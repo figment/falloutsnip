@@ -113,9 +113,13 @@ namespace TESsnip {
                     containsBlob=true;
             }
             if(containsBlob&&elements.Count>1) throw new RecordXmlException("A subrecord containing a blorb or fstring may only contain one element");
-            for(int i=0;i<this.elements.Length-1;i++) {
-                if(this.elements[i].repeat||this.elements[i].optional) {
-                    throw new RecordXmlException("Repeat and optional attributes are only valid on the final element of a subrecord");
+            for(int i=0;i<this.elements.Length;i++) {
+                if(this.elements[i].repeat>0||this.elements[i].optional) {
+                    if ((this.elements[i].optional && i+1 > this.elements.Length)
+                        || ((i+this.elements[i].repeat) > this.elements.Length) )
+                    {
+                        throw new RecordXmlException("Repeat and optional attributes are only valid on the final elements of a subrecord");
+                    }
                 }
             }
         }
@@ -130,7 +134,7 @@ namespace TESsnip {
         public readonly int CondID;
         public readonly bool notininfo;
         public readonly bool multiline;
-        public readonly bool repeat;
+        public readonly int repeat;
         public readonly bool optional;
         public readonly bool hexview;
         public readonly string[] flags;
@@ -162,13 +166,13 @@ namespace TESsnip {
             if(node2!=null) options=node2.Value.Split(';');
             else options=null;
             node2=node.Attributes.GetNamedItem("repeat");
-            if(node2!=null&&node2.Value=="1") repeat=true;
-            else repeat=false;
+            if(node2!=null) repeat=int.Parse(node2.Value);
+            else repeat=0;
             node2=node.Attributes.GetNamedItem("optional");
             if(node2!=null&&node2.Value=="1") optional=true;
             else optional=false;
 
-            if(optional||repeat) {
+            if(optional||repeat>0) {
                 if(group!=0) throw new RecordXmlException("Elements with a group attribute cant be marked optional or repeat");
             }
 
@@ -207,11 +211,11 @@ namespace TESsnip {
                 if(node2!=null&&node2.Value=="true") multiline=true;
                 break;
             case "blob":
-                if(repeat||optional) throw new RecordXmlException("blob or fstring type elements can't be marked with repeat or optional");
+                if(repeat>0||optional) throw new RecordXmlException("blob or fstring type elements can't be marked with repeat or optional");
                 type=ElementValueType.Blob;
                 break;
             case "fstring":
-                if(repeat||optional) throw new RecordXmlException("blob or fstring type elements can't be marked with repeat or optional");
+                if(repeat>0||optional) throw new RecordXmlException("blob or fstring type elements can't be marked with repeat or optional");
                 type=ElementValueType.fstring;
                 node2=node.Attributes.GetNamedItem("multiline");
                 if(node2!=null&&node2.Value=="true") multiline=true;

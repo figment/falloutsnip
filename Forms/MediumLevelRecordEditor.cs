@@ -122,7 +122,7 @@ namespace TESsnip
                 else tb.Enabled = false;
                 cb.CheckedChanged += new EventHandler(CheckBox_CheckedChanged);
             }
-            if (es.optional || es.repeat && repeatcount > 0)
+            if (es.optional || es.repeat > 0 && repeatcount > 0)
             {
                 CheckBox cb = new CheckBox();
                 cb.Text = "Use this value?";
@@ -180,7 +180,7 @@ namespace TESsnip
                         offset += 4;
                         break;
                     case ElementValueType.Float:
-                        tb.Text = TypeConverter.h2f(data[offset], data[offset + 1], data[offset + 2], data[offset + 3]).ToString(es.hexview ? "X8" : "D");
+                        tb.Text = TypeConverter.h2f(data[offset], data[offset + 1], data[offset + 2], data[offset + 3]).ToString();
                         offset += 4;
                         break;
                     case ElementValueType.UShort:
@@ -223,7 +223,7 @@ namespace TESsnip
                         {
                             int len = TypeConverter.h2s(data[offset], data[offset + 1]);
                             string s = System.Text.Encoding.ASCII.GetString(data, offset + 2, len);
-                            offset = offset + (2 + len + 1);
+                            offset = offset + (2 + len);
                             tb.Text = s;
                             tb.Width += 200;
                         } break;
@@ -393,14 +393,14 @@ namespace TESsnip
                     else
                     {
                         AddElement(ss.elements[i], ref offset, data, ref groupOffset, ref CurrentGroup);
-                        if (ss.elements[i].repeat)
+                        if (ss.elements[i].repeat > 0)
                         {
                             repeatcount++;
                             if (offset < data.Length) i--;
                         }
                     }
                 }
-                if (ss.elements[ss.elements.Length - 1].repeat && repeatcount > 0)
+                if (ss.elements[ss.elements.Length - 1].repeat > 0 && repeatcount > 0)
                 {
                     AddElement(ss.elements[ss.elements.Length - 1]);
                 }
@@ -485,7 +485,8 @@ namespace TESsnip
             tag.tb.Enabled = cb.Checked;
             if (cb.Checked)
             {
-                if (ss.elements[ss.elements.Length - 1].repeat) AddElement(ss.elements[ss.elements.Length - 1]);
+                if (ss.elements[ss.elements.Length - 1].repeat > 0) 
+                    AddElement(ss.elements[ss.elements.Length - 1]);
             }
             else
             {
@@ -617,7 +618,6 @@ namespace TESsnip
                         {
                             bytes.AddRange(TypeConverter.s2h((ushort)tbText.Length));
                             bytes.AddRange(System.Text.Encoding.Default.GetBytes(tbText));
-                            bytes.Add(0);
                             break;
                         }
                     case ElementValueType.fstring:

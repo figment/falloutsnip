@@ -73,6 +73,7 @@ namespace TESsnip {
             this.columnHeader1 = new System.Windows.Forms.ColumnHeader();
             this.columnHeader2 = new System.Windows.Forms.ColumnHeader();
             this.SaveEdidListDialog = new System.Windows.Forms.SaveFileDialog();
+            this.reorderSubrecordsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.menuStrip1.SuspendLayout();
             this.splitContainer1.Panel1.SuspendLayout();
             this.splitContainer1.Panel2.SuspendLayout();
@@ -292,7 +293,8 @@ namespace TESsnip {
             this.generateLLXmlToolStripMenuItem,
             this.makeEsmToolStripMenuItem,
             this.martigensToolStripMenuItem,
-            this.editStringsToolStripMenuItem});
+            this.editStringsToolStripMenuItem,
+            this.reorderSubrecordsToolStripMenuItem});
             this.spellsToolStripMenuItem.Name = "spellsToolStripMenuItem";
             this.spellsToolStripMenuItem.Size = new System.Drawing.Size(49, 20);
             this.spellsToolStripMenuItem.Text = "Spells";
@@ -569,6 +571,13 @@ namespace TESsnip {
             this.SaveEdidListDialog.RestoreDirectory = true;
             this.SaveEdidListDialog.Title = "Save file as";
             // 
+            // reorderSubrecordsToolStripMenuItem
+            // 
+            this.reorderSubrecordsToolStripMenuItem.Name = "reorderSubrecordsToolStripMenuItem";
+            this.reorderSubrecordsToolStripMenuItem.Size = new System.Drawing.Size(221, 22);
+            this.reorderSubrecordsToolStripMenuItem.Text = "Reorder Subrecords";
+            this.reorderSubrecordsToolStripMenuItem.Click += new System.EventHandler(this.reorderSubrecordsToolStripMenuItem_Click);
+            // 
             // MainView
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -652,5 +661,6 @@ namespace TESsnip {
         private System.Windows.Forms.ToolStripButton toolStripMoveRecordDown;
         private System.Windows.Forms.ToolStripButton toolStripEditSubrecord;
         private System.Windows.Forms.ToolStripButton toolStripEditSubrecordHex;
+        private System.Windows.Forms.ToolStripMenuItem reorderSubrecordsToolStripMenuItem;
     }
 }

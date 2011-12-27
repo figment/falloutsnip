@@ -936,265 +936,279 @@ namespace TESsnip
             string s = ss.name + " (" + ss.desc + ")" + Environment.NewLine;
             try
             {
-                for (int j = 0; j < ss.elements.Length; j++)
+                for (int eidx = 0, elen = 1; eidx < ss.elements.Length; eidx += elen)
                 {
-                    if (offset == Data.Length && j == ss.elements.Length - 1 && ss.elements[j].optional) break;
-                    string s2 = "";
-                    if (!ss.elements[j].notininfo) s2 += ss.elements[j].name + ": ";
-                    switch (ss.elements[j].type)
-                    {
-                        case ElementValueType.Int:
-                            {
+                    var sselem = ss.elements[eidx];
+                    bool repeat = sselem.repeat > 0;
+                    elen = Math.Max(1, sselem.repeat);
 
-                                string tmps = TypeConverter.h2si(Data[offset], Data[offset + 1], Data[offset + 2], Data[offset + 3]).ToString();
-                                if (!ss.elements[j].notininfo)
-                                {
-                                    if (ss.elements[j].hexview) s2 += TypeConverter.h2i(Data[offset], Data[offset + 1], Data[offset + 2], Data[offset + 3]).ToString("X8");
-                                    else s2 += tmps;
-                                    if (ss.elements[j].options != null)
+                    do
+                    {
+                        for (int eoff = 0; eoff < elen; ++eoff)
+                        {
+                            sselem = ss.elements[eidx + eoff];
+
+                            if (offset == Data.Length && eidx == ss.elements.Length - 1 && sselem.optional) break;
+                            string s2 = "";
+                            if (!sselem.notininfo) s2 += sselem.name + ": ";
+                            switch (sselem.type)
+                            {
+                                case ElementValueType.Int:
                                     {
-                                        for (int k = 0; k < ss.elements[j].options.Length; k += 2)
+
+                                        string tmps = TypeConverter.h2si(Data[offset], Data[offset + 1], Data[offset + 2], Data[offset + 3]).ToString();
+                                        if (!sselem.notininfo)
                                         {
-                                            if (tmps == ss.elements[j].options[k + 1]) s2 += " (" + ss.elements[j].options[k] + ")";
-                                        }
-                                    }
-                                    else if (ss.elements[j].flags != null)
-                                    {
-                                        uint val = TypeConverter.h2i(Data[offset], Data[offset + 1], Data[offset + 2], Data[offset + 3]);
-                                        string tmp2 = "";
-                                        for (int k = 0; k < ss.elements[j].flags.Length; k++)
-                                        {
-                                            if ((val & (1 << k)) != 0)
+                                            if (sselem.hexview) s2 += TypeConverter.h2i(Data[offset], Data[offset + 1], Data[offset + 2], Data[offset + 3]).ToString("X8");
+                                            else s2 += tmps;
+                                            if (sselem.options != null)
                                             {
-                                                if (tmp2.Length > 0) tmp2 += ", ";
-                                                tmp2 += ss.elements[j].flags[k];
+                                                for (int k = 0; k < sselem.options.Length; k += 2)
+                                                {
+                                                    if (tmps == sselem.options[k + 1]) s2 += " (" + sselem.options[k] + ")";
+                                                }
+                                            }
+                                            else if (sselem.flags != null)
+                                            {
+                                                uint val = TypeConverter.h2i(Data[offset], Data[offset + 1], Data[offset + 2], Data[offset + 3]);
+                                                string tmp2 = "";
+                                                for (int k = 0; k < sselem.flags.Length; k++)
+                                                {
+                                                    if ((val & (1 << k)) != 0)
+                                                    {
+                                                        if (tmp2.Length > 0) tmp2 += ", ";
+                                                        tmp2 += sselem.flags[k];
+                                                    }
+                                                }
+                                                if (tmp2.Length > 0) s2 += " (" + tmp2 + ")";
                                             }
                                         }
-                                        if (tmp2.Length > 0) s2 += " (" + tmp2 + ")";
-                                    }
-                                }
-                                offset += 4;
-                            } break;
-                        case ElementValueType.UInt:
-                            {
-                                string tmps = TypeConverter.h2i(Data[offset], Data[offset + 1], Data[offset + 2], Data[offset + 3]).ToString();
-                                if (!ss.elements[j].notininfo)
-                                {
-                                    if (ss.elements[j].hexview) s2 += TypeConverter.h2i(Data[offset], Data[offset + 1], Data[offset + 2], Data[offset + 3]).ToString("X8");
-                                    else s2 += tmps;
-                                    if (ss.elements[j].options != null)
+                                        offset += 4;
+                                    } break;
+                                case ElementValueType.UInt:
                                     {
-                                        for (int k = 0; k < ss.elements[j].options.Length; k += 2)
+                                        string tmps = TypeConverter.h2i(Data[offset], Data[offset + 1], Data[offset + 2], Data[offset + 3]).ToString();
+                                        if (!sselem.notininfo)
                                         {
-                                            if (tmps == ss.elements[j].options[k + 1]) s2 += " (" + ss.elements[j].options[k] + ")";
-                                        }
-                                    }
-                                    else if (ss.elements[j].flags != null)
-                                    {
-                                        uint val = TypeConverter.h2i(Data[offset], Data[offset + 1], Data[offset + 2], Data[offset + 3]);
-                                        string tmp2 = "";
-                                        for (int k = 0; k < ss.elements[j].flags.Length; k++)
-                                        {
-                                            if ((val & (1 << k)) != 0)
+                                            if (sselem.hexview) s2 += TypeConverter.h2i(Data[offset], Data[offset + 1], Data[offset + 2], Data[offset + 3]).ToString("X8");
+                                            else s2 += tmps;
+                                            if (sselem.options != null)
                                             {
-                                                if (tmp2.Length > 0) tmp2 += ", ";
-                                                tmp2 += ss.elements[j].flags[k];
+                                                for (int k = 0; k < sselem.options.Length; k += 2)
+                                                {
+                                                    if (tmps == sselem.options[k + 1]) s2 += " (" + sselem.options[k] + ")";
+                                                }
+                                            }
+                                            else if (sselem.flags != null)
+                                            {
+                                                uint val = TypeConverter.h2i(Data[offset], Data[offset + 1], Data[offset + 2], Data[offset + 3]);
+                                                string tmp2 = "";
+                                                for (int k = 0; k < sselem.flags.Length; k++)
+                                                {
+                                                    if ((val & (1 << k)) != 0)
+                                                    {
+                                                        if (tmp2.Length > 0) tmp2 += ", ";
+                                                        tmp2 += sselem.flags[k];
+                                                    }
+                                                }
+                                                if (tmp2.Length > 0) s2 += " (" + tmp2 + ")";
                                             }
                                         }
-                                        if (tmp2.Length > 0) s2 += " (" + tmp2 + ")";
+                                        offset += 4;
                                     }
-                                }
-                                offset += 4;
-                            }
-                            break;
-                        case ElementValueType.Short:
-                            {
-                                string tmps = TypeConverter.h2ss(Data[offset], Data[offset + 1]).ToString();
-                                if (!ss.elements[j].notininfo)
-                                {
-                                    if (ss.elements[j].hexview) s2 += TypeConverter.h2ss(Data[offset], Data[offset + 1]).ToString("X4");
-                                    else s2 += tmps;
-                                    if (ss.elements[j].options != null)
+                                    break;
+                                case ElementValueType.Short:
                                     {
-                                        for (int k = 0; k < ss.elements[j].options.Length; k += 2)
+                                        string tmps = TypeConverter.h2ss(Data[offset], Data[offset + 1]).ToString();
+                                        if (!sselem.notininfo)
                                         {
-                                            if (tmps == ss.elements[j].options[k + 1]) s2 += " (" + ss.elements[j].options[k] + ")";
-                                        }
-                                    }
-                                    else if (ss.elements[j].flags != null)
-                                    {
-                                        uint val = TypeConverter.h2s(Data[offset], Data[offset + 1]);
-                                        string tmp2 = "";
-                                        for (int k = 0; k < ss.elements[j].flags.Length; k++)
-                                        {
-                                            if ((val & (1 << k)) != 0)
+                                            if (sselem.hexview) s2 += TypeConverter.h2ss(Data[offset], Data[offset + 1]).ToString("X4");
+                                            else s2 += tmps;
+                                            if (sselem.options != null)
                                             {
-                                                if (tmp2.Length > 0) tmp2 += ", ";
-                                                tmp2 += ss.elements[j].flags[k];
+                                                for (int k = 0; k < sselem.options.Length; k += 2)
+                                                {
+                                                    if (tmps == sselem.options[k + 1]) s2 += " (" + sselem.options[k] + ")";
+                                                }
+                                            }
+                                            else if (sselem.flags != null)
+                                            {
+                                                uint val = TypeConverter.h2s(Data[offset], Data[offset + 1]);
+                                                string tmp2 = "";
+                                                for (int k = 0; k < sselem.flags.Length; k++)
+                                                {
+                                                    if ((val & (1 << k)) != 0)
+                                                    {
+                                                        if (tmp2.Length > 0) tmp2 += ", ";
+                                                        tmp2 += sselem.flags[k];
+                                                    }
+                                                }
+                                                if (tmp2.Length > 0) s2 += " (" + tmp2 + ")";
                                             }
                                         }
-                                        if (tmp2.Length > 0) s2 += " (" + tmp2 + ")";
+                                        offset += 2;
                                     }
-                                }
-                                offset += 2;
-                            }
-                            break;
-                        case ElementValueType.UShort:
-                            {
-                                string tmps = TypeConverter.h2s(Data[offset], Data[offset + 1]).ToString();
-                                if (!ss.elements[j].notininfo)
-                                {
-                                    if (ss.elements[j].hexview) s2 += TypeConverter.h2s(Data[offset], Data[offset + 1]).ToString("X4");
-                                    else s2 += tmps;
-                                    if (ss.elements[j].options != null)
+                                    break;
+                                case ElementValueType.UShort:
                                     {
-                                        for (int k = 0; k < ss.elements[j].options.Length; k += 2)
+                                        string tmps = TypeConverter.h2s(Data[offset], Data[offset + 1]).ToString();
+                                        if (!sselem.notininfo)
                                         {
-                                            if (tmps == ss.elements[j].options[k + 1]) s2 += " (" + ss.elements[j].options[k] + ")";
-                                        }
-                                    }
-                                    else if (ss.elements[j].flags != null)
-                                    {
-                                        uint val = TypeConverter.h2s(Data[offset], Data[offset + 1]);
-                                        string tmp2 = "";
-                                        for (int k = 0; k < ss.elements[j].flags.Length; k++)
-                                        {
-                                            if ((val & (1 << k)) != 0)
+                                            if (sselem.hexview) s2 += TypeConverter.h2s(Data[offset], Data[offset + 1]).ToString("X4");
+                                            else s2 += tmps;
+                                            if (sselem.options != null)
                                             {
-                                                if (tmp2.Length > 0) tmp2 += ", ";
-                                                tmp2 += ss.elements[j].flags[k];
+                                                for (int k = 0; k < sselem.options.Length; k += 2)
+                                                {
+                                                    if (tmps == sselem.options[k + 1]) s2 += " (" + sselem.options[k] + ")";
+                                                }
+                                            }
+                                            else if (sselem.flags != null)
+                                            {
+                                                uint val = TypeConverter.h2s(Data[offset], Data[offset + 1]);
+                                                string tmp2 = "";
+                                                for (int k = 0; k < sselem.flags.Length; k++)
+                                                {
+                                                    if ((val & (1 << k)) != 0)
+                                                    {
+                                                        if (tmp2.Length > 0) tmp2 += ", ";
+                                                        tmp2 += sselem.flags[k];
+                                                    }
+                                                }
+                                                if (tmp2.Length > 0) s2 += " (" + tmp2 + ")";
                                             }
                                         }
-                                        if (tmp2.Length > 0) s2 += " (" + tmp2 + ")";
+                                        offset += 2;
                                     }
-                                }
-                                offset += 2;
-                            }
-                            break;
-                        case ElementValueType.Byte:
-                            {
-                                string tmps = Data[offset].ToString();
-                                if (!ss.elements[j].notininfo)
-                                {
-                                    if (ss.elements[j].hexview) s2 += Data[offset].ToString("X2");
-                                    else s2 += tmps;
-                                    if (ss.elements[j].options != null)
+                                    break;
+                                case ElementValueType.Byte:
                                     {
-                                        for (int k = 0; k < ss.elements[j].options.Length; k += 2)
+                                        string tmps = Data[offset].ToString();
+                                        if (!sselem.notininfo)
                                         {
-                                            if (tmps == ss.elements[j].options[k + 1]) s2 += " (" + ss.elements[j].options[k] + ")";
-                                        }
-                                    }
-                                    else if (ss.elements[j].flags != null)
-                                    {
-                                        int val = Data[offset];
-                                        string tmp2 = "";
-                                        for (int k = 0; k < ss.elements[j].flags.Length; k++)
-                                        {
-                                            if ((val & (1 << k)) != 0)
+                                            if (sselem.hexview) s2 += Data[offset].ToString("X2");
+                                            else s2 += tmps;
+                                            if (sselem.options != null)
                                             {
-                                                if (tmp2.Length > 0) tmp2 += ", ";
-                                                tmp2 += ss.elements[j].flags[k];
+                                                for (int k = 0; k < sselem.options.Length; k += 2)
+                                                {
+                                                    if (tmps == sselem.options[k + 1]) s2 += " (" + sselem.options[k] + ")";
+                                                }
+                                            }
+                                            else if (sselem.flags != null)
+                                            {
+                                                int val = Data[offset];
+                                                string tmp2 = "";
+                                                for (int k = 0; k < sselem.flags.Length; k++)
+                                                {
+                                                    if ((val & (1 << k)) != 0)
+                                                    {
+                                                        if (tmp2.Length > 0) tmp2 += ", ";
+                                                        tmp2 += sselem.flags[k];
+                                                    }
+                                                }
+                                                if (tmp2.Length > 0) s2 += " (" + tmp2 + ")";
                                             }
                                         }
-                                        if (tmp2.Length > 0) s2 += " (" + tmp2 + ")";
+                                        offset++;
                                     }
-                                }
-                                offset++;
-                            }
-                            break;
-                        case ElementValueType.SByte:
-                            {
-                                string tmps = ((sbyte)Data[offset]).ToString();
-                                if (!ss.elements[j].notininfo)
-                                {
-                                    if (ss.elements[j].hexview) s2 += Data[offset].ToString("X2");
-                                    else s2 += tmps;
-                                    if (ss.elements[j].options != null)
+                                    break;
+                                case ElementValueType.SByte:
                                     {
-                                        for (int k = 0; k < ss.elements[j].options.Length; k += 2)
+                                        string tmps = ((sbyte)Data[offset]).ToString();
+                                        if (!sselem.notininfo)
                                         {
-                                            if (tmps == ss.elements[j].options[k + 1]) s2 += " (" + ss.elements[j].options[k] + ")";
-                                        }
-                                    }
-                                    else if (ss.elements[j].flags != null)
-                                    {
-                                        int val = Data[offset];
-                                        string tmp2 = "";
-                                        for (int k = 0; k < ss.elements[j].flags.Length; k++)
-                                        {
-                                            if ((val & (1 << k)) != 0)
+                                            if (sselem.hexview) s2 += Data[offset].ToString("X2");
+                                            else s2 += tmps;
+                                            if (sselem.options != null)
                                             {
-                                                if (tmp2.Length > 0) tmp2 += ", ";
-                                                tmp2 += ss.elements[j].flags[k];
+                                                for (int k = 0; k < sselem.options.Length; k += 2)
+                                                {
+                                                    if (tmps == sselem.options[k + 1]) s2 += " (" + sselem.options[k] + ")";
+                                                }
+                                            }
+                                            else if (sselem.flags != null)
+                                            {
+                                                int val = Data[offset];
+                                                string tmp2 = "";
+                                                for (int k = 0; k < sselem.flags.Length; k++)
+                                                {
+                                                    if ((val & (1 << k)) != 0)
+                                                    {
+                                                        if (tmp2.Length > 0) tmp2 += ", ";
+                                                        tmp2 += sselem.flags[k];
+                                                    }
+                                                }
+                                                if (tmp2.Length > 0) s2 += " (" + tmp2 + ")";
                                             }
                                         }
-                                        if (tmp2.Length > 0) s2 += " (" + tmp2 + ")";
+                                        offset++;
                                     }
-                                }
-                                offset++;
-                            }
-                            break;
-                        case ElementValueType.FormID:
-                            {
-                                uint id = TypeConverter.h2i(Data[offset], Data[offset + 1], Data[offset + 2], Data[offset + 3]);
-                                if (!ss.elements[j].notininfo) s2 += id.ToString("X8");
-                                if (formIDLookup != null) s2 += ": " + formIDLookup(id);
-                                offset += 4;
-                            } break;
-                        case ElementValueType.Float:
-                            if (!ss.elements[j].notininfo) s2 += TypeConverter.h2f(Data[offset], Data[offset + 1], Data[offset + 2], Data[offset + 3]).ToString();
-                            offset += 4;
-                            break;
-                        case ElementValueType.String:
-                            if (!ss.elements[j].notininfo)
-                            {
-                                while (Data[offset] != 0) s2 += (char)Data[offset++];
-                            }
-                            else
-                            {
-                                while (Data[offset] != 0) offset++;
-                            }
-                            offset++;
-                            break;
-                        case ElementValueType.fstring:
-                            s2 += GetStrData();
-                            break;
-                        case ElementValueType.Blob:
-                            s2 += GetHexData();
-                            break;
-                        case ElementValueType.BString:
-                            {
-                                int len = TypeConverter.h2s(Data[offset], Data[offset + 1]);
-                                s2 = System.Text.Encoding.ASCII.GetString(Data, offset + 2, len);
-                                offset += (2 + len + 1);
-                            }
-                            break;
-                        case ElementValueType.LString:
-                            {
-                                if (Data.Length == 4)
-                                {
-                                    uint id = TypeConverter.h2i(Data[offset], Data[offset + 1], Data[offset + 2], Data[offset + 3]);
-                                    string value = strLookup(id);
-                                    if (!ss.elements[j].notininfo) s2 += id.ToString("X8");
-                                    if (strLookup != null) s2 += ": " + value;
+                                    break;
+                                case ElementValueType.FormID:
+                                    {
+                                        uint id = TypeConverter.h2i(Data[offset], Data[offset + 1], Data[offset + 2], Data[offset + 3]);
+                                        if (!sselem.notininfo) s2 += id.ToString("X8");
+                                        if (formIDLookup != null) s2 += ": " + formIDLookup(id);
+                                        offset += 4;
+                                    } break;
+                                case ElementValueType.Float:
+                                    if (!sselem.notininfo) s2 += TypeConverter.h2f(Data[offset], Data[offset + 1], Data[offset + 2], Data[offset + 3]).ToString();
                                     offset += 4;
-                                }
-                                else
-                                {
-                                    if (!ss.elements[j].notininfo)
+                                    break;
+                                case ElementValueType.String:
+                                    if (!sselem.notininfo)
+                                    {
                                         while (Data[offset] != 0) s2 += (char)Data[offset++];
+                                    }
                                     else
+                                    {
                                         while (Data[offset] != 0) offset++;
+                                    }
                                     offset++;
-                                }
-                            } break;
-                        default:
-                            throw new ApplicationException();
-                    }
-                    if (!ss.elements[j].notininfo) s2 += Environment.NewLine;
-                    if (offset < Data.Length && j == ss.elements.Length - 1 && ss.elements[j].repeat) j--;
-                    s += s2;
+                                    break;
+                                case ElementValueType.fstring:
+                                    if (!sselem.notininfo)
+                                        s2 += GetStrData();
+                                    break;
+                                case ElementValueType.Blob:
+                                    if (!sselem.notininfo)
+                                        s2 += GetHexData();
+                                    break;
+                                case ElementValueType.BString:
+                                    {
+                                        int len = TypeConverter.h2s(Data[offset], Data[offset + 1]);
+                                        if (!sselem.notininfo)
+                                            s2 = System.Text.Encoding.ASCII.GetString(Data, offset + 2, len);
+                                        offset += (2 + len);
+                                    }
+                                    break;
+                                case ElementValueType.LString:
+                                    {
+                                        if (Data.Length == 4)
+                                        {
+                                            uint id = TypeConverter.h2i(Data[offset], Data[offset + 1], Data[offset + 2], Data[offset + 3]);
+                                            string value = strLookup(id);
+                                            if (!sselem.notininfo) s2 += id.ToString("X8");
+                                            if (strLookup != null) s2 += ": " + value;
+                                            offset += 4;
+                                        }
+                                        else
+                                        {
+                                            if (!sselem.notininfo)
+                                                while (Data[offset] != 0) s2 += (char)Data[offset++];
+                                            else
+                                                while (Data[offset] != 0) offset++;
+                                            offset++;
+                                        }
+                                    } break;
+                                default:
+                                    throw new ApplicationException();
+                            }
+                            if (!sselem.notininfo) s2 += Environment.NewLine;
+                            s += s2;
+                        }
+                    } while (repeat && offset < Data.Length);
                 }
             }
             catch

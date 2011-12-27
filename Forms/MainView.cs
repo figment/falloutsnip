@@ -1,6 +1,7 @@
 using System;
 using System.Windows.Forms;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace TESsnip
 {
@@ -176,7 +177,7 @@ namespace TESsnip
                             {
                                 int len = TypeConverter.h2s(data[offset], data[offset + 1]);
                                 string s = System.Text.Encoding.ASCII.GetString(data, offset + 2, len);
-                                offset = offset + (2 + len + 1);
+                                offset = offset + (2 + len);
                                 conditions[ess[j].CondID] = new Conditional(ElementValueType.String, s);
                             } break;
                         case ElementValueType.LString:
@@ -215,7 +216,7 @@ namespace TESsnip
                             break;
                         case ElementValueType.BString:
                             int len = TypeConverter.h2s(data[offset], data[offset + 1]);
-                            offset += 2 + len + 1;
+                            offset += 2 + len;
                             break;
                         default:
                             throw new ApplicationException();
@@ -310,7 +311,7 @@ namespace TESsnip
             }
         }
         /// <summary>
-        /// This routine assigns Structure definitions to 
+        /// This routine assigns Structure definitions to subrecords
         /// </summary>
         private void MatchRecordStructureToRecord()
         {
@@ -413,6 +414,7 @@ namespace TESsnip
                 insertRecordToolStripMenuItem.Enabled = true;
                 insertSubrecordToolStripMenuItem.Enabled = false;
             }
+            listSubrecord.Refresh();
         }
 
         private void RefreshSelection()
@@ -1870,6 +1872,7 @@ namespace TESsnip
             try
             {
                 RecordStructure.Load();
+                RebuildSelection();
             }
             catch (Exception ex)
             {
@@ -2072,6 +2075,54 @@ namespace TESsnip
         private void toolStripEditSubrecordHex_Click(object sender, EventArgs e)
         {
             EditSelectedSubrecordHex();
+        }
+
+        // try to reorder subrecords to match the structure file.
+        private void reorderSubrecordsToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if (!ValidateMakeChange())
+                return;
+
+            if (RecordStructure.Records == null) return;
+            if (!RecordStructure.Records.ContainsKey(parentRecord.Name)) return;
+
+            SubrecordStructure[] sss = RecordStructure.Records[parentRecord.Name].subrecords;
+
+            List<SubRecord> subs = new List<SubRecord>(parentRecord.SubRecords);
+            foreach (var sub in subs) sub.DetachStructure();
+
+            List<SubRecord> newsubs = new List<SubRecord>();
+            for ( int ssidx=0,sslen=0; ssidx < sss.Length; ssidx += sslen)
+            {
+                SubrecordStructure ss = sss[ssidx];
+                bool repeat = ss.repeat > 0;
+                sslen = Math.Max(1, ss.repeat);
+
+                bool found = false;
+                do
+                {
+                    found = false;
+                    for (int ssoff = 0; ssoff < sslen; ++ssoff)
+                    {
+                        ss = sss[ssidx + ssoff];
+                        for (int i = 0; i < subs.Count; ++i)
+                        {
+                            var sr = subs[i];
+                            if (sr.Name == ss.name)
+                            {
+                                newsubs.Add(sr);
+                                subs.RemoveAt(i);
+                                found = true;
+                                break;
+                            }
+                        }
+                    }
+                } while (found && repeat);
+            }
+            newsubs.AddRange(subs);
+            parentRecord.SubRecords.Clear();
+            parentRecord.SubRecords.AddRange(newsubs);
+            RebuildSelection();
         }
     }
 }

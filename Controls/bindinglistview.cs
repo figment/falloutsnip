@@ -42,7 +42,7 @@ namespace TESsnip.Windows.Controls
 
         void FillListViewItem(ListViewItem lvItem, int index)
         {
-            if (index >=0 && index < this._data.Count)
+            if (index >= 0 && this._data != null && index < this._data.Count)
             {
                 object item = this._data[index];
                 for (int i = 0; i < lvItem.SubItems.Count; ++i)

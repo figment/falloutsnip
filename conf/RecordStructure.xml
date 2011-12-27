@@ -330,10 +330,10 @@
     <Subrecord name="ZNAM" desc="Drop Sound Ref" optional="1">
       <Element name="Drop Sound ID" type="formid" reftype="SOUN" />
     </Subrecord>
-    <Subrecord name="RNAM" desc="Unknown Ref" optional="1">
-      <Element name="ID" type="int" />
+    <Subrecord name="RNAM" desc="Race" optional="1">
+      <Element name="ID" type="formid" reftype="RACE"/>
     </Subrecord>
-    <Subrecord name="KSIZ" desc="Unknown Size" optional="1">
+    <Subrecord name="KSIZ" desc="Keyword Size" optional="1">
       <Element name="Value" type="int" />
     </Subrecord>
     <Subrecord name="KWDA" desc="Keywords" optional="1">
@@ -366,8 +366,8 @@
       <Element name="Unk 2" type="int"/>
       <Element name="Unk 3" type="int"/>
     </Subrecord>
-    <Subrecord name="RNAM" desc="Unknown Ref" optional="1">
-      <Element name="ID" type="int" />
+    <Subrecord name="RNAM" desc="RNAM" optional="1">
+      <Element name="ID" type="formid" reftype="RACE"/>
     </Subrecord>
     <Subrecord name="DNAM" desc="Type??" optional="1">
       <Element name="Unknown 1" type="int"/>
@@ -492,7 +492,7 @@
     <Subrecord name="BAMT" desc="BAMT" optional="1">
       <Element name="Unknown" type="blob" />
     </Subrecord>
-    <Subrecord name="KSIZ" desc="Unknown Size" optional="1">
+    <Subrecord name="KSIZ" desc="Keyword Size" optional="1">
       <Element name="Value" type="int" />
     </Subrecord>
     <Subrecord name="KWDA" desc="Keywords" optional="1">
@@ -1310,32 +1310,20 @@
     </Subrecord>
   </Record>
 
-  <Group id="4">
-    <Subrecord name="TINI" desc="TINI" optional="4" repeat="4">
-      <Element name="Unknown" type="short" />
-    </Subrecord>
-    <Subrecord name="TINC" desc="TINC">
-      <Element name="Unknown" type="int" />
-    </Subrecord>
-    <Subrecord name="TINV" desc="TINV">
-      <Element name="Unknown" type="int" />
-    </Subrecord>
-    <Subrecord name="TIAS" desc="TIAS">
-      <Element name="Unknown" type="short" />
-    </Subrecord>
-  </Group>
-
   <Record name="NPC_" desc="NPC Package">
     <Subrecord name="EDID" desc="Editor ID">
       <Element name="Editor ID" type="string" />
     </Subrecord>
     <Subrecord name="VMAD" desc="Script Packages" optional="1">
+      <!--
       <Element name="Unknown" type="short" />
       <Element name="Unknown" type="short" />
       <Element name="Unknown" type="short" />
-      <Element name="Name" type="bstring" />
+      <Element name="Name" type="bstring" repeat="2"/>
+      <Element name="Unknown" type="short" />
+      -->
+      <Element name="Unknown" type="blob" notininfo = "true" />
 
-      <!-- <Element name="Unknown" type="blob" /> -->
     </Subrecord>
     <Subrecord name="OBND" desc="OBND Data" optional="1">
       <Element name="Unknown" type="short" />
@@ -1358,11 +1346,103 @@
       <Element name="Unknown" type="int" />
       <Element name="Unknown" type="int" />
     </Subrecord>
-    <Subrecord name = "FULL" desc = "Name" optional = "1">
+    <Subrecord name="TPLT" desc="Template NPC" optional="1">
+      <Element name="ID" type="formid" reftype="NPC_"/>
+    </Subrecord>
+    <Subrecord name="SNAM" desc="Faction" optional="1" repeat="1">
+      <Element name="Faction" type="formid" reftype="FACT"/>
+      <Element name="Level" type="byte" />
+      <Element name="Unknown" type="ushort" />
+    </Subrecord>
+    <Subrecord name="INAM" desc="INAM" optional="1">
+      <Element name="ID" type="formid" />
+    </Subrecord>
+    <Subrecord name="VTCK" desc="Voice Type" optional="1">
+      <Element name="Voice" type="formid" reftype="VTYP"/>
+    </Subrecord>
+    <Subrecord name="TPLT" desc="Template NPC" optional="1">
+      <Element name="ID" type="formid" reftype="NPC_"/>
+    </Subrecord>
+    <Subrecord name="RNAM" desc="Race" optional="1">
+      <Element name="ID" type="formid" reftype="RACE"/>
+    </Subrecord>
+    <Subrecord name="ATKR" desc="Attack Race" optional="1">
+      <Element name="Form ID" type="formid" reftype="STAT" />
+    </Subrecord>
+    <Subrecord name="SPCT" desc="Spell Book Count" optional="1" >
+      <Element name="ID" type="int" />
+    </Subrecord>
+    <Subrecord name="SPLO" desc="Spell Book List" optional="1" repeat="1">
+      <Element name="ID" type="formid" reftype="SPEL"/>
+    </Subrecord>
+    <Subrecord name="WNAM" desc="World Static Record" optional="1">
+      <Element name="Form ID" type="formid" reftype="STAT" />
+    </Subrecord>
+    <Subrecord name="ATKR" desc="Attack Race" optional="1">
+      <Element name="Form ID" type="formid" reftype="RACE" />
+    </Subrecord>
+    <Subrecord name="PRKZ" desc="Perk Count" optional="1">
+      <Element name="Count" type="int"/>
+    </Subrecord>
+    <Subrecord name="PRKR" desc="Perk" optional="1" repeat="1">
+      <Element name="ID" type="formid" reftype="PERK" />
+      <Element name="Unknown" type="uint" hexview="true"/>
+    </Subrecord>
+    <Subrecord name="COCT" desc="Container Count" optional="1">
+      <Element name="ID" type="int" />
+    </Subrecord>
+    <Subrecord name="CNTO" desc="Container Item" optional="1" repeat="1">
+      <Element name="Item Form ID" type="formid" />
+      <Element name="Count" type="int" />
+    </Subrecord>
+    <Subrecord name="ECOR" desc="ECOR" optional="1">
+      <Element name="ID" type="formid" refid="FLST"/>
+    </Subrecord>
+    <Subrecord name="AIDT" desc="AIDT" optional="1">
+      <Element name="Unknown" type="byte" />
+      <Element name="Unknown" type="byte" />
+      <Element name="Unknown" type="ushort" />
+      <Element name="Unknown" type="byte" />
+      <Element name="Unknown" type="byte" />
+      <Element name="Unknown" type="ushort" />
+      <Element name="Unknown" type="uint" />
+      <Element name="Unknown" type="short" />
+      <Element name="Unknown" type="short" />
+      <Element name="Unknown" type="short" />
+      <Element name="Unknown" type="short" />
+    </Subrecord>
+    <Subrecord name="PKID" desc="PKID" optional="1" repeat="1">
+      <Element name="ID" type="formid" />
+    </Subrecord>
+    <Subrecord name="KSIZ" desc="Keyword Size" optional="1">
+      <Element name="Value" type="int" />
+    </Subrecord>
+    <Subrecord name="KWDA" desc="Keywords" optional="1">
+      <Element name="Keyword" type="formid" hexview="true" repeat="1" reftype="KYWD"/>
+    </Subrecord>
+    <Subrecord name="CNAM" desc="Class Name" optional="1" repeat="1">
+      <Element name="ID" type="formid" reftype="CLAS"/>
+    </Subrecord>
+    <Subrecord name = "FULL" desc = "Full Name" optional = "1">
+      <Element name="Name" type="lstring" />
+    </Subrecord>
+    <Subrecord name = "SHRT" desc = "Short Name" optional = "1">
       <Element name="Name" type="lstring" />
     </Subrecord>
     <Subrecord name="DATA" desc="Data" optional="1">
-      <Element name="Unknown" type="blob" />
+      <Element name="Unknown" type="blob" notininfo = "true"/>
+    </Subrecord>
+    <Subrecord name="DNAM" desc="DNAM" optional="1" repeat="1">
+      <!--<Element name="Data" type="blob" />-->
+    </Subrecord>
+    <Subrecord name="PNAM" desc="Head Parts" optional="1" repeat="1">
+      <Element name="ID" type="formid" reftype="HDPT"/>
+    </Subrecord>
+    <Subrecord name="HCLF" desc="Hair Color" optional="1">
+      <Element name="ID" type="formid" refid="CLFM"/>
+    </Subrecord>
+    <Subrecord name="ZNAM" desc="ZNAM" optional="1">
+      <Element name="ID" type="formid" refid="CSTY"/>
     </Subrecord>
     <Subrecord name="NAM5" desc="NAM5" optional="1">
       <Element name="Unknown" type="short" />
@@ -1375,6 +1455,34 @@
     </Subrecord>
     <Subrecord name="NAM8" desc="NAM8" optional="1">
       <Element name="Unknown" type="int" />
+    </Subrecord>
+
+    <Subrecord name="CSDT" desc="Sound Template" optional="1">
+      <Element name="ID" type="formid" refid="NPC_"/>
+    </Subrecord>
+    <Subrecord name="CSDI" desc="Sound Recording" optional="1">
+      <Element name="ID" type="formid" refid="SNDR"/>
+    </Subrecord>
+    <Subrecord name="CSDC" desc="Sound Level?" optional="1">
+      <Element name="Unknown" type="byte"/>
+    </Subrecord>
+    <Subrecord name="CSCR" desc="CSCR Template" optional="1">
+      <Element name="ID" type="formid" refid="NPC_"/>
+    </Subrecord>
+    <Subrecord name="DOFT" desc="Daily Outfit" optional="1">
+      <Element name="ID" type="formid" refid="OTFT"/>
+    </Subrecord>
+    <Subrecord name="SOFT" desc="Sleep Outfit" optional="1">
+      <Element name="ID" type="formid" refid="OTFT"/>
+    </Subrecord>
+    <Subrecord name="DPLT" desc="Daily Package List" optional="1">
+      <Element name="ID" type="formid" refid="FLST"/>
+    </Subrecord>
+    <Subrecord name="CRIF" desc="Crime Faction" optional="1">
+      <Element name="ID" type="formid" refid="FACT"/>
+    </Subrecord>
+    <Subrecord name="FTST" desc="Complexion Texture" optional="1">
+      <Element name="ID" type="formid" refid="TXST"/>
     </Subrecord>
     <Subrecord name="QNAM" desc="QNAME" optional="1">
       <Element name="Unknown" type="float" />
@@ -1400,76 +1508,27 @@
       <Element name="Unknown 16" type="float" />
       <Element name="Unknown 17" type="float" />
       <Element name="Unknown 18" type="float" />
-      <Element name="Unknown 19" type="float" />
+      <Element name="Unknown 19" type="uint" hexview="true"/>
     </Subrecord>
-
     <Subrecord name="NAMA" desc="NAMA" optional="1">
       <Element name="Unknown" type="int" />
       <Element name="Unknown" type="int" />
       <Element name="Unknown" type="int" />
       <Element name="Unknown" type="int" />
     </Subrecord>
-    <Group id = "4" />
-    <Subrecord name="SNAM" desc="SNAM" optional="1" repeat="1">
-      <Element name="Faction" type="formid" reftype="BPTD"/>
-      <Element name="Level" type="byte" />
-      <Element name="Unknown" type="ushort" />
+    <Subrecord name="TINI" desc="TINI" optional="4" repeat="4">
+      <Element name="Unknown" type="short" />
     </Subrecord>
-    <Subrecord name="VTCK" desc="VTCK" optional="1">
+    <Subrecord name="TINC" desc="TINC">
+      <Element name="Unknown" type="uint" hexview = "true"  />
+    </Subrecord>
+    <Subrecord name="TINV" desc="TINV">
       <Element name="Unknown" type="int" />
     </Subrecord>
-    <Subrecord name="RNAM" desc="RNAM" optional="1">
-      <Element name="ID" type="int" />
-    </Subrecord>
-    <Subrecord name="SPCT" desc="SPCT" optional="1" >
-      <Element name="ID" type="int" />
-    </Subrecord>
-    <Subrecord name="SPLO" desc="SPLO" optional="1" repeat="1">
-      <Element name="ID" type="int" />
-    </Subrecord>
-    <Subrecord name="COCT" desc="COCT" optional="1">
-      <Element name="ID" type="int" />
-    </Subrecord>
-    <Subrecord name="CNTO" desc="CNTO" optional="1" repeat="1">
-      <Element name="Item Form ID" type="formid" />
-      <Element name="Count" type="int" />
-    </Subrecord>
-    <Subrecord name="AIDT" desc="AIDT" optional="1">
-      <Element name="Unknown" type="int" />
-      <Element name="Unknown" type="int" />
-      <Element name="Unknown" type="int" />
-      <Element name="Unknown" type="int" />
-      <Element name="Unknown" type="int" />
+    <Subrecord name="TIAS" desc="TIAS">
+      <Element name="Unknown" type="short" />
     </Subrecord>
 
-    <Subrecord name="PKID" desc="PKID" optional="1" repeat="1">
-      <Element name="ID" type="int" />
-    </Subrecord>
-    <Subrecord name="CNAM" desc="CNAM" optional="1" repeat="1">
-      <Element name="ID" type="int" />
-    </Subrecord>
-    <Subrecord name="DNAM" desc="DNAM" optional="1" repeat="1">
-      <Element name="Data" type="blob" />
-    </Subrecord>
-
-    <Subrecord name="PNAM" desc="PNAM" optional="1" repeat="1">
-      <Element name="ID" type="int" />
-    </Subrecord>
-    <Subrecord name="HCLF" desc="HCLF" optional="1">
-      <Element name="ID" type="int" />
-    </Subrecord>
-    <Subrecord name="ZNAM" desc="ZNAM" optional="1">
-      <Element name="ID" type="int" />
-    </Subrecord>
-    <Subrecord name="DOFT" desc="DOFT" optional="1">
-      <Element name="ID" type="int" />
-    </Subrecord>
-    <Subrecord name="SOFT" desc="SOFT" optional="1">
-      <Element name="ID" type="int" />
-    </Subrecord>
-    <Subrecord name="CRIF" desc="CRIF" optional="1">
-      <Element name="ID" type="int" />
-    </Subrecord>
   </Record>
   <Record name="LAND" desc="LAND Package">
     <Subrecord name="EDID" desc="Editor ID">
