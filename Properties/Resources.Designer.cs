@@ -60,6 +60,20 @@ namespace TESsnip.Properties {
             }
         }
         
+        internal static System.Drawing.Bitmap Copy {
+            get {
+                object obj = ResourceManager.GetObject("Copy", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        internal static System.Drawing.Bitmap cut_2 {
+            get {
+                object obj = ResourceManager.GetObject("cut-2", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
         internal static System.Drawing.Bitmap deletecell {
             get {
                 object obj = ResourceManager.GetObject("deletecell", resourceCulture);
@@ -119,6 +133,20 @@ namespace TESsnip.Properties {
         internal static System.Drawing.Bitmap move_task_up {
             get {
                 object obj = ResourceManager.GetObject("move_task_up", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        internal static System.Drawing.Bitmap Paste {
+            get {
+                object obj = ResourceManager.GetObject("Paste", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        internal static System.Drawing.Bitmap special_paste {
+            get {
+                object obj = ResourceManager.GetObject("special_paste", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }

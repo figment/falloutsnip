@@ -57,6 +57,7 @@ namespace TESsnip {
             this.makeEsmToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.martigensToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.editStringsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.reorderSubrecordsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.OpenModDialog = new System.Windows.Forms.OpenFileDialog();
             this.tbInfo = new System.Windows.Forms.TextBox();
             this.SaveModDialog = new System.Windows.Forms.SaveFileDialog();
@@ -69,11 +70,15 @@ namespace TESsnip {
             this.toolStripMoveRecordDown = new System.Windows.Forms.ToolStripButton();
             this.toolStripEditSubrecord = new System.Windows.Forms.ToolStripButton();
             this.toolStripEditSubrecordHex = new System.Windows.Forms.ToolStripButton();
+            this.toolStripPasteSubrecord = new System.Windows.Forms.ToolStripButton();
             this.listSubrecord = new TESsnip.Windows.Controls.BindingListView();
             this.columnHeader1 = new System.Windows.Forms.ColumnHeader();
             this.columnHeader2 = new System.Windows.Forms.ColumnHeader();
             this.SaveEdidListDialog = new System.Windows.Forms.SaveFileDialog();
-            this.reorderSubrecordsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripCopySubrecord = new System.Windows.Forms.ToolStripButton();
+            this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
+            this.toolStripButton1 = new System.Windows.Forms.ToolStripSeparator();
+            this.toolStripSeparator2 = new System.Windows.Forms.ToolStripSeparator();
             this.menuStrip1.SuspendLayout();
             this.splitContainer1.Panel1.SuspendLayout();
             this.splitContainer1.Panel2.SuspendLayout();
@@ -90,7 +95,7 @@ namespace TESsnip {
             this.PluginTree.HideSelection = false;
             this.PluginTree.Location = new System.Drawing.Point(0, 0);
             this.PluginTree.Name = "PluginTree";
-            this.PluginTree.Size = new System.Drawing.Size(196, 211);
+            this.PluginTree.Size = new System.Drawing.Size(221, 226);
             this.PluginTree.TabIndex = 0;
             this.PluginTree.MouseDoubleClick += new System.Windows.Forms.MouseEventHandler(this.PluginTree_MouseDoubleClick);
             this.PluginTree.Enter += new System.EventHandler(this.PluginTree_Enter);
@@ -106,7 +111,7 @@ namespace TESsnip {
             this.spellsToolStripMenuItem});
             this.menuStrip1.Location = new System.Drawing.Point(0, 0);
             this.menuStrip1.Name = "menuStrip1";
-            this.menuStrip1.Size = new System.Drawing.Size(589, 24);
+            this.menuStrip1.Size = new System.Drawing.Size(667, 24);
             this.menuStrip1.TabIndex = 1;
             this.menuStrip1.Text = "menuStrip1";
             // 
@@ -383,6 +388,13 @@ namespace TESsnip {
             this.editStringsToolStripMenuItem.Text = "Edit Strings";
             this.editStringsToolStripMenuItem.Click += new System.EventHandler(this.editStringsToolStripMenuItem_Click);
             // 
+            // reorderSubrecordsToolStripMenuItem
+            // 
+            this.reorderSubrecordsToolStripMenuItem.Name = "reorderSubrecordsToolStripMenuItem";
+            this.reorderSubrecordsToolStripMenuItem.Size = new System.Drawing.Size(221, 22);
+            this.reorderSubrecordsToolStripMenuItem.Text = "Reorder Subrecords";
+            this.reorderSubrecordsToolStripMenuItem.Click += new System.EventHandler(this.reorderSubrecordsToolStripMenuItem_Click);
+            // 
             // OpenModDialog
             // 
             this.OpenModDialog.Filter = "Skyrim plugin (*.esm, *.esp)|*.esm;*.esp";
@@ -400,7 +412,7 @@ namespace TESsnip {
             this.tbInfo.ReadOnly = true;
             this.tbInfo.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
             this.tbInfo.ShortcutsEnabled = false;
-            this.tbInfo.Size = new System.Drawing.Size(389, 429);
+            this.tbInfo.Size = new System.Drawing.Size(442, 461);
             this.tbInfo.TabIndex = 2;
             this.tbInfo.PreviewKeyDown += new System.Windows.Forms.PreviewKeyDownEventHandler(this.tbInfo_PreviewKeyDown);
             // 
@@ -424,8 +436,8 @@ namespace TESsnip {
             // splitContainer1.Panel2
             // 
             this.splitContainer1.Panel2.Controls.Add(this.tbInfo);
-            this.splitContainer1.Size = new System.Drawing.Size(589, 429);
-            this.splitContainer1.SplitterDistance = 196;
+            this.splitContainer1.Size = new System.Drawing.Size(667, 461);
+            this.splitContainer1.SplitterDistance = 221;
             this.splitContainer1.TabIndex = 3;
             // 
             // splitContainer2
@@ -443,8 +455,8 @@ namespace TESsnip {
             // 
             this.splitContainer2.Panel2.Controls.Add(this.toolStripSubRecord);
             this.splitContainer2.Panel2.Controls.Add(this.listSubrecord);
-            this.splitContainer2.Size = new System.Drawing.Size(196, 429);
-            this.splitContainer2.SplitterDistance = 211;
+            this.splitContainer2.Size = new System.Drawing.Size(221, 461);
+            this.splitContainer2.SplitterDistance = 226;
             this.splitContainer2.TabIndex = 1;
             // 
             // toolStripSubRecord
@@ -453,13 +465,18 @@ namespace TESsnip {
             this.toolStripSubRecord.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.toolStripInsertRecord,
             this.toolStripDeleteRecord,
+            this.toolStripSeparator1,
             this.toolStripMoveRecordUp,
             this.toolStripMoveRecordDown,
+            this.toolStripButton1,
             this.toolStripEditSubrecord,
-            this.toolStripEditSubrecordHex});
+            this.toolStripEditSubrecordHex,
+            this.toolStripPasteSubrecord,
+            this.toolStripCopySubrecord,
+            this.toolStripSeparator2});
             this.toolStripSubRecord.Location = new System.Drawing.Point(0, 0);
             this.toolStripSubRecord.Name = "toolStripSubRecord";
-            this.toolStripSubRecord.Size = new System.Drawing.Size(196, 25);
+            this.toolStripSubRecord.Size = new System.Drawing.Size(221, 25);
             this.toolStripSubRecord.TabIndex = 1;
             // 
             // toolStripInsertRecord
@@ -508,6 +525,7 @@ namespace TESsnip {
             this.toolStripEditSubrecord.Image = global::TESsnip.Properties.Resources.editclear;
             this.toolStripEditSubrecord.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.toolStripEditSubrecord.Name = "toolStripEditSubrecord";
+            this.toolStripEditSubrecord.Padding = new System.Windows.Forms.Padding(2, 0, 0, 0);
             this.toolStripEditSubrecord.Size = new System.Drawing.Size(23, 22);
             this.toolStripEditSubrecord.Text = "Edit Subrecord";
             this.toolStripEditSubrecord.Click += new System.EventHandler(this.toolStripEditSubrecord_Click);
@@ -521,6 +539,17 @@ namespace TESsnip {
             this.toolStripEditSubrecordHex.Size = new System.Drawing.Size(23, 22);
             this.toolStripEditSubrecordHex.Text = "Hex Edit";
             this.toolStripEditSubrecordHex.Click += new System.EventHandler(this.toolStripEditSubrecordHex_Click);
+            // 
+            // toolStripPasteSubrecord
+            // 
+            this.toolStripPasteSubrecord.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
+            this.toolStripPasteSubrecord.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.toolStripPasteSubrecord.Image = global::TESsnip.Properties.Resources.Paste;
+            this.toolStripPasteSubrecord.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.toolStripPasteSubrecord.Name = "toolStripPasteSubrecord";
+            this.toolStripPasteSubrecord.Size = new System.Drawing.Size(23, 22);
+            this.toolStripPasteSubrecord.Text = "Paste";
+            this.toolStripPasteSubrecord.Click += new System.EventHandler(this.toolStripPasteSubrecord_Click);
             // 
             // listSubrecord
             // 
@@ -543,7 +572,7 @@ namespace TESsnip {
             this.listSubrecord.MultiSelect = false;
             this.listSubrecord.Name = "listSubrecord";
             this.listSubrecord.ShowItemToolTips = true;
-            this.listSubrecord.Size = new System.Drawing.Size(196, 186);
+            this.listSubrecord.Size = new System.Drawing.Size(221, 203);
             this.listSubrecord.TabIndex = 0;
             this.listSubrecord.UseCompatibleStateImageBehavior = false;
             this.listSubrecord.View = System.Windows.Forms.View.Details;
@@ -571,18 +600,37 @@ namespace TESsnip {
             this.SaveEdidListDialog.RestoreDirectory = true;
             this.SaveEdidListDialog.Title = "Save file as";
             // 
-            // reorderSubrecordsToolStripMenuItem
+            // toolStripCopySubrecord
             // 
-            this.reorderSubrecordsToolStripMenuItem.Name = "reorderSubrecordsToolStripMenuItem";
-            this.reorderSubrecordsToolStripMenuItem.Size = new System.Drawing.Size(221, 22);
-            this.reorderSubrecordsToolStripMenuItem.Text = "Reorder Subrecords";
-            this.reorderSubrecordsToolStripMenuItem.Click += new System.EventHandler(this.reorderSubrecordsToolStripMenuItem_Click);
+            this.toolStripCopySubrecord.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
+            this.toolStripCopySubrecord.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.toolStripCopySubrecord.Image = global::TESsnip.Properties.Resources.Copy;
+            this.toolStripCopySubrecord.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.toolStripCopySubrecord.Name = "toolStripCopySubrecord";
+            this.toolStripCopySubrecord.Size = new System.Drawing.Size(23, 22);
+            this.toolStripCopySubrecord.Text = "Copy Element";
+            this.toolStripCopySubrecord.Click += new System.EventHandler(this.toolStripCopySubrecord_Click);
+            // 
+            // toolStripSeparator1
+            // 
+            this.toolStripSeparator1.Name = "toolStripSeparator1";
+            this.toolStripSeparator1.Size = new System.Drawing.Size(6, 25);
+            // 
+            // toolStripButton1
+            // 
+            this.toolStripButton1.Name = "toolStripButton1";
+            this.toolStripButton1.Size = new System.Drawing.Size(6, 25);
+            // 
+            // toolStripSeparator2
+            // 
+            this.toolStripSeparator2.Name = "toolStripSeparator2";
+            this.toolStripSeparator2.Size = new System.Drawing.Size(6, 25);
             // 
             // MainView
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(589, 453);
+            this.ClientSize = new System.Drawing.Size(667, 485);
             this.Controls.Add(this.splitContainer1);
             this.Controls.Add(this.menuStrip1);
             this.MainMenuStrip = this.menuStrip1;
@@ -662,5 +710,10 @@ namespace TESsnip {
         private System.Windows.Forms.ToolStripButton toolStripEditSubrecord;
         private System.Windows.Forms.ToolStripButton toolStripEditSubrecordHex;
         private System.Windows.Forms.ToolStripMenuItem reorderSubrecordsToolStripMenuItem;
+        private System.Windows.Forms.ToolStripButton toolStripPasteSubrecord;
+        private System.Windows.Forms.ToolStripButton toolStripCopySubrecord;
+        private System.Windows.Forms.ToolStripSeparator toolStripSeparator1;
+        private System.Windows.Forms.ToolStripSeparator toolStripButton1;
+        private System.Windows.Forms.ToolStripSeparator toolStripSeparator2;
     }
 }

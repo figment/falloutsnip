@@ -272,6 +272,10 @@
     <Content Include="conf\settings.xml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+    <None Include="Resources\Paste.bmp" />
+    <None Include="Resources\Copy.bmp" />
+    <None Include="Resources\cut-2.bmp" />
+    <None Include="Resources\special_paste.png" />
     <None Include="Resources\xdays.png" />
     <None Include="Resources\editclear.png" />
     <None Include="Resources\deletecell.png" />

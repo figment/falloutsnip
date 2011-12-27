@@ -2124,5 +2124,61 @@ namespace TESsnip
             parentRecord.SubRecords.AddRange(newsubs);
             RebuildSelection();
         }
+
+        private void toolStripCopySubrecord_Click(object sender, EventArgs e)
+        {
+            var sr = GetSelectedSubrecord();
+            if (sr == null) return;
+
+            Clipboard = (SubRecord)sr.Clone();
+            ClipboardNode = null;
+        }
+
+        private void toolStripPasteSubrecord_Click(object sender, EventArgs e)
+        {
+            if (!ValidateMakeChange())
+                return;
+
+            if (Clipboard == null)
+                return;
+
+            try
+            {
+                BaseRecord br = (BaseRecord)PluginTree.SelectedNode.Tag;
+
+                SubRecord sr = Clipboard.Clone() as SubRecord;
+                if (sr == null)
+                    return;
+
+                if (br is Record)
+                {
+                    if (listSubrecord.SelectedIndices.Count == 1)
+                    {
+                        int idx = listSubrecord.SelectedIndices[0];
+                        if (idx < 0 || idx >= (listSubrecord.Items.Count - 1))
+                            return;
+
+                        try
+                        {
+                            br.InsertRecord(idx, sr);
+                        }
+                        catch (TESParserException ex)
+                        {
+                            MessageBox.Show(ex.Message);
+                        }
+                    }
+                    else
+                    {
+                        br.AddRecord(sr);
+                    }
+
+                }
+                RebuildSelection();
+            }
+            catch (System.Exception ex)
+            {
+                MessageBox.Show(ex.ToString(), "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
     }
 }
