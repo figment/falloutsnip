@@ -226,6 +226,7 @@ namespace TESsnip {
             this.Controls.Add(this.tbRecType);
             this.Controls.Add(this.cmbGroupType);
             this.Name = "GroupEditor";
+            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
             this.Text = "GroupEditor";
             this.ResumeLayout(false);
             this.PerformLayout();

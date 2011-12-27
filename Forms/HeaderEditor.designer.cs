@@ -567,6 +567,7 @@ namespace TESsnip {
             this.Controls.Add(this.cb1);
             this.Controls.Add(this.cb0);
             this.Name = "HeaderEditor";
+            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
             this.Text = "HeaderEditor";
             this.ResumeLayout(false);
             this.PerformLayout();

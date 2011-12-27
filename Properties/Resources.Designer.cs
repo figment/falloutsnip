@@ -60,6 +60,13 @@ namespace TESsnip.Properties {
             }
         }
         
+        internal static System.Drawing.Bitmap deletecell {
+            get {
+                object obj = ResourceManager.GetObject("deletecell", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
         internal static System.Drawing.Bitmap edit_add {
             get {
                 object obj = ResourceManager.GetObject("edit_add", resourceCulture);
@@ -70,6 +77,13 @@ namespace TESsnip.Properties {
         internal static System.Drawing.Bitmap edit_remove {
             get {
                 object obj = ResourceManager.GetObject("edit_remove", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        internal static System.Drawing.Bitmap editclear {
+            get {
+                object obj = ResourceManager.GetObject("editclear", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -88,10 +102,38 @@ namespace TESsnip.Properties {
             }
         }
         
+        internal static System.Drawing.Bitmap insertcell1 {
+            get {
+                object obj = ResourceManager.GetObject("insertcell1", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        internal static System.Drawing.Bitmap move_task_down {
+            get {
+                object obj = ResourceManager.GetObject("move_task_down", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        internal static System.Drawing.Bitmap move_task_up {
+            get {
+                object obj = ResourceManager.GetObject("move_task_up", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
         internal static System.Drawing.Icon tesv_ico {
             get {
                 object obj = ResourceManager.GetObject("tesv_ico", resourceCulture);
                 return ((System.Drawing.Icon)(obj));
+            }
+        }
+        
+        internal static System.Drawing.Bitmap xdays {
+            get {
+                object obj = ResourceManager.GetObject("xdays", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
             }
         }
     }

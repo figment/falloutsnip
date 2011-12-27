@@ -61,7 +61,23 @@
     <Compile Include="Controls\bindinglistview.cs">
       <SubType>Component</SubType>
     </Compile>
+    <Compile Include="Controls\CheckedComboBox.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Controls\CustomComboBox.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Controls\FlagComboBox.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Controls\FlagComboBox.Designer.cs">
+      <DependentUpon>FlagComboBox.cs</DependentUpon>
+    </Compile>
     <Compile Include="Controls\nativemethods.cs" />
+    <Compile Include="Controls\OldNewEvent.cs" />
+    <Compile Include="Controls\PopupControl.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="Controls\virtuallistview.cs">
       <SubType>Component</SubType>
     </Compile>
@@ -256,6 +272,12 @@
     <Content Include="conf\settings.xml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+    <None Include="Resources\xdays.png" />
+    <None Include="Resources\editclear.png" />
+    <None Include="Resources\deletecell.png" />
+    <None Include="Resources\move_task_down.png" />
+    <None Include="Resources\move_task_up.png" />
+    <None Include="Resources\insertcell1.png" />
     <None Include="Resources\insertcell.png" />
     <None Include="Resources\edit_remove.png" />
     <None Include="Resources\edit_add.png" />

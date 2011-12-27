@@ -8,7 +8,7 @@ namespace TESsnip
 
     public abstract class BaseRecord
     {
-        public string Name;
+        public virtual string Name { get; set; }
 
         public abstract long Size { get; }
         public abstract long Size2 { get; }
@@ -60,6 +60,8 @@ namespace TESsnip
         public abstract string GetDesc();
         public abstract void DeleteRecord(BaseRecord br);
         public abstract void AddRecord(BaseRecord br);
+        public virtual void InsertRecord(int index, BaseRecord br) { AddRecord(br); }
+
         internal abstract List<string> GetIDs(bool lower);
         internal abstract void SaveData(BinaryWriter bw);
 
@@ -100,12 +102,20 @@ namespace TESsnip
             if (r == null) return;
             Records.Remove(r);
         }
+        
         public override void AddRecord(BaseRecord br)
         {
             Rec r = br as Rec;
             if (r == null) throw new TESParserException("Record to add was not of the correct type." +
                    Environment.NewLine + "Plugins can only hold Groups or Records.");
             Records.Add(r);
+        }
+        public override void InsertRecord(int idx, BaseRecord br)
+        {
+            Rec r = br as Rec;
+            if (r == null) throw new TESParserException("Record to add was not of the correct type." +
+                   Environment.NewLine + "Plugins can only hold Groups or Records.");
+            Records.Insert(idx, r);
         }
 
         private void LoadPluginData(BinaryReader br, bool headerOnly)
@@ -435,6 +445,13 @@ namespace TESsnip
                    Environment.NewLine + "Groups can only hold records or other groups.");
             Records.Add(r);
         }
+        public override void InsertRecord(int idx, BaseRecord br)
+        {
+            Rec r = br as Rec;
+            if (r == null) throw new TESParserException("Record to add was not of the correct type." +
+                   Environment.NewLine + "Groups can only hold records or other groups.");
+            Records.Insert(idx, r);
+        }
 
         internal GroupRecord(uint Size, BinaryReader br, bool Oblivion)
         {
@@ -596,7 +613,7 @@ namespace TESsnip
 
     public sealed class Record : Rec
     {
-        public readonly List<SubRecord> SubRecords = new List<SubRecord>();
+        public readonly TESsnip.Collections.Generic.AdvancedList<SubRecord> SubRecords ;
         public uint Flags1;
         public uint Flags2;
         public uint Flags3;
@@ -627,6 +644,7 @@ namespace TESsnip
             if (sr == null) return;
             SubRecords.Remove(sr);
         }
+
         public override void AddRecord(BaseRecord br)
         {
             SubRecord sr = br as SubRecord;
@@ -634,9 +652,18 @@ namespace TESsnip
                    Environment.NewLine + "Records can only hold Subrecords.");
             SubRecords.Add(sr);
         }
+        public override void InsertRecord(int idx, BaseRecord br)
+        {
+            SubRecord sr = br as SubRecord;
+            if (sr == null) throw new TESParserException("Record to add was not of the correct type." +
+                   Environment.NewLine + "Records can only hold Subrecords.");
+            SubRecords.Insert(idx, sr);
+        }
 
         internal Record(string name, uint Size, BinaryReader br, bool Oblivion)
         {
+            SubRecords = new TESsnip.Collections.Generic.AdvancedList<SubRecord>(1);
+            SubRecords.AllowSorting = false;
             Name = name;
             Flags1 = br.ReadUInt32();
             FormID = br.ReadUInt32();
@@ -675,7 +702,8 @@ namespace TESsnip
 
         private Record(Record r)
         {
-            SubRecords = new List<SubRecord>(r.SubRecords.Count);
+            SubRecords = new TESsnip.Collections.Generic.AdvancedList<SubRecord>(r.SubRecords.Count);
+            SubRecords.AllowSorting = false;
             for (int i = 0; i < r.SubRecords.Count; i++) SubRecords.Add((SubRecord)r.SubRecords[i].Clone());
             Flags1 = r.Flags1;
             Flags2 = r.Flags2;
@@ -708,15 +736,18 @@ namespace TESsnip
                 "Size: " + Size.ToString() + " bytes (excluding header)";
         }
 
-        private string GetExtendedDesc(SubrecordStructure[] sss, dFormIDLookupI formIDLookup, dLStringLookup strLookup)
+        private string GetExtendedDesc(dFormIDLookupI formIDLookup, dLStringLookup strLookup)
         {
-            if (sss == null) return null;
             string s = RecordStructure.Records[Name].description + Environment.NewLine;
-            for (int i = 0; i < sss.Length; i++)
+            foreach (var subrec in SubRecords)
             {
-                if (sss[i].elements == null) return s;
-                if (sss[i].notininfo) continue;
-                s += Environment.NewLine + SubRecords[i].GetFormattedData(sss[i], formIDLookup, strLookup);
+                if (subrec.Structure == null)
+                    continue;
+                if (subrec.Structure.elements == null) 
+                    return s;
+                if (subrec.Structure.notininfo) 
+                    continue;
+                s += Environment.NewLine + subrec.GetFormattedData(formIDLookup, strLookup);
             }
             return s;
         }
@@ -731,13 +762,13 @@ namespace TESsnip
             return "[Record]" + Environment.NewLine + GetBaseDesc();
         }
 
-        internal string GetDesc(SubrecordStructure[] sss, dFormIDLookupI formIDLookup, dLStringLookup strLookup)
+        internal string GetDesc(dFormIDLookupI formIDLookup, dLStringLookup strLookup)
         {
             string start = "[Record]" + Environment.NewLine + GetBaseDesc();
             string end;
             try
             {
-                end = GetExtendedDesc(sss, formIDLookup, strLookup);
+                end = GetExtendedDesc(formIDLookup, strLookup);
             }
             catch
             {
@@ -770,6 +801,7 @@ namespace TESsnip
     {
         private Record Owner;
         private byte[] Data;
+
         public override long Size { get { return Data.Length; } }
         public override long Size2 { get { return 6 + Data.Length + (Data.Length > ushort.MaxValue ? 10 : 0); } }
 
@@ -872,8 +904,34 @@ namespace TESsnip
             foreach (byte b in Data) s += b.ToString("X").PadLeft(2, '0') + " ";
             return s;
         }
-        internal string GetFormattedData(SubrecordStructure ss, dFormIDLookupI formIDLookup, dLStringLookup strLookup)
+
+        public string Description
         {
+            get { return this.Structure!= null ? this.Structure.desc : ""; }
+        }
+
+        public bool IsValid
+        {
+            get { return this.Structure != null && (this.Structure.size == 0 || this.Structure.size == this.Size); }
+        }
+        
+        internal SubrecordStructure Structure { get; private set; }
+
+        internal void AttachStructure(SubrecordStructure ss)
+        {
+            this.Structure = ss;
+        }
+        internal void DetachStructure()
+        {
+            this.Structure = null;
+        }
+
+        internal string GetFormattedData(dFormIDLookupI formIDLookup, dLStringLookup strLookup)
+        {
+            SubrecordStructure ss = this.Structure;
+            if (ss == null)
+                return "";
+
             int offset = 0;
             string s = ss.name + " (" + ss.desc + ")" + Environment.NewLine;
             try
@@ -886,94 +944,196 @@ namespace TESsnip
                     switch (ss.elements[j].type)
                     {
                         case ElementValueType.Int:
-                            string tmps = TypeConverter.h2si(Data[offset], Data[offset + 1], Data[offset + 2], Data[offset + 3]).ToString();
-                            if (!ss.elements[j].notininfo)
                             {
-                                if (ss.elements[j].hexview) s2 += TypeConverter.h2i(Data[offset], Data[offset + 1], Data[offset + 2], Data[offset + 3]).ToString("X8");
-                                else s2 += tmps;
-                                if (ss.elements[j].options != null)
+
+                                string tmps = TypeConverter.h2si(Data[offset], Data[offset + 1], Data[offset + 2], Data[offset + 3]).ToString();
+                                if (!ss.elements[j].notininfo)
                                 {
-                                    for (int k = 0; k < ss.elements[j].options.Length; k += 2)
+                                    if (ss.elements[j].hexview) s2 += TypeConverter.h2i(Data[offset], Data[offset + 1], Data[offset + 2], Data[offset + 3]).ToString("X8");
+                                    else s2 += tmps;
+                                    if (ss.elements[j].options != null)
                                     {
-                                        if (tmps == ss.elements[j].options[k + 1]) s2 += " (" + ss.elements[j].options[k] + ")";
-                                    }
-                                }
-                                else if (ss.elements[j].flags != null)
-                                {
-                                    uint val = TypeConverter.h2i(Data[offset], Data[offset + 1], Data[offset + 2], Data[offset + 3]);
-                                    string tmp2 = "";
-                                    for (int k = 0; k < ss.elements[j].flags.Length; k++)
-                                    {
-                                        if ((val & (1 << k)) != 0)
+                                        for (int k = 0; k < ss.elements[j].options.Length; k += 2)
                                         {
-                                            if (tmp2.Length > 0) tmp2 += ", ";
-                                            tmp2 += ss.elements[j].flags[k];
+                                            if (tmps == ss.elements[j].options[k + 1]) s2 += " (" + ss.elements[j].options[k] + ")";
                                         }
                                     }
-                                    if (tmp2.Length > 0) s2 += " (" + tmp2 + ")";
+                                    else if (ss.elements[j].flags != null)
+                                    {
+                                        uint val = TypeConverter.h2i(Data[offset], Data[offset + 1], Data[offset + 2], Data[offset + 3]);
+                                        string tmp2 = "";
+                                        for (int k = 0; k < ss.elements[j].flags.Length; k++)
+                                        {
+                                            if ((val & (1 << k)) != 0)
+                                            {
+                                                if (tmp2.Length > 0) tmp2 += ", ";
+                                                tmp2 += ss.elements[j].flags[k];
+                                            }
+                                        }
+                                        if (tmp2.Length > 0) s2 += " (" + tmp2 + ")";
+                                    }
                                 }
+                                offset += 4;
+                            } break;
+                        case ElementValueType.UInt:
+                            {
+                                string tmps = TypeConverter.h2i(Data[offset], Data[offset + 1], Data[offset + 2], Data[offset + 3]).ToString();
+                                if (!ss.elements[j].notininfo)
+                                {
+                                    if (ss.elements[j].hexview) s2 += TypeConverter.h2i(Data[offset], Data[offset + 1], Data[offset + 2], Data[offset + 3]).ToString("X8");
+                                    else s2 += tmps;
+                                    if (ss.elements[j].options != null)
+                                    {
+                                        for (int k = 0; k < ss.elements[j].options.Length; k += 2)
+                                        {
+                                            if (tmps == ss.elements[j].options[k + 1]) s2 += " (" + ss.elements[j].options[k] + ")";
+                                        }
+                                    }
+                                    else if (ss.elements[j].flags != null)
+                                    {
+                                        uint val = TypeConverter.h2i(Data[offset], Data[offset + 1], Data[offset + 2], Data[offset + 3]);
+                                        string tmp2 = "";
+                                        for (int k = 0; k < ss.elements[j].flags.Length; k++)
+                                        {
+                                            if ((val & (1 << k)) != 0)
+                                            {
+                                                if (tmp2.Length > 0) tmp2 += ", ";
+                                                tmp2 += ss.elements[j].flags[k];
+                                            }
+                                        }
+                                        if (tmp2.Length > 0) s2 += " (" + tmp2 + ")";
+                                    }
+                                }
+                                offset += 4;
                             }
-                            offset += 4;
                             break;
                         case ElementValueType.Short:
-                            tmps = TypeConverter.h2ss(Data[offset], Data[offset + 1]).ToString();
-                            if (!ss.elements[j].notininfo)
                             {
-                                if (ss.elements[j].hexview) s2 += TypeConverter.h2ss(Data[offset], Data[offset + 1]).ToString("X4");
-                                else s2 += tmps;
-                                if (ss.elements[j].options != null)
+                                string tmps = TypeConverter.h2ss(Data[offset], Data[offset + 1]).ToString();
+                                if (!ss.elements[j].notininfo)
                                 {
-                                    for (int k = 0; k < ss.elements[j].options.Length; k += 2)
+                                    if (ss.elements[j].hexview) s2 += TypeConverter.h2ss(Data[offset], Data[offset + 1]).ToString("X4");
+                                    else s2 += tmps;
+                                    if (ss.elements[j].options != null)
                                     {
-                                        if (tmps == ss.elements[j].options[k + 1]) s2 += " (" + ss.elements[j].options[k] + ")";
-                                    }
-                                }
-                                else if (ss.elements[j].flags != null)
-                                {
-                                    uint val = TypeConverter.h2s(Data[offset], Data[offset + 1]);
-                                    string tmp2 = "";
-                                    for (int k = 0; k < ss.elements[j].flags.Length; k++)
-                                    {
-                                        if ((val & (1 << k)) != 0)
+                                        for (int k = 0; k < ss.elements[j].options.Length; k += 2)
                                         {
-                                            if (tmp2.Length > 0) tmp2 += ", ";
-                                            tmp2 += ss.elements[j].flags[k];
+                                            if (tmps == ss.elements[j].options[k + 1]) s2 += " (" + ss.elements[j].options[k] + ")";
                                         }
                                     }
-                                    if (tmp2.Length > 0) s2 += " (" + tmp2 + ")";
+                                    else if (ss.elements[j].flags != null)
+                                    {
+                                        uint val = TypeConverter.h2s(Data[offset], Data[offset + 1]);
+                                        string tmp2 = "";
+                                        for (int k = 0; k < ss.elements[j].flags.Length; k++)
+                                        {
+                                            if ((val & (1 << k)) != 0)
+                                            {
+                                                if (tmp2.Length > 0) tmp2 += ", ";
+                                                tmp2 += ss.elements[j].flags[k];
+                                            }
+                                        }
+                                        if (tmp2.Length > 0) s2 += " (" + tmp2 + ")";
+                                    }
                                 }
+                                offset += 2;
                             }
-                            offset += 2;
+                            break;
+                        case ElementValueType.UShort:
+                            {
+                                string tmps = TypeConverter.h2s(Data[offset], Data[offset + 1]).ToString();
+                                if (!ss.elements[j].notininfo)
+                                {
+                                    if (ss.elements[j].hexview) s2 += TypeConverter.h2s(Data[offset], Data[offset + 1]).ToString("X4");
+                                    else s2 += tmps;
+                                    if (ss.elements[j].options != null)
+                                    {
+                                        for (int k = 0; k < ss.elements[j].options.Length; k += 2)
+                                        {
+                                            if (tmps == ss.elements[j].options[k + 1]) s2 += " (" + ss.elements[j].options[k] + ")";
+                                        }
+                                    }
+                                    else if (ss.elements[j].flags != null)
+                                    {
+                                        uint val = TypeConverter.h2s(Data[offset], Data[offset + 1]);
+                                        string tmp2 = "";
+                                        for (int k = 0; k < ss.elements[j].flags.Length; k++)
+                                        {
+                                            if ((val & (1 << k)) != 0)
+                                            {
+                                                if (tmp2.Length > 0) tmp2 += ", ";
+                                                tmp2 += ss.elements[j].flags[k];
+                                            }
+                                        }
+                                        if (tmp2.Length > 0) s2 += " (" + tmp2 + ")";
+                                    }
+                                }
+                                offset += 2;
+                            }
                             break;
                         case ElementValueType.Byte:
-                            tmps = Data[offset].ToString();
-                            if (!ss.elements[j].notininfo)
                             {
-                                if (ss.elements[j].hexview) s2 += Data[offset].ToString("X2");
-                                else s2 += tmps;
-                                if (ss.elements[j].options != null)
+                                string tmps = Data[offset].ToString();
+                                if (!ss.elements[j].notininfo)
                                 {
-                                    for (int k = 0; k < ss.elements[j].options.Length; k += 2)
+                                    if (ss.elements[j].hexview) s2 += Data[offset].ToString("X2");
+                                    else s2 += tmps;
+                                    if (ss.elements[j].options != null)
                                     {
-                                        if (tmps == ss.elements[j].options[k + 1]) s2 += " (" + ss.elements[j].options[k] + ")";
-                                    }
-                                }
-                                else if (ss.elements[j].flags != null)
-                                {
-                                    int val = Data[offset];
-                                    string tmp2 = "";
-                                    for (int k = 0; k < ss.elements[j].flags.Length; k++)
-                                    {
-                                        if ((val & (1 << k)) != 0)
+                                        for (int k = 0; k < ss.elements[j].options.Length; k += 2)
                                         {
-                                            if (tmp2.Length > 0) tmp2 += ", ";
-                                            tmp2 += ss.elements[j].flags[k];
+                                            if (tmps == ss.elements[j].options[k + 1]) s2 += " (" + ss.elements[j].options[k] + ")";
                                         }
                                     }
-                                    if (tmp2.Length > 0) s2 += " (" + tmp2 + ")";
+                                    else if (ss.elements[j].flags != null)
+                                    {
+                                        int val = Data[offset];
+                                        string tmp2 = "";
+                                        for (int k = 0; k < ss.elements[j].flags.Length; k++)
+                                        {
+                                            if ((val & (1 << k)) != 0)
+                                            {
+                                                if (tmp2.Length > 0) tmp2 += ", ";
+                                                tmp2 += ss.elements[j].flags[k];
+                                            }
+                                        }
+                                        if (tmp2.Length > 0) s2 += " (" + tmp2 + ")";
+                                    }
                                 }
+                                offset++;
                             }
-                            offset++;
+                            break;
+                        case ElementValueType.SByte:
+                            {
+                                string tmps = ((sbyte)Data[offset]).ToString();
+                                if (!ss.elements[j].notininfo)
+                                {
+                                    if (ss.elements[j].hexview) s2 += Data[offset].ToString("X2");
+                                    else s2 += tmps;
+                                    if (ss.elements[j].options != null)
+                                    {
+                                        for (int k = 0; k < ss.elements[j].options.Length; k += 2)
+                                        {
+                                            if (tmps == ss.elements[j].options[k + 1]) s2 += " (" + ss.elements[j].options[k] + ")";
+                                        }
+                                    }
+                                    else if (ss.elements[j].flags != null)
+                                    {
+                                        int val = Data[offset];
+                                        string tmp2 = "";
+                                        for (int k = 0; k < ss.elements[j].flags.Length; k++)
+                                        {
+                                            if ((val & (1 << k)) != 0)
+                                            {
+                                                if (tmp2.Length > 0) tmp2 += ", ";
+                                                tmp2 += ss.elements[j].flags[k];
+                                            }
+                                        }
+                                        if (tmp2.Length > 0) s2 += " (" + tmp2 + ")";
+                                    }
+                                }
+                                offset++;
+                            }
                             break;
                         case ElementValueType.FormID:
                             {
@@ -1002,6 +1162,13 @@ namespace TESsnip
                             break;
                         case ElementValueType.Blob:
                             s2 += GetHexData();
+                            break;
+                        case ElementValueType.BString:
+                            {
+                                int len = TypeConverter.h2s(Data[offset], Data[offset + 1]);
+                                s2 = System.Text.Encoding.ASCII.GetString(Data, offset + 2, len);
+                                offset += (2 + len + 1);
+                            }
                             break;
                         case ElementValueType.LString:
                             {

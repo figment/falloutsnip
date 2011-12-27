@@ -62,7 +62,14 @@ namespace TESsnip {
             this.SaveModDialog = new System.Windows.Forms.SaveFileDialog();
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
             this.splitContainer2 = new System.Windows.Forms.SplitContainer();
-            this.listView1 = new System.Windows.Forms.ListView();
+            this.toolStripSubRecord = new System.Windows.Forms.ToolStrip();
+            this.toolStripInsertRecord = new System.Windows.Forms.ToolStripButton();
+            this.toolStripDeleteRecord = new System.Windows.Forms.ToolStripButton();
+            this.toolStripMoveRecordUp = new System.Windows.Forms.ToolStripButton();
+            this.toolStripMoveRecordDown = new System.Windows.Forms.ToolStripButton();
+            this.toolStripEditSubrecord = new System.Windows.Forms.ToolStripButton();
+            this.toolStripEditSubrecordHex = new System.Windows.Forms.ToolStripButton();
+            this.listSubrecord = new TESsnip.Windows.Controls.BindingListView();
             this.columnHeader1 = new System.Windows.Forms.ColumnHeader();
             this.columnHeader2 = new System.Windows.Forms.ColumnHeader();
             this.SaveEdidListDialog = new System.Windows.Forms.SaveFileDialog();
@@ -73,6 +80,7 @@ namespace TESsnip {
             this.splitContainer2.Panel1.SuspendLayout();
             this.splitContainer2.Panel2.SuspendLayout();
             this.splitContainer2.SuspendLayout();
+            this.toolStripSubRecord.SuspendLayout();
             this.SuspendLayout();
             // 
             // PluginTree
@@ -431,33 +439,120 @@ namespace TESsnip {
             // 
             // splitContainer2.Panel2
             // 
-            this.splitContainer2.Panel2.Controls.Add(this.listView1);
+            this.splitContainer2.Panel2.Controls.Add(this.toolStripSubRecord);
+            this.splitContainer2.Panel2.Controls.Add(this.listSubrecord);
             this.splitContainer2.Size = new System.Drawing.Size(196, 429);
             this.splitContainer2.SplitterDistance = 211;
             this.splitContainer2.TabIndex = 1;
             // 
-            // listView1
+            // toolStripSubRecord
             // 
-            this.listView1.AllowDrop = true;
-            this.listView1.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
+            this.toolStripSubRecord.GripStyle = System.Windows.Forms.ToolStripGripStyle.Hidden;
+            this.toolStripSubRecord.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.toolStripInsertRecord,
+            this.toolStripDeleteRecord,
+            this.toolStripMoveRecordUp,
+            this.toolStripMoveRecordDown,
+            this.toolStripEditSubrecord,
+            this.toolStripEditSubrecordHex});
+            this.toolStripSubRecord.Location = new System.Drawing.Point(0, 0);
+            this.toolStripSubRecord.Name = "toolStripSubRecord";
+            this.toolStripSubRecord.Size = new System.Drawing.Size(196, 25);
+            this.toolStripSubRecord.TabIndex = 1;
+            // 
+            // toolStripInsertRecord
+            // 
+            this.toolStripInsertRecord.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.toolStripInsertRecord.Image = global::TESsnip.Properties.Resources.insertcell;
+            this.toolStripInsertRecord.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.toolStripInsertRecord.Name = "toolStripInsertRecord";
+            this.toolStripInsertRecord.Size = new System.Drawing.Size(23, 22);
+            this.toolStripInsertRecord.Text = "Insert Record";
+            this.toolStripInsertRecord.Click += new System.EventHandler(this.toolStripInsertRecord_Click);
+            // 
+            // toolStripDeleteRecord
+            // 
+            this.toolStripDeleteRecord.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.toolStripDeleteRecord.Image = global::TESsnip.Properties.Resources.deletecell;
+            this.toolStripDeleteRecord.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.toolStripDeleteRecord.Name = "toolStripDeleteRecord";
+            this.toolStripDeleteRecord.Size = new System.Drawing.Size(23, 22);
+            this.toolStripDeleteRecord.Text = "Delete Record";
+            this.toolStripDeleteRecord.Click += new System.EventHandler(this.toolStripDeleteRecord_Click);
+            // 
+            // toolStripMoveRecordUp
+            // 
+            this.toolStripMoveRecordUp.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.toolStripMoveRecordUp.Image = global::TESsnip.Properties.Resources.move_task_up;
+            this.toolStripMoveRecordUp.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.toolStripMoveRecordUp.Name = "toolStripMoveRecordUp";
+            this.toolStripMoveRecordUp.Size = new System.Drawing.Size(23, 22);
+            this.toolStripMoveRecordUp.Text = "Move Record Up";
+            this.toolStripMoveRecordUp.Click += new System.EventHandler(this.toolStripMoveRecordUp_Click);
+            // 
+            // toolStripMoveRecordDown
+            // 
+            this.toolStripMoveRecordDown.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.toolStripMoveRecordDown.Image = global::TESsnip.Properties.Resources.move_task_down;
+            this.toolStripMoveRecordDown.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.toolStripMoveRecordDown.Name = "toolStripMoveRecordDown";
+            this.toolStripMoveRecordDown.Size = new System.Drawing.Size(23, 22);
+            this.toolStripMoveRecordDown.Text = "Move Record Down";
+            this.toolStripMoveRecordDown.Click += new System.EventHandler(this.toolStripMoveRecordDown_Click);
+            // 
+            // toolStripEditSubrecord
+            // 
+            this.toolStripEditSubrecord.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.toolStripEditSubrecord.Image = global::TESsnip.Properties.Resources.editclear;
+            this.toolStripEditSubrecord.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.toolStripEditSubrecord.Name = "toolStripEditSubrecord";
+            this.toolStripEditSubrecord.Size = new System.Drawing.Size(23, 22);
+            this.toolStripEditSubrecord.Text = "Edit Subrecord";
+            this.toolStripEditSubrecord.Click += new System.EventHandler(this.toolStripEditSubrecord_Click);
+            // 
+            // toolStripEditSubrecordHex
+            // 
+            this.toolStripEditSubrecordHex.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.toolStripEditSubrecordHex.Image = global::TESsnip.Properties.Resources.xdays;
+            this.toolStripEditSubrecordHex.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.toolStripEditSubrecordHex.Name = "toolStripEditSubrecordHex";
+            this.toolStripEditSubrecordHex.Size = new System.Drawing.Size(23, 22);
+            this.toolStripEditSubrecordHex.Text = "Hex Edit";
+            this.toolStripEditSubrecordHex.Click += new System.EventHandler(this.toolStripEditSubrecordHex_Click);
+            // 
+            // listSubrecord
+            // 
+            this.listSubrecord.Activation = System.Windows.Forms.ItemActivation.OneClick;
+            this.listSubrecord.AllowDrop = true;
+            this.listSubrecord.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+                        | System.Windows.Forms.AnchorStyles.Left)
+                        | System.Windows.Forms.AnchorStyles.Right)));
+            this.listSubrecord.AutoScroll = false;
+            this.listSubrecord.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
             this.columnHeader1,
             this.columnHeader2});
-            this.listView1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.listView1.HideSelection = false;
-            this.listView1.Location = new System.Drawing.Point(0, 0);
-            this.listView1.MultiSelect = false;
-            this.listView1.Name = "listView1";
-            this.listView1.ShowItemToolTips = true;
-            this.listView1.Size = new System.Drawing.Size(196, 214);
-            this.listView1.TabIndex = 0;
-            this.listView1.UseCompatibleStateImageBehavior = false;
-            this.listView1.View = System.Windows.Forms.View.Details;
-            this.listView1.ItemActivate += new System.EventHandler(this.listView1_ItemActivate);
-            this.listView1.SelectedIndexChanged += new System.EventHandler(this.listView1_SelectedIndexChanged);
-            this.listView1.DragDrop += new System.Windows.Forms.DragEventHandler(this.listView1_DragDrop);
-            this.listView1.DragEnter += new System.Windows.Forms.DragEventHandler(this.listView1_DragEnter);
-            this.listView1.GiveFeedback += new System.Windows.Forms.GiveFeedbackEventHandler(this.listView1_GiveFeedback);
-            this.listView1.ItemDrag += new System.Windows.Forms.ItemDragEventHandler(this.listView1_ItemDrag);
+            this.listSubrecord.DataSource = null;
+            this.listSubrecord.FullRowSelect = true;
+            this.listSubrecord.GridLines = true;
+            this.listSubrecord.HideSelection = false;
+            this.listSubrecord.HoverSelection = true;
+            this.listSubrecord.ItemCount = 0;
+            this.listSubrecord.Location = new System.Drawing.Point(0, 28);
+            this.listSubrecord.MultiSelect = false;
+            this.listSubrecord.Name = "listSubrecord";
+            this.listSubrecord.ShowItemToolTips = true;
+            this.listSubrecord.Size = new System.Drawing.Size(196, 186);
+            this.listSubrecord.TabIndex = 0;
+            this.listSubrecord.UseCompatibleStateImageBehavior = false;
+            this.listSubrecord.View = System.Windows.Forms.View.Details;
+            this.listSubrecord.VirtualMode = true;
+            this.listSubrecord.ItemActivate += new System.EventHandler(this.listView1_ItemActivate);
+            this.listSubrecord.DragDrop += new System.Windows.Forms.DragEventHandler(this.listView1_DragDrop);
+            this.listSubrecord.MouseDoubleClick += new System.Windows.Forms.MouseEventHandler(this.listSubrecord_MouseDoubleClick);
+            this.listSubrecord.ItemDrag += new System.Windows.Forms.ItemDragEventHandler(this.listView1_ItemDrag);
+            this.listSubrecord.GiveFeedback += new System.Windows.Forms.GiveFeedbackEventHandler(this.listView1_GiveFeedback);
+            this.listSubrecord.SelectedIndexChanged += new System.EventHandler(this.listView1_SelectedIndexChanged);
+            this.listSubrecord.DragEnter += new System.Windows.Forms.DragEventHandler(this.listView1_DragEnter);
             // 
             // columnHeader1
             // 
@@ -484,6 +579,7 @@ namespace TESsnip {
             this.MainMenuStrip = this.menuStrip1;
             this.MinimumSize = new System.Drawing.Size(380, 300);
             this.Name = "MainView";
+            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
             this.Text = "TESsnip (Skyrim edition)";
             this.Load += new System.EventHandler(this.MainView_Load);
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.TESsnip_FormClosing);
@@ -495,7 +591,10 @@ namespace TESsnip {
             this.splitContainer1.ResumeLayout(false);
             this.splitContainer2.Panel1.ResumeLayout(false);
             this.splitContainer2.Panel2.ResumeLayout(false);
+            this.splitContainer2.Panel2.PerformLayout();
             this.splitContainer2.ResumeLayout(false);
+            this.toolStripSubRecord.ResumeLayout(false);
+            this.toolStripSubRecord.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -522,7 +621,7 @@ namespace TESsnip {
         private System.Windows.Forms.ToolStripMenuItem newToolStripMenuItem;
         private System.Windows.Forms.SplitContainer splitContainer1;
         private System.Windows.Forms.SplitContainer splitContainer2;
-        private System.Windows.Forms.ListView listView1;
+        private TESsnip.Windows.Controls.BindingListView listSubrecord;
         private System.Windows.Forms.ColumnHeader columnHeader1;
         private System.Windows.Forms.ColumnHeader columnHeader2;
         private System.Windows.Forms.ToolStripMenuItem insertRecordToolStripMenuItem;
@@ -546,5 +645,12 @@ namespace TESsnip {
         private System.Windows.Forms.ToolStripMenuItem makeEsmToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem martigensToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem editStringsToolStripMenuItem;
+        private System.Windows.Forms.ToolStrip toolStripSubRecord;
+        private System.Windows.Forms.ToolStripButton toolStripInsertRecord;
+        private System.Windows.Forms.ToolStripButton toolStripDeleteRecord;
+        private System.Windows.Forms.ToolStripButton toolStripMoveRecordUp;
+        private System.Windows.Forms.ToolStripButton toolStripMoveRecordDown;
+        private System.Windows.Forms.ToolStripButton toolStripEditSubrecord;
+        private System.Windows.Forms.ToolStripButton toolStripEditSubrecordHex;
     }
 }

@@ -33,9 +33,9 @@ namespace TESsnip {
             // tbEdit
             // 
             this.tbEdit.AcceptsReturn = true;
-            this.tbEdit.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
+            this.tbEdit.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+                        | System.Windows.Forms.AnchorStyles.Left)
+                        | System.Windows.Forms.AnchorStyles.Right)));
             this.tbEdit.Location = new System.Drawing.Point(12, 48);
             this.tbEdit.Multiline = true;
             this.tbEdit.Name = "tbEdit";
@@ -95,6 +95,7 @@ namespace TESsnip {
             this.Controls.Add(this.bSave);
             this.Controls.Add(this.tbEdit);
             this.Name = "DataEdit";
+            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
             this.Text = "Editing: ";
             this.ResumeLayout(false);
             this.PerformLayout();

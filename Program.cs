@@ -17,7 +17,7 @@ namespace TESsnip
         /// The main entry point for the application.
         /// </summary>
         [STAThread]
-        static void Main()
+        static void Main(string[] args)
         {
             settingsDir = System.Environment.CurrentDirectory;
             exeDir = System.Environment.CurrentDirectory;
@@ -39,11 +39,46 @@ namespace TESsnip
             {
             	
             }
+            List<string> plugins = new List<string>();
+            for (int i=0;i<args.Length;++i)
+            {
+                string arg = args[i];
+                if (string.IsNullOrEmpty(arg))
+                    continue;
+                if (arg[0] == '-' || arg[0] == '/')
+                {
+                    if (arg.Length == 1)
+                        continue;
+                    switch (char.ToLower(arg[1]))
+                    {
+                        case 'c':
+                            settingsDir = (arg.Length > 2 && arg[2] == ':') ? arg.Substring(3) : args[++i];
+                            break;
+                    }
+                }
+                else
+                {
+                    plugins.Add(arg);
+                }
 
+            }
 
+            if (System.IO.Directory.Exists(gameDataDir))
+            {
+                System.Environment.CurrentDirectory = gameDataDir;
+            }
+
+            Properties.Settings.Default.Reload();
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
-            Application.Run(new MainView());
+
+            MainView main = new MainView();
+            foreach (string arg in plugins)
+            {
+                main.LoadPlugin(arg);
+            }
+            Application.Run(main);
+            Properties.Settings.Default.Save();
         }
     }
 }

@@ -89,6 +89,11 @@ namespace TESsnip {
             tc.ss=ss;
             return UpdateBytes();
         }
+        public static byte[] s2h(ushort ss)
+        {
+            tc.s = ss;
+            return UpdateBytes();
+        }
 
         /*public static void f2h(float f, byte[] data, int offset) {
             tc.f=f;
@@ -115,6 +120,12 @@ namespace TESsnip {
             tc.ss=ss;
             data[offset+0]=tc.b1;
             data[offset+1]=tc.b2;
+        }
+        public static void s2h(ushort ss, byte[] data, int offset)
+        {
+            tc.s = ss;
+            data[offset + 0] = tc.b1;
+            data[offset + 1] = tc.b2;
         }
     }
 }

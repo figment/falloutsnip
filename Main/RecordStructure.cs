@@ -6,12 +6,13 @@ namespace TESsnip {
 
     class RecordXmlException : Exception { public RecordXmlException(string msg) : base(msg) { } }
     enum ElementValueType {
-        String, Float, Int, Short, Byte, FormID, fstring, Blob, LString
+        String, Float, Int, Short, Byte, FormID, fstring, Blob, LString, BString, UShort, UInt, SByte
     }
     enum CondType {
         None, Equal, Not, Greater, Less, GreaterEqual, LessEqual, StartsWith, EndsWith, Contains, Exists, Missing
     }
-    struct SubrecordStructure {
+    class SubrecordStructure 
+    {
         public readonly string name;
         public readonly int repeat;
         public readonly int optional;
@@ -186,6 +187,15 @@ namespace TESsnip {
             case "byte":
                 type=ElementValueType.Byte;
                 break;
+            case "uint":
+                type = ElementValueType.UInt;
+                break;
+            case "ushort":
+                type = ElementValueType.UShort;
+                break;
+            case "sbyte":
+                type = ElementValueType.SByte;
+                break;
             case "formid":
                 type=ElementValueType.FormID;
                 node2=node.Attributes.GetNamedItem("reftype");
@@ -206,6 +216,11 @@ namespace TESsnip {
                 node2=node.Attributes.GetNamedItem("multiline");
                 if(node2!=null&&node2.Value=="true") multiline=true;
                 break;
+            case "bstring":
+                type = ElementValueType.BString;
+                node2 = node.Attributes.GetNamedItem("multiline");
+                if (node2 != null && node2.Value == "true") multiline = true;
+                break;                    
             case "lstring":
                 type = ElementValueType.LString;
                 node2 = node.Attributes.GetNamedItem("multiline");
@@ -223,12 +238,7 @@ namespace TESsnip {
         public static bool Loaded { get { return loaded; } }
 
         public static Dictionary<string, RecordStructure> Records;
-
-#if DEBUG
-        private static string xmlPath=System.IO.Path.Combine(Program.exeDir, @"conf\RecordStructure.xml");
-#else
-        private static string xmlPath=System.IO.Path.Combine(Program.exeDir, @"conf\RecordStructure.xml");
-#endif
+        private static string xmlPath=System.IO.Path.Combine(Program.settingsDir, @"RecordStructure.xml");
 
         public static void Load() {
             if(loaded) {

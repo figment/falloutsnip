@@ -13,14 +13,25 @@ namespace TESsnip.Collections.Generic
 
     public class AdvancedList<T> : BindingList<T>, IBindingListView
     {
+        bool allowSort = true;
         public AdvancedList()
         {
 
         }
 
+        public AdvancedList(int capacity)
+        {
+        }
+
         public AdvancedList(IList<T> list) : base(list != null ? list : new T[0])
         {
 
+        }
+
+        public virtual bool AllowSorting
+        {
+            get { return allowSort; }
+            set { allowSort = value; }
         }
 
         protected override bool IsSortedCore
@@ -35,7 +46,7 @@ namespace TESsnip.Collections.Generic
 
         protected override bool SupportsSortingCore
         {
-            get { return true; }
+            get { return allowSort; }
         }
 
         protected override ListSortDirection SortDirectionCore
@@ -53,33 +64,39 @@ namespace TESsnip.Collections.Generic
 
         protected override void ApplySortCore(PropertyDescriptor prop, ListSortDirection direction)
         {
-            ListSortDescription[] arr = {
+            if (allowSort)
+            {
+                ListSortDescription[] arr = {
                 new ListSortDescription(prop, direction)
-            };
-            ApplySort(new ListSortDescriptionCollection(arr));
+                };
+                ApplySort(new ListSortDescriptionCollection(arr));
+            }
         }
 
         PropertyComparerCollection<T> sorts;
         public void ApplySort(ListSortDescriptionCollection sortCollection)
         {
-            bool oldRaise = RaiseListChangedEvents;
-            RaiseListChangedEvents = false;
-            try
+            if (allowSort)
             {
-                PropertyComparerCollection<T> tmp = new PropertyComparerCollection<T>(sortCollection);
-                List<T> items = new List<T>(this);
-                items.Sort(tmp);
-                int index = 0;
-                foreach (T item in items)
+                bool oldRaise = RaiseListChangedEvents;
+                RaiseListChangedEvents = false;
+                try
                 {
-                    SetItem(index++, item);
+                    PropertyComparerCollection<T> tmp = new PropertyComparerCollection<T>(sortCollection);
+                    List<T> items = new List<T>(this);
+                    items.Sort(tmp);
+                    int index = 0;
+                    foreach (T item in items)
+                    {
+                        SetItem(index++, item);
+                    }
+                    sorts = tmp;
                 }
-                sorts = tmp;
-            }
-            finally
-            {
-                RaiseListChangedEvents = oldRaise;
-                ResetBindings();
+                finally
+                {
+                    RaiseListChangedEvents = oldRaise;
+                    ResetBindings();
+                }
             }
         }
 
@@ -103,6 +120,27 @@ namespace TESsnip.Collections.Generic
         bool IBindingListView.SupportsFiltering
         {
             get { return false; }
+        }
+
+
+        public void AddRange(ICollection<T> items)
+        {
+            foreach (T item in items)
+                this.Add(item);
+        }
+
+        public void InsertRange(int index, ICollection<T> items)
+        {
+            foreach (T item in items)
+                this.InsertItem(index, item);
+        }
+
+        public T[] ToArray()
+        {
+            T[] retval = new T[this.Items.Count];
+            for (int i = 0; i < retval.Length; ++i)
+                retval[i] = this.Items[i];
+            return retval;
         }
     }
 

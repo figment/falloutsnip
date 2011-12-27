@@ -142,6 +142,7 @@ namespace TESsnip {
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
             this.MaximizeBox = false;
             this.Name = "SearchForm";
+            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
             this.Text = "SearchForm";
             this.ResumeLayout(false);
             this.PerformLayout();
