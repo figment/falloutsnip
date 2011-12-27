@@ -336,10 +336,8 @@
     <Subrecord name="KSIZ" desc="Unknown Size" optional="1">
       <Element name="Value" type="int" />
     </Subrecord>
-    <Subrecord name="KWDA" desc="Unknown Data" optional="1">
-      <Element name="Unk1" type="int" />
-      <Element name="Unk2" type="int" />
-      <Element name="Unk3" type="int" />
+    <Subrecord name="KWDA" desc="Keywords" optional="1">
+      <Element name="Keyword" type="formid" hexview="true" repeat="1" reftype="KYWD"/>
     </Subrecord>
     <Subrecord name="DESC" desc="Item Description" optional="1">
       <Element name="Name" type="lstring" />
@@ -497,10 +495,8 @@
     <Subrecord name="KSIZ" desc="Unknown Size" optional="1">
       <Element name="Value" type="int" />
     </Subrecord>
-    <Subrecord name="KWDA" desc="Unknown Data" optional="1">
-      <Element name="Unk1" type="int" />
-      <Element name="Unk2" type="int" />
-      <Element name="Unk3" type="int" />
+    <Subrecord name="KWDA" desc="Keywords" optional="1">
+      <Element name="Keyword" type="formid" hexview="true" repeat="1" reftype="KYWD"/>
     </Subrecord>
     <Subrecord name="DESC" desc="Item Description" optional="1">
       <Element name="Name" type="lstring" />
@@ -1289,6 +1285,30 @@
     </Subrecord>
   </Record>
 
+  <Record name="COBJ" desc="Constructible OBJects">
+    <Subrecord name="EDID" desc="Editor ID">
+      <Element name="Editor ID" type="string" />
+    </Subrecord>
+    <Subrecord name="COCT" desc="Component Count"  optional="1">
+      <Element name="Count" type="int" />
+    </Subrecord>
+    <Subrecord name="CNTO" desc="Componemt Object" optional="1" repeat="1">
+      <Element name="Form ID" type="formid" />
+      <Element name="Count" type="int" />
+    </Subrecord>
+    <Subrecord name="CTDA" desc="CTDA Data" optional="1" notininfo="true" repeat="1">
+      <Element name="CTDA Data" type="blob" />
+    </Subrecord>
+    <Subrecord name="CNAM" desc="Resulting Item">
+      <Element name="FormID" type="formid" />
+    </Subrecord>
+    <Subrecord name="NAM1" desc="Resulting Quantity">
+      <Element name="Count" type="short" />
+    </Subrecord>
+    <Subrecord name="BNAM" desc="Required Crafting Station (KYWD)">
+      <Element name="Crafting Station" type="formid" reftype="KYWD"/>
+    </Subrecord>
+  </Record>
 
   <Group id="4">
     <Subrecord name="TINI" desc="TINI" optional="4" repeat="4">
@@ -1456,4 +1476,6 @@
       <Element name="Editor ID" type="string" />
     </Subrecord>
   </Record>
+
+
 </Records>
