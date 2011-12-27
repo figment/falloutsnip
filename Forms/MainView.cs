@@ -37,10 +37,10 @@ namespace TESsnip
             InitializeComponent();
 
             this.listSubrecord.Columns.Clear();
-            this.listSubrecord.AddBindingColumn("Name", "Name", 40);
+            this.listSubrecord.AddBindingColumn("Name", "Name", 50);
             this.listSubrecord.AddBindingColumn("Size", "Size", 40);
             this.listSubrecord.AddBindingColumn("IsValid", "*", 20, new Func<SubRecord, string>(a => a.IsValid ? "*" : ""));
-            this.listSubrecord.AddBindingColumn("Description", "Description", 80);
+            this.listSubrecord.AddBindingColumn("Description", "Description", 100);
             
             this.SaveModDialog.InitialDirectory = Program.gameDataDir;
             this.OpenModDialog.InitialDirectory = Program.gameDataDir;
