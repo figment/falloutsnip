@@ -1,4 +1,4 @@
-namespace TESsnip {
+namespace TESVSnip {
     partial class HexDataEdit {
         /// <summary>
         /// Required designer variable.
@@ -77,8 +77,8 @@ namespace TESsnip {
             this.tbName.Name = "tbName";
             this.tbName.Size = new System.Drawing.Size(100, 20);
             this.tbName.TabIndex = 5;
-            this.tbName.Leave += new System.EventHandler(this.tbName_Leave);
             this.tbName.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.tbName_KeyPress);
+            this.tbName.Leave += new System.EventHandler(this.tbName_Leave);
             // 
             // label1
             // 
@@ -215,8 +215,8 @@ namespace TESsnip {
             // 
             // tbEDID
             // 
-            this.tbEDID.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)
-                        | System.Windows.Forms.AnchorStyles.Right)));
+            this.tbEDID.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.tbEDID.Location = new System.Drawing.Point(295, 375);
             this.tbEDID.Name = "tbEDID";
             this.tbEDID.ReadOnly = true;
@@ -235,9 +235,9 @@ namespace TESsnip {
             // 
             // hexBox1
             // 
-            this.hexBox1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-                        | System.Windows.Forms.AnchorStyles.Left)
-                        | System.Windows.Forms.AnchorStyles.Right)));
+            this.hexBox1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.hexBox1.Font = new System.Drawing.Font("Courier New", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.hexBox1.LineInfoForeColor = System.Drawing.Color.Empty;
             this.hexBox1.Location = new System.Drawing.Point(12, 38);
@@ -247,8 +247,8 @@ namespace TESsnip {
             this.hexBox1.StringViewVisible = true;
             this.hexBox1.TabIndex = 7;
             this.hexBox1.UseFixedBytesPerLine = true;
-            this.hexBox1.SelectionStartChanged += new System.EventHandler(this.hexBox1_SelectionStartChanged);
             this.hexBox1.InsertActiveChanged += new System.EventHandler(this.hexBox1_InsertActiveChanged);
+            this.hexBox1.SelectionStartChanged += new System.EventHandler(this.hexBox1_SelectionStartChanged);
             // 
             // bFromFile
             // 
@@ -296,6 +296,7 @@ namespace TESsnip {
             this.Controls.Add(this.bCancel);
             this.Controls.Add(this.bSave);
             this.Name = "HexDataEdit";
+            this.ShowInTaskbar = false;
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
             this.Text = "Editing: ";
             this.ResumeLayout(false);

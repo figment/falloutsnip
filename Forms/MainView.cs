@@ -3,10 +3,11 @@ using System.Windows.Forms;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace TESsnip
+namespace TESVSnip
 {
     internal delegate string dFormIDLookupS(string id);
     internal delegate string dFormIDLookupI(uint id);
+    internal delegate Record dFormIDLookupR(uint id);
     internal delegate string dLStringLookup(uint id);
     internal delegate string[] dFormIDScan(string type);
     internal partial class MainView : Form
@@ -41,7 +42,7 @@ namespace TESsnip
             this.listSubrecord.AddBindingColumn("Size", "Size", 40);
             this.listSubrecord.AddBindingColumn("IsValid", "*", 20, new Func<SubRecord, string>(a => a.IsValid ? "*" : ""));
             this.listSubrecord.AddBindingColumn("Description", "Description", 100);
-            
+
             this.SaveModDialog.InitialDirectory = Program.gameDataDir;
             this.OpenModDialog.InitialDirectory = Program.gameDataDir;
 
@@ -51,13 +52,72 @@ namespace TESsnip
 
         internal void LoadPlugin(string s)
         {
-            Plugin p = new Plugin(s, false);
+            Plugin p = new Plugin(s, false, GetRecordFilter(s));
             TreeNode tn = new TreeNode(p.Name);
             CreatePluginTree(p, tn);
             PluginTree.Nodes.Add(tn);
             UpdateStringEditor();
+            GC.Collect();
         }
 
+        private string[] GetRecordFilter(string s)
+        {
+            string[] recFilter = null;
+            bool applyfilter = false;
+            bool bAskToApplyFilter = true;
+            if (TESVSnip.Properties.Settings.Default.IsFirstTimeOpening)
+            {
+                if (string.Compare(System.IO.Path.GetFileName(s), "skyrim.esm", true) == 0)
+                {
+                    DialogResult result = MessageBox.Show(this,
+                        @"This is the first time 'skyrim.esm' has been loaded.
+The file is large size and takes significant memory to load.
+Would you like to configure which Records to exclude?"
+                        , "First Load Options", MessageBoxButtons.YesNoCancel, MessageBoxIcon.Question, MessageBoxDefaultButton.Button1);
+                    if (result == DialogResult.Yes)
+                    {
+                        TESVSnip.Properties.Settings.Default.EnableESMFilter = true;
+                        TESVSnip.Properties.Settings.Default.DontAskUserAboutFiltering = true;
+                        using (TESVSnip.Forms.LoadSettings settings = new TESVSnip.Forms.LoadSettings())
+                        {
+                            settings.ShowDialog();
+                        }
+                        TESVSnip.Properties.Settings.Default.IsFirstTimeOpening = false;
+                    }
+                    else if (result == DialogResult.No)
+                    {
+                        TESVSnip.Properties.Settings.Default.IsFirstTimeOpening = false;
+                        TESVSnip.Properties.Settings.Default.DontAskUserAboutFiltering = true;
+                    }
+                    else
+                    {
+                        TESVSnip.Properties.Settings.Default.IsFirstTimeOpening = false;
+                        return recFilter;
+                    }
+                }
+                bAskToApplyFilter = false;
+            }
+            if (TESVSnip.Properties.Settings.Default.EnableESMFilter)
+            {
+                applyfilter = string.Compare(System.IO.Path.GetExtension(s), ".esm", true) == 0;
+                if (applyfilter && bAskToApplyFilter && !TESVSnip.Properties.Settings.Default.DontAskUserAboutFiltering)
+                {
+                    DialogResult result = MessageBox.Show(this,
+                                            @"The file is large size and takes significant memory to load.
+Would you like to apply the record exclusions?"
+                                            , "Filter Options", MessageBoxButtons.YesNo, MessageBoxIcon.Question, MessageBoxDefaultButton.Button1);
+                    if (result == DialogResult.Yes)
+                    {
+
+                    }
+                }
+                if (applyfilter)
+                {
+                    recFilter = TESVSnip.Properties.Settings.Default.FilteredESMRecords.Trim().Split(new char[] { ';', ',' }, StringSplitOptions.RemoveEmptyEntries);
+                }
+            }
+            return recFilter;
+        }
         private void WalkPluginTree(Rec r, TreeNode tn)
         {
             TreeNode tn2 = new TreeNode(r.DescriptiveName);
@@ -112,6 +172,20 @@ namespace TESsnip
                 this.end = end;
             }
         }
+        private class GroupBlock
+        {
+            public readonly int start;
+            public readonly int end;
+            public int found;
+
+            public GroupBlock(int start, int end) 
+            {
+                this.start = start;
+                this.end = end;
+                this.found = 0;
+            }
+        }
+
         private struct Conditional
         {
             public readonly ElementValueType type;
@@ -180,6 +254,12 @@ namespace TESsnip
                                 offset = offset + (2 + len);
                                 conditions[ess[j].CondID] = new Conditional(ElementValueType.String, s);
                             } break;
+                        case ElementValueType.Str4:
+                            {
+                                string s = System.Text.Encoding.ASCII.GetString(data, offset, 4);
+                                offset += 4;
+                                conditions[ess[j].CondID] = new Conditional(ElementValueType.String, s);
+                            }break;
                         case ElementValueType.LString:
                             conditions[ess[j].CondID] = new Conditional(ElementValueType.Int, TypeConverter.h2si(data[offset], data[offset + 1], data[offset + 2], data[offset + 3]));
                             offset += 4;
@@ -213,10 +293,27 @@ namespace TESsnip
                         case ElementValueType.fstring:
                             break;
                         case ElementValueType.LString:
-                            break;
+                            {
+                                // Try to guess if string or string index.  Do not know if the external string checkbox is set or not in this code
+                                var d = new ArraySegment<byte>(data, offset, data.Length-offset);
+                                bool isString = TypeConverter.IsLikelyString(d);
+                                uint id = TypeConverter.h2i(d);
+                                if (!isString)
+                                {
+                                    offset += 4;
+                                }
+                                else
+                                {
+                                    while (data[offset] != 0) offset++;
+                                    offset++;
+                                }
+                            } break; 
                         case ElementValueType.BString:
                             int len = TypeConverter.h2s(data[offset], data[offset + 1]);
                             offset += 2 + len;
+                            break;
+                        case ElementValueType.Str4:
+                            offset += 4;
                             break;
                         default:
                             throw new ApplicationException();
@@ -276,6 +373,7 @@ namespace TESsnip
                             default: return false;
                         }
                     }
+                case ElementValueType.Str4:
                 case ElementValueType.fstring:
                 case ElementValueType.BString:
                 case ElementValueType.String:
@@ -310,40 +408,44 @@ namespace TESsnip
                 default: return false;
             }
         }
+
+
+        
         /// <summary>
         /// This routine assigns Structure definitions to subrecords
         /// </summary>
         private void MatchRecordStructureToRecord()
         {
-            //SubrecordStructs = null;
             if (RecordStructure.Records == null) return;
             if (!RecordStructure.Records.ContainsKey(parentRecord.Name)) return;
-            //SubrecordStructs = new SubrecordStructure[parentRecord.SubRecords.Count];
-            SubrecordStructure[] sss = RecordStructure.Records[parentRecord.Name].subrecords;
-            SubRecord[] subs = parentRecord.SubRecords.ToArray();
+            var subrecords = new List<SubrecordStructure>();
+            var sss = RecordStructure.Records[parentRecord.Name].subrecords;
+            var subs = parentRecord.SubRecords.ToArray();
             foreach (var sub in subs) sub.DetachStructure();
             int subi = 0, ssi = 0;
             Stack<LoopBlock> repeats = new Stack<LoopBlock>();
             Dictionary<int, Conditional> conditions = new Dictionary<int, Conditional>();
             while (subi < subs.Length && ssi < sss.Length)
             {
-                if (sss[ssi].Condition != CondType.None && !MatchRecordCheckCondition(conditions, sss[ssi]))
+                var ss = sss[ssi];
+                var sb = subs[subi];
+                if (ss.Condition != CondType.None && !MatchRecordCheckCondition(conditions, ss))
                 {
                     ssi++;
                     continue;
                 }
-                if (subs[subi].Name == sss[ssi].name && (sss[ssi].size == 0 || sss[ssi].size == subs[subi].Size))
+                if (sb.Name == ss.name && (ss.size == 0 || ss.size == sb.Size))
                 {
-                    subs[subi].AttachStructure(sss[ssi]);
-                    if (sss[ssi].repeat > 0)
+                    sb.AttachStructure(ss);
+                    if (ss.repeat > 0)
                     {
-                        if (repeats.Count == 0 || repeats.Peek().start != ssi) repeats.Push(new LoopBlock(ssi, ssi + sss[ssi].repeat));
+                        if (repeats.Count == 0 || repeats.Peek().start != ssi) repeats.Push(new LoopBlock(ssi, ssi + ss.repeat));
                     }
-                    if (sss[ssi].ContaintsConditionals)
+                    if (ss.ContainsConditionals)
                     {
                         try
                         {
-                            MatchRecordAddConditionals(conditions, subs[subi], sss[ssi].elements);
+                            MatchRecordAddConditionals(conditions, sb, ss.elements);
                         }
                         catch { }
                     }
@@ -419,7 +521,7 @@ namespace TESsnip
 
         private void RefreshSelection()
         {
-            if (PluginTree.SelectedNode == null) 
+            if (PluginTree.SelectedNode == null)
                 return;
 
             //Enable and disable relevant menu items
@@ -486,6 +588,7 @@ namespace TESsnip
                     BaseRecord node = (BaseRecord)PluginTree.SelectedNode.Tag;
                     parent.DeleteRecord(node);
                 }
+                GetPluginFromNode(PluginTree.SelectedNode).InvalidateCache();
                 PluginTree.SelectedNode.Remove();
             }
         }
@@ -500,6 +603,14 @@ namespace TESsnip
             TreeNode tn = PluginTree.SelectedNode;
             while (!(tn.Tag is Plugin)) tn = tn.Parent;
             Plugin p = (Plugin)tn.Tag;
+            if (p.Filtered)
+            {
+                DialogResult result = MessageBox.Show(this, @"This file has had a filter applied and contents potentially removed.  
+Do you still want to save?", "Modified Save", MessageBoxButtons.YesNo, MessageBoxIcon.Warning, MessageBoxDefaultButton.Button2);
+                if (result == DialogResult.No)
+                    return;
+            }
+
             if (SaveModDialog.ShowDialog() == DialogResult.OK)
             {
                 p.Save(SaveModDialog.FileName);
@@ -574,6 +685,7 @@ namespace TESsnip
                     PluginTree.SelectedNode.Nodes.Add(ClipboardNode);
                     ClipboardNode = (TreeNode)ClipboardNode.Clone();
                     ClipboardNode.Tag = Clipboard;
+                    GetPluginFromNode(PluginTree.SelectedNode).InvalidateCache();
                 }
                 else
                 {
@@ -611,24 +723,37 @@ namespace TESsnip
             UpdateStringEditor();
         }
 
+        private Plugin GetPluginFromNode(TreeNode node)
+        {
+            TreeNode tn = node;
+            if (tn.Tag is Plugin) return (Plugin)tn.Tag;
+            while (!(tn.Tag is Plugin) && tn != null) tn = tn.Parent;
+            return tn != null ? tn.Parent.Tag as Plugin : new Plugin();
+        }
+
         private void PluginTree_MouseDoubleClick(object sender, MouseEventArgs e)
         {
             if (PluginTree.SelectedNode == null) return;
             if (PluginTree.SelectedNode.Tag is Record)
             {
                 Record r = (Record)PluginTree.SelectedNode.Tag;
-                HeaderEditor.Display(r);
-                if (PluginTree.SelectedNode.Text != r.DescriptiveName)
+                if (DialogResult.OK == HeaderEditor.Display(r))
+                {
+                    GetPluginFromNode(PluginTree.SelectedNode).InvalidateCache();
                     PluginTree.SelectedNode.Text = r.DescriptiveName;
-                tbInfo.Text = ((BaseRecord)PluginTree.SelectedNode.Tag).GetDesc();
+                    tbInfo.Text = ((BaseRecord)PluginTree.SelectedNode.Tag).GetDesc();
+                }
             }
             else if (PluginTree.SelectedNode.Tag is GroupRecord)
             {
                 GroupRecord gr = (GroupRecord)PluginTree.SelectedNode.Tag;
-                GroupEditor.Display(gr);
-                if (PluginTree.SelectedNode.Text != gr.DescriptiveName)
+                if (DialogResult.OK == GroupEditor.Display(gr))
+                {
+                    GetPluginFromNode(PluginTree.SelectedNode).InvalidateCache();
                     PluginTree.SelectedNode.Text = gr.DescriptiveName;
-                tbInfo.Text = ((BaseRecord)PluginTree.SelectedNode.Tag).GetDesc();
+                    tbInfo.Text = ((BaseRecord)PluginTree.SelectedNode.Tag).GetDesc();
+                }
+
             }
         }
 
@@ -643,8 +768,8 @@ namespace TESsnip
             }
             else
             {
-                tbInfo.Text = "[Subrecord data]" + Environment.NewLine 
-                    + "String: " + sr.GetStrData() + Environment.NewLine + Environment.NewLine 
+                tbInfo.Text = "[Subrecord data]" + Environment.NewLine
+                    + "String: " + sr.GetStrData() + Environment.NewLine + Environment.NewLine
                     + "Hex:" + Environment.NewLine + sr.GetHexData();
             }
             pasteToolStripMenuItem.Enabled = false;
@@ -664,11 +789,11 @@ namespace TESsnip
         void EditSelectedSubrecord()
         {
             var sr = GetSelectedSubrecord();
-            if (sr == null)return;
+            if (sr == null) return;
 
-            if (useNewSubrecordEditorToolStripMenuItem.Checked 
+            if (useNewSubrecordEditorToolStripMenuItem.Checked
                 && sr.Structure != null
-                && sr.Structure.elements != null 
+                && sr.Structure.elements != null
                 && sr.Structure.elements[0].type != ElementValueType.Blob && !sr.Structure.UseHexEditor)
             {
                 MediumLevelRecordEditor re;
@@ -771,6 +896,7 @@ namespace TESsnip
             TreeNode tn = new TreeNode(p.Name);
             tn.Tag = p;
             PluginTree.SelectedNode.Nodes.Add(tn);
+            GetPluginFromNode(PluginTree.SelectedNode).InvalidateCache();
         }
 
         private void insertSubrecordToolStripMenuItem_Click(object sender, EventArgs e)
@@ -780,6 +906,7 @@ namespace TESsnip
             BaseRecord node = (BaseRecord)PluginTree.SelectedNode.Tag;
             SubRecord p = new SubRecord();
             node.AddRecord(p);
+            GetPluginFromNode(PluginTree.SelectedNode).InvalidateCache();
             PluginTree_AfterSelect(null, null);
         }
 
@@ -996,10 +1123,11 @@ namespace TESsnip
             }
             if (unknownRecordsWarning)
             {
-                MessageBox.Show("The plugin contained records which were not recognised, and cannot be fixed automatically",
+                MessageBox.Show("The plugin contained records which were not recognized, and cannot be fixed automatically",
                     "Warning");
             }
 
+            p.InvalidateCache();
 
 
             CreatePluginTree(p, tn);
@@ -1757,23 +1885,42 @@ namespace TESsnip
             {
                 return "FormID was invalid";
             }
-            string edid = null;
-            foreach (Rec r in FormIDLookup[FormIDLookup.Length - 1].Records)
-            {
-                if (RecurseFormIDSearch(r, id, ref edid)) return edid;
-            }
+            Record r;
+            Plugin p = FormIDLookup[FormIDLookup.Length - 1];
+            if (p.TryGetRecordByID(id, out r))
+                return r.DescriptiveName;
             id &= 0xffffff;
-            if (FormIDLookup[pluginid] == null)
+            if (pluginid >= FormIDLookup.Length || FormIDLookup[pluginid] == null)
             {
-                return "Master not loaded";
-            }
-            id += Fixups[pluginid] << 24;
-            foreach (Rec r in FormIDLookup[pluginid].Records)
-            {
-                if (RecurseFormIDSearch(r, id, ref edid)) return edid;
+                p = FormIDLookup[pluginid];
+                if (p == null)
+                    return "Master not loaded";
+
+                id += Fixups[pluginid] << 24;
+                if (p.TryGetRecordByID(id, out r))
+                    return r.DescriptiveName;
             }
             return "No match";
         }
+
+        private Record GetRecordByID(uint id)
+        {
+            uint pluginid = (id & 0xff000000) >> 24;
+            if (pluginid > FormIDLookup.Length)
+                return null;
+            Record r;
+            // What is this check for???
+            if (FormIDLookup[FormIDLookup.Length - 1].TryGetRecordByID(id, out r))
+                return r;
+            id &= 0xffffff;
+            if (pluginid >= FormIDLookup.Length || FormIDLookup[pluginid] == null)
+                return null;
+            id += Fixups[pluginid] << 24;
+            if (FormIDLookup[pluginid].TryGetRecordByID(id, out r))
+                return r;
+            return null;
+        }
+
         private string LookupFormIDS(string sid)
         {
             uint id;
@@ -1983,10 +2130,10 @@ namespace TESsnip
 
                 if (br is Record)
                 {
-                    if (listSubrecord.SelectedIndices.Count == 1) 
+                    if (listSubrecord.SelectedIndices.Count == 1)
                     {
                         int idx = listSubrecord.SelectedIndices[0];
-                        if (idx < 0 || idx >= (listSubrecord.Items.Count-1))
+                        if (idx < 0 || idx >= (listSubrecord.Items.Count - 1))
                             return;
 
                         Record r = (Record)br;
@@ -2035,7 +2182,7 @@ namespace TESsnip
 
             SubRecord sr = parentRecord.SubRecords[idx];
             parentRecord.SubRecords.RemoveAt(idx);
-            parentRecord.SubRecords.Insert(idx-1, sr);
+            parentRecord.SubRecords.Insert(idx - 1, sr);
             listSubrecord.SelectItem(idx - 1);
             listSubrecord.EnsureVisible(idx - 1);
 
@@ -2047,7 +2194,7 @@ namespace TESsnip
         {
             if (listSubrecord.SelectedIndices.Count != 1) return;
             int idx = listSubrecord.SelectedIndices[0];
-            if (idx < 0 || idx >= (listSubrecord.Items.Count-1))
+            if (idx < 0 || idx >= (listSubrecord.Items.Count - 1))
                 return;
 
             SubRecord sr = parentRecord.SubRecords[idx];
@@ -2082,17 +2229,17 @@ namespace TESsnip
         {
             if (!ValidateMakeChange())
                 return;
-
+#if false
             if (RecordStructure.Records == null) return;
             if (!RecordStructure.Records.ContainsKey(parentRecord.Name)) return;
 
-            SubrecordStructure[] sss = RecordStructure.Records[parentRecord.Name].subrecords;
+            SubrecordBase[] sss = RecordStructure.Records[parentRecord.Name].subrecords;
 
             List<SubRecord> subs = new List<SubRecord>(parentRecord.SubRecords);
             foreach (var sub in subs) sub.DetachStructure();
 
             List<SubRecord> newsubs = new List<SubRecord>();
-            for ( int ssidx=0,sslen=0; ssidx < sss.Length; ssidx += sslen)
+            for (int ssidx = 0, sslen = 0; ssidx < sss.Length; ssidx += sslen)
             {
                 SubrecordStructure ss = sss[ssidx];
                 bool repeat = ss.repeat > 0;
@@ -2123,6 +2270,7 @@ namespace TESsnip
             parentRecord.SubRecords.Clear();
             parentRecord.SubRecords.AddRange(newsubs);
             RebuildSelection();
+#endif
         }
 
         private void toolStripCopySubrecord_Click(object sender, EventArgs e)
@@ -2180,5 +2328,196 @@ namespace TESsnip
                 MessageBox.Show(ex.ToString(), "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
+
+        #region Create Record Structure XML
+
+        
+
+        private void createRecordStructureXmlToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            TreeNode tn = PluginTree.SelectedNode;
+            while (!(tn.Tag is Plugin)) tn = tn.Parent;
+            Plugin p = (Plugin)tn.Tag;
+
+            TESVSnip.Data.RecordBuilder builder = new TESVSnip.Data.RecordBuilder();
+            builder.FormLookup = new dFormIDLookupR(this.GetRecordByID);
+            builder.StringLookup = new dLStringLookup(this.LookupFormStrings);
+            builder.CancelAction = new Func<bool>(() => { return backgroundWorker1.CancellationPending; });
+            builder.UpdateProgressAction = new Action<int>(a => backgroundWorker1.ReportProgress(a));
+
+            StartBackgroundWork(() => { builder.Start(p); }
+                , () =>
+                {
+                    using (System.Windows.Forms.SaveFileDialog dlg = new System.Windows.Forms.SaveFileDialog())
+                    {
+                        dlg.InitialDirectory = System.IO.Path.GetTempPath();
+                        dlg.FileName = "RecordStructure.xml";
+                        dlg.OverwritePrompt = false;
+                        if (dlg.ShowDialog() == DialogResult.OK)
+                        {
+                            System.Xml.Serialization.XmlSerializer xs = new System.Xml.Serialization.XmlSerializer(typeof(TESVSnip.Data.Records));
+                            using (System.IO.StreamWriter fs = System.IO.File.CreateText(dlg.FileName))
+                            {
+                                xs.Serialize(fs, builder.Complete());
+                            }
+                        }
+                    }
+                }
+                );
+
+        }
+        #endregion
+
+        #region Action
+
+        Action cancelBackgroundAction = null;
+        public void StartBackgroundWork(Action workAction, Action completedAction)
+        {
+            if (this.backgroundWorker1.CancellationPending)
+                return;
+
+            this.toolStripStatusProgressBar.ProgressBar.Value = this.toolStripStatusProgressBar.Minimum;
+            this.toolStripStatusProgressBar.Visible = true;
+            this.toolStripStopProgress.Visible = true;
+            this.backgroundWorker1.RunWorkerAsync(new Action[] { workAction, completedAction });
+        }
+
+        private void backgroundWorker1_DoWork(object sender, System.ComponentModel.DoWorkEventArgs e)
+        {
+            Action[] actions = e.Argument as Action[];
+            if (actions.Length > 0)
+            {
+                actions[0]();
+            }
+            if (!backgroundWorker1.CancellationPending && actions.Length > 1)
+            {
+                e.Result = actions[1];
+            }
+        }
+
+        private void backgroundWorker1_ProgressChanged(object sender, System.ComponentModel.ProgressChangedEventArgs e)
+        {
+            this.toolStripStatusProgressBar.Value = e.ProgressPercentage % this.toolStripStatusProgressBar.Maximum;
+        }
+
+        private void backgroundWorker1_RunWorkerCompleted(object sender, System.ComponentModel.RunWorkerCompletedEventArgs e)
+        {
+            this.toolStripStatusProgressBar.Visible = false;
+            this.toolStripStopProgress.Visible = false;
+            if (e.Cancelled || e.Error != null)
+                return;
+            Action completedAction = e.Result as Action;
+            if (completedAction != null) completedAction();
+        }
+
+        private void toolStripStopProgress_ButtonClick(object sender, EventArgs e)
+        {
+            this.backgroundWorker1.CancelAsync();
+            if (cancelBackgroundAction != null)
+                cancelBackgroundAction();
+        }
+
+        private void mergeRecordsXMLToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            TESVSnip.Data.Records baseRecords = null;
+            TESVSnip.Data.Records updateRecords = null;
+
+            System.Xml.Serialization.XmlSerializer xs = new System.Xml.Serialization.XmlSerializer(typeof(TESVSnip.Data.Records));
+            using (var dlg = new System.Windows.Forms.OpenFileDialog())
+            {
+                dlg.Title = "Select Base Record Structure";
+                dlg.InitialDirectory = Program.settingsDir;
+                dlg.FileName = "RecordStructure.xml";
+                if (dlg.ShowDialog() != DialogResult.OK)
+                    return;
+
+                using (System.IO.FileStream fs = System.IO.File.OpenRead(dlg.FileName))
+                {
+                    baseRecords = xs.Deserialize(fs) as TESVSnip.Data.Records;
+                }
+            }
+            using (var dlg = new System.Windows.Forms.OpenFileDialog())
+            {
+                dlg.Title = "Select Record Structure XML To Merge";
+                dlg.InitialDirectory = System.IO.Path.GetTempPath();
+                dlg.FileName = "RecordStructure.xml";
+                if (dlg.ShowDialog() != DialogResult.OK)
+                    return;
+                using (System.IO.FileStream fs = System.IO.File.OpenRead(dlg.FileName))
+                {
+                    updateRecords = xs.Deserialize(fs) as TESVSnip.Data.Records;
+                }
+            }
+            if (updateRecords != null && baseRecords != null)
+            {
+
+                var builder = new TESVSnip.Data.RecordBuilder();
+                builder.MergeRecords(baseRecords.Items.OfType<TESVSnip.Data.RecordsRecord>()
+                    , updateRecords.Items.OfType<TESVSnip.Data.RecordsRecord>());
+
+                using (var dlg = new System.Windows.Forms.SaveFileDialog())
+                {
+                    dlg.Title = "Select Record Structure To Save";
+                    dlg.InitialDirectory = System.IO.Path.GetTempPath();
+                    dlg.FileName = "RecordStructure.xml";
+                    dlg.OverwritePrompt = false;
+                    if (dlg.ShowDialog() == DialogResult.OK)
+                    {
+                        using (System.IO.StreamWriter fs = System.IO.File.CreateText(dlg.FileName))
+                        {
+                            xs.Serialize(fs, updateRecords);
+                        }
+                    }
+                }
+            }
+        }
+
+
+        #endregion
+
+        private void eSMFilterSettingsToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            // Update the global list
+            bool modified = false;
+            List<string> groups = TESVSnip.Properties.Settings.Default.AllESMRecords != null
+                ? TESVSnip.Properties.Settings.Default.AllESMRecords.Trim().Split(new char[]{';',','}, StringSplitOptions.RemoveEmptyEntries).ToList()
+                : new List<string>();
+            groups.Sort();
+            foreach (var plugin in PluginTree.Nodes.OfType<TreeNode>().Select(n => n.Tag).OfType<Plugin>())
+            {
+                plugin.ForEach((r) => {
+                    if (r is GroupRecord)
+                    {
+                        var g = (GroupRecord)r;
+                        var s = g.ContentsType;
+                        if (!string.IsNullOrEmpty(s))
+                        {
+                            int idx = groups.BinarySearch(s);
+                            if (idx < 0) { groups.Insert(~idx, s); modified = true; }
+                        }
+                    }
+                });
+            }
+            RecordStructure.Load();
+            var allRecords = RecordStructure.Records.Select((kvp) => kvp.Key).ToList();
+            foreach (var str in allRecords)
+            {
+                int idx = groups.BinarySearch(str);
+                if (idx < 0) { groups.Insert(~idx, str); modified = true; }
+            }
+
+            if (modified)
+            {
+                TESVSnip.Properties.Settings.Default.AllESMRecords = string.Join(";", groups.ToArray());
+            }
+            
+            using (TESVSnip.Forms.LoadSettings settings = new TESVSnip.Forms.LoadSettings())
+            {
+                settings.ShowDialog();
+            }
+        }
+
     }
+
+
 }

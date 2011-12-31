@@ -1,6 +1,6 @@
 using System;
 
-namespace TESsnip {
+namespace TESVSnip {
     [System.Runtime.InteropServices.StructLayout(System.Runtime.InteropServices.LayoutKind.Explicit)]
     struct TypeConverter {
         [System.Runtime.InteropServices.FieldOffset(0)]
@@ -49,7 +49,20 @@ namespace TESsnip {
             tc.b4=b4;
             return tc.i;
         }
-        public static int h2si(byte b1, byte b2, byte b3, byte b4) {
+        public static uint h2i(ArraySegment<byte> data)
+        {
+            if (data.Count >= 4)
+            {
+                tc.b1 = data.Array[data.Offset + 0];
+                tc.b2 = data.Array[data.Offset + 1];
+                tc.b3 = data.Array[data.Offset + 2];
+                tc.b4 = data.Array[data.Offset + 3];
+                return tc.i;
+            }
+            return 0;            
+        }
+        public static int h2si(byte b1, byte b2, byte b3, byte b4)
+        {
             tc.b1=b1;
             tc.b2=b2;
             tc.b3=b3;
@@ -126,6 +139,17 @@ namespace TESsnip {
             tc.s = ss;
             data[offset + 0] = tc.b1;
             data[offset + 1] = tc.b2;
+        }
+        public static bool IsLikelyString(ArraySegment<byte> data)
+        {
+            bool isAscii = true;
+            for (int i = 0; i < data.Count - 1 && isAscii; ++i)
+            {
+                char c = (char)data.Array[data.Offset + i];
+                if (c == 0) return (i > 0);
+                isAscii = !Char.IsControl(c);
+            }
+            return (isAscii && data.Array[data.Count - 1] == 0);
         }
     }
 }

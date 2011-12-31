@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Windows.Forms;
 
-namespace TESsnip
+namespace TESVSnip
 {
 
     static class Program

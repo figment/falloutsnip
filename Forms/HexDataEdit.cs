@@ -2,7 +2,7 @@ using System;
 using System.Windows.Forms;
 using System.Collections.Generic;
 
-namespace TESsnip {
+namespace TESVSnip {
     internal partial class HexDataEdit : Form {
         public static bool Canceled;
         public static byte[] result;

@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace TESsnip.Windows.Controls
+namespace TESVSnip.Windows.Controls
 {
     public class OldNewEventArgs<T> : EventArgs
     {

@@ -1,4 +1,4 @@
-﻿namespace TESsnip.Forms
+﻿namespace TESVSnip.Forms
 {
     partial class StringsEditor
     {
@@ -45,7 +45,7 @@
             this.cboType = new System.Windows.Forms.ComboBox();
             this.label4 = new System.Windows.Forms.Label();
             this.btnNewItem = new System.Windows.Forms.Button();
-            this.listStrings = new TESsnip.Windows.Controls.BindingListView();
+            this.listStrings = new TESVSnip.Windows.Controls.BindingListView();
             this.btnApply = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.error)).BeginInit();
             this.SuspendLayout();
@@ -64,7 +64,7 @@
             // btnAddString
             // 
             this.btnAddString.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.btnAddString.Image = global::TESsnip.Properties.Resources.edit_add;
+            this.btnAddString.Image = global::TESVSnip.Properties.Resources.edit_add;
             this.btnAddString.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
             this.btnAddString.Location = new System.Drawing.Point(117, 374);
             this.btnAddString.Name = "btnAddString";
@@ -121,7 +121,7 @@
             // btnLookup
             // 
             this.btnLookup.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.btnLookup.Image = global::TESsnip.Properties.Resources.find;
+            this.btnLookup.Image = global::TESVSnip.Properties.Resources.find;
             this.btnLookup.Location = new System.Drawing.Point(159, 322);
             this.btnLookup.Name = "btnLookup";
             this.btnLookup.Size = new System.Drawing.Size(26, 23);
@@ -133,7 +133,7 @@
             // btnDeleteString
             // 
             this.btnDeleteString.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.btnDeleteString.Image = global::TESsnip.Properties.Resources.edit_remove;
+            this.btnDeleteString.Image = global::TESVSnip.Properties.Resources.edit_remove;
             this.btnDeleteString.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
             this.btnDeleteString.Location = new System.Drawing.Point(179, 374);
             this.btnDeleteString.Name = "btnDeleteString";
@@ -206,7 +206,7 @@
             // btnNewItem
             // 
             this.btnNewItem.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.btnNewItem.Image = global::TESsnip.Properties.Resources.insertcell;
+            this.btnNewItem.Image = global::TESVSnip.Properties.Resources.insertcell;
             this.btnNewItem.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
             this.btnNewItem.Location = new System.Drawing.Point(55, 374);
             this.btnNewItem.Name = "btnNewItem";

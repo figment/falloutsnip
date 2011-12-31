@@ -1,4 +1,4 @@
-﻿namespace TESsnip.Forms
+﻿namespace TESVSnip.Forms
 {
     partial class MultilineStringEditor
     {

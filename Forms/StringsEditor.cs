@@ -6,9 +6,9 @@ using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Windows.Forms;
-using TESsnip.Collections.Generic;
+using TESVSnip.Collections.Generic;
 
-namespace TESsnip.Forms
+namespace TESVSnip.Forms
 {
     public partial class StringsEditor : Form
     {
@@ -154,7 +154,7 @@ namespace TESsnip.Forms
             }
         }
 
-        private void SetSelectedItem(TESsnip.Forms.StringsEditor.StringHolder str)
+        private void SetSelectedItem(TESVSnip.Forms.StringsEditor.StringHolder str)
         {
             str.ID = str.ID;
             txtID.Text = str.ID.ToString("X8");

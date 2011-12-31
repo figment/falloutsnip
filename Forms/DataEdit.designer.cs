@@ -1,4 +1,4 @@
-namespace TESsnip {
+namespace TESVSnip {
     partial class DataEdit {
         /// <summary>
         /// Required designer variable.
@@ -33,9 +33,9 @@ namespace TESsnip {
             // tbEdit
             // 
             this.tbEdit.AcceptsReturn = true;
-            this.tbEdit.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-                        | System.Windows.Forms.AnchorStyles.Left)
-                        | System.Windows.Forms.AnchorStyles.Right)));
+            this.tbEdit.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.tbEdit.Location = new System.Drawing.Point(12, 48);
             this.tbEdit.Multiline = true;
             this.tbEdit.Name = "tbEdit";
@@ -72,8 +72,8 @@ namespace TESsnip {
             this.tbName.Name = "tbName";
             this.tbName.Size = new System.Drawing.Size(100, 20);
             this.tbName.TabIndex = 5;
-            this.tbName.Leave += new System.EventHandler(this.tbName_Leave);
             this.tbName.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.tbName_KeyPress);
+            this.tbName.Leave += new System.EventHandler(this.tbName_Leave);
             // 
             // label1
             // 
@@ -95,6 +95,7 @@ namespace TESsnip {
             this.Controls.Add(this.bSave);
             this.Controls.Add(this.tbEdit);
             this.Name = "DataEdit";
+            this.ShowInTaskbar = false;
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
             this.Text = "Editing: ";
             this.ResumeLayout(false);

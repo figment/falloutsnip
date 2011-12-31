@@ -5,7 +5,7 @@ using File=System.IO.File;
 using Point=System.Drawing.Point;
 using Size=System.Drawing.Size;
 
-namespace TESsnip {
+namespace TESVSnip {
     static class Settings {
         private static XmlDocument xmlDoc;
         private static readonly string xmlPath=Path.Combine(Program.settingsDir, "settings.xml");

@@ -6,7 +6,7 @@ using System.Security.Permissions;
 using System.Windows.Forms;
 using System.Windows.Forms.Design;
 
-namespace TESsnip.Windows.Controls
+namespace TESVSnip.Windows.Controls
 {
     /// <summary>
     /// <c>CustomComboBox</c> is an extension of <c>ComboBox</c> which provides drop-down customization.

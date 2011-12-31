@@ -7,7 +7,7 @@ using System.Runtime.InteropServices;
 using System.ComponentModel;
 using System.Reflection;
 
-namespace TESsnip.Windows.Controls
+namespace TESVSnip.Windows.Controls
 {
 	/// <summary>
 	/// Summary description for BindingListView.

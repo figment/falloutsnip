@@ -1,7 +1,7 @@
 using System;
 using System.Windows.Forms;
 
-namespace TESsnip {
+namespace TESVSnip {
     partial class DataEdit : Form {
         public static bool Canceled;
         public static byte[] result;

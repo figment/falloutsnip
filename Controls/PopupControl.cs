@@ -4,7 +4,7 @@ using System.Runtime.InteropServices;
 using System.Security.Permissions;
 using System.Windows.Forms;
 
-namespace TESsnip.Windows.Controls
+namespace TESVSnip.Windows.Controls
 {
     public enum PopupResizeMode
     {

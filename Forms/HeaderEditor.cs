@@ -1,7 +1,7 @@
 using System;
 using System.Windows.Forms;
 
-namespace TESsnip {
+namespace TESVSnip {
     internal partial class HeaderEditor : Form {
         private uint Flags1;
         private uint Flags2;
@@ -34,9 +34,9 @@ namespace TESsnip {
             cb18.Enabled=false;
         }
 
-        public static void Display(Record r) {
+        public static DialogResult Display(Record r) {
             HeaderEditor hr=new HeaderEditor(r);
-            hr.ShowDialog();
+            return hr.ShowDialog();
         }
 
         private void bCancel_Click(object sender, EventArgs e) {

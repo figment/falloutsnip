@@ -7,7 +7,7 @@ using System.ComponentModel;
 using System.Reflection;
 using System.Threading;
 
-namespace TESsnip.Windows.Controls
+namespace TESVSnip.Windows.Controls
 {
     #region VirtualListView Delegates
     public delegate void QueryItemTextHandler(int item, int subItem, out string text);

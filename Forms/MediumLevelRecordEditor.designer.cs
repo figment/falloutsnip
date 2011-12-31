@@ -1,4 +1,4 @@
-namespace TESsnip {
+namespace TESVSnip {
     partial class MediumLevelRecordEditor {
         /// <summary>
         /// Required designer variable.
@@ -52,9 +52,9 @@ namespace TESsnip {
             // 
             // fpanel1
             // 
-            this.fpanel1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-                        | System.Windows.Forms.AnchorStyles.Left)
-                        | System.Windows.Forms.AnchorStyles.Right)));
+            this.fpanel1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.fpanel1.AutoScroll = true;
             this.fpanel1.FlowDirection = System.Windows.Forms.FlowDirection.TopDown;
             this.fpanel1.Location = new System.Drawing.Point(12, 12);
@@ -72,6 +72,7 @@ namespace TESsnip {
             this.Controls.Add(this.bCancel);
             this.Controls.Add(this.bSave);
             this.Name = "MediumLevelRecordEditor";
+            this.ShowInTaskbar = false;
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
             this.Text = "Record editor";
             this.ResumeLayout(false);

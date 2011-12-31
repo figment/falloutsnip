@@ -1,4 +1,4 @@
-namespace TESsnip {
+namespace TESVSnip {
     partial class SearchForm {
         /// <summary>
         /// Required designer variable.

@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace TESsnip
+namespace TESVSnip
 {
     public enum LocalizedStringFormat
     {

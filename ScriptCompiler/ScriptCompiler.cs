@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Xml;
-using TESsnip;
+using TESVSnip;
 using BinaryWriter=System.IO.BinaryWriter;
 using MemoryStream=System.IO.MemoryStream;
 

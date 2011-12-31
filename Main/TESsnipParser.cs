@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 
-namespace TESsnip
+namespace TESVSnip
 {
     public class TESParserException : Exception { public TESParserException(string msg) : base(msg) { } }
 
@@ -62,6 +62,10 @@ namespace TESsnip
         public abstract void AddRecord(BaseRecord br);
         public virtual void InsertRecord(int index, BaseRecord br) { AddRecord(br); }
 
+        // internal iterators
+        public virtual bool While(Predicate<BaseRecord> action) { return action(this); }
+        public virtual void ForEach(Action<BaseRecord> action) { action(this); }
+
         internal abstract List<string> GetIDs(bool lower);
         internal abstract void SaveData(BinaryWriter bw);
 
@@ -90,6 +94,12 @@ namespace TESsnip
         public readonly LocalizedStringDict ILStrings = new LocalizedStringDict();
         public readonly LocalizedStringDict DLStrings = new LocalizedStringDict();
 
+        // Hash tables for quick FormID lookups
+        public readonly Dictionary<uint, Record> FormIDLookup = new Dictionary<uint, Record>();
+
+        // Whether the file was filtered on load
+        public bool Filtered = false;
+
         public override long Size
         {
             get { long size = 0; foreach (Rec rec in Records) size += rec.Size2; return size; }
@@ -101,6 +111,7 @@ namespace TESsnip
             Rec r = br as Rec;
             if (r == null) return;
             Records.Remove(r);
+            InvalidateCache();
         }
         
         public override void AddRecord(BaseRecord br)
@@ -109,6 +120,7 @@ namespace TESsnip
             if (r == null) throw new TESParserException("Record to add was not of the correct type." +
                    Environment.NewLine + "Plugins can only hold Groups or Records.");
             Records.Add(r);
+            InvalidateCache();
         }
         public override void InsertRecord(int idx, BaseRecord br)
         {
@@ -116,13 +128,52 @@ namespace TESsnip
             if (r == null) throw new TESParserException("Record to add was not of the correct type." +
                    Environment.NewLine + "Plugins can only hold Groups or Records.");
             Records.Insert(idx, r);
+            InvalidateCache();
         }
 
-        private void LoadPluginData(BinaryReader br, bool headerOnly)
+        public override bool While(Predicate<BaseRecord> action)
+        {
+            if ( !base.While(action) ) return false;
+            foreach (var r in this.Records) 
+                if (!r.While(action))
+                    return false;
+            return true;
+        }
+        public override void ForEach(Action<BaseRecord> action)
+        {
+            base.ForEach(action);
+            foreach (var r in this.Records) r.ForEach(action);
+        }
+
+        public bool TryGetRecordByID(uint key, out Record value)
+        {
+            RebuildCache();
+            return this.FormIDLookup.TryGetValue(key, out value);
+        }
+
+        private void RebuildCache()
+        {
+            if (this.FormIDLookup.Count == 0)
+            {
+                this.ForEach(br => { Record r = br as Record; if (r != null) { this.FormIDLookup[r.FormID] = r; } });
+            }
+        }
+
+        /// <summary>
+        /// Invalidate the FormID Cache.
+        /// </summary>
+        public void InvalidateCache()
+        {
+            this.FormIDLookup.Clear();
+        }
+
+        private void LoadPluginData(BinaryReader br, bool headerOnly, string[] recFilter)
         {
             string s;
             uint recsize;
             bool IsOblivion = false;
+
+            this.Filtered = (recFilter != null && recFilter.Length > 0);
 
             InitDecompressor();
 
@@ -148,8 +199,24 @@ namespace TESsnip
                 {
                     s = ReadRecName(br);
                     recsize = br.ReadUInt32();
-                    if (s == "GRUP") Records.Add(new GroupRecord(recsize, br, IsOblivion));
-                    else Records.Add(new Record(s, recsize, br, IsOblivion));
+
+                    
+                    if (s == "GRUP")
+                    {
+                        Records.Add(new GroupRecord(recsize, br, IsOblivion, recFilter, false));
+                    }
+                    else
+                    {
+                        bool skip = recFilter != null && Array.IndexOf(recFilter, s) >= 0;
+                        if (skip)
+                        {
+                            long size = (recsize + (IsOblivion ? 8 : 12));
+                            if ((br.ReadUInt32() & 0x00040000) > 0) size += 4;
+                            br.BaseStream.Position += size;// just read past the data
+                        }
+                        else
+                            Records.Add(new Record(s, recsize, br, IsOblivion));
+                    }
                 }
             }
 
@@ -182,20 +249,22 @@ namespace TESsnip
             BinaryReader br = new BinaryReader(new MemoryStream(data));
             try
             {
-                LoadPluginData(br, false);
+                LoadPluginData(br, false, null);
             }
             finally
             {
                 br.Close();
             }
         }
-        internal Plugin(string FilePath, bool headerOnly)
+        internal Plugin(string FilePath, bool headerOnly) : this(FilePath, headerOnly, null) {}
+
+        internal Plugin(string FilePath, bool headerOnly, string[] recFilter)
         {
             Name = Path.GetFileName(FilePath);
             FileInfo fi = new FileInfo(FilePath);
             using (BinaryReader br = new BinaryReader(fi.OpenRead()))
             {
-                LoadPluginData(br, headerOnly);
+                LoadPluginData(br, headerOnly, recFilter);
             }
             if (!headerOnly)
             {
@@ -423,7 +492,7 @@ namespace TESsnip
 
         public string ContentsType
         {
-            get { return "" + (char)data[0] + (char)data[1] + (char)data[2] + (char)data[3]; }
+            get { return groupType == 0 ? "" + (char)data[0] + (char)data[1] + (char)data[2] + (char)data[3] : ""; }
         }
 
         public override long Size
@@ -453,29 +522,61 @@ namespace TESsnip
             Records.Insert(idx, r);
         }
 
-        internal GroupRecord(uint Size, BinaryReader br, bool Oblivion)
+        public override bool While(Predicate<BaseRecord> action)
+        {
+            if (!base.While(action))
+                return false;
+            foreach (var r in this.Records)
+                if (!r.While(action))
+                    return false;
+            return true;
+        }
+
+        public override void ForEach(Action<BaseRecord> action)
+        {
+            base.ForEach(action);
+            foreach (var r in this.Records) r.ForEach(action);
+        }
+        
+
+        internal GroupRecord(uint Size, BinaryReader br, bool Oblivion, string[] recFilter, bool filterAll)
         {
             Name = "GRUP";
             data = br.ReadBytes(4);
             groupType = br.ReadUInt32();
             dateStamp = br.ReadUInt32();
+            string contentType = groupType == 0 ? System.Text.Encoding.ASCII.GetString(data) : "";
             if (!Oblivion) flags = br.ReadUInt32();
             uint AmountRead = 0;
             while (AmountRead < Size - (Oblivion ? 20 : 24))
             {
                 string s = Plugin.ReadRecName(br);
                 uint recsize = br.ReadUInt32();
+
                 if (s == "GRUP")
                 {
-                    GroupRecord gr = new GroupRecord(recsize, br, Oblivion);
+                    bool skip = filterAll || (recFilter != null && Array.IndexOf(recFilter, contentType) >= 0);
+                    GroupRecord gr = new GroupRecord(recsize, br, Oblivion, recFilter, skip);
                     AmountRead += recsize;
-                    Records.Add(gr);
+
+                    if (!filterAll) Records.Add(gr);
                 }
                 else
                 {
-                    Record r = new Record(s, recsize, br, Oblivion);
-                    AmountRead += (uint)(recsize + (Oblivion ? 20 : 24));
-                    Records.Add(r);
+                    bool skip = filterAll || (recFilter != null && Array.IndexOf(recFilter, s) >= 0);
+                    if (skip)
+                    {
+                        long size = (recsize + (Oblivion ? 12 : 16));
+                        //if ((br.ReadUInt32() & 0x00040000) > 0) size += 4;
+                        br.BaseStream.Position += size;// just read past the data
+                        AmountRead += (uint)(recsize + (Oblivion ? 20 : 24));
+                    }
+                    else
+                    {
+                        Record r = new Record(s, recsize, br, Oblivion);
+                        AmountRead += (uint)(recsize + (Oblivion ? 20 : 24));
+                        Records.Add(r);
+                    }
                 }
             }
             if (AmountRead > (Size - (Oblivion ? 20 : 24)))
@@ -613,7 +714,7 @@ namespace TESsnip
 
     public sealed class Record : Rec
     {
-        public readonly TESsnip.Collections.Generic.AdvancedList<SubRecord> SubRecords ;
+        public readonly TESVSnip.Collections.Generic.AdvancedList<SubRecord> SubRecords  ;
         public uint Flags1;
         public uint Flags2;
         public uint Flags3;
@@ -662,7 +763,7 @@ namespace TESsnip
 
         internal Record(string name, uint Size, BinaryReader br, bool Oblivion)
         {
-            SubRecords = new TESsnip.Collections.Generic.AdvancedList<SubRecord>(1);
+            SubRecords = new TESVSnip.Collections.Generic.AdvancedList<SubRecord>(1);
             SubRecords.AllowSorting = false;
             Name = name;
             Flags1 = br.ReadUInt32();
@@ -702,7 +803,7 @@ namespace TESsnip
 
         private Record(Record r)
         {
-            SubRecords = new TESsnip.Collections.Generic.AdvancedList<SubRecord>(r.SubRecords.Count);
+            SubRecords = new TESVSnip.Collections.Generic.AdvancedList<SubRecord>(r.SubRecords.Count);
             SubRecords.AllowSorting = false;
             for (int i = 0; i < r.SubRecords.Count; i++) SubRecords.Add((SubRecord)r.SubRecords[i].Clone());
             Flags1 = r.Flags1;
@@ -716,6 +817,7 @@ namespace TESsnip
         public Record()
         {
             Name = "NEW_";
+            SubRecords = new TESVSnip.Collections.Generic.AdvancedList<SubRecord>();
         }
 
         public override BaseRecord Clone()
@@ -738,7 +840,10 @@ namespace TESsnip
 
         private string GetExtendedDesc(dFormIDLookupI formIDLookup, dLStringLookup strLookup)
         {
-            string s = RecordStructure.Records[Name].description + Environment.NewLine;
+            RecordStructure rec;
+            if (!RecordStructure.Records.TryGetValue(Name, out rec))
+                return "";
+            string s = rec.description + Environment.NewLine;
             foreach (var subrec in SubRecords)
             {
                 if (subrec.Structure == null)
@@ -772,7 +877,7 @@ namespace TESsnip
             }
             catch
             {
-                end = "Warning: An error occured while processing the record. It may not conform to the strucure defined in RecordStructure.xml";
+                end = "Warning: An error occurred while processing the record. It may not conform to the structure defined in RecordStructure.xml";
             }
             if (end == null) return start;
             else return start + Environment.NewLine + Environment.NewLine + "[Formatted information]" + Environment.NewLine + end;
@@ -1185,12 +1290,16 @@ namespace TESsnip
                                     break;
                                 case ElementValueType.LString:
                                     {
-                                        if (Data.Length == 4)
+                                        // Try to guess if string or string index.  Do not know if the external string checkbox is set or not in this code
+                                        int left = Data.Length - offset;
+                                        var data = new ArraySegment<byte>(Data, offset, left);
+                                        bool isString = TypeConverter.IsLikelyString(data);
+                                        uint id = TypeConverter.h2i(data);
+                                        string lvalue = strLookup(id);
+                                        if (!string.IsNullOrEmpty(lvalue) || !isString)
                                         {
-                                            uint id = TypeConverter.h2i(Data[offset], Data[offset + 1], Data[offset + 2], Data[offset + 3]);
-                                            string value = strLookup(id);
                                             if (!sselem.notininfo) s2 += id.ToString("X8");
-                                            if (strLookup != null) s2 += ": " + value;
+                                            if (strLookup != null) s2 += ": " + lvalue;
                                             offset += 4;
                                         }
                                         else
@@ -1202,6 +1311,13 @@ namespace TESsnip
                                             offset++;
                                         }
                                     } break;
+                                case ElementValueType.Str4:
+                                    {
+                                        if (!sselem.notininfo)
+                                            s2 = System.Text.Encoding.ASCII.GetString(Data, offset, 4);
+                                        offset += 4;
+                                    }
+                                    break;
                                 default:
                                     throw new ApplicationException();
                             }
@@ -1232,6 +1348,13 @@ namespace TESsnip
                 }
             }
             return list;
+        }
+
+        public override string ToString()
+        {
+            if (string.IsNullOrEmpty(Description) && this.Description != this.Name)
+                return this.Name;
+            return string.Format("{0}: {1}", this.Name, this.Description);
         }
     }
 

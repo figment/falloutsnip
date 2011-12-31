@@ -1,7 +1,7 @@
 using System;
 using System.Windows.Forms;
 
-namespace TESsnip {
+namespace TESVSnip {
     internal partial class GroupEditor : Form {
         private GroupRecord gr;
 
@@ -22,9 +22,9 @@ namespace TESsnip {
             tbFlags.Text=gr.flags.ToString("X8");
         }
 
-        public static void Display(GroupRecord gr) {
+        public static DialogResult Display(GroupRecord gr) {
             GroupEditor ge=new GroupEditor(gr);
-            ge.ShowDialog();
+            return ge.ShowDialog();
         }
 
         private void cmbGroupType_SelectedIndexChanged(object sender, EventArgs e) {

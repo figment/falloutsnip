@@ -6,7 +6,7 @@ using System.Drawing;
 using System.Text;
 using System.Windows.Forms;
 
-namespace TESsnip.Forms
+namespace TESVSnip.Forms
 {
     public partial class MultilineStringEditor : Form
     {

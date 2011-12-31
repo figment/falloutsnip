@@ -1,4 +1,4 @@
-namespace TESsnip {
+namespace TESVSnip {
     partial class HeaderEditor {
         /// <summary>
         /// Required designer variable.
@@ -421,6 +421,7 @@ namespace TESsnip {
             // 
             // bCancel
             // 
+            this.bCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
             this.bCancel.Location = new System.Drawing.Point(332, 431);
             this.bCancel.Name = "bCancel";
             this.bCancel.Size = new System.Drawing.Size(75, 23);
@@ -431,6 +432,7 @@ namespace TESsnip {
             // 
             // bSave
             // 
+            this.bSave.DialogResult = System.Windows.Forms.DialogResult.OK;
             this.bSave.Location = new System.Drawing.Point(413, 431);
             this.bSave.Name = "bSave";
             this.bSave.Size = new System.Drawing.Size(75, 23);
@@ -447,8 +449,8 @@ namespace TESsnip {
             this.tbFormID.Size = new System.Drawing.Size(100, 20);
             this.tbFormID.TabIndex = 36;
             this.tbFormID.Text = "00000000";
-            this.tbFormID.Leave += new System.EventHandler(this.HexValidCheck);
             this.tbFormID.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.HexOnlyKeyPress);
+            this.tbFormID.Leave += new System.EventHandler(this.HexValidCheck);
             // 
             // label1
             // 
@@ -467,8 +469,8 @@ namespace TESsnip {
             this.tbFlags2.Size = new System.Drawing.Size(100, 20);
             this.tbFlags2.TabIndex = 38;
             this.tbFlags2.Text = "00000000";
-            this.tbFlags2.Leave += new System.EventHandler(this.HexValidCheck);
             this.tbFlags2.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.HexOnlyKeyPress);
+            this.tbFlags2.Leave += new System.EventHandler(this.HexValidCheck);
             // 
             // tbFlags3
             // 
@@ -478,8 +480,8 @@ namespace TESsnip {
             this.tbFlags3.Size = new System.Drawing.Size(100, 20);
             this.tbFlags3.TabIndex = 39;
             this.tbFlags3.Text = "00000000";
-            this.tbFlags3.Leave += new System.EventHandler(this.HexValidCheck);
             this.tbFlags3.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.HexOnlyKeyPress);
+            this.tbFlags3.Leave += new System.EventHandler(this.HexValidCheck);
             // 
             // label2
             // 
@@ -507,8 +509,8 @@ namespace TESsnip {
             this.tbName.Name = "tbName";
             this.tbName.Size = new System.Drawing.Size(100, 20);
             this.tbName.TabIndex = 42;
-            this.tbName.Leave += new System.EventHandler(this.tbName_Leave);
             this.tbName.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.tbName_KeyPress);
+            this.tbName.Leave += new System.EventHandler(this.tbName_Leave);
             // 
             // label4
             // 
@@ -521,8 +523,10 @@ namespace TESsnip {
             // 
             // HeaderEditor
             // 
+            this.AcceptButton = this.bSave;
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.CancelButton = this.bCancel;
             this.ClientSize = new System.Drawing.Size(500, 466);
             this.Controls.Add(this.label4);
             this.Controls.Add(this.tbName);
@@ -567,6 +571,7 @@ namespace TESsnip {
             this.Controls.Add(this.cb1);
             this.Controls.Add(this.cb0);
             this.Name = "HeaderEditor";
+            this.ShowInTaskbar = false;
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
             this.Text = "HeaderEditor";
             this.ResumeLayout(false);

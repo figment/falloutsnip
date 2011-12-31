@@ -8,7 +8,7 @@ using System.Collections;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
 
-namespace TESsnip.Windows.Controls
+namespace TESVSnip.Windows.Controls
 {
 	/// <summary>
 	/// BallonToolTip

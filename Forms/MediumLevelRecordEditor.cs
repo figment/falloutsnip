@@ -1,9 +1,10 @@
 using System;
 using System.Windows.Forms;
 using System.Collections.Generic;
-using TESsnip.Windows.Controls;
+using TESVSnip.Windows.Controls;
+using System.Linq;
 
-namespace TESsnip
+namespace TESVSnip
 {
     internal partial class MediumLevelRecordEditor : Form
     {
@@ -238,6 +239,13 @@ namespace TESsnip
                             tb.Tag = new lTag(tb, data, offset);
                             offset += data.Length;
                         } break;
+                    case ElementValueType.Str4:
+                        {
+                            string s = System.Text.Encoding.ASCII.GetString(data, offset, 4);
+                            offset += 4;
+                            tb.MaxLength = 4;
+                            tb.Text = s;
+                        } break;
                     default:
                         throw new ApplicationException();
                 }
@@ -252,7 +260,7 @@ namespace TESsnip
             Label l = new Label();
             l.AutoSize = true;
             string tmp = es.type.ToString();
-            l.Text = tmp + ": " + es.name + (es.desc != null ? (" (" + es.desc + ")") : "");
+            l.Text = tmp + ": " + es.name + (!string.IsNullOrEmpty(es.desc) ? (" (" + es.desc + ")") : "");
             panel1.Controls.Add(tb);
             tb.Location = new System.Drawing.Point(10, ypos);
             if (es.multiline)
@@ -327,7 +335,7 @@ namespace TESsnip
             {
                 options = es.options;
             }
-            if (options != null)
+            if (options != null && options.Length > 0)
             {
                 ypos += 28;
                 ComboBox cmb = new ComboBox();
@@ -651,6 +659,12 @@ namespace TESsnip
                             }
                             break;
                         }
+                    case ElementValueType.Str4:
+                        {
+                            byte[] txtbytes = new byte[] { 0x32, 0x32, 0x32, 0x32 };
+                            System.Text.Encoding.Default.GetBytes(tbText, 0, Math.Min(4, tbText.Length), txtbytes, 0);
+                            bytes.AddRange(txtbytes);
+                        } break;
                     default:
                         throw new ApplicationException();
                 }

@@ -5,7 +5,7 @@ using System.Drawing;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
 
-namespace TESsnip.Windows.Controls
+namespace TESVSnip.Windows.Controls
 {
     #region Native Helper Methods
     public sealed class NativeMethods
