@@ -1,10 +1,17 @@
-    figments's TESsnip Fork 1.0
+    figments's TESsnip Fork 1.1
     =-=-=-=-=-=-=-=-=-=-=-=-=-=
 
     This packages includes a fork of the Fallout Mod Manager 
       TESsnip utility.
 
 Change Log:
+v 1.1
+- Major update to RecordStructure to allow inline groups
+- Programatically tried to discover layout of all records
+- Improved usability on the subrecords by adding toolbar
+- Added Str4 data type for fixed 4-byte strings
+
+v 1.0
 - Add LString data type to represent localized string
 - Import the strings directory if present 
 - Export strings to the Strings directory if strings are present for a plugin
@@ -16,7 +23,6 @@ Notes:
   store the integer ID (which is in Hex) or to store the actual text.
 - When checked it stores the actual text.  When not checked it stores the id.
    
-
 TODO:
 - Sorry the new string editor got away from me and is rather 
   fiddly and not intuitive but that is in line with TESsnip anyway
@@ -25,7 +31,8 @@ TODO:
 
 Credits:
 * timeslip - The original author of TESsnip
-
+* Dave Humphrey - Maintainer of http://www.uesp.net/wiki a source ESM layout
+                - Tes5Lib (http://github.com/uesp/tes5lib)
 
 License:
 * The TESsnip code is licensed under GPL so this is by extension also GPL

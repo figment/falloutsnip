@@ -146,10 +146,30 @@ namespace TESVSnip {
             for (int i = 0; i < data.Count - 1 && isAscii; ++i)
             {
                 char c = (char)data.Array[data.Offset + i];
-                if (c == 0) return (i > 0);
+                //if (c == 0) return (i > 0);
                 isAscii = !Char.IsControl(c);
             }
             return (isAscii && data.Array[data.Count - 1] == 0);
+        }
+        public static string GetString(ArraySegment<byte> data)
+        {
+            var sb = new System.Text.StringBuilder();
+            bool isAscii = true;
+            for (int i = 0; i < data.Count - 1 && isAscii; ++i)
+            {
+                char c = (char)data.Array[data.Offset + i];
+                if (c == 0) return sb.ToString();
+                isAscii = !Char.IsControl(c);
+            }
+            return sb.ToString();
+        }
+
+        public static string GetHexData(byte[] data, int offset, int count)
+        {
+            System.Text.StringBuilder sb = new System.Text.StringBuilder();
+            for (int i = 0; i < count && (offset + i) < data.Length; ++i)
+                sb.Append( data[offset + i].ToString("X2") ).Append( " " );            
+            return sb.ToString();
         }
     }
 }

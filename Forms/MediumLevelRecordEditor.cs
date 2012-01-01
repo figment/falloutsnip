@@ -107,7 +107,7 @@ namespace TESVSnip
             panel1.Anchor = AnchorStyles.Top | AnchorStyles.Right | AnchorStyles.Left | AnchorStyles.Bottom;
             int ypos = 0;
             uint flagValue = 0; // value if flags is set
-            bool hasFlags = (es.options == null && es.flags != null);
+            bool hasFlags = (es.options.Length == 0 && es.flags.Length > 1);
 
             TextBox tb = new TextBox();
             boxes.Add(tb);
@@ -235,9 +235,19 @@ namespace TESVSnip
                     case ElementValueType.LString:
                         {
                             uint id = TypeConverter.h2i(data[offset], data[offset + 1], data[offset + 2], data[offset + 3]);
-                            tb.Text = id.ToString("X8");
+                            bool isString = TypeConverter.IsLikelyString(new ArraySegment<byte>(data, offset, data.Length - offset));
+                            if (isString)
+                            {
+                                string s = TypeConverter.GetString(new ArraySegment<byte>(data, offset, data.Length - offset));
+                                tb.Text = s;
+                                offset += s.Length;
+                            }
+                            else
+                            {
+                                offset += 4;
+                                tb.Text = id.ToString("X8");
+                            }
                             tb.Tag = new lTag(tb, data, offset);
-                            offset += data.Length;
                         } break;
                     case ElementValueType.Str4:
                         {

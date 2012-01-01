@@ -136,7 +136,7 @@ namespace TESVSnip {
             this.notininfo = node.notininfo;
             this.optional = node.optional != 0;
             this.options = node.options == null ? new string[0] : node.options.Split(new char[] { ';' }, StringSplitOptions.RemoveEmptyEntries);
-            this.flags = node.flags == null ? new string[0] : node.flags.Split(new char[] { ';' }, StringSplitOptions.RemoveEmptyEntries);
+            this.flags = node.flags == null ? new string[0] : node.flags.Split(new char[] { ';' });
             this.repeat = node.repeat;
             this.CondID = node.condid;
             if (optional || repeat > 0)

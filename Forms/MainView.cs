@@ -2,6 +2,7 @@ using System;
 using System.Windows.Forms;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 
 namespace TESVSnip
 {
@@ -37,18 +38,30 @@ namespace TESVSnip
             }
             InitializeComponent();
 
-            this.listSubrecord.Columns.Clear();
-            this.listSubrecord.AddBindingColumn("Name", "Name", 50);
-            this.listSubrecord.AddBindingColumn("Size", "Size", 40);
-            this.listSubrecord.AddBindingColumn("IsValid", "*", 20, new Func<SubRecord, string>(a => a.IsValid ? "*" : ""));
-            this.listSubrecord.AddBindingColumn("Description", "Description", 100);
+            InitializeToolStripFind();
+InitializeSubrecordForm();
 
             this.SaveModDialog.InitialDirectory = Program.gameDataDir;
             this.OpenModDialog.InitialDirectory = Program.gameDataDir;
 
             this.Icon = Properties.Resources.tesv_ico;
             Settings.GetWindowPosition("TESsnip", this);
+
+            if (!DesignMode)
+            {
+                try
+                {
+                    System.Reflection.Assembly asm = System.Reflection.Assembly.GetExecutingAssembly();
+                    var attr = asm.GetCustomAttributes(true).OfType<AssemblyInformationalVersionAttribute>().FirstOrDefault();
+                    if (attr != null)
+                        this.Text = attr.InformationalVersion;
+                }
+                catch
+                {
+                }
+            }
         }
+
 
         internal void LoadPlugin(string s)
         {
@@ -414,10 +427,14 @@ Would you like to apply the record exclusions?"
         /// <summary>
         /// This routine assigns Structure definitions to subrecords
         /// </summary>
-        private void MatchRecordStructureToRecord()
+        private bool MatchRecordStructureToRecord()
         {
-            if (RecordStructure.Records == null) return;
-            if (!RecordStructure.Records.ContainsKey(parentRecord.Name)) return;
+            return MatchRecordStructureToRecord(this.parentRecord);
+        }
+        private bool MatchRecordStructureToRecord(Record parentRecord)
+        {
+            if (RecordStructure.Records == null) return false;
+            if (!RecordStructure.Records.ContainsKey(parentRecord.Name)) return false;
             var subrecords = new List<SubrecordStructure>();
             var sss = RecordStructure.Records[parentRecord.Name].subrecords;
             var subs = parentRecord.SubRecords.ToArray();
@@ -460,9 +477,10 @@ Would you like to apply the record exclusions?"
                 {
                     ssi += sss[ssi].optional;
                 }
-                else return;
+                else return false;
                 if (repeats.Count > 0 && repeats.Peek().end == ssi) ssi = repeats.Peek().start;
             }
+            return (subi != subs.Length);
         }
 
         private void PluginTree_AfterSelect(object sender, TreeViewEventArgs e)
@@ -728,7 +746,7 @@ Do you still want to save?", "Modified Save", MessageBoxButtons.YesNo, MessageBo
             TreeNode tn = node;
             if (tn.Tag is Plugin) return (Plugin)tn.Tag;
             while (!(tn.Tag is Plugin) && tn != null) tn = tn.Parent;
-            return tn != null ? tn.Parent.Tag as Plugin : new Plugin();
+            return tn != null && tn.Parent != null ? tn.Parent.Tag as Plugin : new Plugin();
         }
 
         private void PluginTree_MouseDoubleClick(object sender, MouseEventArgs e)
@@ -912,16 +930,28 @@ Do you still want to save?", "Modified Save", MessageBoxButtons.YesNo, MessageBo
 
         private void findToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            if (searchForm != null)
+            //if (searchForm != null)
+            //{
+            //    searchForm.Focus();
+            //}
+            //else
+            //{
+            //    spellsToolStripMenuItem.Enabled = false;
+            //    searchForm = new SearchForm(PluginTree);
+            //    searchForm.FormClosed += new FormClosedEventHandler(searchForm_FormClosed);
+            //    searchForm.Show();
+            //}
+            if (!this.toolStripIncrFind.Visible)
             {
-                searchForm.Focus();
+                toolStripIncrFind.Visible = true;
+                this.toolStripIncrFind.Focus();
+                this.toolStripIncrFindText.Select();
+                this.toolStripIncrFindText.SelectAll();
+                this.toolStripIncrFindText.Focus();
             }
             else
             {
-                spellsToolStripMenuItem.Enabled = false;
-                searchForm = new SearchForm(PluginTree);
-                searchForm.FormClosed += new FormClosedEventHandler(searchForm_FormClosed);
-                searchForm.Show();
+                this.toolStripIncrFind.Visible = false;
             }
         }
 
@@ -1345,16 +1375,15 @@ Do you still want to save?", "Modified Save", MessageBoxButtons.YesNo, MessageBo
             CreatePluginTree(FormIDLookup[FormIDLookup.Length - 1], tn);
         }
 
+        #region Non-Conforming Records
         private bool findNonConformingRecordInternal(TreeNode tn)
         {
             if (tn.Tag is Record)
             {
-                Record r = tn.Tag as Record;
-                PluginTree.SelectedNode = tn;
-                foreach (var sr in r.SubRecords)
+                if (IsNonConformingRecord(tn))
                 {
-                    if (sr.Structure == null)
-                        return true;
+                    PluginTree.SelectedNode = tn;
+                    return true;
                 }
             }
             else
@@ -1365,14 +1394,37 @@ Do you still want to save?", "Modified Save", MessageBoxButtons.YesNo, MessageBo
         }
         private void findNonconformingRecordToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            if (PluginTree.SelectedNode == null) return;
-            if (PluginTree.SelectedNode.Tag is Record)
+            toolStripIncrInvalidRec.Visible = !toolStripIncrInvalidRec.Visible;
+            if (toolStripIncrInvalidRec.Visible)
             {
-                MessageBox.Show("Spell works only on plugins or record groups", "Error");
-                return;
+                toolStripIncrInvalidRec.Focus();
+                toolStripIncrInvalidRecNext.Select();
             }
-            findNonConformingRecordInternal(PluginTree.SelectedNode);
         }
+
+        internal bool findNonConformingRecordIncremental(TreeNode tn, bool forward, bool downOnly)
+        {
+            var node = IncrementalSearch(tn, false, forward, downOnly, new Predicate<TreeNode>(IsNonConformingRecord));
+            if (node != null)
+                PluginTree.SelectedNode = node;
+            return node != null;
+        }
+
+        private bool IsNonConformingRecord(TreeNode tn)
+        {
+            if (tn.Tag is Record)
+            {
+                Record r = tn.Tag as Record;
+
+                if (MatchRecordStructureToRecord(r))
+                {
+                    return true;
+                }
+            }
+            return false;
+        }
+        
+        #endregion
 
         private void compileScriptToolStripMenuItem_Click(object sender, EventArgs e)
         {
@@ -1815,6 +1867,57 @@ Do you still want to save?", "Modified Save", MessageBoxButtons.YesNo, MessageBo
                 }
             }
         }
+
+        #region Reorder Subrecords
+        // try to reorder subrecords to match the structure file.
+        private void reorderSubrecordsToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if (!ValidateMakeChange())
+                return;
+
+            if (RecordStructure.Records == null) return;
+            if (!RecordStructure.Records.ContainsKey(parentRecord.Name)) return;
+
+            SubrecordStructure[] sss = RecordStructure.Records[parentRecord.Name].subrecords;
+
+            List<SubRecord> subs = new List<SubRecord>(parentRecord.SubRecords);
+            foreach (var sub in subs) sub.DetachStructure();
+
+            List<SubRecord> newsubs = new List<SubRecord>();
+            for (int ssidx = 0, sslen = 0; ssidx < sss.Length; ssidx += sslen)
+            {
+                SubrecordStructure ss = sss[ssidx];
+                bool repeat = ss.repeat > 0;
+                sslen = Math.Max(1, ss.repeat);
+
+                bool found = false;
+                do
+                {
+                    found = false;
+                    for (int ssoff = 0; ssoff < sslen; ++ssoff)
+                    {
+                        ss = sss[ssidx + ssoff];
+                        for (int i = 0; i < subs.Count; ++i)
+                        {
+                            var sr = subs[i];
+                            if (sr.Name == ss.name)
+                            {
+                                newsubs.Add(sr);
+                                subs.RemoveAt(i);
+                                found = true;
+                                break;
+                            }
+                        }
+                    }
+                } while (found && repeat);
+            }
+            newsubs.AddRange(subs);
+            parentRecord.SubRecords.Clear();
+            parentRecord.SubRecords.AddRange(newsubs);
+            RebuildSelection();
+        }
+        #endregion
+
         #endregion
 
         private void FindMasters()
@@ -2109,6 +2212,14 @@ Do you still want to save?", "Modified Save", MessageBoxButtons.YesNo, MessageBo
         }
 
         #region SubRecord Manipulation
+        private void InitializeSubrecordForm()
+        {
+            this.listSubrecord.Columns.Clear();
+            this.listSubrecord.AddBindingColumn("Name", "Name", 50);
+            this.listSubrecord.AddBindingColumn("Size", "Size", 40);
+            this.listSubrecord.AddBindingColumn("IsValid", "*", 20, new Func<SubRecord, string>(a => a.IsValid ? "*" : ""));
+            this.listSubrecord.AddBindingColumn("Description", "Description", 100);
+        }
 
         private bool ValidateMakeChange()
         {
@@ -2207,8 +2318,6 @@ Do you still want to save?", "Modified Save", MessageBoxButtons.YesNo, MessageBo
             RefreshSelection();
         }
 
-        #endregion
-
         private void toolStripEditSubrecord_Click(object sender, EventArgs e)
         {
             EditSelectedSubrecord();
@@ -2224,54 +2333,7 @@ Do you still want to save?", "Modified Save", MessageBoxButtons.YesNo, MessageBo
             EditSelectedSubrecordHex();
         }
 
-        // try to reorder subrecords to match the structure file.
-        private void reorderSubrecordsToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            if (!ValidateMakeChange())
-                return;
-#if false
-            if (RecordStructure.Records == null) return;
-            if (!RecordStructure.Records.ContainsKey(parentRecord.Name)) return;
-
-            SubrecordBase[] sss = RecordStructure.Records[parentRecord.Name].subrecords;
-
-            List<SubRecord> subs = new List<SubRecord>(parentRecord.SubRecords);
-            foreach (var sub in subs) sub.DetachStructure();
-
-            List<SubRecord> newsubs = new List<SubRecord>();
-            for (int ssidx = 0, sslen = 0; ssidx < sss.Length; ssidx += sslen)
-            {
-                SubrecordStructure ss = sss[ssidx];
-                bool repeat = ss.repeat > 0;
-                sslen = Math.Max(1, ss.repeat);
-
-                bool found = false;
-                do
-                {
-                    found = false;
-                    for (int ssoff = 0; ssoff < sslen; ++ssoff)
-                    {
-                        ss = sss[ssidx + ssoff];
-                        for (int i = 0; i < subs.Count; ++i)
-                        {
-                            var sr = subs[i];
-                            if (sr.Name == ss.name)
-                            {
-                                newsubs.Add(sr);
-                                subs.RemoveAt(i);
-                                found = true;
-                                break;
-                            }
-                        }
-                    }
-                } while (found && repeat);
-            }
-            newsubs.AddRange(subs);
-            parentRecord.SubRecords.Clear();
-            parentRecord.SubRecords.AddRange(newsubs);
-            RebuildSelection();
-#endif
-        }
+        #endregion
 
         private void toolStripCopySubrecord_Click(object sender, EventArgs e)
         {
@@ -2409,13 +2471,13 @@ Do you still want to save?", "Modified Save", MessageBoxButtons.YesNo, MessageBo
             Action completedAction = e.Result as Action;
             if (completedAction != null) completedAction();
         }
-
-        private void toolStripStopProgress_ButtonClick(object sender, EventArgs e)
+        private void toolStripStopProgress_Click(object sender, EventArgs e)
         {
             this.backgroundWorker1.CancelAsync();
             if (cancelBackgroundAction != null)
                 cancelBackgroundAction();
         }
+
 
         private void mergeRecordsXMLToolStripMenuItem_Click(object sender, EventArgs e)
         {
@@ -2517,7 +2579,326 @@ Do you still want to save?", "Modified Save", MessageBoxButtons.YesNo, MessageBo
             }
         }
 
+
+        #region Incremental Search
+
+        #region Search Helpers
+        enum SearchType
+        {
+            EditorID,
+            FormID,
+            FullSearch
+        }
+        class ComboHelper<T, U>
+        {
+            public ComboHelper(T key, U value)
+            {
+                this.Key = key;
+                this.Value = value;
+            }
+            public T Key{ get; set; }
+            public U Value { get; set; }
+
+            public override string  ToString()
+            {
+ 	             return Value.ToString();
+            } 
+        }
+
+        void InitializeToolStripFind()
+        {
+            ComboHelper<SearchType, string>[] items = new ComboHelper<SearchType, string>[]
+            {
+                new ComboHelper<SearchType, string>(SearchType.EditorID, "Editor ID"),
+                new ComboHelper<SearchType, string>(SearchType.FormID, "Editor ID"),
+                new ComboHelper<SearchType, string>(SearchType.FullSearch, "Full Search"),
+            };
+            toolStripIncrFindType.Items.Clear();
+            foreach (var itm in items) toolStripIncrFindType.Items.Add(itm);
+            toolStripIncrFindType.SelectedItem = toolStripIncrFindType.Items[0];
+            toolStripIncrFindText.Tag = true; // text tag first search
+        }
+
+        private void RecurseFullSearch(List<TreeNode> matches, TreeNode node, string searchString, bool partial)
+        {
+            Record rec = node.Tag as Record;
+            if (rec != null)
+            {
+                foreach (SubRecord sr in rec.SubRecords)
+                {
+                    if (partial)
+                    {
+                        if (sr.GetStrData().ToLowerInvariant().Contains(searchString)) matches.Add(node);
+                    }
+                    else
+                    {
+                        if (sr.GetStrData().ToLowerInvariant() == searchString) matches.Add(node);
+                    }
+                }
+            }
+            else
+            {
+                for (int i = 0; i < node.Nodes.Count; i++) 
+                    RecurseFullSearch(matches, node.Nodes[i], searchString, partial);
+            }
+        }
+
+        internal TreeNode IncrementalSearch(TreeNode tn, bool first, bool forward, bool downOnly, Predicate<TreeNode> searchFunc )
+        {
+            if (tn == null)
+                tn = PluginTree.SelectedNode != null ? PluginTree.SelectedNode : PluginTree.TopNode;
+            if (tn == null)
+                return null;
+            bool keep = first;
+            while (tn != null)
+            {
+                if (keep && searchFunc(tn))
+                    return tn;
+                keep = true;
+                if (forward)
+                {
+                    if (tn.FirstNode != null)
+                    {
+                        tn = tn.FirstNode;
+                    }
+                    else
+                    {
+                        while (!downOnly && tn != null && tn.NextNode == null)
+                            tn = tn.Parent;
+                        tn = (tn != null && tn.NextNode != null) ? tn.NextNode : null;
+                    }
+                }
+                else
+                {
+                    var n = tn;
+                    while (n != null && n.PrevNode == null)
+                        n = n.Parent;
+                    tn = n;
+                    if (n != null)
+                    {
+                        // Find last item
+                        var n2 = n.PrevNode;
+                        while (n2.FirstNode != null)
+                        {
+                            n2 = n2.FirstNode;
+                            while (n2 != null && n2.NextNode != null)
+                                n2 = n2.NextNode;
+                        }
+                        tn = n2;
+                    }
+                }
+            }
+            return tn;
+        }
+
+        private TreeNode PerformSearch(SearchType type, TreeNode tn, string text, bool first, bool partial, bool forward, bool downOnly)
+        {
+            Predicate<TreeNode> searchFunction = null;
+
+            if (type == SearchType.FormID)
+            {
+                uint searchID;
+                if (!uint.TryParse(text, System.Globalization.NumberStyles.AllowHexSpecifier, null, out searchID))
+                {
+                    MessageBox.Show("Invalid FormID");
+                    return null;
+                }
+                searchFunction = (TreeNode node) => { 
+                    var rec = node.Tag as Record;
+                    return (rec != null) ? rec.FormID == searchID : false; 
+                };
+            }
+            else if (type == SearchType.EditorID)
+            {
+                string searchString = text.ToLowerInvariant();
+                searchFunction = (TreeNode node) =>
+                {
+                    var rec = node.Tag as Record;
+                    if (rec != null && !string.IsNullOrEmpty(rec.descriptiveName))
+                    {
+                        if (partial)
+                        {
+                            var val = rec.descriptiveName.ToLowerInvariant();
+                            if (val.Contains(searchString))
+                                return true;
+                        }
+                        else
+                        {
+                            var val = rec.descriptiveName.ToLowerInvariant().Substring(2, rec.descriptiveName.Length - 3);
+                            if (val == searchString) 
+                                return true;
+                        }
+                    }
+                    return false;
+                };
+
+            }
+            else if (type == SearchType.FullSearch)
+            {
+                string searchString = text.ToLowerInvariant();
+                searchFunction = (TreeNode node) =>
+                {
+                    var rec = node.Tag as Record;
+                    if (rec != null)
+                    {
+                        foreach (SubRecord sr in rec.SubRecords)
+                        {
+                            var val = sr.GetStrData();
+                            if (!string.IsNullOrEmpty(val))
+                            {
+                                val = val.ToLowerInvariant();
+                                if ((partial && val.Contains(searchString)) || (val == searchString))
+                                    return true;
+                            }
+                        }
+                    }
+                    return false;
+                };
+            }
+            return IncrementalSearch(tn, first, forward, downOnly, searchFunction);
+        }
+        #endregion
+
+        private void toolStripIncrFindMatch_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void toolStripTextBox1_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.KeyCode == Keys.Enter)
+            {
+
+            }
+        }
+
+        private void toolStripIncrFindNext_Click(object sender, EventArgs e)
+        {
+            PerformSearch(PluginTree.SelectedNode, true);
+        }
+
+        private void PerformSearch(TreeNode start, bool forward)
+        {
+            var item = toolStripIncrFindType.SelectedItem as ComboHelper<SearchType, string>;
+            var text = toolStripIncrFindText.Text;
+            var partial = !toolStripIncrFindExact.Checked;
+            var downOnly = toolStripIncrFindDown.Checked;
+            var first = toolStripIncrFindText.Tag == null ? true : (bool)toolStripIncrFindText.Tag;
+            if (string.IsNullOrEmpty(text))
+            {
+                System.Media.SystemSounds.Beep.Play();
+                toolStripIncrFind.Focus();
+                toolStripIncrFindText.Select();
+                toolStripIncrFindText.Focus();
+                return;
+            }
+            var node = PerformSearch(item.Key, start, text, first, partial, forward, downOnly);
+            if (node != null)
+            {
+                PluginTree.SelectedNode = node;
+                toolStripIncrFindText.Tag = false;
+            }
+            else
+            {
+                System.Media.SystemSounds.Beep.Play();
+                toolStripIncrFind.Focus();
+                toolStripIncrFindText.Select();
+                toolStripIncrFindText.Focus();
+                toolStripIncrFindText.Tag = true;
+            }
+        }
+
+        private void toolStripIncrFindPrev_Click(object sender, EventArgs e)
+        {
+            PerformSearch(PluginTree.SelectedNode, false);
+        }
+
+        private void toolStripIncrFindRestart_Click(object sender, EventArgs e)
+        {
+            // use tag to indicate text changed and therefore reset the search
+            toolStripIncrFindText.Tag = true;
+
+            PerformSearch(PluginTree.TopNode, true);
+        }
+
+        private void toolStripIncrFindCancel_Click(object sender, EventArgs e)
+        {
+            toolStripIncrFind.Visible = false;
+        }
+
+        private void toolStripIncrFind_VisibleChanged(object sender, EventArgs e)
+        {
+            findToolStripMenuItem.Checked = toolStripIncrFind.Visible;
+        }
+
+        private void toolStripIncrFindText_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.KeyValue == (char)Keys.Enter)
+            {
+                e.SuppressKeyPress = true;
+                e.Handled = true;
+                PerformSearch(PluginTree.SelectedNode, !e.Shift);
+            }
+        }
+        private void toolStripIncrFindText_TextChanged(object sender, EventArgs e)
+        {
+            // use tag to indicate text changed and therefore reset the search
+            toolStripIncrFindText.Tag = true;
+        }
+
+        #endregion
+
+
+        #region ToolStrip Check Toggle
+        private void toolStripCheck_CheckStateChanged(object sender, EventArgs e)
+        {
+            var button = sender as System.Windows.Forms.ToolStripButton;
+            button.Image = button.Checked
+                ? global::TESVSnip.Properties.Resources.checkedbox
+                : global::TESVSnip.Properties.Resources.emptybox
+                ;
+        }
+        #endregion
+
+        #region Increment Invalid Record Search
+        private void toolStripIncrInvalidRecNext_Click(object sender, EventArgs e)
+        {
+
+            if (!findNonConformingRecordIncremental(null, true, toolStripIncrInvalidRecDown.Checked))
+            {
+                System.Media.SystemSounds.Beep.Play();
+            }
+        }
+
+        private void toolStripIncrInvalidRecPrev_Click(object sender, EventArgs e)
+        {
+            if (!findNonConformingRecordIncremental(null, false, toolStripIncrInvalidRecDown.Checked))
+            {
+                System.Media.SystemSounds.Beep.Play();
+            }
+        }
+
+        private void toolStripIncrInvalidRecRestart_Click(object sender, EventArgs e)
+        {
+            if (!findNonConformingRecordIncremental(PluginTree.TopNode, true, true))
+            {
+                System.Media.SystemSounds.Beep.Play();
+            }
+        }
+
+        private void toolStripIncrInvalidRecCancel_Click(object sender, EventArgs e)
+        {
+            toolStripIncrInvalidRec.Visible = false;
+        }
+
+        private void toolStripIncrInvalidRec_VisibleChanged(object sender, EventArgs e)
+        {
+            findNonconformingRecordToolStripMenuItem.Checked = toolStripIncrInvalidRec.Visible;
+        }
+        
+        #endregion
+
+
+
     }
-
-
 }

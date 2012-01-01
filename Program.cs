@@ -34,6 +34,8 @@ namespace TESVSnip
                     gameDir = key.GetValue("Installed Path", gameDir, Microsoft.Win32.RegistryValueOptions.None) as string;
                     gameDataDir = System.IO.Path.Combine(gameDir, "Data");
                 }
+
+                object[] asmAttributes = asm.GetCustomAttributes(true);
             }
             catch
             {

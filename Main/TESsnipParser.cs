@@ -585,7 +585,15 @@ namespace TESVSnip
             }
             if (groupType == 0)
             {
-                descriptiveName = " (" + (char)data[0] + (char)data[1] + (char)data[2] + (char)data[3] + ")";
+                string name = System.Text.Encoding.ASCII.GetString(data, 0, 4);
+                descriptiveName = " (" + name + ")";
+                RecordStructure rec;
+                if (RecordStructure.Records.TryGetValue(name, out rec))
+                {
+                    if (rec.description != name)
+                        descriptiveName += " - " + rec.description;
+                }
+
             }
         }
 
@@ -843,18 +851,21 @@ namespace TESVSnip
             RecordStructure rec;
             if (!RecordStructure.Records.TryGetValue(Name, out rec))
                 return "";
-            string s = rec.description + Environment.NewLine;
+
+            var s = new System.Text.StringBuilder();
+            s.AppendLine(rec.description);
             foreach (var subrec in SubRecords)
             {
                 if (subrec.Structure == null)
                     continue;
-                if (subrec.Structure.elements == null) 
-                    return s;
+                if (subrec.Structure.elements == null)
+                    return s.ToString();
                 if (subrec.Structure.notininfo) 
                     continue;
-                s += Environment.NewLine + subrec.GetFormattedData(formIDLookup, strLookup);
+                s.AppendLine();
+                s.Append(subrec.GetFormattedData(formIDLookup, strLookup));
             }
-            return s;
+            return s.ToString();
         }
 
         private string GetLocalizedString(dLStringLookup strLookup)
@@ -1033,29 +1044,35 @@ namespace TESVSnip
 
         internal string GetFormattedData(dFormIDLookupI formIDLookup, dLStringLookup strLookup)
         {
+            var sb = new System.Text.StringBuilder();
+            GetFormattedData(sb, formIDLookup, strLookup);
+            return sb.ToString();
+        }
+        internal void GetFormattedData(System.Text.StringBuilder s, dFormIDLookupI formIDLookup, dLStringLookup strLookup)
+        {
             SubrecordStructure ss = this.Structure;
             if (ss == null)
-                return "";
+                return;
 
             int offset = 0;
-            string s = ss.name + " (" + ss.desc + ")" + Environment.NewLine;
+            s.AppendFormat("{0} ({1})", ss.name, ss.desc);
+            s.AppendLine();
             try
             {
                 for (int eidx = 0, elen = 1; eidx < ss.elements.Length; eidx += elen)
                 {
                     var sselem = ss.elements[eidx];
                     bool repeat = sselem.repeat > 0;
-                    elen = Math.Max(1, sselem.repeat);
-
+                    elen = sselem.repeat > 1 ? sselem.repeat : 1;
                     do
                     {
-                        for (int eoff = 0; eoff < elen; ++eoff)
+                        for (int eoff = 0; eoff < elen && offset < Data.Length; ++eoff)
                         {
                             sselem = ss.elements[eidx + eoff];
 
                             if (offset == Data.Length && eidx == ss.elements.Length - 1 && sselem.optional) break;
-                            string s2 = "";
-                            if (!sselem.notininfo) s2 += sselem.name + ": ";
+                            if (!sselem.notininfo) s.Append(sselem.name).Append(": ");
+
                             switch (sselem.type)
                             {
                                 case ElementValueType.Int:
@@ -1064,28 +1081,30 @@ namespace TESVSnip
                                         string tmps = TypeConverter.h2si(Data[offset], Data[offset + 1], Data[offset + 2], Data[offset + 3]).ToString();
                                         if (!sselem.notininfo)
                                         {
-                                            if (sselem.hexview) s2 += TypeConverter.h2i(Data[offset], Data[offset + 1], Data[offset + 2], Data[offset + 3]).ToString("X8");
-                                            else s2 += tmps;
+                                            if (sselem.hexview) s.Append(TypeConverter.h2i(Data[offset], Data[offset + 1], Data[offset + 2], Data[offset + 3]).ToString("X8"));
+                                            else s.Append(tmps);
                                             if (sselem.options != null)
                                             {
                                                 for (int k = 0; k < sselem.options.Length; k += 2)
                                                 {
-                                                    if (tmps == sselem.options[k + 1]) s2 += " (" + sselem.options[k] + ")";
+                                                    if (tmps == sselem.options[k + 1])
+                                                        s.AppendFormat(" ({0})", sselem.options[k]);
                                                 }
                                             }
                                             else if (sselem.flags != null)
                                             {
                                                 uint val = TypeConverter.h2i(Data[offset], Data[offset + 1], Data[offset + 2], Data[offset + 3]);
-                                                string tmp2 = "";
+                                                var tmp2 = new System.Text.StringBuilder();
                                                 for (int k = 0; k < sselem.flags.Length; k++)
                                                 {
                                                     if ((val & (1 << k)) != 0)
                                                     {
-                                                        if (tmp2.Length > 0) tmp2 += ", ";
-                                                        tmp2 += sselem.flags[k];
+                                                        if (tmp2.Length > 0) tmp2.Append(", ");
+                                                        tmp2.Append(sselem.flags[k]);
                                                     }
                                                 }
-                                                if (tmp2.Length > 0) s2 += " (" + tmp2 + ")";
+                                                if (tmp2.Length > 0)
+                                                    s.AppendFormat(" ({0})", tmp2);
                                             }
                                         }
                                         offset += 4;
@@ -1095,28 +1114,30 @@ namespace TESVSnip
                                         string tmps = TypeConverter.h2i(Data[offset], Data[offset + 1], Data[offset + 2], Data[offset + 3]).ToString();
                                         if (!sselem.notininfo)
                                         {
-                                            if (sselem.hexview) s2 += TypeConverter.h2i(Data[offset], Data[offset + 1], Data[offset + 2], Data[offset + 3]).ToString("X8");
-                                            else s2 += tmps;
+                                            if (sselem.hexview) s.Append( TypeConverter.h2i(Data[offset], Data[offset + 1], Data[offset + 2], Data[offset + 3]).ToString("X8") );
+                                            else s.Append(tmps);
                                             if (sselem.options != null)
                                             {
                                                 for (int k = 0; k < sselem.options.Length; k += 2)
                                                 {
-                                                    if (tmps == sselem.options[k + 1]) s2 += " (" + sselem.options[k] + ")";
+                                                    if (tmps == sselem.options[k + 1])
+                                                        s.AppendFormat(" ({0})", sselem.options[k]);
                                                 }
                                             }
                                             else if (sselem.flags != null)
                                             {
                                                 uint val = TypeConverter.h2i(Data[offset], Data[offset + 1], Data[offset + 2], Data[offset + 3]);
-                                                string tmp2 = "";
+                                                var tmp2 = new System.Text.StringBuilder();
                                                 for (int k = 0; k < sselem.flags.Length; k++)
                                                 {
                                                     if ((val & (1 << k)) != 0)
                                                     {
-                                                        if (tmp2.Length > 0) tmp2 += ", ";
-                                                        tmp2 += sselem.flags[k];
+                                                        if (tmp2.Length > 0) tmp2.Append(", ");
+                                                        tmp2.Append(sselem.flags[k]);
                                                     }
                                                 }
-                                                if (tmp2.Length > 0) s2 += " (" + tmp2 + ")";
+                                                if (tmp2.Length > 0)
+                                                    s.AppendFormat(" ({0})", tmp2);
                                             }
                                         }
                                         offset += 4;
@@ -1127,28 +1148,29 @@ namespace TESVSnip
                                         string tmps = TypeConverter.h2ss(Data[offset], Data[offset + 1]).ToString();
                                         if (!sselem.notininfo)
                                         {
-                                            if (sselem.hexview) s2 += TypeConverter.h2ss(Data[offset], Data[offset + 1]).ToString("X4");
-                                            else s2 += tmps;
+                                            if (sselem.hexview) s.Append(TypeConverter.h2ss(Data[offset], Data[offset + 1]).ToString("X4"));
+                                            else s.Append(tmps);
                                             if (sselem.options != null)
                                             {
                                                 for (int k = 0; k < sselem.options.Length; k += 2)
                                                 {
-                                                    if (tmps == sselem.options[k + 1]) s2 += " (" + sselem.options[k] + ")";
+                                                    if (tmps == sselem.options[k + 1]) s.AppendFormat(" ({0})", sselem.options[k]);
                                                 }
                                             }
                                             else if (sselem.flags != null)
                                             {
                                                 uint val = TypeConverter.h2s(Data[offset], Data[offset + 1]);
-                                                string tmp2 = "";
+                                                var tmp2 = new System.Text.StringBuilder();
                                                 for (int k = 0; k < sselem.flags.Length; k++)
                                                 {
                                                     if ((val & (1 << k)) != 0)
                                                     {
-                                                        if (tmp2.Length > 0) tmp2 += ", ";
-                                                        tmp2 += sselem.flags[k];
+                                                        if (tmp2.Length > 0) tmp2.Append(", ");
+                                                        tmp2.Append(sselem.flags[k]);
                                                     }
                                                 }
-                                                if (tmp2.Length > 0) s2 += " (" + tmp2 + ")";
+                                                if (tmp2.Length > 0)
+                                                    s.AppendFormat(" ({0})", tmp2);
                                             }
                                         }
                                         offset += 2;
@@ -1159,28 +1181,29 @@ namespace TESVSnip
                                         string tmps = TypeConverter.h2s(Data[offset], Data[offset + 1]).ToString();
                                         if (!sselem.notininfo)
                                         {
-                                            if (sselem.hexview) s2 += TypeConverter.h2s(Data[offset], Data[offset + 1]).ToString("X4");
-                                            else s2 += tmps;
+                                            if (sselem.hexview) s.Append(TypeConverter.h2s(Data[offset], Data[offset + 1]).ToString("X4"));
+                                            else s.Append(tmps);
                                             if (sselem.options != null)
                                             {
                                                 for (int k = 0; k < sselem.options.Length; k += 2)
                                                 {
-                                                    if (tmps == sselem.options[k + 1]) s2 += " (" + sselem.options[k] + ")";
+                                                    if (tmps == sselem.options[k + 1]) s.Append(" (").Append(sselem.options[k]).Append(")");
                                                 }
                                             }
                                             else if (sselem.flags != null)
                                             {
                                                 uint val = TypeConverter.h2s(Data[offset], Data[offset + 1]);
-                                                string tmp2 = "";
+                                                var tmp2 = new System.Text.StringBuilder();
                                                 for (int k = 0; k < sselem.flags.Length; k++)
                                                 {
                                                     if ((val & (1 << k)) != 0)
                                                     {
-                                                        if (tmp2.Length > 0) tmp2 += ", ";
-                                                        tmp2 += sselem.flags[k];
+                                                        if (tmp2.Length > 0) tmp2.Append(", ");
+                                                        tmp2.Append(sselem.flags[k]);
                                                     }
                                                 }
-                                                if (tmp2.Length > 0) s2 += " (" + tmp2 + ")";
+                                                if (tmp2.Length > 0)
+                                                    s.AppendFormat(" ({0})", tmp2);
                                             }
                                         }
                                         offset += 2;
@@ -1191,28 +1214,29 @@ namespace TESVSnip
                                         string tmps = Data[offset].ToString();
                                         if (!sselem.notininfo)
                                         {
-                                            if (sselem.hexview) s2 += Data[offset].ToString("X2");
-                                            else s2 += tmps;
+                                            if (sselem.hexview) s.Append(Data[offset].ToString("X2"));
+                                            else s.Append(tmps);
                                             if (sselem.options != null)
                                             {
                                                 for (int k = 0; k < sselem.options.Length; k += 2)
                                                 {
-                                                    if (tmps == sselem.options[k + 1]) s2 += " (" + sselem.options[k] + ")";
+                                                    if (tmps == sselem.options[k + 1]) 
+                                                        s.AppendFormat(" ({0})", sselem.options[k]);
                                                 }
                                             }
                                             else if (sselem.flags != null)
                                             {
                                                 int val = Data[offset];
-                                                string tmp2 = "";
+                                                var tmp2 = new System.Text.StringBuilder();
                                                 for (int k = 0; k < sselem.flags.Length; k++)
                                                 {
                                                     if ((val & (1 << k)) != 0)
                                                     {
-                                                        if (tmp2.Length > 0) tmp2 += ", ";
-                                                        tmp2 += sselem.flags[k];
+                                                        if (tmp2.Length > 0) tmp2.Append(", ");
+                                                        tmp2.Append(sselem.flags[k]);
                                                     }
                                                 }
-                                                if (tmp2.Length > 0) s2 += " (" + tmp2 + ")";
+                                                if (tmp2.Length > 0) s.AppendFormat(" ({0})", tmp2);
                                             }
                                         }
                                         offset++;
@@ -1223,28 +1247,29 @@ namespace TESVSnip
                                         string tmps = ((sbyte)Data[offset]).ToString();
                                         if (!sselem.notininfo)
                                         {
-                                            if (sselem.hexview) s2 += Data[offset].ToString("X2");
-                                            else s2 += tmps;
+                                            if (sselem.hexview) s.Append(Data[offset].ToString("X2"));
+                                            else s.Append(tmps);
                                             if (sselem.options != null)
                                             {
                                                 for (int k = 0; k < sselem.options.Length; k += 2)
                                                 {
-                                                    if (tmps == sselem.options[k + 1]) s2 += " (" + sselem.options[k] + ")";
+                                                    if (tmps == sselem.options[k + 1])
+                                                        s.AppendFormat(" ({0})", sselem.options[k]);
                                                 }
                                             }
                                             else if (sselem.flags != null)
                                             {
                                                 int val = Data[offset];
-                                                string tmp2 = "";
+                                                var tmp2 = new System.Text.StringBuilder();
                                                 for (int k = 0; k < sselem.flags.Length; k++)
                                                 {
                                                     if ((val & (1 << k)) != 0)
                                                     {
-                                                        if (tmp2.Length > 0) tmp2 += ", ";
-                                                        tmp2 += sselem.flags[k];
+                                                        if (tmp2.Length > 0) tmp2.Append(", ");
+                                                        tmp2.Append(sselem.flags[k]);
                                                     }
                                                 }
-                                                if (tmp2.Length > 0) s2 += " (" + tmp2 + ")";
+                                                if (tmp2.Length > 0) s.AppendFormat(" ({0})", tmp2);
                                             }
                                         }
                                         offset++;
@@ -1253,18 +1278,18 @@ namespace TESVSnip
                                 case ElementValueType.FormID:
                                     {
                                         uint id = TypeConverter.h2i(Data[offset], Data[offset + 1], Data[offset + 2], Data[offset + 3]);
-                                        if (!sselem.notininfo) s2 += id.ToString("X8");
-                                        if (formIDLookup != null) s2 += ": " + formIDLookup(id);
+                                        if (!sselem.notininfo) s.Append(id.ToString("X8"));
+                                        if (id != 0 && formIDLookup != null) s.Append(": ").Append(formIDLookup(id));
                                         offset += 4;
                                     } break;
                                 case ElementValueType.Float:
-                                    if (!sselem.notininfo) s2 += TypeConverter.h2f(Data[offset], Data[offset + 1], Data[offset + 2], Data[offset + 3]).ToString();
+                                    if (!sselem.notininfo) s.Append(TypeConverter.h2f(Data[offset], Data[offset + 1], Data[offset + 2], Data[offset + 3]));
                                     offset += 4;
                                     break;
                                 case ElementValueType.String:
                                     if (!sselem.notininfo)
                                     {
-                                        while (Data[offset] != 0) s2 += (char)Data[offset++];
+                                        while (Data[offset] != 0) s.Append((char)Data[offset++]);
                                     }
                                     else
                                     {
@@ -1273,18 +1298,18 @@ namespace TESVSnip
                                     offset++;
                                     break;
                                 case ElementValueType.fstring:
-                                    if (!sselem.notininfo)
-                                        s2 += GetStrData();
+                                    if (!sselem.notininfo) s.Append(GetStrData());
+                                    offset += Data.Length - offset;
                                     break;
                                 case ElementValueType.Blob:
-                                    if (!sselem.notininfo)
-                                        s2 += GetHexData();
+                                    if (!sselem.notininfo) s.Append(TypeConverter.GetHexData(Data, offset, Data.Length - offset));
+                                    offset += Data.Length - offset;
                                     break;
                                 case ElementValueType.BString:
                                     {
                                         int len = TypeConverter.h2s(Data[offset], Data[offset + 1]);
                                         if (!sselem.notininfo)
-                                            s2 = System.Text.Encoding.ASCII.GetString(Data, offset + 2, len);
+                                            s.Append(System.Text.Encoding.ASCII.GetString(Data, offset + 2, len));
                                         offset += (2 + len);
                                     }
                                     break;
@@ -1298,14 +1323,14 @@ namespace TESVSnip
                                         string lvalue = strLookup(id);
                                         if (!string.IsNullOrEmpty(lvalue) || !isString)
                                         {
-                                            if (!sselem.notininfo) s2 += id.ToString("X8");
-                                            if (strLookup != null) s2 += ": " + lvalue;
+                                            if (!sselem.notininfo) s.Append(id.ToString("X8"));
+                                            if (strLookup != null) s.Append(": ").Append(lvalue);
                                             offset += 4;
                                         }
                                         else
                                         {
                                             if (!sselem.notininfo)
-                                                while (Data[offset] != 0) s2 += (char)Data[offset++];
+                                                while (Data[offset] != 0) s.Append((char)Data[offset++]);
                                             else
                                                 while (Data[offset] != 0) offset++;
                                             offset++;
@@ -1314,24 +1339,29 @@ namespace TESVSnip
                                 case ElementValueType.Str4:
                                     {
                                         if (!sselem.notininfo)
-                                            s2 = System.Text.Encoding.ASCII.GetString(Data, offset, 4);
+                                            s.Append(System.Text.Encoding.ASCII.GetString(Data, offset, 4));
                                         offset += 4;
                                     }
                                     break;
                                 default:
                                     throw new ApplicationException();
                             }
-                            if (!sselem.notininfo) s2 += Environment.NewLine;
-                            s += s2;
+                            if (!sselem.notininfo) s.AppendLine();
                         }
                     } while (repeat && offset < Data.Length);
+                }
+
+                if (offset < Data.Length)
+                {
+                    s.AppendLine();
+                    s.AppendLine("Remaining Data: ");
+                    s.Append(TypeConverter.GetHexData(Data, offset, Data.Length - offset));
                 }
             }
             catch
             {
-                s += "Warning: Subrecord doesn't seem to match the expected structure" + Environment.NewLine;
+                s.AppendLine("Warning: Subrecord doesn't seem to match the expected structure");
             }
-            return s;
         }
         internal override List<string> GetIDs(bool lower)
         {

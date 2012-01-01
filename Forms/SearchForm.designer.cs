@@ -56,9 +56,9 @@ namespace TESVSnip {
             this.cbSelectedNode.AutoSize = true;
             this.cbSelectedNode.Location = new System.Drawing.Point(12, 130);
             this.cbSelectedNode.Name = "cbSelectedNode";
-            this.cbSelectedNode.Size = new System.Drawing.Size(176, 17);
+            this.cbSelectedNode.Size = new System.Drawing.Size(182, 17);
             this.cbSelectedNode.TabIndex = 2;
-            this.cbSelectedNode.Text = "Search under slected node only";
+            this.cbSelectedNode.Text = "Search under selected node only";
             this.cbSelectedNode.UseVisualStyleBackColor = true;
             // 
             // bFind

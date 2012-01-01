@@ -1,5 +1,5 @@
 ﻿<?xml version='1.0' encoding='utf-8'?>
-<SettingsFile xmlns="http://schemas.microsoft.com/VisualStudio/2004/01/settings" CurrentProfile="(Default)" GeneratedClassNamespace="TESsnip.Properties" GeneratedClassName="Settings">
+<SettingsFile xmlns="http://schemas.microsoft.com/VisualStudio/2004/01/settings" CurrentProfile="(Default)" GeneratedClassNamespace="TESVSnip.Properties" GeneratedClassName="Settings">
   <Profiles />
   <Settings>
     <Setting Name="TESsnip" Type="System.String" Scope="User">
@@ -27,7 +27,7 @@
       <Value Profile="(Default)">226</Value>
     </Setting>
     <Setting Name="MainVertSplitterPct" Type="System.Int32" Scope="User">
-      <Value Profile="(Default)">170</Value>
+      <Value Profile="(Default)">222</Value>
     </Setting>
   </Settings>
 </SettingsFile>

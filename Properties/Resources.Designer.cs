@@ -74,6 +74,20 @@ namespace TESVSnip.Properties {
             }
         }
         
+        internal static System.Drawing.Bitmap checkedbox {
+            get {
+                object obj = ResourceManager.GetObject("checkedbox", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        internal static System.Drawing.Bitmap checkedbox1 {
+            get {
+                object obj = ResourceManager.GetObject("checkedbox1", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
         internal static System.Drawing.Bitmap Copy {
             get {
                 object obj = ResourceManager.GetObject("Copy", resourceCulture);
@@ -88,9 +102,23 @@ namespace TESVSnip.Properties {
             }
         }
         
+        internal static System.Drawing.Bitmap delete {
+            get {
+                object obj = ResourceManager.GetObject("delete", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
         internal static System.Drawing.Bitmap deletecell {
             get {
                 object obj = ResourceManager.GetObject("deletecell", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        internal static System.Drawing.Bitmap down {
+            get {
+                object obj = ResourceManager.GetObject("down", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -112,6 +140,13 @@ namespace TESVSnip.Properties {
         internal static System.Drawing.Bitmap editclear {
             get {
                 object obj = ResourceManager.GetObject("editclear", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        internal static System.Drawing.Bitmap emptybox {
+            get {
+                object obj = ResourceManager.GetObject("emptybox", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -145,10 +180,8 @@ namespace TESVSnip.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to {\rtf1\ansi\ansicpg1252\deff0\deflang1033{\fonttbl{\f0\fnil\fcharset0 Calibri;}}
-        ///{\colortbl ;\red255\green0\blue0;}
-        ///{\*\generator Msftedit 5.41.21.2510;}\viewkind4\uc1\pard\sa200\sl276\slmult1\lang9\f0\fs20 Select the Record Types that will be \ul not\ulnone  loaded by TESVSnip when loading ESM masters. Typically, this is for Skyrim.ESM  and it is encouraged to only select REGN, NAVI, WRLD, DIAL, CELL, REFR for best performance while still loading a majority of records.\par
-        ///\cf1\fs22 Warning: Saving Mast [rest of string was truncated]&quot;;.
+        ///   Looks up a localized string similar to {\rtf1\adeflang1025\ansi\ansicpg1252\uc1\adeff31507\deff0\stshfdbch31505\stshfloch31506\stshfhich31506\stshfbi31507\deflang1033\deflangfe1033\themelang1033\themelangfe0\themelangcs0{\fonttbl{\f0\fbidi \froman\fcharset0\fprq2{\*\panose 02020603050405020304}Times New Roman;}{\f34\fbidi \froman\fcharset1\fprq2{\*\panose 02040503050406030204}Cambria Math;}
+        ///{\f37\fbidi \fswiss\fcharset0\fprq2{\*\panose 020f0502020204030204}Calibri;}{\flomajor\f31500\fbidi \froman\fcharset0\fprq2{\*\panose 02020603050405020304}T [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string LoadWarning {
             get {
@@ -170,9 +203,23 @@ namespace TESVSnip.Properties {
             }
         }
         
+        internal static System.Drawing.Bitmap next {
+            get {
+                object obj = ResourceManager.GetObject("next", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
         internal static System.Drawing.Bitmap Paste {
             get {
                 object obj = ResourceManager.GetObject("Paste", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        internal static System.Drawing.Bitmap quick_restart {
+            get {
+                object obj = ResourceManager.GetObject("quick_restart", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -188,6 +235,13 @@ namespace TESVSnip.Properties {
             get {
                 object obj = ResourceManager.GetObject("tesv_ico", resourceCulture);
                 return ((System.Drawing.Icon)(obj));
+            }
+        }
+        
+        internal static System.Drawing.Bitmap up {
+            get {
+                object obj = ResourceManager.GetObject("up", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
             }
         }
         

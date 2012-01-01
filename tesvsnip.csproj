@@ -27,12 +27,23 @@
     <UpdatePeriodically>false</UpdatePeriodically>
     <UpdateRequired>false</UpdateRequired>
     <MapFileExtensions>true</MapFileExtensions>
-    <ApplicationRevision>0</ApplicationRevision>
-    <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
     <IsWebBootstrapper>false</IsWebBootstrapper>
     <UseApplicationTrust>false</UseApplicationTrust>
     <BootstrapperEnabled>true</BootstrapperEnabled>
   </PropertyGroup>
+  <PropertyGroup>
+    <BUILD_ROOT Condition="'$(BUILD_ROOT)' == '' AND Exists('$(MSBuildProjectDirectory)\build\')">$(MSBuildProjectDirectory)\</BUILD_ROOT>
+    <BUILD_ROOT Condition="'$(BUILD_ROOT)' == '' AND Exists('$(MSBuildProjectDirectory)\..\build\')">$(MSBuildProjectDirectory)\..\</BUILD_ROOT>
+    <BUILD_ROOT Condition="'$(BUILD_ROOT)' == '' AND Exists('$(MSBuildProjectDirectory)\..\..\build\')">$(MSBuildProjectDirectory)\..\..\</BUILD_ROOT>
+    <BUILD_ROOT Condition="'$(BUILD_ROOT)' == '' AND Exists('$(MSBuildProjectDirectory)\..\..\..\build\')">$(MSBuildProjectDirectory)\..\..\..\</BUILD_ROOT>
+  </PropertyGroup>
+  <PropertyGroup>
+    <SignAssembly>false</SignAssembly>
+  </PropertyGroup>
+  <PropertyGroup>
+    <AssemblyOriginatorKeyFile>build\tesvsnip.snk</AssemblyOriginatorKeyFile>
+  </PropertyGroup>
+  <Import Project="$(BUILD_ROOT)\build\tesvsnip.common.targets" />
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
@@ -220,6 +231,7 @@
       <DependentUpon>Resources.resx</DependentUpon>
       <DesignTime>True</DesignTime>
     </Compile>
+    <None Include="build\tesvsnip.snk" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
@@ -293,6 +305,7 @@
     <None Include="app.config" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="build\buildver.txt" />
     <Content Include="conf\RecordStructure.xml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
@@ -308,7 +321,14 @@
     <Content Include="conf\settings.xml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <None Include="Resources\RTF_LoadWarning.txt" />
+    <None Include="Resources\quick_restart.png" />
+    <None Include="Resources\up.png" />
+    <None Include="Resources\down.png" />
+    <None Include="Resources\delete.png" />
+    <None Include="Resources\checkedbox1.png" />
+    <None Include="Resources\emptybox.png" />
+    <None Include="Resources\checkedbox.png" />
+    <None Include="Resources\next.png" />
     <None Include="Resources\cancel.png" />
     <None Include="Resources\fileexport.png" />
     <None Include="Resources\agt_stop.png" />
