@@ -2898,6 +2898,11 @@ Do you still want to save?", "Modified Save", MessageBoxButtons.YesNo, MessageBo
         
         #endregion
 
+        private void exitToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            this.Close();
+        }
+
 
 
     }
