@@ -929,8 +929,9 @@ namespace TESVSnip
                 "Size: " + Size.ToString() + " bytes (excluding header)";
         }
 
-        private string GetExtendedDesc(SelectionContext context)
+        private string GetExtendedDesc(SelectionContext selectContext)
         {
+            var context = selectContext.Clone();
             try
             {
                 context.Record = this;

@@ -5,7 +5,15 @@ TESVSnip is a fork of the TESsnip utility bundled with Fallout Mod Manager with 
 
 In the word of the original author, TESsnip is a low level plugin editor that allows you to open esm/esp files, view the record structure and cut/copy/paste records and subrecords between different parents, including different esp's. You can also view and edit the data saved in a subrecord, in either hex or string format, as well as editing record headers.
 
+Requirements:
+  .NET 3.5
+
 Change Log:
+v 1.3
+- Fixed positioning for first time loading
+- Synchronized RecordStructure.XML with UESP wiki
+- Fixed nonconforming record search
+
 v 1.2
 - Bug fix in handling lstring which prevent sub editor from opening
 - Support multiple subrecord copy/paste (only from the subrecord toolbar)

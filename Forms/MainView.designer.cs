@@ -533,7 +533,6 @@ namespace TESVSnip {
             // 
             // splitHorizontal
             // 
-            this.splitHorizontal.DataBindings.Add(new System.Windows.Forms.Binding("SplitterDistance", global::TESVSnip.Properties.Settings.Default, "MainHorzSplitterPct", true, System.Windows.Forms.DataSourceUpdateMode.OnPropertyChanged));
             this.splitHorizontal.Dock = System.Windows.Forms.DockStyle.Fill;
             this.splitHorizontal.Location = new System.Drawing.Point(0, 24);
             this.splitHorizontal.MinimumSize = new System.Drawing.Size(100, 200);
@@ -548,12 +547,11 @@ namespace TESVSnip {
             // 
             this.splitHorizontal.Panel2.Controls.Add(this.tbInfo);
             this.splitHorizontal.Size = new System.Drawing.Size(667, 612);
-            this.splitHorizontal.SplitterDistance = global::TESVSnip.Properties.Settings.Default.MainHorzSplitterPct;
+            this.splitHorizontal.SplitterDistance = 226;
             this.splitHorizontal.TabIndex = 3;
             // 
             // splitVertical
             // 
-            this.splitVertical.DataBindings.Add(new System.Windows.Forms.Binding("SplitterDistance", global::TESVSnip.Properties.Settings.Default, "MainVertSplitterPct", true, System.Windows.Forms.DataSourceUpdateMode.OnPropertyChanged));
             this.splitVertical.Dock = System.Windows.Forms.DockStyle.Fill;
             this.splitVertical.Location = new System.Drawing.Point(0, 0);
             this.splitVertical.MinimumSize = new System.Drawing.Size(100, 100);
@@ -570,7 +568,7 @@ namespace TESVSnip {
             this.splitVertical.Panel2.Controls.Add(this.listSubrecord);
             this.splitVertical.Panel2.Controls.Add(this.toolStripSubRecord);
             this.splitVertical.Size = new System.Drawing.Size(226, 612);
-            this.splitVertical.SplitterDistance = global::TESVSnip.Properties.Settings.Default.MainVertSplitterPct;
+            this.splitVertical.SplitterDistance = 222;
             this.splitVertical.TabIndex = 1;
             // 
             // PluginTree
@@ -598,6 +596,7 @@ namespace TESVSnip {
             this.listSubrecord.Dock = System.Windows.Forms.DockStyle.Fill;
             this.listSubrecord.FullRowSelect = true;
             this.listSubrecord.GridLines = true;
+            this.listSubrecord.HeaderStyle = System.Windows.Forms.ColumnHeaderStyle.Nonclickable;
             this.listSubrecord.HideSelection = false;
             this.listSubrecord.HoverSelection = true;
             this.listSubrecord.ItemCount = 0;

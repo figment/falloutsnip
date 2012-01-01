@@ -13,8 +13,8 @@ namespace TESVSnip
     internal delegate string[] dFormIDScan(string type);
     internal partial class MainView : Form
     {
-        public static object Clipboard;
-        public static TreeNode ClipboardNode;
+        private static object s_clipboard;
+        private static TreeNode s_clipboardNode;
         private SelectionContext Selection;
         private Plugin[] FormIDLookup;
         private uint[] Fixups;
@@ -42,12 +42,30 @@ namespace TESVSnip
             this.OpenModDialog.InitialDirectory = Program.gameDataDir;
 
             this.Icon = Properties.Resources.tesv_ico;
-            Settings.GetWindowPosition("TESsnip", this);
+
+            if (!global::TESVSnip.Properties.Settings.Default.IsFirstTimeOpening)
+            {
+                Settings.GetWindowPosition("TESsnip", this);
+                splitHorizontal.SplitterDistance = global::TESVSnip.Properties.Settings.Default.MainHorzSplitterPct;
+                splitVertical.SplitterDistance = global::TESVSnip.Properties.Settings.Default.MainVertSplitterPct;
+            }
+            else
+            {
+                Settings.SetWindowPosition("TESsnip", this);
+                global::TESVSnip.Properties.Settings.Default.IsFirstTimeOpening = false;
+                global::TESVSnip.Properties.Settings.Default.MainHorzSplitterPct = splitHorizontal.SplitterDistance;
+                global::TESVSnip.Properties.Settings.Default.MainVertSplitterPct = splitVertical.SplitterDistance;
+                global::TESVSnip.Properties.Settings.Default.Save();
+            }
 
             Selection = new SelectionContext();
             Selection.formIDLookup = new dFormIDLookupI(LookupFormIDI);
             Selection.strLookup = new dLStringLookup(LookupFormStrings);
 
+            UpdateToolStripSelection();
+            Selection.RecordChanged += delegate(object o, EventArgs a) { UpdateToolStripSelection(); };
+            Selection.SubRecordChanged += delegate(object o, EventArgs a){ UpdateToolStripSelection(); };
+            
 
             if (!DesignMode)
             {
@@ -65,6 +83,38 @@ namespace TESVSnip
         }
 
 
+
+        public object Clipboard
+        {
+            get { return s_clipboard; }
+            set
+            {
+                if (s_clipboard != value)
+                {
+                    s_clipboard = value;
+                    UpdateToolStripSelection();
+                }
+            }
+        }
+        
+        public TreeNode ClipboardNode
+        {
+            get { return s_clipboardNode; }
+            set
+            {
+                if (s_clipboardNode != value)
+                {
+                    s_clipboardNode = value;
+                    UpdateToolStripSelection();
+                }
+            }
+        }
+
+        void UpdateClipboardStatus()
+        {
+            UpdateToolStripSelection();
+        }
+
         internal void LoadPlugin(string s)
         {
             Plugin p = new Plugin(s, false, GetRecordFilter(s));
@@ -80,7 +130,7 @@ namespace TESVSnip
             string[] recFilter = null;
             bool applyfilter = false;
             bool bAskToApplyFilter = true;
-            if (TESVSnip.Properties.Settings.Default.IsFirstTimeOpening)
+            if (TESVSnip.Properties.Settings.Default.IsFirstTimeOpeningSkyrimESM)
             {
                 if (string.Compare(System.IO.Path.GetFileName(s), "skyrim.esm", true) == 0)
                 {
@@ -97,16 +147,16 @@ Would you like to configure which Records to exclude?"
                         {
                             settings.ShowDialog();
                         }
-                        TESVSnip.Properties.Settings.Default.IsFirstTimeOpening = false;
+                        TESVSnip.Properties.Settings.Default.IsFirstTimeOpeningSkyrimESM = false;
                     }
                     else if (result == DialogResult.No)
                     {
-                        TESVSnip.Properties.Settings.Default.IsFirstTimeOpening = false;
+                        TESVSnip.Properties.Settings.Default.IsFirstTimeOpeningSkyrimESM = false;
                         TESVSnip.Properties.Settings.Default.DontAskUserAboutFiltering = true;
                     }
                     else
                     {
-                        TESVSnip.Properties.Settings.Default.IsFirstTimeOpening = false;
+                        TESVSnip.Properties.Settings.Default.IsFirstTimeOpeningSkyrimESM = false;
                         return recFilter;
                     }
                 }
@@ -207,37 +257,38 @@ Would you like to apply the record exclusions?"
             byte[] data = sr.GetReadonlyData();
             for (int j = 0; j < ess.Length; j++)
             {
-                if (ess[j].CondID != 0)
+                var essCondID = ess[j].CondID;
+                if (essCondID != 0)
                 {
                     switch (ess[j].type)
                     {
                         case ElementValueType.Int:
                         case ElementValueType.FormID:
-                            conditions[ess[j].CondID] = new Conditional(ElementValueType.Int, TypeConverter.h2si(data[offset], data[offset + 1], data[offset + 2], data[offset + 3]));
+                            conditions[essCondID] = new Conditional(ElementValueType.Int, TypeConverter.h2si(data[offset], data[offset + 1], data[offset + 2], data[offset + 3]));
                             offset += 4;
                             break;
                         case ElementValueType.UInt:
-                            conditions[ess[j].CondID] = new Conditional(ElementValueType.UInt, (uint)TypeConverter.h2i(data[offset], data[offset + 1], data[offset + 2], data[offset + 3]));
+                            conditions[essCondID] = new Conditional(ElementValueType.UInt, (uint)TypeConverter.h2i(data[offset], data[offset + 1], data[offset + 2], data[offset + 3]));
                             offset += 4;
                             break;
                         case ElementValueType.Float:
-                            conditions[ess[j].CondID] = new Conditional(ElementValueType.Float, TypeConverter.h2f(data[offset], data[offset + 1], data[offset + 2], data[offset + 3]));
+                            conditions[essCondID] = new Conditional(ElementValueType.Float, TypeConverter.h2f(data[offset], data[offset + 1], data[offset + 2], data[offset + 3]));
                             offset += 4;
                             break;
                         case ElementValueType.Short:
-                            conditions[ess[j].CondID] = new Conditional(ElementValueType.Short, (int)TypeConverter.h2ss(data[offset], data[offset + 1]));
+                            conditions[essCondID] = new Conditional(ElementValueType.Short, (int)TypeConverter.h2ss(data[offset], data[offset + 1]));
                             offset += 2;
                             break;
                         case ElementValueType.UShort:
-                            conditions[ess[j].CondID] = new Conditional(ElementValueType.UShort, TypeConverter.h2s(data[offset], data[offset + 1]));
+                            conditions[essCondID] = new Conditional(ElementValueType.UShort, TypeConverter.h2s(data[offset], data[offset + 1]));
                             offset += 2;
                             break;
                         case ElementValueType.SByte:
-                            conditions[ess[j].CondID] = new Conditional(ElementValueType.SByte, (sbyte)data[offset]);
+                            conditions[essCondID] = new Conditional(ElementValueType.SByte, (sbyte)data[offset]);
                             offset++;
                             break;
                         case ElementValueType.Byte:
-                            conditions[ess[j].CondID] = new Conditional(ElementValueType.Byte, (int)data[offset]);
+                            conditions[essCondID] = new Conditional(ElementValueType.Byte, (int)data[offset]);
                             offset++;
                             break;
                         case ElementValueType.String:
@@ -245,27 +296,27 @@ Would you like to apply the record exclusions?"
                                 string s = "";
                                 while (data[offset] != 0) s += (char)data[offset++];
                                 offset++;
-                                conditions[ess[j].CondID] = new Conditional(ElementValueType.String, s);
+                                conditions[essCondID] = new Conditional(ElementValueType.String, s);
                             }
                             break;
                         case ElementValueType.fstring:
-                            conditions[ess[j].CondID] = new Conditional(ElementValueType.String, sr.GetStrData());
+                            conditions[essCondID] = new Conditional(ElementValueType.String, sr.GetStrData());
                             break;
                         case ElementValueType.BString:
                             {
                                 int len = TypeConverter.h2s(data[offset], data[offset + 1]);
                                 string s = System.Text.Encoding.ASCII.GetString(data, offset + 2, len);
                                 offset = offset + (2 + len);
-                                conditions[ess[j].CondID] = new Conditional(ElementValueType.String, s);
+                                conditions[essCondID] = new Conditional(ElementValueType.String, s);
                             } break;
                         case ElementValueType.Str4:
                             {
                                 string s = System.Text.Encoding.ASCII.GetString(data, offset, 4);
                                 offset += 4;
-                                conditions[ess[j].CondID] = new Conditional(ElementValueType.String, s);
+                                conditions[essCondID] = new Conditional(ElementValueType.String, s);
                             } break;
                         case ElementValueType.LString:
-                            conditions[ess[j].CondID] = new Conditional(ElementValueType.Int, TypeConverter.h2si(data[offset], data[offset + 1], data[offset + 2], data[offset + 3]));
+                            conditions[essCondID] = new Conditional(ElementValueType.Int, TypeConverter.h2si(data[offset], data[offset + 1], data[offset + 2], data[offset + 3]));
                             offset += 4;
                             break;
                         default:
@@ -422,54 +473,61 @@ Would you like to apply the record exclusions?"
         }
         private bool MatchRecordStructureToRecord(Record parentRecord)
         {
-            if (RecordStructure.Records == null) return false;
-            if (!RecordStructure.Records.ContainsKey(parentRecord.Name)) return false;
-            var subrecords = new List<SubrecordStructure>();
-            var sss = RecordStructure.Records[parentRecord.Name].subrecords;
-            var subs = parentRecord.SubRecords.ToArray();
-            foreach (var sub in subs) sub.DetachStructure();
-            int subi = 0, ssi = 0;
-            Stack<LoopBlock> repeats = new Stack<LoopBlock>();
-            Dictionary<int, Conditional> conditions = new Dictionary<int, Conditional>();
-            while (subi < subs.Length && ssi < sss.Length)
+            try
             {
-                var ss = sss[ssi];
-                var sb = subs[subi];
-                if (ss.Condition != CondType.None && !MatchRecordCheckCondition(conditions, ss))
+                if (parentRecord == null || RecordStructure.Records == null) return false;
+                if (!RecordStructure.Records.ContainsKey(parentRecord.Name)) return false;
+                var subrecords = new List<SubrecordStructure>();
+                var sss = RecordStructure.Records[parentRecord.Name].subrecords;
+                var subs = parentRecord.SubRecords.ToArray();
+                foreach (var sub in subs) sub.DetachStructure();
+                int subi = 0, ssi = 0;
+                Stack<LoopBlock> repeats = new Stack<LoopBlock>();
+                Dictionary<int, Conditional> conditions = new Dictionary<int, Conditional>();
+                while (subi < subs.Length && ssi < sss.Length)
                 {
-                    ssi++;
-                    continue;
-                }
-                if (sb.Name == ss.name && (ss.size == 0 || ss.size == sb.Size))
-                {
-                    sb.AttachStructure(ss);
-                    if (ss.repeat > 0)
+                    var ss = sss[ssi];
+                    var sb = subs[subi];
+                    if (ss.Condition != CondType.None && !MatchRecordCheckCondition(conditions, ss))
                     {
-                        if (repeats.Count == 0 || repeats.Peek().start != ssi) repeats.Push(new LoopBlock(ssi, ssi + ss.repeat));
+                        ssi++;
+                        continue;
                     }
-                    if (ss.ContainsConditionals)
+                    if (sb.Name == ss.name && (ss.size == 0 || ss.size == sb.Size))
                     {
-                        try
+                        sb.AttachStructure(ss);
+                        if (ss.repeat > 0)
                         {
-                            MatchRecordAddConditionals(conditions, sb, ss.elements);
+                            if (repeats.Count == 0 || repeats.Peek().start != ssi) repeats.Push(new LoopBlock(ssi, ssi + ss.repeat));
                         }
-                        catch { }
+                        if (ss.ContainsConditionals)
+                        {
+                            try
+                            {
+                                MatchRecordAddConditionals(conditions, sb, ss.elements);
+                            }
+                            catch { }
+                        }
+                        subi++;
+                        ssi++;
                     }
-                    subi++;
-                    ssi++;
+                    else if (repeats.Count > 0 && repeats.Peek().start == ssi)
+                    {
+                        ssi = repeats.Pop().end;
+                    }
+                    else if (sss[ssi].optional > 0)
+                    {
+                        ssi += sss[ssi].optional;
+                    }
+                    else return true;
+                    if (repeats.Count > 0 && repeats.Peek().end == ssi) ssi = repeats.Peek().start;
                 }
-                else if (repeats.Count > 0 && repeats.Peek().start == ssi)
-                {
-                    ssi = repeats.Pop().end;
-                }
-                else if (sss[ssi].optional > 0)
-                {
-                    ssi += sss[ssi].optional;
-                }
-                else return false;
-                if (repeats.Count > 0 && repeats.Peek().end == ssi) ssi = repeats.Peek().start;
+                return (subi != subs.Length);
             }
-            return (subi != subs.Length);
+            catch 
+            {
+                return false;
+            }           
         }
 
         private void PluginTree_AfterSelect(object sender, TreeViewEventArgs e)
@@ -482,7 +540,6 @@ Would you like to apply the record exclusions?"
             if (PluginTree.SelectedNode == null)
                 return;
 
-            this.Selection.Reset();
             FindMasters();
             if (PluginTree.SelectedNode.Tag is Plugin)
             {
@@ -529,7 +586,6 @@ Would you like to apply the record exclusions?"
         {
             if (PluginTree.SelectedNode == null)
                 return;
-            Selection.SubRecord = GetSelectedSubrecord();
 
             //Enable and disable relevant menu items
             if (PluginTree.SelectedNode.Tag is Plugin)
@@ -570,6 +626,8 @@ Would you like to apply the record exclusions?"
                 insertRecordToolStripMenuItem.Enabled = true;
                 insertSubrecordToolStripMenuItem.Enabled = false;
             }
+            Selection.SubRecord = GetSelectedSubrecord();
+
             listSubrecord.Refresh();
         }
 
@@ -792,9 +850,52 @@ Do you still want to save?", "Modified Save", MessageBoxButtons.YesNo, MessageBo
             deleteToolStripMenuItem.Enabled = true;
             insertRecordToolStripMenuItem.Enabled = false;
             insertSubrecordToolStripMenuItem.Enabled = false;
-
+            UpdateToolStripSelection();
         }
 
+        private void UpdateToolStripSelection()
+        {
+            if (Selection.Record != null)
+            {
+                toolStripInsertRecord.Enabled = true;
+                toolStripPasteSubrecord.Enabled = (Clipboard is IEnumerable<SubRecord>);
+            }
+            else
+            {
+                toolStripInsertRecord.Enabled = false;
+                toolStripPasteSubrecord.Enabled = false;
+            }
+            if (Selection.SubRecord != null)
+            {                
+                toolStripEditSubrecordHex.Enabled = true;
+                toolStripEditSubrecord.Enabled = true;
+                toolStripCopySubrecord.Enabled = true;
+                toolStripMoveRecordDown.Enabled = true;
+                toolStripMoveRecordUp.Enabled = true;
+                toolStripDeleteRecord.Enabled = true;
+            }
+            else
+            {
+                toolStripEditSubrecordHex.Enabled = false;
+                toolStripEditSubrecord.Enabled = false;
+                toolStripCopySubrecord.Enabled = false;
+                toolStripMoveRecordDown.Enabled = false;
+                toolStripMoveRecordUp.Enabled = false;
+                toolStripDeleteRecord.Enabled = false;
+            }
+            int idx = this.listSubrecord.GetFocusedItem();
+            if (idx <= 0)
+            {
+                toolStripMoveRecordUp.Enabled = false;
+            }
+            if (this.listSubrecord.ItemCount != 0)
+            {
+                if (idx == this.listSubrecord.DataSource.Count - 1)
+                {
+                    toolStripMoveRecordDown.Enabled = false;
+                }
+            }
+        }
         private void listView1_ItemActivate(object sender, EventArgs e)
         {
             //EditSelectedSubrecord();
@@ -867,25 +968,32 @@ Do you still want to save?", "Modified Save", MessageBoxButtons.YesNo, MessageBo
         }
         void EditSelectedSubrecordHex()
         {
-            var sr = GetSelectedSubrecord();
-            if (sr == null)
-                return;
-            using (var form = new HexDataEdit(sr.Name, sr.GetData(), LookupFormIDS))
+            try
             {
-                DialogResult result = form.ShowDialog();
-                if (result == DialogResult.OK)
+                var sr = GetSelectedSubrecord();
+                if (sr == null)
+                    return;
+                using (var form = new HexDataEdit(sr.Name, sr.GetData(), LookupFormIDS))
                 {
-                    sr.SetData(HexDataEdit.result);
-                    sr.Name = HexDataEdit.resultName;
-                    tbInfo.Text = "[Subrecord data]" + Environment.NewLine + sr.GetHexData();
-                    listSubrecord.Refresh();
+                    DialogResult result = form.ShowDialog();
+                    if (result == DialogResult.OK)
+                    {
+                        sr.SetData(HexDataEdit.result);
+                        sr.Name = HexDataEdit.resultName;
+                        tbInfo.Text = "[Subrecord data]" + Environment.NewLine + sr.GetHexData();
+                        listSubrecord.Refresh();
+                    }
+                }
+                MatchRecordStructureToRecord();
+                if (sr.Name == "EDID" && listSubrecord.SelectedIndices[0] == 0)
+                {
+                    Selection.Record.descriptiveName = " (" + sr.GetStrData() + ")";
+                    PluginTree.SelectedNode.Text = Selection.Record.DescriptiveName;
                 }
             }
-            MatchRecordStructureToRecord();
-            if (sr.Name == "EDID" && listSubrecord.SelectedIndices[0] == 0)
+            catch 
             {
-                Selection.Record.descriptiveName = " (" + sr.GetStrData() + ")";
-                PluginTree.SelectedNode.Text = Selection.Record.DescriptiveName;
+            	
             }
         }
 
@@ -905,9 +1013,12 @@ Do you still want to save?", "Modified Save", MessageBoxButtons.YesNo, MessageBo
 
         private SubRecord GetSelectedSubrecord()
         {
-            if (listSubrecord.SelectedIndices.Count < 1) return null;
-            int idx = listSubrecord.SelectedIndices[0];
-            return listSubrecord.DataSource[idx] as SubRecord;
+            //if (listSubrecord.SelectedIndices.Count < 1) return null;
+            //int idx = listSubrecord.SelectedIndices[0];
+            //return listSubrecord.DataSource[idx] as SubRecord;
+
+            int idx = listSubrecord.GetFocusedItem();
+            return (idx >= 0) ? listSubrecord.DataSource[idx] as SubRecord : null;
         }
 
         private List<SubRecord> GetSelectedSubrecords()
@@ -966,6 +1077,9 @@ Do you still want to save?", "Modified Save", MessageBoxButtons.YesNo, MessageBo
 
         private void TESsnip_FormClosing(object sender, FormClosingEventArgs e)
         {
+            global::TESVSnip.Properties.Settings.Default.MainHorzSplitterPct = splitHorizontal.SplitterDistance;
+            global::TESVSnip.Properties.Settings.Default.MainVertSplitterPct = splitVertical.SplitterDistance;
+
             PluginTree.Nodes.Clear();
             Clipboard = null;
             ClipboardNode = null;
@@ -2296,6 +2410,8 @@ Do you still want to save?", "Modified Save", MessageBoxButtons.YesNo, MessageBo
             SubRecord sr = rec.SubRecords[idx];
             rec.SubRecords.RemoveAt(idx);
             rec.SubRecords.Insert(idx - 1, sr);
+            
+            listSubrecord.ClearSelection();
             listSubrecord.SelectItem(idx - 1);
             listSubrecord.EnsureVisible(idx - 1);
 
@@ -2315,8 +2431,11 @@ Do you still want to save?", "Modified Save", MessageBoxButtons.YesNo, MessageBo
             SubRecord sr = rec.SubRecords[idx];
             rec.SubRecords.RemoveAt(idx);
             rec.SubRecords.Insert(idx + 1, sr);
+
+            listSubrecord.ClearSelection();
             listSubrecord.SelectItem(idx + 1);
             listSubrecord.EnsureVisible(idx + 1);
+
 
             Selection.SubRecord = GetSelectedSubrecord();
             MatchRecordStructureToRecord();

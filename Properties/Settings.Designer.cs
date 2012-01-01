@@ -62,12 +62,12 @@ namespace TESVSnip.Properties {
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("True")]
-        public bool IsFirstTimeOpening {
+        public bool IsFirstTimeOpeningSkyrimESM {
             get {
-                return ((bool)(this["IsFirstTimeOpening"]));
+                return ((bool)(this["IsFirstTimeOpeningSkyrimESM"]));
             }
             set {
-                this["IsFirstTimeOpening"] = value;
+                this["IsFirstTimeOpeningSkyrimESM"] = value;
             }
         }
         
@@ -97,18 +97,6 @@ namespace TESVSnip.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("REGN;NAVI;WRLD;DIAL;CELL")]
-        public string FilteredESMRecords {
-            get {
-                return ((string)(this["FilteredESMRecords"]));
-            }
-            set {
-                this["FilteredESMRecords"] = value;
-            }
-        }
-        
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("226")]
         public int MainHorzSplitterPct {
             get {
@@ -128,6 +116,30 @@ namespace TESVSnip.Properties {
             }
             set {
                 this["MainVertSplitterPct"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("REGN;NAVI;WRLD;DIAL;CELL;IMAD;WTHR")]
+        public string FilteredESMRecords {
+            get {
+                return ((string)(this["FilteredESMRecords"]));
+            }
+            set {
+                this["FilteredESMRecords"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("True")]
+        public bool IsFirstTimeOpening {
+            get {
+                return ((bool)(this["IsFirstTimeOpening"]));
+            }
+            set {
+                this["IsFirstTimeOpening"] = value;
             }
         }
     }
