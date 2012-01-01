@@ -236,6 +236,7 @@ namespace TESVSnip
                         {
                             uint id = TypeConverter.h2i(data[offset], data[offset + 1], data[offset + 2], data[offset + 3]);
                             bool isString = TypeConverter.IsLikelyString(new ArraySegment<byte>(data, offset, data.Length - offset));
+                            int strOffset = offset;
                             if (isString)
                             {
                                 string s = TypeConverter.GetString(new ArraySegment<byte>(data, offset, data.Length - offset));
@@ -247,7 +248,7 @@ namespace TESVSnip
                                 offset += 4;
                                 tb.Text = id.ToString("X8");
                             }
-                            tb.Tag = new lTag(tb, data, offset);
+                            tb.Tag = new lTag(tb, data, strOffset);
                         } break;
                     case ElementValueType.Str4:
                         {

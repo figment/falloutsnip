@@ -13,12 +13,9 @@ namespace TESVSnip
     internal delegate string[] dFormIDScan(string type);
     internal partial class MainView : Form
     {
-        public static BaseRecord Clipboard;
+        public static object Clipboard;
         public static TreeNode ClipboardNode;
-        private bool SelectedSubrecord;
-        private Record parentRecord;
-        private SearchForm searchForm;
-        //private SubrecordStructure[] SubrecordStructs;
+        private SelectionContext Selection;
         private Plugin[] FormIDLookup;
         private uint[] Fixups;
         private Forms.StringsEditor stringEditor = null;
@@ -39,13 +36,18 @@ namespace TESVSnip
             InitializeComponent();
 
             InitializeToolStripFind();
-InitializeSubrecordForm();
+            InitializeSubrecordForm();
 
             this.SaveModDialog.InitialDirectory = Program.gameDataDir;
             this.OpenModDialog.InitialDirectory = Program.gameDataDir;
 
             this.Icon = Properties.Resources.tesv_ico;
             Settings.GetWindowPosition("TESsnip", this);
+
+            Selection = new SelectionContext();
+            Selection.formIDLookup = new dFormIDLookupI(LookupFormIDI);
+            Selection.strLookup = new dLStringLookup(LookupFormStrings);
+
 
             if (!DesignMode)
             {
@@ -191,7 +193,7 @@ Would you like to apply the record exclusions?"
             public readonly int end;
             public int found;
 
-            public GroupBlock(int start, int end) 
+            public GroupBlock(int start, int end)
             {
                 this.start = start;
                 this.end = end;
@@ -199,17 +201,6 @@ Would you like to apply the record exclusions?"
             }
         }
 
-        private struct Conditional
-        {
-            public readonly ElementValueType type;
-            public readonly object value;
-
-            public Conditional(ElementValueType type, object value)
-            {
-                this.type = type;
-                this.value = value;
-            }
-        }
         private static void MatchRecordAddConditionals(Dictionary<int, Conditional> conditions, SubRecord sr, ElementStructure[] ess)
         {
             int offset = 0;
@@ -272,7 +263,7 @@ Would you like to apply the record exclusions?"
                                 string s = System.Text.Encoding.ASCII.GetString(data, offset, 4);
                                 offset += 4;
                                 conditions[ess[j].CondID] = new Conditional(ElementValueType.String, s);
-                            }break;
+                            } break;
                         case ElementValueType.LString:
                             conditions[ess[j].CondID] = new Conditional(ElementValueType.Int, TypeConverter.h2si(data[offset], data[offset + 1], data[offset + 2], data[offset + 3]));
                             offset += 4;
@@ -308,7 +299,7 @@ Would you like to apply the record exclusions?"
                         case ElementValueType.LString:
                             {
                                 // Try to guess if string or string index.  Do not know if the external string checkbox is set or not in this code
-                                var d = new ArraySegment<byte>(data, offset, data.Length-offset);
+                                var d = new ArraySegment<byte>(data, offset, data.Length - offset);
                                 bool isString = TypeConverter.IsLikelyString(d);
                                 uint id = TypeConverter.h2i(d);
                                 if (!isString)
@@ -320,7 +311,7 @@ Would you like to apply the record exclusions?"
                                     while (data[offset] != 0) offset++;
                                     offset++;
                                 }
-                            } break; 
+                            } break;
                         case ElementValueType.BString:
                             int len = TypeConverter.h2s(data[offset], data[offset + 1]);
                             offset += 2 + len;
@@ -422,14 +413,12 @@ Would you like to apply the record exclusions?"
             }
         }
 
-
-        
         /// <summary>
         /// This routine assigns Structure definitions to subrecords
         /// </summary>
         private bool MatchRecordStructureToRecord()
         {
-            return MatchRecordStructureToRecord(this.parentRecord);
+            return MatchRecordStructureToRecord(Selection.Record);
         }
         private bool MatchRecordStructureToRecord(Record parentRecord)
         {
@@ -492,13 +481,14 @@ Would you like to apply the record exclusions?"
         {
             if (PluginTree.SelectedNode == null)
                 return;
-            SelectedSubrecord = false;
-            parentRecord = null;
+
+            this.Selection.Reset();
             FindMasters();
             if (PluginTree.SelectedNode.Tag is Plugin)
             {
                 listSubrecord.DataSource = null;
-                tbInfo.Text = ((BaseRecord)PluginTree.SelectedNode.Tag).GetDesc();
+                Selection.Plugin = ((Plugin)PluginTree.SelectedNode.Tag);
+                tbInfo.Text = Selection.Plugin.GetDesc();
                 cutToolStripMenuItem.Enabled = false;
                 copyToolStripMenuItem.Enabled = false;
                 deleteToolStripMenuItem.Enabled = false;
@@ -515,16 +505,14 @@ Would you like to apply the record exclusions?"
                 insertRecordToolStripMenuItem.Enabled = false;
                 insertSubrecordToolStripMenuItem.Enabled = true;
                 Record r = (Record)PluginTree.SelectedNode.Tag;
+                Selection.Record = r;
                 listSubrecord.DataSource = r.SubRecords;
-                parentRecord = r;
                 MatchRecordStructureToRecord();
-                tbInfo.Text = ((Record)PluginTree.SelectedNode.Tag).GetDesc(
-                    lookupFormidsToolStripMenuItem.Checked ? new dFormIDLookupI(LookupFormIDI) : null
-                    , lookupFormidsToolStripMenuItem.Checked ? new dLStringLookup(LookupFormStrings) : null
-                    );
+                tbInfo.Text = Selection.Record.GetDesc(Selection);
             }
             else
             {
+                Selection.Record = null;
                 listSubrecord.DataSource = null;
                 tbInfo.Text = ((BaseRecord)PluginTree.SelectedNode.Tag).GetDesc();
                 cutToolStripMenuItem.Enabled = true;
@@ -541,6 +529,7 @@ Would you like to apply the record exclusions?"
         {
             if (PluginTree.SelectedNode == null)
                 return;
+            Selection.SubRecord = GetSelectedSubrecord();
 
             //Enable and disable relevant menu items
             if (PluginTree.SelectedNode.Tag is Plugin)
@@ -556,7 +545,7 @@ Would you like to apply the record exclusions?"
             else if (PluginTree.SelectedNode.Tag is Record)
             {
                 Record r = (Record)PluginTree.SelectedNode.Tag;
-                if (!r.Equals(parentRecord))
+                if (!r.Equals(Selection.Record))
                 {
                     RebuildSelection();
                 }
@@ -568,10 +557,7 @@ Would you like to apply the record exclusions?"
                     pasteToolStripMenuItem.Enabled = true;
                     insertRecordToolStripMenuItem.Enabled = false;
                     insertSubrecordToolStripMenuItem.Enabled = true;
-                    tbInfo.Text = ((Record)PluginTree.SelectedNode.Tag).GetDesc(
-                        lookupFormidsToolStripMenuItem.Checked ? new dFormIDLookupI(LookupFormIDI) : null
-                        , lookupFormidsToolStripMenuItem.Checked ? new dLStringLookup(LookupFormStrings) : null
-                        );
+                    tbInfo.Text = ((Record)PluginTree.SelectedNode.Tag).GetDesc(Selection);
                 }
             }
             else
@@ -591,10 +577,10 @@ Would you like to apply the record exclusions?"
         {
             if (!ValidateMakeChange())
                 return;
-            if (SelectedSubrecord)
+            if (Selection.SelectedSubrecord)
             {
                 if (listSubrecord.SelectedIndices.Count != 1) return;
-                parentRecord.SubRecords.RemoveAt(listSubrecord.SelectedIndices[0]);
+                Selection.Record.SubRecords.RemoveAt(listSubrecord.SelectedIndices[0]);
                 listSubrecord.Refresh();
 
             }
@@ -640,7 +626,7 @@ Do you still want to save?", "Modified Save", MessageBoxButtons.YesNo, MessageBo
         {
             if (!ValidateMakeChange())
                 return;
-            if (!SelectedSubrecord && PluginTree.SelectedNode != null && PluginTree.SelectedNode.Tag is Plugin)
+            if (!Selection.SelectedSubrecord && PluginTree.SelectedNode != null && PluginTree.SelectedNode.Tag is Plugin)
             {
                 MessageBox.Show("Cannot cut a plugin", "Error");
                 return;
@@ -651,13 +637,13 @@ Do you still want to save?", "Modified Save", MessageBoxButtons.YesNo, MessageBo
 
         private void copyToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            if (SelectedSubrecord)
+            if (Selection.SelectedSubrecord)
             {
                 if (listSubrecord.SelectedIndices.Count != 1) return;
                 int idx = listSubrecord.SelectedIndices[0];
 
                 SubRecord sr = (SubRecord)listSubrecord.DataSource[idx];
-                Clipboard = (SubRecord)sr.Clone();
+                Clipboard = sr.Clone();
                 ClipboardNode = null;
             }
             else if (PluginTree.SelectedNode.Tag is Plugin)
@@ -694,25 +680,28 @@ Do you still want to save?", "Modified Save", MessageBoxButtons.YesNo, MessageBo
                 MessageBox.Show("Plugin merging has been disabled");
                 return;
             }
-            try
+            else if (Clipboard is BaseRecord)
             {
-                node.AddRecord(Clipboard);
-                Clipboard = Clipboard.Clone();
-                if (ClipboardNode != null)
+                try
                 {
-                    PluginTree.SelectedNode.Nodes.Add(ClipboardNode);
-                    ClipboardNode = (TreeNode)ClipboardNode.Clone();
-                    ClipboardNode.Tag = Clipboard;
-                    GetPluginFromNode(PluginTree.SelectedNode).InvalidateCache();
+                    var br = (BaseRecord)((BaseRecord)Clipboard).Clone();
+                    node.AddRecord(br);
+                    if (ClipboardNode != null)
+                    {
+                        PluginTree.SelectedNode.Nodes.Add(ClipboardNode);
+                        ClipboardNode = (TreeNode)ClipboardNode.Clone();
+                        ClipboardNode.Tag = Clipboard;
+                        GetPluginFromNode(PluginTree.SelectedNode).InvalidateCache();
+                    }
+                    else
+                    {
+                        PluginTree_AfterSelect(null, null);
+                    }
                 }
-                else
+                catch (TESParserException ex)
                 {
-                    PluginTree_AfterSelect(null, null);
+                    MessageBox.Show(ex.Message);
                 }
-            }
-            catch (TESParserException ex)
-            {
-                MessageBox.Show(ex.Message);
             }
         }
 
@@ -777,12 +766,19 @@ Do you still want to save?", "Modified Save", MessageBoxButtons.YesNo, MessageBo
 
         private void listView1_SelectedIndexChanged(object sender, EventArgs e)
         {
-            var sr = GetSelectedSubrecord();
-            if (sr == null) return;
+            // Update the current selection
+            Selection.SubRecord = GetSelectedSubrecord();
+            if (Selection.SubRecord == null)
+            {
+                tbInfo.Text = "";
+                return;
+            }
 
+            var context = GetSelectedContext();
+            var sr = Selection.SubRecord;
             if (sr.Structure != null && sr.Structure.elements != null)
             {
-                tbInfo.Text = sr.GetFormattedData(LookupFormIDI, LookupFormStrings);
+                tbInfo.Text = sr.GetFormattedData(context);
             }
             else
             {
@@ -794,9 +790,9 @@ Do you still want to save?", "Modified Save", MessageBoxButtons.YesNo, MessageBo
             copyToolStripMenuItem.Enabled = true;
             cutToolStripMenuItem.Enabled = true;
             deleteToolStripMenuItem.Enabled = true;
-            SelectedSubrecord = true;
             insertRecordToolStripMenuItem.Enabled = false;
             insertSubrecordToolStripMenuItem.Enabled = false;
+
         }
 
         private void listView1_ItemActivate(object sender, EventArgs e)
@@ -806,6 +802,8 @@ Do you still want to save?", "Modified Save", MessageBoxButtons.YesNo, MessageBo
 
         void EditSelectedSubrecord()
         {
+            var context = GetSelectedContext();
+            //context.SubRecord = GetSelectedSubrecord();
             var sr = GetSelectedSubrecord();
             if (sr == null) return;
 
@@ -827,11 +825,11 @@ Do you still want to save?", "Modified Save", MessageBoxButtons.YesNo, MessageBo
                 if (re != null)
                 {
                     re.ShowDialog();
-                    tbInfo.Text = sr.GetFormattedData(LookupFormIDI, LookupFormStrings);
+                    tbInfo.Text = sr.GetFormattedData(context);
                     if (sr.Name == "EDID" && listSubrecord.SelectedIndices[0] == 0)
                     {
-                        parentRecord.descriptiveName = " (" + sr.GetStrData() + ")";
-                        PluginTree.SelectedNode.Text = parentRecord.DescriptiveName;
+                        context.Record.descriptiveName = " (" + sr.GetStrData() + ")";
+                        PluginTree.SelectedNode.Text = context.Record.DescriptiveName;
                     }
                     //listSubrecord.SelectedItems[0].SubItems[1].Text = sr.Size.ToString() + " *";
                     listSubrecord.Refresh();
@@ -845,8 +843,6 @@ Do you still want to save?", "Modified Save", MessageBoxButtons.YesNo, MessageBo
                 {
                     sr.SetData(HexDataEdit.result);
                     sr.Name = HexDataEdit.resultName;
-                    //listSubrecord.SelectedItems[0].Text = sr.Name;
-                    //listSubrecord.SelectedItems[0].SubItems[1].Text = sr.Size.ToString();
                     tbInfo.Text = "[Subrecord data]" + Environment.NewLine + sr.GetHexData();
                     listSubrecord.Refresh();
                 }
@@ -858,8 +854,6 @@ Do you still want to save?", "Modified Save", MessageBoxButtons.YesNo, MessageBo
                 {
                     sr.SetData(DataEdit.result);
                     sr.Name = DataEdit.resultName;
-                    //listSubrecord.SelectedItems[0].Text = sr.Name;
-                    //listSubrecord.SelectedItems[0].SubItems[1].Text = sr.Size.ToString();
                     tbInfo.Text = "[Subrecord data]" + Environment.NewLine + sr.GetStrData();
                     listSubrecord.Refresh();
                 }
@@ -867,8 +861,8 @@ Do you still want to save?", "Modified Save", MessageBoxButtons.YesNo, MessageBo
             MatchRecordStructureToRecord();
             if (sr.Name == "EDID" && listSubrecord.SelectedIndices[0] == 0)
             {
-                parentRecord.descriptiveName = " (" + sr.GetStrData() + ")";
-                PluginTree.SelectedNode.Text = parentRecord.DescriptiveName;
+                context.Record.descriptiveName = " (" + sr.GetStrData() + ")";
+                PluginTree.SelectedNode.Text = context.Record.DescriptiveName;
             }
         }
         void EditSelectedSubrecordHex()
@@ -890,16 +884,42 @@ Do you still want to save?", "Modified Save", MessageBoxButtons.YesNo, MessageBo
             MatchRecordStructureToRecord();
             if (sr.Name == "EDID" && listSubrecord.SelectedIndices[0] == 0)
             {
-                parentRecord.descriptiveName = " (" + sr.GetStrData() + ")";
-                PluginTree.SelectedNode.Text = parentRecord.DescriptiveName;
+                Selection.Record.descriptiveName = " (" + sr.GetStrData() + ")";
+                PluginTree.SelectedNode.Text = Selection.Record.DescriptiveName;
             }
+        }
+
+        private void UpdateSelectionContext()
+        {
+            Selection.Reset();
+            Selection.SubRecord = GetSelectedSubrecord();
+        }
+
+        private SelectionContext GetSelectedContext()
+        {
+            return Selection;
+            //context.Record = this.parentRecord
+            //context.SubRecord = GetSelectedSubrecord();
+
         }
 
         private SubRecord GetSelectedSubrecord()
         {
-            if (listSubrecord.SelectedIndices.Count != 1) return null;
+            if (listSubrecord.SelectedIndices.Count < 1) return null;
             int idx = listSubrecord.SelectedIndices[0];
             return listSubrecord.DataSource[idx] as SubRecord;
+        }
+
+        private List<SubRecord> GetSelectedSubrecords()
+        {
+            if (listSubrecord.SelectedIndices.Count < 1) return null;
+            List<SubRecord> recs = new List<SubRecord>();
+            foreach ( int idx in listSubrecord.SelectedIndices )
+            {
+                var sr = listSubrecord.DataSource[idx] as SubRecord;
+                if (sr != null) recs.Add(sr);
+            }
+            return recs;            
         }
 
         private void insertRecordToolStripMenuItem_Click(object sender, EventArgs e)
@@ -930,17 +950,6 @@ Do you still want to save?", "Modified Save", MessageBoxButtons.YesNo, MessageBo
 
         private void findToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            //if (searchForm != null)
-            //{
-            //    searchForm.Focus();
-            //}
-            //else
-            //{
-            //    spellsToolStripMenuItem.Enabled = false;
-            //    searchForm = new SearchForm(PluginTree);
-            //    searchForm.FormClosed += new FormClosedEventHandler(searchForm_FormClosed);
-            //    searchForm.Show();
-            //}
             if (!this.toolStripIncrFind.Visible)
             {
                 toolStripIncrFind.Visible = true;
@@ -955,19 +964,12 @@ Do you still want to save?", "Modified Save", MessageBoxButtons.YesNo, MessageBo
             }
         }
 
-        private void searchForm_FormClosed(object sender, FormClosedEventArgs e)
-        {
-            searchForm = null;
-            spellsToolStripMenuItem.Enabled = true;
-        }
-
         private void TESsnip_FormClosing(object sender, FormClosingEventArgs e)
         {
-            if (searchForm != null) searchForm.Close();
             PluginTree.Nodes.Clear();
             Clipboard = null;
             ClipboardNode = null;
-            parentRecord = null;
+            Selection.Plugin = null;
             CloseStringEditor();
             Settings.SetWindowPosition("TESsnip", this);
         }
@@ -1006,7 +1008,7 @@ Do you still want to save?", "Modified Save", MessageBoxButtons.YesNo, MessageBo
         private bool DragDropInProgress;
         private void listView1_ItemDrag(object sender, ItemDragEventArgs e)
         {
-            if (listSubrecord.SelectedIndices.Count != 1 || e.Button != MouseButtons.Left) return;
+            if (listSubrecord.SelectedIndices.Count < 1 || e.Button != MouseButtons.Left) return;
             DragDropInProgress = true;
             listSubrecord.DoDragDrop(listSubrecord.SelectedIndices[0] + 1, DragDropEffects.Move);
         }
@@ -1023,18 +1025,19 @@ Do you still want to save?", "Modified Save", MessageBoxButtons.YesNo, MessageBo
         {
             int toswap = (int)e.Data.GetData(typeof(int)) - 1;
             if (toswap == -1) return;
-            SubRecord sr = parentRecord.SubRecords[toswap];
+            var rec = Selection.Record;
+            SubRecord sr = rec.SubRecords[toswap];
             if (listSubrecord.SelectedIndices.Count == 0)
             {
-                parentRecord.SubRecords.RemoveAt(toswap);
-                parentRecord.SubRecords.Add(sr);
+                rec.SubRecords.RemoveAt(toswap);
+                rec.SubRecords.Add(sr);
             }
-            else if (listSubrecord.SelectedIndices.Count == 1)
+            else if (listSubrecord.SelectedIndices.Count >= 1)
             {
                 int moveto = listSubrecord.SelectedIndices[0];
                 if (toswap == moveto) return;
-                parentRecord.SubRecords.RemoveAt(toswap);
-                parentRecord.SubRecords.Insert(moveto, sr);
+                rec.SubRecords.RemoveAt(toswap);
+                rec.SubRecords.Insert(moveto, sr);
             }
             else return;
             PluginTree_AfterSelect(null, null);
@@ -1423,7 +1426,7 @@ Do you still want to save?", "Modified Save", MessageBoxButtons.YesNo, MessageBo
             }
             return false;
         }
-        
+
         #endregion
 
         private void compileScriptToolStripMenuItem_Click(object sender, EventArgs e)
@@ -1431,9 +1434,9 @@ Do you still want to save?", "Modified Save", MessageBoxButtons.YesNo, MessageBo
             if (FormIDLookup == null || PluginTree.SelectedNode == null) return;
             string errors;
             Record r;
-            if (SelectedSubrecord && parentRecord.Name != "SCPT")
+            if (Selection.SelectedSubrecord && Selection.Record.Name != "SCPT")
             {
-                var sr = GetSelectedSubrecord();
+                var sr = Selection.SubRecord;
                 if (sr == null) return;
                 if (sr.Name != "SCTX")
                 {
@@ -1448,7 +1451,7 @@ Do you still want to save?", "Modified Save", MessageBoxButtons.YesNo, MessageBo
                 else
                 {
                     int i = listSubrecord.SelectedIndices[0];
-                    var srs = parentRecord.SubRecords;
+                    var srs = Selection.Record.SubRecords;
                     while (i > 0 && (srs[i - 1].Name == "SCDA" || srs[i - 1].Name == "SCHR"))
                         srs.RemoveAt(--i);
                     while (i < srs.Count && (srs[i].Name == "SCTX" || srs[i].Name == "SLSD" || srs[i].Name == "SCVR" || srs[i].Name == "SCRO" || srs[i].Name == "SCRV"))
@@ -1875,12 +1878,13 @@ Do you still want to save?", "Modified Save", MessageBoxButtons.YesNo, MessageBo
             if (!ValidateMakeChange())
                 return;
 
-            if (RecordStructure.Records == null) return;
-            if (!RecordStructure.Records.ContainsKey(parentRecord.Name)) return;
+            var rec = Selection.Record;
+            if (rec == null || RecordStructure.Records == null) return;
+            if (!RecordStructure.Records.ContainsKey(rec.Name)) return;
 
-            SubrecordStructure[] sss = RecordStructure.Records[parentRecord.Name].subrecords;
+            SubrecordStructure[] sss = RecordStructure.Records[rec.Name].subrecords;
 
-            List<SubRecord> subs = new List<SubRecord>(parentRecord.SubRecords);
+            List<SubRecord> subs = new List<SubRecord>(rec.SubRecords);
             foreach (var sub in subs) sub.DetachStructure();
 
             List<SubRecord> newsubs = new List<SubRecord>();
@@ -1912,8 +1916,8 @@ Do you still want to save?", "Modified Save", MessageBoxButtons.YesNo, MessageBo
                 } while (found && repeat);
             }
             newsubs.AddRange(subs);
-            parentRecord.SubRecords.Clear();
-            parentRecord.SubRecords.AddRange(newsubs);
+            rec.SubRecords.Clear();
+            rec.SubRecords.AddRange(newsubs);
             RebuildSelection();
         }
         #endregion
@@ -2223,11 +2227,6 @@ Do you still want to save?", "Modified Save", MessageBoxButtons.YesNo, MessageBo
 
         private bool ValidateMakeChange()
         {
-            if (searchForm != null && searchForm.InSearch)
-            {
-                MessageBox.Show("Cannot modify contents while searching", "Error");
-                return false;
-            }
             return true;
         }
 
@@ -2275,45 +2274,51 @@ Do you still want to save?", "Modified Save", MessageBoxButtons.YesNo, MessageBo
         {
             if (!ValidateMakeChange())
                 return;
-            if (parentRecord != null)
+            var rec = Selection.Record;
+            if (rec != null)
             {
-                if (listSubrecord.SelectedIndices.Count != 1) return;
-                parentRecord.SubRecords.RemoveAt(listSubrecord.SelectedIndices[0]);
+                if (listSubrecord.SelectedIndices.Count < 1) return;
+                rec.SubRecords.RemoveAt(listSubrecord.SelectedIndices[0]);
             }
+            Selection.SubRecord = GetSelectedSubrecord();
             MatchRecordStructureToRecord();
             RefreshSelection();
         }
 
         private void toolStripMoveRecordUp_Click(object sender, EventArgs e)
         {
-            if (listSubrecord.SelectedIndices.Count != 1) return;
+            if (listSubrecord.SelectedIndices.Count < 1) return;
             int idx = listSubrecord.SelectedIndices[0];
             if (idx < 1 || idx >= (listSubrecord.Items.Count))
                 return;
 
-            SubRecord sr = parentRecord.SubRecords[idx];
-            parentRecord.SubRecords.RemoveAt(idx);
-            parentRecord.SubRecords.Insert(idx - 1, sr);
+            var rec = Selection.Record;
+            SubRecord sr = rec.SubRecords[idx];
+            rec.SubRecords.RemoveAt(idx);
+            rec.SubRecords.Insert(idx - 1, sr);
             listSubrecord.SelectItem(idx - 1);
             listSubrecord.EnsureVisible(idx - 1);
 
+            Selection.SubRecord = GetSelectedSubrecord();
             MatchRecordStructureToRecord();
             RefreshSelection();
         }
 
         private void toolStripMoveRecordDown_Click(object sender, EventArgs e)
         {
-            if (listSubrecord.SelectedIndices.Count != 1) return;
+            if (listSubrecord.SelectedIndices.Count < 1) return;
             int idx = listSubrecord.SelectedIndices[0];
             if (idx < 0 || idx >= (listSubrecord.Items.Count - 1))
                 return;
 
-            SubRecord sr = parentRecord.SubRecords[idx];
-            parentRecord.SubRecords.RemoveAt(idx);
-            parentRecord.SubRecords.Insert(idx + 1, sr);
+            var rec = Selection.Record;
+            SubRecord sr = rec.SubRecords[idx];
+            rec.SubRecords.RemoveAt(idx);
+            rec.SubRecords.Insert(idx + 1, sr);
             listSubrecord.SelectItem(idx + 1);
             listSubrecord.EnsureVisible(idx + 1);
 
+            Selection.SubRecord = GetSelectedSubrecord();
             MatchRecordStructureToRecord();
             RefreshSelection();
         }
@@ -2337,10 +2342,10 @@ Do you still want to save?", "Modified Save", MessageBoxButtons.YesNo, MessageBo
 
         private void toolStripCopySubrecord_Click(object sender, EventArgs e)
         {
-            var sr = GetSelectedSubrecord();
+            var sr = GetSelectedSubrecords();
             if (sr == null) return;
 
-            Clipboard = (SubRecord)sr.Clone();
+            Clipboard = sr.Select( ss => { return (SubRecord)ss.Clone(); }).ToArray();
             ClipboardNode = null;
         }
 
@@ -2349,40 +2354,43 @@ Do you still want to save?", "Modified Save", MessageBoxButtons.YesNo, MessageBo
             if (!ValidateMakeChange())
                 return;
 
-            if (Clipboard == null)
+            if (!(Clipboard is IEnumerable<SubRecord>))
                 return;
 
             try
             {
                 BaseRecord br = (BaseRecord)PluginTree.SelectedNode.Tag;
 
-                SubRecord sr = Clipboard.Clone() as SubRecord;
-                if (sr == null)
-                    return;
-
-                if (br is Record)
+                var nodes =  (IEnumerable<SubRecord>)Clipboard;
+                foreach (var clipSr in nodes.Reverse()) // insert in revers
                 {
-                    if (listSubrecord.SelectedIndices.Count == 1)
-                    {
-                        int idx = listSubrecord.SelectedIndices[0];
-                        if (idx < 0 || idx >= (listSubrecord.Items.Count - 1))
-                            return;
+                    SubRecord sr = clipSr.Clone() as SubRecord;
+                    if (sr == null)
+                        return;
 
-                        try
+                    if (br is Record)
+                    {
+                        if (listSubrecord.SelectedIndices.Count >= 1)
                         {
-                            br.InsertRecord(idx, sr);
+                            int idx = listSubrecord.SelectedIndices[0];
+                            if (idx < 0 || idx >= (listSubrecord.Items.Count - 1))
+                                return;
+                            try
+                            {
+                                br.InsertRecord(idx, sr);
+                            }
+                            catch (TESParserException ex)
+                            {
+                                MessageBox.Show(ex.Message);
+                            }
                         }
-                        catch (TESParserException ex)
+                        else
                         {
-                            MessageBox.Show(ex.Message);
+                            br.AddRecord(sr);
                         }
                     }
-                    else
-                    {
-                        br.AddRecord(sr);
-                    }
-
                 }
+
                 RebuildSelection();
             }
             catch (System.Exception ex)
@@ -2393,7 +2401,7 @@ Do you still want to save?", "Modified Save", MessageBoxButtons.YesNo, MessageBo
 
         #region Create Record Structure XML
 
-        
+
 
         private void createRecordStructureXmlToolStripMenuItem_Click(object sender, EventArgs e)
         {
@@ -2542,12 +2550,13 @@ Do you still want to save?", "Modified Save", MessageBoxButtons.YesNo, MessageBo
             // Update the global list
             bool modified = false;
             List<string> groups = TESVSnip.Properties.Settings.Default.AllESMRecords != null
-                ? TESVSnip.Properties.Settings.Default.AllESMRecords.Trim().Split(new char[]{';',','}, StringSplitOptions.RemoveEmptyEntries).ToList()
+                ? TESVSnip.Properties.Settings.Default.AllESMRecords.Trim().Split(new char[] { ';', ',' }, StringSplitOptions.RemoveEmptyEntries).ToList()
                 : new List<string>();
             groups.Sort();
             foreach (var plugin in PluginTree.Nodes.OfType<TreeNode>().Select(n => n.Tag).OfType<Plugin>())
             {
-                plugin.ForEach((r) => {
+                plugin.ForEach((r) =>
+                {
                     if (r is GroupRecord)
                     {
                         var g = (GroupRecord)r;
@@ -2572,7 +2581,7 @@ Do you still want to save?", "Modified Save", MessageBoxButtons.YesNo, MessageBo
             {
                 TESVSnip.Properties.Settings.Default.AllESMRecords = string.Join(";", groups.ToArray());
             }
-            
+
             using (TESVSnip.Forms.LoadSettings settings = new TESVSnip.Forms.LoadSettings())
             {
                 settings.ShowDialog();
@@ -2596,13 +2605,13 @@ Do you still want to save?", "Modified Save", MessageBoxButtons.YesNo, MessageBo
                 this.Key = key;
                 this.Value = value;
             }
-            public T Key{ get; set; }
+            public T Key { get; set; }
             public U Value { get; set; }
 
-            public override string  ToString()
+            public override string ToString()
             {
- 	             return Value.ToString();
-            } 
+                return Value.ToString();
+            }
         }
 
         void InitializeToolStripFind()
@@ -2638,12 +2647,12 @@ Do you still want to save?", "Modified Save", MessageBoxButtons.YesNo, MessageBo
             }
             else
             {
-                for (int i = 0; i < node.Nodes.Count; i++) 
+                for (int i = 0; i < node.Nodes.Count; i++)
                     RecurseFullSearch(matches, node.Nodes[i], searchString, partial);
             }
         }
 
-        internal TreeNode IncrementalSearch(TreeNode tn, bool first, bool forward, bool downOnly, Predicate<TreeNode> searchFunc )
+        internal TreeNode IncrementalSearch(TreeNode tn, bool first, bool forward, bool downOnly, Predicate<TreeNode> searchFunc)
         {
             if (tn == null)
                 tn = PluginTree.SelectedNode != null ? PluginTree.SelectedNode : PluginTree.TopNode;
@@ -2703,9 +2712,10 @@ Do you still want to save?", "Modified Save", MessageBoxButtons.YesNo, MessageBo
                     MessageBox.Show("Invalid FormID");
                     return null;
                 }
-                searchFunction = (TreeNode node) => { 
+                searchFunction = (TreeNode node) =>
+                {
                     var rec = node.Tag as Record;
-                    return (rec != null) ? rec.FormID == searchID : false; 
+                    return (rec != null) ? rec.FormID == searchID : false;
                 };
             }
             else if (type == SearchType.EditorID)
@@ -2725,7 +2735,7 @@ Do you still want to save?", "Modified Save", MessageBoxButtons.YesNo, MessageBo
                         else
                         {
                             var val = rec.descriptiveName.ToLowerInvariant().Substring(2, rec.descriptiveName.Length - 3);
-                            if (val == searchString) 
+                            if (val == searchString)
                                 return true;
                         }
                     }
@@ -2895,7 +2905,7 @@ Do you still want to save?", "Modified Save", MessageBoxButtons.YesNo, MessageBo
         {
             findNonconformingRecordToolStripMenuItem.Checked = toolStripIncrInvalidRec.Visible;
         }
-        
+
         #endregion
 
         private void exitToolStripMenuItem_Click(object sender, EventArgs e)
@@ -2903,7 +2913,18 @@ Do you still want to save?", "Modified Save", MessageBoxButtons.YesNo, MessageBo
             this.Close();
         }
 
-
-
+        private void lookupFormidsToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if (lookupFormidsToolStripMenuItem.Checked)
+            {
+                Selection.formIDLookup = new dFormIDLookupI(LookupFormIDI);
+                Selection.strLookup = new dLStringLookup(LookupFormStrings);
+            }
+            else
+            {
+                Selection.formIDLookup = null;
+                Selection.strLookup = null;
+            }
+        }
     }
 }

@@ -220,9 +220,6 @@
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="Forms\SearchForm.resx">
-      <DependentUpon>SearchForm.cs</DependentUpon>
-    </EmbeddedResource>
     <EmbeddedResource Include="Forms\MainView.resx">
       <DependentUpon>MainView.cs</DependentUpon>
     </EmbeddedResource>
@@ -244,12 +241,6 @@
     <Compile Include="Main\RecordStructure.cs" />
     <Compile Include="ScriptCompiler\ScriptCompiler.cs" />
     <Compile Include="ScriptCompiler\Tokenizer.cs" />
-    <Compile Include="Forms\SearchForm.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Forms\SearchForm.designer.cs">
-      <DependentUpon>SearchForm.cs</DependentUpon>
-    </Compile>
     <Compile Include="Main\Settings.cs" />
     <Compile Include="Settings.cs" />
     <Compile Include="SharpZipLib\Checksums\Adler32.cs" />

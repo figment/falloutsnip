@@ -13,6 +13,19 @@ namespace TESVSnip {
         None, Equal, Not, Greater, Less, GreaterEqual, LessEqual, StartsWith, EndsWith, Contains, Exists, Missing
     }
 
+    struct Conditional
+    {
+        public readonly ElementValueType type;
+        public readonly object value;
+
+        public Conditional(ElementValueType type, object value)
+        {
+            this.type = type;
+            this.value = value;
+        }
+    }
+
+
     class SubrecordBase
     {
         protected SubrecordBase(SubrecordBase src, int optional, int repeat)

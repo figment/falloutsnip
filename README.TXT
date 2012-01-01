@@ -1,14 +1,23 @@
-    figments's TESsnip Fork 1.1
-    =-=-=-=-=-=-=-=-=-=-=-=-=-=
+figments's TESsnip Fork (Skyrim Edition) version 1.2
+=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
 
-    This packages includes a fork of the Fallout Mod Manager 
-      TESsnip utility.
+TESVSnip is a fork of the TESsnip utility bundled with Fallout Mod Manager with changes specifically for Skyrim.
+
+In the word of the original author, TESsnip is a low level plugin editor that allows you to open esm/esp files, view the record structure and cut/copy/paste records and subrecords between different parents, including different esp's. You can also view and edit the data saved in a subrecord, in either hex or string format, as well as editing record headers.
 
 Change Log:
+v 1.2
+- Bug fix in handling lstring which prevent sub editor from opening
+- Support multiple subrecord copy/paste (only from the subrecord toolbar)
+- Change IDs for GMST and EFID
+
 v 1.1
 - Major update to RecordStructure to allow inline groups
-- Programatically tried to discover layout of all records
+- Programatically tried to discover layout of all records so we have a better first pass
 - Improved usability on the subrecords by adding toolbar
+- Improved incremental search and nonconforming record search
+- Improved performance when doing a lot of activities like search or generation of detailed reports
+- Added Ability to exclude certain record types on load of skyrim.esm to conserve memory
 - Added Str4 data type for fixed 4-byte strings
 
 v 1.0
@@ -24,6 +33,8 @@ Notes:
 - When checked it stores the actual text.  When not checked it stores the id.
    
 TODO:
+- QUST record is mess and may require a new XML format to deal with it properly
+- Substructures like MO2T and MO3T have complicated repeating structures not possible to edit currently
 - Sorry the new string editor got away from me and is rather 
   fiddly and not intuitive but that is in line with TESsnip anyway
 - Detect localization or allow selection of localization in future

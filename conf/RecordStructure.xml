@@ -33,9 +33,9 @@
       <Element name="ID" type="formid" reftype="MGEF" />
     </Subrecord>
     <Subrecord name="EFIT" desc="EFIT" optional="1">
-      <Element name="Unknown" type="float" />
-      <Element name="Unknown 1" type="int" />
-      <Element name="Unknown 2" type="lstring" />
+      <Element name="Magnitude" type="float" />
+      <Element name="Unknown" type="int" />
+      <Element name="Duration" type="uint" />
     </Subrecord>
     <Group id="CONDITIONAL" repeat="1"/>
   </Group>
@@ -69,11 +69,16 @@
   </Record>
   <Record name="GMST" desc="Game setting">
     <Subrecord name="EDID" desc="Editor ID">
-      <Element name="Setting name" type="string" />
+      <Element name="Setting name" type="string" condid="1"/>
     </Subrecord>
-    <Subrecord name="DATA" desc="Setting value" optional="1">
-      <Element name="String Value" type="blob" />
-      <!-- Flags 3 in header controls the data type -->
+    <Subrecord name="DATA" desc="Setting value" condid="1" condition="startswith" condvalue="s">
+      <Element name="String Value" type="lstring" />
+    </Subrecord>
+    <Subrecord name="DATA" desc="Setting value" condid="1" condition="startswith" condvalue="f">
+      <Element name="Float Value" type="float" />
+    </Subrecord>
+    <Subrecord name="DATA" desc="Setting value" condid="1" condition="startswith" condvalue="i">
+      <Element name="Integer Value" type="int" />
     </Subrecord>
   </Record>
   <Record name="KYWD" desc="Keyword">

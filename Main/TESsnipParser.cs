@@ -6,6 +6,89 @@ namespace TESVSnip
 {
     public class TESParserException : Exception { public TESParserException(string msg) : base(msg) { } }
 
+    #region class SelectionContext
+    /// <summary>
+    /// External state for holding single selection for use with evaluating descriptions and intelligent editors
+    /// </summary>
+    class SelectionContext
+    {
+        private Plugin plugin;
+        private Record record;
+        private SubRecord subRecord;
+
+        public Plugin Plugin
+        {
+            get { return plugin; }
+            set 
+            {
+                if (this.plugin != value)
+                {
+                    this.plugin = value;
+                    this.Groups.Clear();
+                    this.Record = null;
+                    if (this.PluginChanged != null) 
+                        this.PluginChanged(this, EventArgs.Empty);
+                }
+            }
+        }
+        public Stack<GroupRecord> Groups = new Stack<GroupRecord>();
+        public Record Record
+        {
+            get { return this.record; }
+            set
+            {
+                if (this.record != value)
+                {
+                    this.record = value;
+                    this.SubRecord = null;
+                    this.Conditions.Clear();
+                    if (this.RecordChanged != null) 
+                        this.RecordChanged(this, EventArgs.Empty);
+                }
+            }
+        }
+        public SubRecord SubRecord
+        {
+            get { return this.subRecord; }
+            set 
+            {
+                if (this.subRecord != value)
+                {
+                    this.subRecord = value; 
+                    if (this.SubRecordChanged != null) 
+                        this.SubRecordChanged(this, EventArgs.Empty);
+                }
+            }
+        }
+        public Dictionary<int, Conditional> Conditions = new Dictionary<int, Conditional>();
+        public dFormIDLookupI formIDLookup = null;
+        public dLStringLookup strLookup = null;
+
+        public bool SelectedSubrecord
+        {
+            get { return this.SubRecord != null;  }
+        }
+
+        public void Reset()
+        {
+            this.Plugin = null;
+        }
+
+        public event EventHandler PluginChanged;
+        public event EventHandler RecordChanged;
+        public event EventHandler SubRecordChanged;
+
+        public SelectionContext Clone()
+        {
+            var result = (SelectionContext)this.MemberwiseClone();
+            result.PluginChanged = null;
+            result.RecordChanged = null;
+            result.SubRecordChanged = null;
+            return result;
+        }
+    }
+    #endregion
+
     public abstract class BaseRecord
     {
         public virtual string Name { get; set; }
@@ -846,26 +929,37 @@ namespace TESVSnip
                 "Size: " + Size.ToString() + " bytes (excluding header)";
         }
 
-        private string GetExtendedDesc(dFormIDLookupI formIDLookup, dLStringLookup strLookup)
+        private string GetExtendedDesc(SelectionContext context)
         {
-            RecordStructure rec;
-            if (!RecordStructure.Records.TryGetValue(Name, out rec))
-                return "";
-
-            var s = new System.Text.StringBuilder();
-            s.AppendLine(rec.description);
-            foreach (var subrec in SubRecords)
+            try
             {
-                if (subrec.Structure == null)
-                    continue;
-                if (subrec.Structure.elements == null)
-                    return s.ToString();
-                if (subrec.Structure.notininfo) 
-                    continue;
-                s.AppendLine();
-                s.Append(subrec.GetFormattedData(formIDLookup, strLookup));
+                context.Record = this;
+                RecordStructure rec;
+                if (!RecordStructure.Records.TryGetValue(Name, out rec))
+                    return "";
+                var s = new System.Text.StringBuilder();
+                s.AppendLine(rec.description);
+                foreach (var subrec in SubRecords)
+                {
+                    if (subrec.Structure == null)
+                        continue;
+                    if (subrec.Structure.elements == null)
+                        return s.ToString();
+                    if (subrec.Structure.notininfo)
+                        continue;
+
+                    context.SubRecord = subrec;
+                    s.AppendLine();
+                    s.Append(subrec.GetFormattedData(context));
+                }
+                return s.ToString();
             }
-            return s.ToString();
+            finally
+            {
+                context.Record = null;
+                context.SubRecord = null;
+                context.Conditions.Clear();
+            }
         }
 
         private string GetLocalizedString(dLStringLookup strLookup)
@@ -878,13 +972,13 @@ namespace TESVSnip
             return "[Record]" + Environment.NewLine + GetBaseDesc();
         }
 
-        internal string GetDesc(dFormIDLookupI formIDLookup, dLStringLookup strLookup)
+        internal string GetDesc(SelectionContext context)
         {
             string start = "[Record]" + Environment.NewLine + GetBaseDesc();
             string end;
             try
             {
-                end = GetExtendedDesc(formIDLookup, strLookup);
+                end = GetExtendedDesc(context);
             }
             catch
             {
@@ -1042,17 +1136,20 @@ namespace TESVSnip
             this.Structure = null;
         }
 
-        internal string GetFormattedData(dFormIDLookupI formIDLookup, dLStringLookup strLookup)
+        internal string GetFormattedData(SelectionContext context)
         {
             var sb = new System.Text.StringBuilder();
-            GetFormattedData(sb, formIDLookup, strLookup);
+            GetFormattedData(sb, context);
             return sb.ToString();
         }
-        internal void GetFormattedData(System.Text.StringBuilder s, dFormIDLookupI formIDLookup, dLStringLookup strLookup)
+        internal void GetFormattedData(System.Text.StringBuilder s, SelectionContext context)
         {
             SubrecordStructure ss = this.Structure;
             if (ss == null)
                 return;
+
+            dFormIDLookupI formIDLookup = context.formIDLookup;
+            dLStringLookup strLookup = context.strLookup;
 
             int offset = 0;
             s.AppendFormat("{0} ({1})", ss.name, ss.desc);
