@@ -38,8 +38,25 @@ namespace TESVSnip
             InitializeToolStripFind();
             InitializeSubrecordForm();
 
-            this.SaveModDialog.InitialDirectory = Program.gameDataDir;
-            this.OpenModDialog.InitialDirectory = Program.gameDataDir;
+            if (string.IsNullOrEmpty(global::TESVSnip.Properties.Settings.Default.DefaultSaveFolder) 
+                || !System.IO.Directory.Exists(global::TESVSnip.Properties.Settings.Default.DefaultSaveFolder) )
+            {
+                this.SaveModDialog.InitialDirectory = Program.gameDataDir;
+            }
+            else
+            {
+                this.SaveModDialog.InitialDirectory = global::TESVSnip.Properties.Settings.Default.DefaultSaveFolder;
+            }
+            if (string.IsNullOrEmpty(global::TESVSnip.Properties.Settings.Default.DefaultOpenFolder)
+                || !System.IO.Directory.Exists(global::TESVSnip.Properties.Settings.Default.DefaultOpenFolder))
+            {
+                this.OpenModDialog.InitialDirectory = Program.gameDataDir;
+            }
+            else
+            {
+                this.OpenModDialog.InitialDirectory = global::TESVSnip.Properties.Settings.Default.DefaultOpenFolder;
+            }
+            
 
             this.Icon = Properties.Resources.tesv_ico;
 

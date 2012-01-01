@@ -142,5 +142,29 @@ namespace TESVSnip.Properties {
                 this["IsFirstTimeOpening"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string DefaultSaveFolder {
+            get {
+                return ((string)(this["DefaultSaveFolder"]));
+            }
+            set {
+                this["DefaultSaveFolder"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string DefaultOpenFolder {
+            get {
+                return ((string)(this["DefaultOpenFolder"]));
+            }
+            set {
+                this["DefaultOpenFolder"] = value;
+            }
+        }
     }
 }
