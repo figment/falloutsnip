@@ -579,6 +579,8 @@ Would you like to apply the record exclusions?"
                 insertRecordToolStripMenuItem.Enabled = true;
                 insertSubrecordToolStripMenuItem.Enabled = false;
             }
+            Selection.SubRecord = GetSelectedSubrecord();
+            UpdateToolStripSelection();
             listSubrecord.Refresh();
         }
 
@@ -627,7 +629,7 @@ Would you like to apply the record exclusions?"
                 insertSubrecordToolStripMenuItem.Enabled = false;
             }
             Selection.SubRecord = GetSelectedSubrecord();
-
+            UpdateToolStripSelection();
             listSubrecord.Refresh();
         }
 
@@ -1016,9 +1018,12 @@ Do you still want to save?", "Modified Save", MessageBoxButtons.YesNo, MessageBo
             //if (listSubrecord.SelectedIndices.Count < 1) return null;
             //int idx = listSubrecord.SelectedIndices[0];
             //return listSubrecord.DataSource[idx] as SubRecord;
-
             int idx = listSubrecord.GetFocusedItem();
-            return (idx >= 0) ? listSubrecord.DataSource[idx] as SubRecord : null;
+            if (listSubrecord.DataSource != null)
+            {
+                if (idx >= 0) return listSubrecord.DataSource[idx] as SubRecord;
+            }
+            return null;
         }
 
         private List<SubRecord> GetSelectedSubrecords()
@@ -2413,6 +2418,7 @@ Do you still want to save?", "Modified Save", MessageBoxButtons.YesNo, MessageBo
             
             listSubrecord.ClearSelection();
             listSubrecord.SelectItem(idx - 1);
+            listSubrecord.FocusItem(idx - 1);
             listSubrecord.EnsureVisible(idx - 1);
 
             Selection.SubRecord = GetSelectedSubrecord();
@@ -2434,6 +2440,7 @@ Do you still want to save?", "Modified Save", MessageBoxButtons.YesNo, MessageBo
 
             listSubrecord.ClearSelection();
             listSubrecord.SelectItem(idx + 1);
+            listSubrecord.FocusItem(idx + 1);
             listSubrecord.EnsureVisible(idx + 1);
 
 
