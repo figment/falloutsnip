@@ -108,6 +108,7 @@ namespace TESVSnip {
             this.toolStripIncrInvalidRecPrev = new System.Windows.Forms.ToolStripButton();
             this.toolStripIncrInvalidRecRestart = new System.Windows.Forms.ToolStripButton();
             this.toolStripIncrInvalidRecDown = new System.Windows.Forms.ToolStripButton();
+            this.toolStripIncrInvalidRecStatus = new System.Windows.Forms.ToolStripLabel();
             this.menuStrip1.SuspendLayout();
             this.statusStrip1.SuspendLayout();
             this.splitHorizontal.Panel1.SuspendLayout();
@@ -154,7 +155,7 @@ namespace TESVSnip {
             // 
             this.newToolStripMenuItem.Name = "newToolStripMenuItem";
             this.newToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.I)));
-            this.newToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.newToolStripMenuItem.Size = new System.Drawing.Size(146, 22);
             this.newToolStripMenuItem.Text = "&New";
             this.newToolStripMenuItem.Click += new System.EventHandler(this.newToolStripMenuItem_Click);
             // 
@@ -162,7 +163,7 @@ namespace TESVSnip {
             // 
             this.openNewPluginToolStripMenuItem.Name = "openNewPluginToolStripMenuItem";
             this.openNewPluginToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.O)));
-            this.openNewPluginToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.openNewPluginToolStripMenuItem.Size = new System.Drawing.Size(146, 22);
             this.openNewPluginToolStripMenuItem.Text = "&Open";
             this.openNewPluginToolStripMenuItem.Click += new System.EventHandler(this.openNewPluginToolStripMenuItem_Click);
             // 
@@ -170,46 +171,46 @@ namespace TESVSnip {
             // 
             this.saveToolStripMenuItem.Name = "saveToolStripMenuItem";
             this.saveToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.S)));
-            this.saveToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.saveToolStripMenuItem.Size = new System.Drawing.Size(146, 22);
             this.saveToolStripMenuItem.Text = "&Save";
             this.saveToolStripMenuItem.Click += new System.EventHandler(this.saveToolStripMenuItem_Click);
             // 
             // closeToolStripMenuItem
             // 
             this.closeToolStripMenuItem.Name = "closeToolStripMenuItem";
-            this.closeToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.closeToolStripMenuItem.Size = new System.Drawing.Size(146, 22);
             this.closeToolStripMenuItem.Text = "&Close";
             this.closeToolStripMenuItem.Click += new System.EventHandler(this.closeToolStripMenuItem_Click);
             // 
             // closeAllToolStripMenuItem
             // 
             this.closeAllToolStripMenuItem.Name = "closeAllToolStripMenuItem";
-            this.closeAllToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.closeAllToolStripMenuItem.Size = new System.Drawing.Size(146, 22);
             this.closeAllToolStripMenuItem.Text = "Close &All";
             this.closeAllToolStripMenuItem.Click += new System.EventHandler(this.closeAllToolStripMenuItem_Click);
             // 
             // toolStripSeparator3
             // 
             this.toolStripSeparator3.Name = "toolStripSeparator3";
-            this.toolStripSeparator3.Size = new System.Drawing.Size(149, 6);
+            this.toolStripSeparator3.Size = new System.Drawing.Size(143, 6);
             // 
             // reloadXmlToolStripMenuItem
             // 
             this.reloadXmlToolStripMenuItem.Name = "reloadXmlToolStripMenuItem";
-            this.reloadXmlToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.reloadXmlToolStripMenuItem.Size = new System.Drawing.Size(146, 22);
             this.reloadXmlToolStripMenuItem.Text = "Reload &Xml";
             this.reloadXmlToolStripMenuItem.Click += new System.EventHandler(this.reloadXmlToolStripMenuItem_Click);
             // 
             // toolStripMenuItem1
             // 
             this.toolStripMenuItem1.Name = "toolStripMenuItem1";
-            this.toolStripMenuItem1.Size = new System.Drawing.Size(149, 6);
+            this.toolStripMenuItem1.Size = new System.Drawing.Size(143, 6);
             // 
             // exitToolStripMenuItem
             // 
             this.exitToolStripMenuItem.Name = "exitToolStripMenuItem";
             this.exitToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Alt | System.Windows.Forms.Keys.F4)));
-            this.exitToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.exitToolStripMenuItem.Size = new System.Drawing.Size(146, 22);
             this.exitToolStripMenuItem.Text = "E&xit";
             this.exitToolStripMenuItem.Click += new System.EventHandler(this.exitToolStripMenuItem_Click);
             // 
@@ -438,7 +439,6 @@ namespace TESVSnip {
             this.createRecordStructureXmlToolStripMenuItem.Name = "createRecordStructureXmlToolStripMenuItem";
             this.createRecordStructureXmlToolStripMenuItem.Size = new System.Drawing.Size(264, 22);
             this.createRecordStructureXmlToolStripMenuItem.Text = "Guess Record Structure ...";
-            this.createRecordStructureXmlToolStripMenuItem.Visible = false;
             this.createRecordStructureXmlToolStripMenuItem.Click += new System.EventHandler(this.createRecordStructureXmlToolStripMenuItem_Click);
             // 
             // mergeRecordsXMLToolStripMenuItem
@@ -446,7 +446,6 @@ namespace TESVSnip {
             this.mergeRecordsXMLToolStripMenuItem.Name = "mergeRecordsXMLToolStripMenuItem";
             this.mergeRecordsXMLToolStripMenuItem.Size = new System.Drawing.Size(264, 22);
             this.mergeRecordsXMLToolStripMenuItem.Text = "Merge Records XML ...";
-            this.mergeRecordsXMLToolStripMenuItem.Visible = false;
             this.mergeRecordsXMLToolStripMenuItem.Click += new System.EventHandler(this.mergeRecordsXMLToolStripMenuItem_Click);
             // 
             // reorderSubrecordsToolStripMenuItem
@@ -500,7 +499,7 @@ namespace TESVSnip {
             // toolStripStatusLabel
             // 
             this.toolStripStatusLabel.Name = "toolStripStatusLabel";
-            this.toolStripStatusLabel.Size = new System.Drawing.Size(652, 17);
+            this.toolStripStatusLabel.Size = new System.Drawing.Size(403, 17);
             this.toolStripStatusLabel.Spring = true;
             this.toolStripStatusLabel.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             // 
@@ -568,7 +567,7 @@ namespace TESVSnip {
             this.splitVertical.Panel2.Controls.Add(this.listSubrecord);
             this.splitVertical.Panel2.Controls.Add(this.toolStripSubRecord);
             this.splitVertical.Size = new System.Drawing.Size(226, 612);
-            this.splitVertical.SplitterDistance = 222;
+            this.splitVertical.SplitterDistance = 219;
             this.splitVertical.TabIndex = 1;
             // 
             // PluginTree
@@ -577,7 +576,7 @@ namespace TESVSnip {
             this.PluginTree.HideSelection = false;
             this.PluginTree.Location = new System.Drawing.Point(0, 0);
             this.PluginTree.Name = "PluginTree";
-            this.PluginTree.Size = new System.Drawing.Size(226, 222);
+            this.PluginTree.Size = new System.Drawing.Size(226, 219);
             this.PluginTree.TabIndex = 0;
             this.PluginTree.AfterExpand += new System.Windows.Forms.TreeViewEventHandler(this.PluginTree_AfterExpand);
             this.PluginTree.AfterSelect += new System.Windows.Forms.TreeViewEventHandler(this.PluginTree_AfterSelect);
@@ -603,7 +602,7 @@ namespace TESVSnip {
             this.listSubrecord.Location = new System.Drawing.Point(0, 25);
             this.listSubrecord.Name = "listSubrecord";
             this.listSubrecord.ShowItemToolTips = true;
-            this.listSubrecord.Size = new System.Drawing.Size(226, 361);
+            this.listSubrecord.Size = new System.Drawing.Size(226, 364);
             this.listSubrecord.TabIndex = 0;
             this.listSubrecord.UseCompatibleStateImageBehavior = false;
             this.listSubrecord.View = System.Windows.Forms.View.Details;
@@ -770,7 +769,7 @@ namespace TESVSnip {
             this.toolStripIncrFindMatch,
             this.toolStripIncrFindExact,
             this.toolStripIncrFindDown});
-            this.toolStripIncrFind.Location = new System.Drawing.Point(0, 438);
+            this.toolStripIncrFind.Location = new System.Drawing.Point(0, 611);
             this.toolStripIncrFind.Name = "toolStripIncrFind";
             this.toolStripIncrFind.Padding = new System.Windows.Forms.Padding(0);
             this.toolStripIncrFind.Size = new System.Drawing.Size(667, 25);
@@ -787,7 +786,7 @@ namespace TESVSnip {
             this.toolStripIncrFindCancel.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.toolStripIncrFindCancel.Name = "toolStripIncrFindCancel";
             this.toolStripIncrFindCancel.Size = new System.Drawing.Size(23, 22);
-            this.toolStripIncrFindCancel.Text = "toolStripButton2";
+            this.toolStripIncrFindCancel.Text = "Close Search";
             this.toolStripIncrFindCancel.Click += new System.EventHandler(this.toolStripIncrFindCancel_Click);
             // 
             // toolStripIncrFindText
@@ -863,6 +862,7 @@ namespace TESVSnip {
             // toolStripIncrFindDown
             // 
             this.toolStripIncrFindDown.CheckOnClick = true;
+            this.toolStripIncrFindDown.Enabled = false;
             this.toolStripIncrFindDown.Image = global::TESVSnip.Properties.Resources.emptybox;
             this.toolStripIncrFindDown.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
             this.toolStripIncrFindDown.ImageTransparentColor = System.Drawing.Color.Magenta;
@@ -870,6 +870,7 @@ namespace TESVSnip {
             this.toolStripIncrFindDown.Size = new System.Drawing.Size(90, 22);
             this.toolStripIncrFindDown.Text = "Down Only";
             this.toolStripIncrFindDown.ToolTipText = "Down Only";
+            this.toolStripIncrFindDown.Visible = false;
             this.toolStripIncrFindDown.CheckStateChanged += new System.EventHandler(this.toolStripCheck_CheckStateChanged);
             // 
             // toolStripIncrInvalidRec
@@ -882,14 +883,16 @@ namespace TESVSnip {
             this.toolStripIncrInvalidRecNext,
             this.toolStripIncrInvalidRecPrev,
             this.toolStripIncrInvalidRecRestart,
-            this.toolStripIncrInvalidRecDown});
-            this.toolStripIncrInvalidRec.Location = new System.Drawing.Point(0, 438);
+            this.toolStripIncrInvalidRecDown,
+            this.toolStripIncrInvalidRecStatus});
+            this.toolStripIncrInvalidRec.Location = new System.Drawing.Point(0, 611);
             this.toolStripIncrInvalidRec.Name = "toolStripIncrInvalidRec";
             this.toolStripIncrInvalidRec.Padding = new System.Windows.Forms.Padding(0);
             this.toolStripIncrInvalidRec.Size = new System.Drawing.Size(667, 25);
             this.toolStripIncrInvalidRec.TabIndex = 6;
             this.toolStripIncrInvalidRec.Text = "Incremental Invalid Record Search";
             this.toolStripIncrInvalidRec.Visible = false;
+            this.toolStripIncrInvalidRec.ItemClicked += new System.Windows.Forms.ToolStripItemClickedEventHandler(this.toolStripIncrInvalidRec_ItemClicked);
             this.toolStripIncrInvalidRec.VisibleChanged += new System.EventHandler(this.toolStripIncrInvalidRec_VisibleChanged);
             // 
             // toolStripIncrInvalidRecCancel
@@ -900,7 +903,7 @@ namespace TESVSnip {
             this.toolStripIncrInvalidRecCancel.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.toolStripIncrInvalidRecCancel.Name = "toolStripIncrInvalidRecCancel";
             this.toolStripIncrInvalidRecCancel.Size = new System.Drawing.Size(23, 22);
-            this.toolStripIncrInvalidRecCancel.Text = "toolStripButton2";
+            this.toolStripIncrInvalidRecCancel.Text = "Close Search";
             this.toolStripIncrInvalidRecCancel.Click += new System.EventHandler(this.toolStripIncrInvalidRecCancel_Click);
             // 
             // toolStripIncrInvalidRecText
@@ -939,14 +942,22 @@ namespace TESVSnip {
             // toolStripIncrInvalidRecDown
             // 
             this.toolStripIncrInvalidRecDown.CheckOnClick = true;
+            this.toolStripIncrInvalidRecDown.Enabled = false;
             this.toolStripIncrInvalidRecDown.Image = global::TESVSnip.Properties.Resources.emptybox;
             this.toolStripIncrInvalidRecDown.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
             this.toolStripIncrInvalidRecDown.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.toolStripIncrInvalidRecDown.Name = "toolStripIncrInvalidRecDown";
             this.toolStripIncrInvalidRecDown.Size = new System.Drawing.Size(90, 22);
-            this.toolStripIncrInvalidRecDown.Text = "Down Only";
-            this.toolStripIncrInvalidRecDown.ToolTipText = "Match Case";
+            this.toolStripIncrInvalidRecDown.Text = "&Down Only";
+            this.toolStripIncrInvalidRecDown.ToolTipText = "Down Only";
+            this.toolStripIncrInvalidRecDown.Visible = false;
             this.toolStripIncrInvalidRecDown.CheckStateChanged += new System.EventHandler(this.toolStripCheck_CheckStateChanged);
+            // 
+            // toolStripIncrInvalidRecStatus
+            // 
+            this.toolStripIncrInvalidRecStatus.ForeColor = System.Drawing.Color.DarkRed;
+            this.toolStripIncrInvalidRecStatus.Name = "toolStripIncrInvalidRecStatus";
+            this.toolStripIncrInvalidRecStatus.Size = new System.Drawing.Size(0, 22);
             // 
             // MainView
             // 
@@ -962,7 +973,7 @@ namespace TESVSnip {
             this.MainMenuStrip = this.menuStrip1;
             this.MinimumSize = new System.Drawing.Size(380, 300);
             this.Name = "MainView";
-            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
+            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "TESsnip (Skyrim edition)";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.TESsnip_FormClosing);
             this.Load += new System.EventHandler(this.MainView_Load);
@@ -1075,5 +1086,6 @@ namespace TESVSnip {
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator3;
         private System.Windows.Forms.ToolStripSeparator toolStripMenuItem1;
         private System.Windows.Forms.ToolStripMenuItem exitToolStripMenuItem;
+        private System.Windows.Forms.ToolStripLabel toolStripIncrInvalidRecStatus;
     }
 }

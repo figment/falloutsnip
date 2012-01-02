@@ -1,4 +1,4 @@
-figments's TESsnip Fork (Skyrim Edition) version 1.3
+figments's TESsnip Fork (Skyrim Edition) version 1.4
 =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
 
 TESVSnip is a fork of the TESsnip utility bundled with Fallout Mod Manager with changes specifically for Skyrim.
@@ -9,6 +9,9 @@ Requirements:
   .NET 3.5
 
 Change Log:
+v 1.4
+- Add setting to allow specification of file open or file save locations
+
 v 1.3
 - Bug fixes for crashes and other misbehaviors
 - Fixed positioning for first time loading

@@ -121,7 +121,7 @@
         AssemblyCulture="" 
         AssemblyVersion="$(Major).$(Minor).$(Build).$(Revision)" 
         AssemblyFileVersion="$(Major).$(Minor).$(Build).$(Revision)" 
-        AssemblyInformationalVersion="$(ProductName) - Version $(Major).$(Minor).$(Build) ($(GitVersionNumber))" 
+        AssemblyInformationalVersion="$(ProductName) - Version $(Major).$(Minor) ($(GitVersionNumber))" 
         />
   </Target>
   

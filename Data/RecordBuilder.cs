@@ -401,7 +401,7 @@ namespace TESVSnip.Data
             foreach (var kvp in groups)
             {
                 if (IsCanceled) return false;
-                if (kvp.Name.Count(a => !Char.IsLetterOrDigit(a)) > 0) continue;
+                //if (kvp.Name.Count(a => !Char.IsLetterOrDigit(a)) > 0) continue;
                 int n = kvp.Records.Length;
 
                 TESVSnip.Data.Subrecord sr = rr.Subrecords.FirstOrDefault(x => x.name == kvp.Name);

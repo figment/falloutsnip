@@ -124,6 +124,12 @@
     <Compile Include="Forms\LoadSettings.Designer.cs">
       <DependentUpon>LoadSettings.cs</DependentUpon>
     </Compile>
+    <Compile Include="Forms\MainView.Search.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\MainView.Spells.cs">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Include="Forms\MultilineStringEditor.cs">
       <SubType>Form</SubType>
     </Compile>
