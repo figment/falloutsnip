@@ -14,7 +14,7 @@ v 1.6
   (This is experimental and may have issues especially when copying large chunks of data)
 
 v 1.5
-- Chage copy/paste semantics so appended items are not reversed
+- Change copy/paste semantics so appended items are not reversed
 
 v 1.4
 - Add setting to allow specification of file open or file save locations

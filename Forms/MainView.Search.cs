@@ -148,7 +148,19 @@ namespace TESVSnip
             return n;
         }
 
-        private TreeNode PerformSearch(SearchType type, TreeNode tn, string text, bool first, bool partial, bool forward, bool downOnly)
+        /// <summary>
+        /// Helper routine for doing an actual search
+        /// </summary>
+        /// <param name="type">Type of search to perform</param>
+        /// <param name="tn">Starting node to search with</param>
+        /// <param name="text">Text to search for</param>
+        /// <param name="first">Whether this is the first search (if not current node can be matched)</param>
+        /// <param name="partial">Allow for partial text matches</param>
+        /// <param name="forward">Search forward or backward</param>
+        /// <param name="wrapAround">Whether to wrap around when reach top or bottom</param>
+        /// <param name="updateFunc">Function to call to update the UI when doing select</param>
+        /// <returns></returns>
+        private TreeNode PerformSearch(SearchType type, TreeNode tn, string text, bool first, bool partial, bool forward, bool wrapAround, Predicate<TreeNode> updateFunc)
         {
             Predicate<TreeNode> searchFunction = null;
 
@@ -163,6 +175,7 @@ namespace TESVSnip
                 searchFunction = (TreeNode node) =>
                 {
                     var rec = node.Tag as Record;
+                    if (updateFunc != null && updateFunc(node)) return true;
                     return (rec != null) ? rec.FormID == searchID : false;
                 };
             }
@@ -187,6 +200,7 @@ namespace TESVSnip
                                 return true;
                         }
                     }
+                    if (updateFunc != null && updateFunc(node)) return true;
                     return false;
                 };
 
@@ -210,10 +224,11 @@ namespace TESVSnip
                             }
                         }
                     }
+                    if (updateFunc != null && updateFunc(node)) return true;
                     return false;
                 };
             }
-            return IncrementalSearch(tn, first, forward, downOnly, searchFunction);
+            return IncrementalSearch(tn, first, forward, wrapAround, searchFunction);
         }
 
 
@@ -244,7 +259,7 @@ namespace TESVSnip
             }
         }
 
-        private void BackgroundNonConformingRecordIncrementalSearch(TreeNode tn, bool forward, bool downOnly)
+        private void BackgroundNonConformingRecordIncrementalSearch(TreeNode tn, bool forward, bool wrapAround)
         {
             float totalNodes = (int)PluginTree.GetNodeCount(true);
             if (totalNodes == 0)
@@ -260,7 +275,8 @@ namespace TESVSnip
             toolStripIncrInvalidRecStatus.Text = "";
             if (tn == null) tn = PluginTree.SelectedNode != null ? PluginTree.SelectedNode : PluginTree.Nodes[0];
 
-            Predicate<TreeNode> searchFunc = (TreeNode n) => {
+            Predicate<TreeNode> searchFunc = (TreeNode n) =>
+            {
                 if (IsNonConformingRecord(n))
                     return true;
                 if (IsBackroundProcessCanceled()) // returning true will stop it
@@ -274,11 +290,12 @@ namespace TESVSnip
                 return false;
             };
 
-            StartBackgroundWork(() => { foundNode = IncrementalSearch(tn, false, forward, downOnly, searchFunc); }
-                , () => {
+            StartBackgroundWork(() => { foundNode = IncrementalSearch(tn, false, forward, wrapAround, searchFunc); }
+                , () =>
+                {
                     if (IsBackroundProcessCanceled())
                     {
-                        toolStripIncrInvalidRecStatus.Text = "Search Cancelled";
+                        toolStripIncrInvalidRecStatus.Text = "Search Canceled";
                         toolStripIncrInvalidRecStatus.ForeColor = System.Drawing.Color.Black;
                     }
                     else
@@ -297,12 +314,12 @@ namespace TESVSnip
                         }
                     }
                 }
-            ); 
+            );
         }
 
-        internal bool findNonConformingRecordIncremental(TreeNode tn, bool forward, bool downOnly)
+        internal bool findNonConformingRecordIncremental(TreeNode tn, bool forward, bool wrapAround)
         {
-            var node = IncrementalSearch(tn, false, forward, downOnly, new Predicate<TreeNode>(IsNonConformingRecord));
+            var node = IncrementalSearch(tn, false, forward, wrapAround, new Predicate<TreeNode>(IsNonConformingRecord));
             if (node != null)
                 PluginTree.SelectedNode = node;
             return node != null;
@@ -344,15 +361,45 @@ namespace TESVSnip
 
         private void toolStripIncrFindNext_Click(object sender, EventArgs e)
         {
-            PerformSearch(PluginTree.SelectedNode, true);
+            BackgroundIncrementalSearch(PluginTree.SelectedNode, true);
         }
 
-        private void PerformSearch(TreeNode start, bool forward)
+
+        private void BackgroundIncrementalSearch(TreeNode start, bool forward)
         {
+            float totalNodes = (int)PluginTree.GetNodeCount(true);
+            if (totalNodes == 0)
+            {
+                toolStripIncrInvalidRecStatus.Text = "No Plugins Loaded";
+                toolStripIncrInvalidRecStatus.ForeColor = System.Drawing.Color.Maroon;
+                System.Media.SystemSounds.Beep.Play();
+                return;
+            }
+            int prevCount = 0;
+            float currentCount = 0.0f;
+            TreeNode foundNode = null;
+            toolStripIncrFindStatus.Text = "";
+
+            // Grab selected node before searching as it can only be accessed from UI thread
+            if (start == null) start = PluginTree.SelectedNode != null ? PluginTree.SelectedNode : PluginTree.Nodes[0];
+
+            Predicate<TreeNode> updateFunc = (TreeNode n) =>
+            {
+                if (IsBackroundProcessCanceled()) // returning true will stop it
+                    return true;
+                int counter = (int)((float)++currentCount / totalNodes * 100.0f);
+                if (counter != prevCount)
+                {
+                    prevCount = counter;
+                    if (counter % 10 == 0) UpdateBackgroundProgress(counter);
+                }
+                return false;
+            };
+
             var item = toolStripIncrFindType.SelectedItem as ComboHelper<SearchType, string>;
             var text = toolStripIncrFindText.Text;
             var partial = !toolStripIncrFindExact.Checked;
-            var downOnly = toolStripIncrFindWrapAround.Checked;
+            var wrapAround = toolStripIncrFindWrapAround.Checked;
             var first = toolStripIncrFindText.Tag == null ? true : (bool)toolStripIncrFindText.Tag;
             if (string.IsNullOrEmpty(text))
             {
@@ -362,7 +409,60 @@ namespace TESVSnip
                 toolStripIncrFindText.Focus();
                 return;
             }
-            var node = PerformSearch(item.Key, start, text, first, partial, forward, downOnly);
+
+            StartBackgroundWork(() => { foundNode = PerformSearch(item.Key, start, text, first, partial, forward, wrapAround, updateFunc); }
+                , () =>
+                {
+                    if (IsBackroundProcessCanceled())
+                    {
+                        toolStripIncrFindStatus.Text = "Search Canceled";
+                        toolStripIncrFindStatus.ForeColor = System.Drawing.Color.Black;
+                    }
+                    else
+                    {
+                        if (foundNode != null)
+                        {
+                            toolStripIncrFindStatus.Text = "Match Found";
+                            toolStripIncrFindStatus.ForeColor = System.Drawing.Color.Black;
+                            PluginTree.SelectedNode = foundNode;
+                            toolStripIncrFindText.Tag = false;
+                        }
+                        else
+                        {
+                            toolStripIncrFindText.Tag = true;
+
+                            toolStripIncrFindStatus.Text = "No Matches Found";
+                            toolStripIncrFindStatus.ForeColor = System.Drawing.Color.Maroon;
+                            System.Media.SystemSounds.Beep.Play();
+                        }
+                        toolStripIncrFind.Focus();
+                        toolStripIncrFindText.Select();
+                        toolStripIncrFindText.Focus();                        
+                    }
+                }
+            );
+        }
+
+        private void PerformSearch(TreeNode start, bool forward)
+        {
+            BackgroundIncrementalSearch(start, forward);
+        }
+        private void PerformSearch(TreeNode start, bool forward, Predicate<TreeNode> updateFunc)
+        {
+            var item = toolStripIncrFindType.SelectedItem as ComboHelper<SearchType, string>;
+            var text = toolStripIncrFindText.Text;
+            var partial = !toolStripIncrFindExact.Checked;
+            var wrapAround = toolStripIncrFindWrapAround.Checked;
+            var first = toolStripIncrFindText.Tag == null ? true : (bool)toolStripIncrFindText.Tag;
+            if (string.IsNullOrEmpty(text))
+            {
+                System.Media.SystemSounds.Beep.Play();
+                toolStripIncrFind.Focus();
+                toolStripIncrFindText.Select();
+                toolStripIncrFindText.Focus();
+                return;
+            }
+            var node = PerformSearch(item.Key, start, text, first, partial, forward, wrapAround, updateFunc);
             if (node != null)
             {
                 PluginTree.SelectedNode = node;
@@ -380,15 +480,14 @@ namespace TESVSnip
 
         private void toolStripIncrFindPrev_Click(object sender, EventArgs e)
         {
-            PerformSearch(PluginTree.SelectedNode, false);
+            BackgroundIncrementalSearch(PluginTree.SelectedNode, false);
         }
 
         private void toolStripIncrFindRestart_Click(object sender, EventArgs e)
         {
             // use tag to indicate text changed and therefore reset the search
             toolStripIncrFindText.Tag = true;
-
-            PerformSearch(PluginTree.Nodes.Count > 0 ? PluginTree.Nodes[0] : null, true);
+            BackgroundIncrementalSearch(PluginTree.Nodes.Count > 0 ? PluginTree.Nodes[0] : null, true);
         }
 
         private void toolStripIncrFindCancel_Click(object sender, EventArgs e)
@@ -399,6 +498,7 @@ namespace TESVSnip
         private void toolStripIncrFind_VisibleChanged(object sender, EventArgs e)
         {
             findToolStripMenuItem.Checked = toolStripIncrFind.Visible;
+            toolStripIncrFindStatus.Text = "";
         }
 
         private void toolStripIncrFindText_KeyDown(object sender, KeyEventArgs e)
@@ -407,7 +507,7 @@ namespace TESVSnip
             {
                 e.SuppressKeyPress = true;
                 e.Handled = true;
-                PerformSearch(PluginTree.SelectedNode, !e.Shift);
+                BackgroundIncrementalSearch(PluginTree.SelectedNode, !e.Shift);
             }
         }
         private void toolStripIncrFindText_TextChanged(object sender, EventArgs e)
