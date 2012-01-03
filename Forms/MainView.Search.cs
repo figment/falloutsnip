@@ -72,7 +72,7 @@ namespace TESVSnip
             }
         }
 
-        internal TreeNode IncrementalSearch(TreeNode tn, bool first, bool forward, bool downOnly, Predicate<TreeNode> searchFunc)
+        internal TreeNode IncrementalSearch(TreeNode tn, bool first, bool forward, bool wrapAround, Predicate<TreeNode> searchFunc)
         {
             if (PluginTree.Nodes.Count == 0)
                 return null;
@@ -96,11 +96,11 @@ namespace TESVSnip
                     else if (startNode == tn) // if we found the start node again then fail
                         return null;
                     if (forward)
-                        tn = GetNextNode(tn, downOnly);
+                        tn = GetNextNode(tn);
                     else
                         tn = GetPreviousNode(tn);
                 }
-                if (!downOnly)
+                if (wrapAround)
                 {
                     if (forward)
                         tn = PluginTree.Nodes[0];
@@ -111,7 +111,7 @@ namespace TESVSnip
             return null;
         }
 
-        private TreeNode GetNextNode(TreeNode tn, bool downOnly)
+        private TreeNode GetNextNode(TreeNode tn)
         {
             if (tn.FirstNode != null)
             {
@@ -119,7 +119,7 @@ namespace TESVSnip
             }
             else
             {
-                while (!downOnly && tn != null && tn.NextNode == null)
+                while (tn != null && tn.NextNode == null)
                     tn = tn.Parent;
                 tn = (tn != null && tn.NextNode != null) ? tn.NextNode : null;
             }
@@ -352,7 +352,7 @@ namespace TESVSnip
             var item = toolStripIncrFindType.SelectedItem as ComboHelper<SearchType, string>;
             var text = toolStripIncrFindText.Text;
             var partial = !toolStripIncrFindExact.Checked;
-            var downOnly = toolStripIncrFindDown.Checked;
+            var downOnly = toolStripIncrFindWrapAround.Checked;
             var first = toolStripIncrFindText.Tag == null ? true : (bool)toolStripIncrFindText.Tag;
             if (string.IsNullOrEmpty(text))
             {

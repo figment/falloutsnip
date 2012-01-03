@@ -181,17 +181,18 @@ Would you like to configure which Records to exclude?"
             }
             if (TESVSnip.Properties.Settings.Default.EnableESMFilter)
             {
-                applyfilter = string.Compare(System.IO.Path.GetExtension(s), ".esm", true) == 0;
+                if (TESVSnip.Properties.Settings.Default.ApplyFilterToAllESM)
+                    applyfilter = string.Compare(System.IO.Path.GetExtension(s), ".esm", true) == 0;
+                else
+                    applyfilter = string.Compare(System.IO.Path.GetFileName(s), "skyrim.esm", true) == 0;
+
                 if (applyfilter && bAskToApplyFilter && !TESVSnip.Properties.Settings.Default.DontAskUserAboutFiltering)
                 {
                     DialogResult result = MessageBox.Show(this,
                                             @"The file is large size and takes significant memory to load.
 Would you like to apply the record exclusions?"
                                             , "Filter Options", MessageBoxButtons.YesNo, MessageBoxIcon.Question, MessageBoxDefaultButton.Button1);
-                    if (result == DialogResult.Yes)
-                    {
-
-                    }
+                    applyfilter = (result == DialogResult.Yes);
                 }
                 if (applyfilter)
                 {
@@ -844,7 +845,26 @@ Do you still want to save?", "Modified Save", MessageBoxButtons.YesNo, MessageBo
 
         private void copyToolStripMenuItem_Click(object sender, EventArgs e)
         {
+            CopySelection();
+        }
+
+        private void CopySelection()
+        {
             if (Selection.SelectedSubrecord)
+                CopySelectedSubRecord();
+            else CopySelectedTreeNode();
+        }
+
+        private void CopySelectedTreeNode()
+        {
+            if (PluginTree.SelectedNode.Tag is Plugin)
+                MessageBox.Show("Cannot copy a plugin", "Error");
+            else
+                CopySelectedRecord();
+        }
+
+        private void CopySelectedSubRecord()
+        {
             {
                 if (listSubrecord.SelectedIndices.Count != 1) return;
                 int idx = listSubrecord.SelectedIndices[0];
@@ -853,25 +873,19 @@ Do you still want to save?", "Modified Save", MessageBoxButtons.YesNo, MessageBo
                 Clipboard = sr.Clone();
                 ClipboardNode = null;
             }
-            else if (PluginTree.SelectedNode.Tag is Plugin)
+        }
+        private void CopySelectedRecord()
+        {
+            BaseRecord node = ((BaseRecord)PluginTree.SelectedNode.Tag).Clone();
+            Clipboard = node;
+            ClipboardNode = (TreeNode)PluginTree.SelectedNode.Clone();
+            ClipboardNode.Tag = node;
+            if (ClipboardNode.Nodes.Count > 0)
             {
-                MessageBox.Show("Cannot copy a plugin", "Error");
-            }
-            else
-            {
-                BaseRecord node = ((BaseRecord)PluginTree.SelectedNode.Tag).Clone();
-                Clipboard = node;
-                ClipboardNode = (TreeNode)PluginTree.SelectedNode.Clone();
-                ClipboardNode.Tag = node;
-                if (ClipboardNode.Nodes.Count > 0)
-                {
-                    ClipboardNode.Nodes.Clear();
-                    foreach (Rec r in ((GroupRecord)node).Records) WalkPluginTree(r, ClipboardNode);
-                }
-
+                ClipboardNode.Nodes.Clear();
+                foreach (Rec r in ((GroupRecord)node).Records) WalkPluginTree(r, ClipboardNode);
             }
         }
-
         private void pasteToolStripMenuItem_Click(object sender, EventArgs e)
         {
             if (!ValidateMakeChange())
@@ -942,6 +956,7 @@ Do you still want to save?", "Modified Save", MessageBoxButtons.YesNo, MessageBo
             TreeNode tn = node;
             if (tn.Tag is Plugin) return (Plugin)tn.Tag;
             while (!(tn.Tag is Plugin) && tn != null) tn = tn.Parent;
+            if (tn != null && tn.Tag is Plugin) return tn.Tag as Plugin;
             return tn != null && tn.Parent != null ? tn.Parent.Tag as Plugin : new Plugin();
         }
 
@@ -1380,19 +1395,34 @@ Do you still want to save?", "Modified Save", MessageBoxButtons.YesNo, MessageBo
             }
             return false;
         }
+
+
         private string LookupFormIDI(uint id)
+        {
+            return LookupFormIDI(this.Selection, id);
+        }
+
+        private string LookupFormIDI(SelectionContext context, uint id)
         {
             uint pluginid = (id & 0xff000000) >> 24;
             if (pluginid > FormIDLookup.Length)
-            {
                 return "FormID was invalid";
-            }
+
             Record r;
+            if (context.Plugin != null)
+            {
+
+                if (context.Plugin.TryGetRecordByID(id, out r))
+                    return r.DescriptiveName;
+            }
+
+            // what is this doing?
             Plugin p = FormIDLookup[FormIDLookup.Length - 1];
             if (p.TryGetRecordByID(id, out r))
                 return r.DescriptiveName;
             id &= 0xffffff;
-            if (pluginid >= FormIDLookup.Length || FormIDLookup[pluginid] == null)
+
+            if (pluginid < FormIDLookup.Length && FormIDLookup[pluginid] != null)
             {
                 p = FormIDLookup[pluginid];
                 if (p == null)
@@ -1404,7 +1434,7 @@ Do you still want to save?", "Modified Save", MessageBoxButtons.YesNo, MessageBo
             }
             return "No match";
         }
-
+        
         private Record GetRecordByID(uint id)
         {
             uint pluginid = (id & 0xff000000) >> 24;
@@ -2013,39 +2043,17 @@ Do you still want to save?", "Modified Save", MessageBoxButtons.YesNo, MessageBo
         #region Increment Invalid Record Search
         private void toolStripIncrInvalidRecNext_Click(object sender, EventArgs e)
         {
-            BackgroundNonConformingRecordIncrementalSearch(null, true, toolStripIncrInvalidRecDown.Checked);
+            BackgroundNonConformingRecordIncrementalSearch(null, true, toolStripIncrInvalidRecWrapAround.Checked);
         }
 
         private void toolStripIncrInvalidRecPrev_Click(object sender, EventArgs e)
         {
-            toolStripIncrInvalidRecStatus.Text = "";
-            if (!findNonConformingRecordIncremental(null, false, toolStripIncrInvalidRecDown.Checked))
-            {
-                toolStripIncrInvalidRecStatus.Text = "No Invalid Records Found";
-                toolStripIncrInvalidRecStatus.ForeColor = System.Drawing.Color.Maroon;
-                System.Media.SystemSounds.Beep.Play();
-            }
-            else
-            {
-                toolStripIncrInvalidRecStatus.Text = "Invalid Records Found";
-                toolStripIncrInvalidRecStatus.ForeColor = System.Drawing.Color.Black;
-            }
+            BackgroundNonConformingRecordIncrementalSearch(null, false, toolStripIncrInvalidRecWrapAround.Checked);
         }
 
         private void toolStripIncrInvalidRecRestart_Click(object sender, EventArgs e)
         {
-            toolStripIncrInvalidRecStatus.Text = "";
-            if (!findNonConformingRecordIncremental(PluginTree.Nodes.Count > 0 ? PluginTree.Nodes[0] : null, true, false))
-            {
-                toolStripIncrInvalidRecStatus.Text = "No Invalid Records Found";
-                toolStripIncrInvalidRecStatus.ForeColor = System.Drawing.Color.Maroon;
-                System.Media.SystemSounds.Beep.Play();
-            }
-            else
-            {
-                toolStripIncrInvalidRecStatus.Text = "Invalid Records Found";
-                toolStripIncrInvalidRecStatus.ForeColor = System.Drawing.Color.Black;
-            }
+            BackgroundNonConformingRecordIncrementalSearch(PluginTree.Nodes.Count > 0 ? PluginTree.Nodes[0] : null, true, false);
         }
 
         private void toolStripIncrInvalidRecCancel_Click(object sender, EventArgs e)
@@ -2067,5 +2075,132 @@ Do you still want to save?", "Modified Save", MessageBoxButtons.YesNo, MessageBo
 
         }
 
+        private void PluginTree_MouseClick(object sender, MouseEventArgs e)
+        {
+            if (e.Button == MouseButtons.Right)
+            {
+
+            }
+        }
+
+        private void contexMenuRecordCopy_Click(object sender, EventArgs e)
+        {
+            CopySelectedTreeNode();            
+        }
+
+        private void contextMenuRecord_Opening(object sender, System.ComponentModel.CancelEventArgs e)
+        {
+            var tn = contextMenuRecord.Tag as TreeNode;
+            if (tn == null) tn = PluginTree.SelectedNode;
+            if (tn == null)
+            {
+                e.Cancel = true;
+                return;
+            }
+            if (tn.Tag is Plugin)
+            {
+                contextMenuRecordCopy.Enabled = false;
+                contextMenuRecordCopy.AutoToolTip = true;
+                contextMenuRecordCopy.ToolTipText = "Cannot copy a plugin";
+                contextMenuRecordCopyTo.Enabled = false;
+            }
+            else
+            {
+                contextMenuRecordCopy.AutoToolTip = false;
+                contextMenuRecordCopy.Enabled = true;
+                contextMenuRecordCopy.ToolTipText = "Copy Record to Clipboard";
+                contextMenuRecordCopyTo.Enabled = (PluginTree.GetNodeCount(false) > 1);
+            }
+            contextMenuRecordCopyTo.DropDownItems.Clear();
+            var srcPlugin = GetPluginFromNode(tn);
+            foreach (TreeNode n in PluginTree.Nodes)
+            {
+                var plugin = n.Tag as BaseRecord;
+                if (plugin == null) continue;
+                if (srcPlugin.Equals(plugin)) continue;
+                
+                var tsi = new System.Windows.Forms.ToolStripButton(n.Text);
+                tsi.Tag = new object[]{tn.Tag, tn, plugin, n};
+                var sz = TextRenderer.MeasureText(n.Text, contextMenuRecordCopyTo.Font);
+                if (sz.Width > tsi.Width)
+                    tsi.Width = sz.Width;
+                tsi.AutoSize = true;
+                contextMenuRecordCopyTo.DropDownItems.Add(tsi);
+            }
+            
+        }
+
+        private void contextMenuRecordCopyTo_DropDownOpening(object sender, EventArgs e)
+        {
+        }
+
+        private void PluginTree_NodeMouseClick(object sender, TreeNodeMouseClickEventArgs e)
+        {
+            if (e.Button == MouseButtons.Right)
+            {
+                contextMenuRecord.Tag = e.Node;
+                contextMenuRecord.Show(PluginTree.PointToScreen(e.Location));
+            }
+        }
+
+        private void PluginTree_OnContextMenuKey(object sender, EventArgs e)
+        {
+            contextMenuRecord.Show(PluginTree.PointToScreen(new System.Drawing.Point(PluginTree.Width/4, PluginTree.Height/4)));
+        }
+
+        private void contextMenuRecordCopyTo_DropDownItemClicked(object sender, ToolStripItemClickedEventArgs e)
+        {
+            try
+            {
+                var nodes = e.ClickedItem.Tag as object[];
+                var src = nodes[0] as BaseRecord;
+                var srcNode = nodes[1] as TreeNode;
+                var dst = nodes[2] as BaseRecord;
+                var dstNode = nodes[3] as TreeNode;
+                if (src != null && dst != null && dstNode != null && srcNode != null)
+                {
+                    var dstRec = src.Clone() as Rec;
+                    var dstRecNode = (TreeNode)srcNode.Clone();
+                    if (dstRec != null && dstRecNode != null)
+                    {
+                        dstRecNode.Tag = dstRec;
+                        if (dstRecNode.Nodes.Count > 0)
+                        {
+                            dstRecNode.Nodes.Clear();
+                            foreach (Rec r in ((GroupRecord)dstRec).Records) 
+                                WalkPluginTree(r, dstRecNode);
+                        }
+                        dst.AddRecord(dstRec);
+                        dstNode.Nodes.Add(dstRecNode);
+                        //var tn = new TreeNode(dstRec.DescriptiveName);
+                        //tn.Tag = dstRec;
+                        //dstNode.Nodes.Add(tn);
+                        GetPluginFromNode(dstRecNode).InvalidateCache();
+                    }
+                }
+                PluginTree_AfterSelect(null, null);
+            }
+            catch
+            {
+            	
+            }
+        }
+
+        private void contextMenuRecordDelete_Click(object sender, EventArgs e)
+        {
+            if (DialogResult.Yes == MessageBox.Show("Are you sure?", "Delete Node", MessageBoxButtons.YesNo, MessageBoxIcon.Question, MessageBoxDefaultButton.Button2))
+            {
+                if (!ValidateMakeChange())
+                    return;
+                if (PluginTree.SelectedNode.Parent != null)
+                {
+                    BaseRecord parent = (BaseRecord)PluginTree.SelectedNode.Parent.Tag;
+                    BaseRecord node = (BaseRecord)PluginTree.SelectedNode.Tag;
+                    parent.DeleteRecord(node);
+                }
+                GetPluginFromNode(PluginTree.SelectedNode).InvalidateCache();
+                PluginTree.SelectedNode.Remove();
+            }
+        }
     }
 }
