@@ -1,9 +1,12 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Runtime.Serialization;
+using System.Linq;
 
 namespace TESVSnip
 {
+    using TESVSnip.Data;
     public class TESParserException : Exception { public TESParserException(string msg) : base(msg) { } }
 
     #region class SelectionContext
@@ -89,8 +92,10 @@ namespace TESVSnip
     }
     #endregion
 
-    public abstract class BaseRecord
+	[Persistable(Flags = PersistType.DeclaredOnly), Serializable]
+    public abstract class BaseRecord : PersistObject, ICloneable, ISerializable
     {
+        [Persistable]
         public virtual string Name { get; set; }
 
         public abstract long Size { get; }
@@ -165,11 +170,22 @@ namespace TESVSnip
             bw.Write(b, 0, s.Length);
         }
 
+        protected BaseRecord() { }
+        protected BaseRecord(SerializationInfo info, StreamingContext context) 
+            : base(info, context)
+		{
+		}
+
+
         public abstract BaseRecord Clone();
+
+        object ICloneable.Clone() { return this.Clone(); }
     }
 
+    [Persistable(Flags = PersistType.DeclaredOnly), Serializable]
     public sealed class Plugin : BaseRecord
     {
+        [Persistable]
         public readonly List<Rec> Records = new List<Rec>();
 
         public bool StringsDirty { get; set; }
@@ -325,6 +341,12 @@ namespace TESVSnip
                 br.Close();
             }
         }
+
+        Plugin(SerializationInfo info, StreamingContext context) 
+            : base(info, context)
+		{
+		}
+
 
         public Plugin(byte[] data, string name)
         {
@@ -559,18 +581,34 @@ namespace TESVSnip
 
     }
 
+
+    [Persistable(Flags = PersistType.DeclaredOnly), Serializable]
     public abstract class Rec : BaseRecord
     {
+        protected Rec() { }
+
+        protected Rec(SerializationInfo info, StreamingContext context) 
+            : base(info, context)
+		{
+		}
+
+        [Persistable]
         public string descriptiveName;
         public string DescriptiveName { get { return descriptiveName == null ? Name : (Name + descriptiveName); } }
     }
 
+    [Persistable(Flags = PersistType.DeclaredOnly), Serializable]
     public sealed class GroupRecord : Rec
     {
+        [Persistable]
         public readonly List<Rec> Records = new List<Rec>();
+        [Persistable]
         private readonly byte[] data;
+        [Persistable]
         public uint groupType;
+        [Persistable]
         public uint dateStamp;
+        [Persistable]
         public uint flags;
 
         public string ContentsType
@@ -620,7 +658,14 @@ namespace TESVSnip
             base.ForEach(action);
             foreach (var r in this.Records) r.ForEach(action);
         }
-        
+
+        GroupRecord() { }
+
+        GroupRecord(SerializationInfo info, StreamingContext context) 
+            : base(info, context)
+		{
+		}
+
 
         internal GroupRecord(uint Size, BinaryReader br, bool Oblivion, string[] recFilter, bool filterAll)
         {
@@ -812,12 +857,17 @@ namespace TESVSnip
         }
     }
 
-    public sealed class Record : Rec
+    [Persistable(Flags = PersistType.DeclaredOnly), Serializable]
+    public sealed class Record : Rec, ISerializable, IDeserializationCallback
     {
         public readonly TESVSnip.Collections.Generic.AdvancedList<SubRecord> SubRecords  ;
+        [Persistable]
         public uint Flags1;
+        [Persistable]
         public uint Flags2;
+        [Persistable]
         public uint Flags3;
+        [Persistable]
         public uint FormID;
 
         public override long Size
@@ -859,6 +909,26 @@ namespace TESVSnip
             if (sr == null) throw new TESParserException("Record to add was not of the correct type." +
                    Environment.NewLine + "Records can only hold Subrecords.");
             SubRecords.Insert(idx, sr);
+        }
+
+        // due to weird 'bug' in serialization of arrays we do not have access to children yet.
+        SubRecord[] serializationItems = null;
+        Record(SerializationInfo info, StreamingContext context) 
+            : base(info, context)
+		{
+            serializationItems = info.GetValue("SubRecords", typeof(SubRecord[])) as SubRecord[];
+            SubRecords = new Collections.Generic.AdvancedList<SubRecord>(1);
+		}
+        void ISerializable.GetObjectData(SerializationInfo info, StreamingContext context)
+        {
+            info.AddValue("SubRecords", SubRecords.ToArray());
+            TESVSnip.Data.PersistAssist.Serialize(this, info, context);
+        }
+        void IDeserializationCallback.OnDeserialization(object sender)
+        {
+            if (serializationItems != null)
+                this.SubRecords.AddRange(serializationItems.OfType<SubRecord>().ToList());
+            serializationItems = null;
         }
 
         internal Record(string name, uint Size, BinaryReader br, bool Oblivion)
@@ -905,7 +975,8 @@ namespace TESVSnip
         {
             SubRecords = new TESVSnip.Collections.Generic.AdvancedList<SubRecord>(r.SubRecords.Count);
             SubRecords.AllowSorting = false;
-            for (int i = 0; i < r.SubRecords.Count; i++) SubRecords.Add((SubRecord)r.SubRecords[i].Clone());
+            foreach (var sr in r.SubRecords.OfType<SubRecord>())
+                SubRecords.Add((SubRecord)sr.Clone());
             Flags1 = r.Flags1;
             Flags2 = r.Flags2;
             Flags3 = r.Flags3;
@@ -1017,9 +1088,12 @@ namespace TESVSnip
         }
     }
 
+    [Persistable(Flags = PersistType.DeclaredOnly), Serializable]
     public sealed class SubRecord : BaseRecord
     {
         private Record Owner;
+
+        [Persistable]
         private byte[] Data;
 
         public override long Size { get { return Data.Length; } }
@@ -1039,6 +1113,11 @@ namespace TESVSnip
             if (nullTerminate) s += '\0';
             Data = System.Text.Encoding.Default.GetBytes(s);
         }
+
+        SubRecord(SerializationInfo info, StreamingContext context) 
+            : base(info, context)
+		{
+		}
 
         internal SubRecord(Record rec, string name, BinaryReader br, uint size)
         {

@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Runtime.Serialization;
+using TESVSnip.Data;
 
 namespace TESVSnip.Collections.Generic
 {
@@ -11,7 +12,8 @@ namespace TESVSnip.Collections.Generic
     using System.ComponentModel;
     using System.Collections;
 
-    public class AdvancedList<T> : BindingList<T>, IBindingListView
+    [Persistable(Flags = PersistType.DeclaredOnly), Serializable]
+    public class AdvancedList<T> : BindingList<T>, IBindingListView, ISerializable, IPostSerializationCallback
     {
         bool allowSort = true;
         public AdvancedList()
@@ -27,6 +29,34 @@ namespace TESVSnip.Collections.Generic
         {
 
         }
+		/// <summary>
+		///	Deserialization constructor
+		/// </summary>
+        protected AdvancedList(SerializationInfo info, StreamingContext context)
+		{
+            var items = info.GetValue("Items", typeof(T[])) as T[];
+            if (items != null)
+                this.AddRange(items);
+            TESVSnip.Data.PersistAssist.Deserialize(this, info, context);
+		}
+
+		#region ISerializable Members
+
+		void ISerializable.GetObjectData(SerializationInfo info, StreamingContext context)
+		{
+            info.AddValue("Items", this.ToArray());
+            TESVSnip.Data.PersistAssist.Serialize(this, info, context);
+		}
+
+        bool IPostSerializationCallback.NeedCallback { get {return true;} }
+        void IPostSerializationCallback.OnPostSerialization()
+        {
+
+        }
+
+        
+		#endregion
+
 
         public virtual bool AllowSorting
         {

@@ -74,6 +74,7 @@ namespace TESVSnip
                 global::TESVSnip.Properties.Settings.Default.MainVertSplitterPct = splitVertical.SplitterDistance;
                 global::TESVSnip.Properties.Settings.Default.Save();
             }
+            useWindowsClipboardToolStripMenuItem.Checked = global::TESVSnip.Properties.Settings.Default.UseWindowsClipboard;
 
             Selection = new SelectionContext();
             Selection.formIDLookup = new dFormIDLookupI(LookupFormIDI);
@@ -83,7 +84,6 @@ namespace TESVSnip
             Selection.RecordChanged += delegate(object o, EventArgs a) { UpdateToolStripSelection(); };
             Selection.SubRecordChanged += delegate(object o, EventArgs a){ UpdateToolStripSelection(); };
             
-
             if (!DesignMode)
             {
                 try
@@ -101,10 +101,78 @@ namespace TESVSnip
 
 
 
-        public object Clipboard
+        private bool HasClipboardData()
         {
-            get { return s_clipboard; }
-            set
+            if (useWindowsClipboardToolStripMenuItem.Checked)
+            {
+                var od = System.Windows.Forms.Clipboard.GetDataObject();
+                return od != null ? od.GetDataPresent("TESVSnip") : false;
+            }
+            else
+            {
+                return Clipboard != null;
+            }
+        }
+        
+        private bool HasClipboardData<T>()
+        {
+            if (useWindowsClipboardToolStripMenuItem.Checked)
+            {
+                var od = System.Windows.Forms.Clipboard.GetDataObject();
+                return od != null ? od.GetDataPresent(typeof(T).FullName) : false;
+            }
+            else
+            {
+                return Clipboard is T;
+            }
+        }
+
+        private object GetClipboardData()
+        {
+            if (global::TESVSnip.Properties.Settings.Default.UseWindowsClipboard)
+            {
+                var od = System.Windows.Forms.Clipboard.GetDataObject();
+                var cliptype = od.GetData("TESVSnip");
+                if (cliptype is string)
+                {
+                    return od.GetData(cliptype.ToString());
+                }
+                return null;
+            }
+            else
+            {
+                return s_clipboard;
+            }
+        }
+
+        private T GetClipboardData<T>() where T : class
+        {
+            if (global::TESVSnip.Properties.Settings.Default.UseWindowsClipboard)
+            {
+                var od = System.Windows.Forms.Clipboard.GetDataObject();
+                var clip = od.GetData(typeof(T).FullName);
+                return clip as T;
+            }
+            else
+            {
+                return s_clipboard as T;
+            }
+        }
+        private void SetClipboardData(object value)
+        {
+            if (global::TESVSnip.Properties.Settings.Default.UseWindowsClipboard)
+            {
+                if (value is ICloneable)
+                {
+                    var ido = new DataObject();
+                    var srFormat = value.GetType().FullName;
+                    ido.SetData(srFormat, ((ICloneable)value).Clone());
+                    ido.SetData("TESVSnip", srFormat);
+                    System.Windows.Forms.Clipboard.Clear();
+                    System.Windows.Forms.Clipboard.SetDataObject(ido, true);
+                }
+            }
+            else
             {
                 if (s_clipboard != value)
                 {
@@ -112,6 +180,12 @@ namespace TESVSnip
                     UpdateToolStripSelection();
                 }
             }
+        }
+
+        public object Clipboard
+        {
+            get { return GetClipboardData(); }
+            set { SetClipboardData(value);}
         }
         
         public TreeNode ClipboardNode
@@ -688,6 +762,8 @@ Would you like to apply the record exclusions?"
             if (PluginTree.SelectedNode == null)
                 return;
 
+            bool hasClipboard = HasClipboardData();
+
             FindMasters();
             if (PluginTree.SelectedNode.Tag is Plugin)
             {
@@ -697,7 +773,7 @@ Would you like to apply the record exclusions?"
                 cutToolStripMenuItem.Enabled = false;
                 copyToolStripMenuItem.Enabled = false;
                 deleteToolStripMenuItem.Enabled = false;
-                pasteToolStripMenuItem.Enabled = true;
+                pasteToolStripMenuItem.Enabled = hasClipboard;
                 insertRecordToolStripMenuItem.Enabled = true;
                 insertSubrecordToolStripMenuItem.Enabled = false;
             }
@@ -706,7 +782,7 @@ Would you like to apply the record exclusions?"
                 cutToolStripMenuItem.Enabled = true;
                 copyToolStripMenuItem.Enabled = true;
                 deleteToolStripMenuItem.Enabled = true;
-                pasteToolStripMenuItem.Enabled = true;
+                pasteToolStripMenuItem.Enabled = hasClipboard;
                 insertRecordToolStripMenuItem.Enabled = false;
                 insertSubrecordToolStripMenuItem.Enabled = true;
                 Record r = (Record)PluginTree.SelectedNode.Tag;
@@ -723,7 +799,7 @@ Would you like to apply the record exclusions?"
                 cutToolStripMenuItem.Enabled = true;
                 copyToolStripMenuItem.Enabled = true;
                 deleteToolStripMenuItem.Enabled = true;
-                pasteToolStripMenuItem.Enabled = true;
+                pasteToolStripMenuItem.Enabled = hasClipboard;
                 insertRecordToolStripMenuItem.Enabled = true;
                 insertSubrecordToolStripMenuItem.Enabled = false;
             }
@@ -737,6 +813,7 @@ Would you like to apply the record exclusions?"
             if (PluginTree.SelectedNode == null)
                 return;
 
+            bool hasClipboard = HasClipboardData();
             //Enable and disable relevant menu items
             if (PluginTree.SelectedNode.Tag is Plugin)
             {
@@ -744,7 +821,7 @@ Would you like to apply the record exclusions?"
                 cutToolStripMenuItem.Enabled = false;
                 copyToolStripMenuItem.Enabled = false;
                 deleteToolStripMenuItem.Enabled = false;
-                pasteToolStripMenuItem.Enabled = true;
+                pasteToolStripMenuItem.Enabled = hasClipboard;
                 insertRecordToolStripMenuItem.Enabled = true;
                 insertSubrecordToolStripMenuItem.Enabled = false;
             }
@@ -760,7 +837,7 @@ Would you like to apply the record exclusions?"
                     cutToolStripMenuItem.Enabled = true;
                     copyToolStripMenuItem.Enabled = true;
                     deleteToolStripMenuItem.Enabled = true;
-                    pasteToolStripMenuItem.Enabled = true;
+                    pasteToolStripMenuItem.Enabled = hasClipboard;
                     insertRecordToolStripMenuItem.Enabled = false;
                     insertSubrecordToolStripMenuItem.Enabled = true;
                     tbInfo.Text = ((Record)PluginTree.SelectedNode.Tag).GetDesc(Selection);
@@ -772,7 +849,7 @@ Would you like to apply the record exclusions?"
                 cutToolStripMenuItem.Enabled = true;
                 copyToolStripMenuItem.Enabled = true;
                 deleteToolStripMenuItem.Enabled = true;
-                pasteToolStripMenuItem.Enabled = true;
+                pasteToolStripMenuItem.Enabled = hasClipboard;
                 insertRecordToolStripMenuItem.Enabled = true;
                 insertSubrecordToolStripMenuItem.Enabled = false;
             }
@@ -780,7 +857,7 @@ Would you like to apply the record exclusions?"
             UpdateToolStripSelection();
             listSubrecord.Refresh();
         }
-
+        
         private void deleteToolStripMenuItem_Click(object sender, EventArgs e)
         {
             if (!ValidateMakeChange())
@@ -865,14 +942,12 @@ Do you still want to save?", "Modified Save", MessageBoxButtons.YesNo, MessageBo
 
         private void CopySelectedSubRecord()
         {
-            {
-                if (listSubrecord.SelectedIndices.Count != 1) return;
-                int idx = listSubrecord.SelectedIndices[0];
+            if (listSubrecord.SelectedIndices.Count != 1) return;
+            int idx = listSubrecord.SelectedIndices[0];
+            var sr = (SubRecord)listSubrecord.DataSource[idx];
 
-                SubRecord sr = (SubRecord)listSubrecord.DataSource[idx];
-                Clipboard = sr.Clone();
-                ClipboardNode = null;
-            }
+            Clipboard = sr.Clone();
+            ClipboardNode = null;
         }
         private void CopySelectedRecord()
         {
@@ -890,22 +965,25 @@ Do you still want to save?", "Modified Save", MessageBoxButtons.YesNo, MessageBo
         {
             if (!ValidateMakeChange())
                 return;
-            if (Clipboard == null)
+            if (!HasClipboardData())
             {
                 MessageBox.Show("The clipboard is empty", "Error");
                 return;
             }
+            var clipboardObject = this.Clipboard;
+
             BaseRecord node = (BaseRecord)PluginTree.SelectedNode.Tag;
-            if (Clipboard is Plugin)
+            if (clipboardObject is Plugin)
             {
                 MessageBox.Show("Plugin merging has been disabled");
                 return;
             }
-            else if (Clipboard is BaseRecord)
+            else if (clipboardObject is BaseRecord)
             {
                 try
                 {
-                    var br = (BaseRecord)((BaseRecord)Clipboard).Clone();
+                    var dstNode = PluginTree.SelectedNode;
+                    var br = (BaseRecord)((BaseRecord)clipboardObject).Clone();
                     node.AddRecord(br);
                     if (ClipboardNode != null)
                     {
@@ -916,8 +994,18 @@ Do you still want to save?", "Modified Save", MessageBoxButtons.YesNo, MessageBo
                     }
                     else
                     {
-                        PluginTree_AfterSelect(null, null);
+                        string text = (br is Rec) ? ((Rec)br).DescriptiveName : br.Name;
+                        var dstRecNode = new TreeNode(text);
+                        dstRecNode.Tag = br;
+                        if (br is GroupRecord)
+                        {
+                            foreach (Rec r in ((GroupRecord)br).Records)
+                                WalkPluginTree(r, dstRecNode);
+                        }
+                        dstNode.Nodes.Add(dstRecNode);
+                        GetPluginFromNode(dstNode).InvalidateCache();
                     }
+                    PluginTree_AfterSelect(null, null);
                 }
                 catch (TESParserException ex)
                 {
@@ -1022,7 +1110,7 @@ Do you still want to save?", "Modified Save", MessageBoxButtons.YesNo, MessageBo
             if (Selection.Record != null)
             {
                 toolStripInsertRecord.Enabled = true;
-                toolStripPasteSubrecord.Enabled = (Clipboard is IEnumerable<SubRecord>);
+                toolStripPasteSubrecord.Enabled = HasClipboardData<SubRecord[]>();
             }
             else
             {
@@ -1247,6 +1335,7 @@ Do you still want to save?", "Modified Save", MessageBoxButtons.YesNo, MessageBo
         {
             global::TESVSnip.Properties.Settings.Default.MainHorzSplitterPct = splitHorizontal.SplitterDistance;
             global::TESVSnip.Properties.Settings.Default.MainVertSplitterPct = splitVertical.SplitterDistance;
+            global::TESVSnip.Properties.Settings.Default.UseWindowsClipboard = useWindowsClipboardToolStripMenuItem.Checked;
 
             PluginTree.Nodes.Clear();
             Clipboard = null;
@@ -1786,7 +1875,7 @@ Do you still want to save?", "Modified Save", MessageBoxButtons.YesNo, MessageBo
             if (!ValidateMakeChange())
                 return;
 
-            if (!(Clipboard is IEnumerable<SubRecord>))
+            if (!HasClipboardData<SubRecord[]>())
                 return;
 
             try
@@ -1795,7 +1884,7 @@ Do you still want to save?", "Modified Save", MessageBoxButtons.YesNo, MessageBo
 
                 
                 int insertIdx = listSubrecord.GetSelectionIndices().Length == 0 ? -1 : listSubrecord.GetFocusedItem();
-                var nodes =  (IEnumerable<SubRecord>)Clipboard;
+                var nodes =  GetClipboardData<SubRecord[]>();
                 foreach (var clipSr in insertIdx < 0 ? nodes : nodes.Reverse()) // insert in revers
                 {
                     SubRecord sr = clipSr.Clone() as SubRecord;
@@ -2201,5 +2290,17 @@ Do you still want to save?", "Modified Save", MessageBoxButtons.YesNo, MessageBo
                 PluginTree.SelectedNode.Remove();
             }
         }
+
+        private void useWindowsClipboardToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            global::TESVSnip.Properties.Settings.Default.UseWindowsClipboard = 
+            useWindowsClipboardToolStripMenuItem.Checked = !useWindowsClipboardToolStripMenuItem.Checked;
+        }
+
+        private void editToolStripMenuItem_DropDownOpening(object sender, EventArgs e)
+        {
+            pasteToolStripMenuItem.Enabled = HasClipboardData();
+        }
+
     }
 }
