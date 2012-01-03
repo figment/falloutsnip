@@ -100,6 +100,9 @@
     <Compile Include="Controls\CustomComboBox.cs">
       <SubType>Component</SubType>
     </Compile>
+    <Compile Include="Controls\CustomTreeControl.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="Controls\FlagComboBox.cs">
       <SubType>Component</SubType>
     </Compile>

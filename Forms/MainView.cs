@@ -1793,8 +1793,10 @@ Do you still want to save?", "Modified Save", MessageBoxButtons.YesNo, MessageBo
             {
                 BaseRecord br = (BaseRecord)PluginTree.SelectedNode.Tag;
 
+                
+                int insertIdx = listSubrecord.GetSelectionIndices().Length == 0 ? -1 : listSubrecord.GetFocusedItem();
                 var nodes =  (IEnumerable<SubRecord>)Clipboard;
-                foreach (var clipSr in nodes.Reverse()) // insert in revers
+                foreach (var clipSr in insertIdx < 0 ? nodes : nodes.Reverse()) // insert in revers
                 {
                     SubRecord sr = clipSr.Clone() as SubRecord;
                     if (sr == null)
@@ -1802,23 +1804,20 @@ Do you still want to save?", "Modified Save", MessageBoxButtons.YesNo, MessageBo
 
                     if (br is Record)
                     {
-                        if (listSubrecord.SelectedIndices.Count >= 1)
+                        try
                         {
-                            int idx = listSubrecord.SelectedIndices[0];
-                            if (idx < 0 || idx >= (listSubrecord.Items.Count - 1))
-                                return;
-                            try
+                            if (insertIdx >= 0 && insertIdx < listSubrecord.Items.Count)
                             {
-                                br.InsertRecord(idx, sr);
+                                br.InsertRecord(insertIdx, sr);
                             }
-                            catch (TESParserException ex)
+                            else
                             {
-                                MessageBox.Show(ex.Message);
+                                br.AddRecord(sr);
                             }
                         }
-                        else
+                        catch (TESParserException ex)
                         {
-                            br.AddRecord(sr);
+                            MessageBox.Show(ex.Message);
                         }
                     }
                 }

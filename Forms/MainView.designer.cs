@@ -109,14 +109,14 @@ namespace TESVSnip {
             this.toolStripIncrInvalidRec = new System.Windows.Forms.ToolStrip();
             this.toolStripIncrInvalidRecCancel = new System.Windows.Forms.ToolStripButton();
             this.toolStripIncrInvalidRecText = new System.Windows.Forms.ToolStripLabel();
+            this.toolStripSeparator6 = new System.Windows.Forms.ToolStripSeparator();
             this.toolStripIncrInvalidRecNext = new System.Windows.Forms.ToolStripButton();
             this.toolStripIncrInvalidRecPrev = new System.Windows.Forms.ToolStripButton();
             this.toolStripIncrInvalidRecRestart = new System.Windows.Forms.ToolStripButton();
             this.toolStripSeparator4 = new System.Windows.Forms.ToolStripSeparator();
             this.toolStripIncrInvalidRecWrapAround = new System.Windows.Forms.ToolStripButton();
-            this.toolStripIncrInvalidRecStatus = new System.Windows.Forms.ToolStripLabel();
             this.toolStripSeparator5 = new System.Windows.Forms.ToolStripSeparator();
-            this.toolStripSeparator6 = new System.Windows.Forms.ToolStripSeparator();
+            this.toolStripIncrInvalidRecStatus = new System.Windows.Forms.ToolStripLabel();
             this.menuStrip1.SuspendLayout();
             this.statusStrip1.SuspendLayout();
             this.splitHorizontal.Panel1.SuspendLayout();
@@ -905,7 +905,6 @@ namespace TESVSnip {
             // toolStripIncrFindWrapAround
             // 
             this.toolStripIncrFindWrapAround.CheckOnClick = true;
-            this.toolStripIncrFindWrapAround.Enabled = false;
             this.toolStripIncrFindWrapAround.Image = global::TESVSnip.Properties.Resources.emptybox;
             this.toolStripIncrFindWrapAround.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
             this.toolStripIncrFindWrapAround.ImageTransparentColor = System.Drawing.Color.Magenta;
@@ -913,7 +912,6 @@ namespace TESVSnip {
             this.toolStripIncrFindWrapAround.Size = new System.Drawing.Size(102, 22);
             this.toolStripIncrFindWrapAround.Text = "&Wrap Around";
             this.toolStripIncrFindWrapAround.ToolTipText = "Wrap Around";
-            this.toolStripIncrFindWrapAround.Visible = false;
             this.toolStripIncrFindWrapAround.CheckStateChanged += new System.EventHandler(this.toolStripCheck_CheckStateChanged);
             // 
             // toolStripIncrInvalidRec
@@ -957,6 +955,11 @@ namespace TESVSnip {
             this.toolStripIncrInvalidRecText.Name = "toolStripIncrInvalidRecText";
             this.toolStripIncrInvalidRecText.Size = new System.Drawing.Size(107, 22);
             this.toolStripIncrInvalidRecText.Text = "Invalid Item Search";
+            // 
+            // toolStripSeparator6
+            // 
+            this.toolStripSeparator6.Name = "toolStripSeparator6";
+            this.toolStripSeparator6.Size = new System.Drawing.Size(6, 25);
             // 
             // toolStripIncrInvalidRecNext
             // 
@@ -1002,22 +1005,17 @@ namespace TESVSnip {
             this.toolStripIncrInvalidRecWrapAround.ToolTipText = "Wrap Around";
             this.toolStripIncrInvalidRecWrapAround.CheckStateChanged += new System.EventHandler(this.toolStripCheck_CheckStateChanged);
             // 
+            // toolStripSeparator5
+            // 
+            this.toolStripSeparator5.Name = "toolStripSeparator5";
+            this.toolStripSeparator5.Size = new System.Drawing.Size(6, 25);
+            // 
             // toolStripIncrInvalidRecStatus
             // 
             this.toolStripIncrInvalidRecStatus.ForeColor = System.Drawing.Color.DarkRed;
             this.toolStripIncrInvalidRecStatus.Name = "toolStripIncrInvalidRecStatus";
             this.toolStripIncrInvalidRecStatus.Size = new System.Drawing.Size(64, 22);
             this.toolStripIncrInvalidRecStatus.Text = "Status Text";
-            // 
-            // toolStripSeparator5
-            // 
-            this.toolStripSeparator5.Name = "toolStripSeparator5";
-            this.toolStripSeparator5.Size = new System.Drawing.Size(6, 25);
-            // 
-            // toolStripSeparator6
-            // 
-            this.toolStripSeparator6.Name = "toolStripSeparator6";
-            this.toolStripSeparator6.Size = new System.Drawing.Size(6, 25);
             // 
             // MainView
             // 

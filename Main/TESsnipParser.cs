@@ -686,6 +686,15 @@ namespace TESVSnip
             this.data = new byte[4];
             for (int i = 0; i < 4; i++) this.data[i] = (byte)data[i];
             descriptiveName = " (" + data + ")";
+            if (groupType == 0)
+            {
+                RecordStructure rec;
+                if (RecordStructure.Records.TryGetValue(data, out rec))
+                {
+                    if (rec.description != data)
+                        descriptiveName += " - " + rec.description;
+                }
+            }
         }
 
         private GroupRecord(GroupRecord gr)
@@ -754,7 +763,7 @@ namespace TESVSnip
                     desc += "Topic Children " + GetSubDesc();
                     break;
                 case 8:
-                    desc += "Cell Persistent Childen " + GetSubDesc();
+                    desc += "Cell Persistent Children " + GetSubDesc();
                     break;
                 case 9:
                     desc += "Cell Temporary Children " + GetSubDesc();

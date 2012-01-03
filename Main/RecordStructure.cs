@@ -30,7 +30,14 @@ namespace TESVSnip {
     {
         protected SubrecordBase(SubrecordBase src, int optional, int repeat)
         {
-            this.name = src.name;
+            if ( src.name.StartsWith("&#x") )
+            {
+                string[] val = src.name.Split(new char[]{';'}, 2, StringSplitOptions.None);
+                char c = (char)int.Parse(val[0].Substring(3), System.Globalization.NumberStyles.HexNumber, null);
+                this.name = c + val[1];
+            }
+            else
+                this.name = src.name;
             this.desc = src.desc;
             this.optional = optional;
             this.repeat = repeat;
@@ -38,14 +45,28 @@ namespace TESVSnip {
 
         protected SubrecordBase(TESVSnip.Data.Subrecord node)
         {
-            this.name = node.name;
+            if (node.name.StartsWith("&#x"))
+            {
+                string[] val = node.name.Split(new char[] { ';' }, 2, StringSplitOptions.None);
+                char c = (char)int.Parse(val[0].Substring(3), System.Globalization.NumberStyles.HexNumber, null);
+                this.name = c + val[1];
+            }
+            else
+                this.name = node.name;
             this.repeat = node.repeat;
             this.optional = node.optional;
             this.desc = node.desc;
         }
         protected SubrecordBase(TESVSnip.Data.Group node)
         {
-            this.name = node.name;
+            if (node.name.StartsWith("&#x"))
+            {
+                string[] val = node.name.Split(new char[] { ';' }, 2, StringSplitOptions.None);
+                char c = (char)int.Parse(val[0].Substring(3), System.Globalization.NumberStyles.HexNumber, null);
+                this.name = c + val[1];
+            }
+            else
+                this.name = node.name;
             this.repeat = node.repeat;
             this.optional = node.optional;
             this.desc = node.desc;

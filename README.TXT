@@ -11,6 +11,11 @@ Requirements:
 Change Log:
 v 1.4
 - Add setting to allow specification of file open or file save locations
+- Add Context menu on tree to allow copy to other plugins
+- Update the Sanitize Order Spell
+- Substructure matching probably slower but more flexible
+- Added NAVI, CELL, REFR, WRLD, LAND, PHZD, PGRE, ACHR and SCEN
+- Fixed form look ups for plugins
 
 v 1.3
 - Bug fixes for crashes and other misbehaviors
