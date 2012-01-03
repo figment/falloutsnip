@@ -14,6 +14,7 @@ v 1.7
   (Enables cancel during full text searches)
 - Add Name w/Type and Full w/Type to allow for searches limited by record type
 - Experimental short descriptions for REFR, ACHR showing location information
+- Fix FirstTimeLoad of skyrim.esm where user selects cancel to options and filter is still applied
 
 v 1.6
 - Add option to use Windows Clipboard instead of internal copy

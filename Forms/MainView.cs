@@ -236,7 +236,13 @@ Would you like to configure which Records to exclude?"
                         TESVSnip.Properties.Settings.Default.DontAskUserAboutFiltering = true;
                         using (TESVSnip.Forms.LoadSettings settings = new TESVSnip.Forms.LoadSettings())
                         {
-                            settings.ShowDialog();
+                            result = settings.ShowDialog();
+                            if (result == DialogResult.Cancel) // cancel will be same as No
+                            {
+                                TESVSnip.Properties.Settings.Default.EnableESMFilter = false;
+                                TESVSnip.Properties.Settings.Default.DontAskUserAboutFiltering = true;
+                            }
+
                         }
                         TESVSnip.Properties.Settings.Default.IsFirstTimeOpeningSkyrimESM = false;
                     }

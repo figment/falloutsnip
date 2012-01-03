@@ -25,6 +25,9 @@ namespace TESVSnip.Forms
 
         private void LoadSettings_Load(object sender, EventArgs e)
         {
+            // clear the first time check if set as user has visited this form
+            TESVSnip.Properties.Settings.Default.IsFirstTimeOpeningSkyrimESM = false;
+
             this.chkApplyToAllESM.Checked = TESVSnip.Properties.Settings.Default.ApplyFilterToAllESM;
             this.chkDontAskAboutFiltering.Checked = TESVSnip.Properties.Settings.Default.DontAskUserAboutFiltering;
             this.checkBox1.Checked = TESVSnip.Properties.Settings.Default.EnableESMFilter;
