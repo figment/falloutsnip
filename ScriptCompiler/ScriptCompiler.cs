@@ -191,8 +191,8 @@ namespace ScriptCompiler {
         private static void RecursePlugin(Rec r, uint mask, uint id, Dictionary<uint, Record> records, List<Pair<uint, Record>> quests, List<Pair<uint, Record>> refs) {
             if(r is Record) {
                 Record r2=(Record)r;
-                if(r2.descriptiveName==null) return;
-                if((r2.FormID&0xff000000)!=mask||r2.descriptiveName==null) return;
+                if(r2.DescriptiveName==null) return;
+                if((r2.FormID&0xff000000)!=mask||r2.DescriptiveName==null) return;
                 records[(r2.FormID&0xffffff)+id]=r2;
 
                 if(r2.Name=="QUST") {
@@ -219,7 +219,7 @@ namespace ScriptCompiler {
         private static void RecursePlugin(Rec r, Dictionary<uint, Record> records, List<Pair<uint, Record>> quests, List<Pair<uint, Record>> refs) {
             if(r is Record) {
                 Record r2=(Record)r;
-                if(r2.descriptiveName==null) return;
+                if(r2.DescriptiveName==null) return;
                 records[r2.FormID]=r2;
 
                 if(r2.Name=="QUST") {
@@ -1225,7 +1225,7 @@ namespace ScriptCompiler {
             sr.Name="EDID";
             sr.SetStrData(smt[1].utoken, true);
             r.AddRecord(sr);
-            r.descriptiveName=" ("+smt[1].token+")";
+            r.DescriptiveName=" ("+smt[1].token+")";
             schr=new SubRecord();
             schr.Name="SCHR";
             r.AddRecord(schr);

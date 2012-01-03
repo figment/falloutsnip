@@ -593,8 +593,12 @@ namespace TESVSnip
 		}
 
         [Persistable]
-        public string descriptiveName;
-        public string DescriptiveName { get { return descriptiveName == null ? Name : (Name + descriptiveName); } }
+        private string descriptiveName;
+        public virtual string DescriptiveName
+        {
+            get { return descriptiveName == null ? Name : (Name + descriptiveName); }
+            set { descriptiveName = value; }
+        }
     }
 
     [Persistable(Flags = PersistType.DeclaredOnly), Serializable]
@@ -714,13 +718,14 @@ namespace TESVSnip
             if (groupType == 0)
             {
                 string name = System.Text.Encoding.ASCII.GetString(data, 0, 4);
-                descriptiveName = " (" + name + ")";
+                string desc = string.Format(" ({0})", name);
                 RecordStructure rec;
                 if (RecordStructure.Records.TryGetValue(name, out rec))
                 {
                     if (rec.description != name)
-                        descriptiveName += " - " + rec.description;
+                        desc += " - " + rec.description;
                 }
+                DescriptiveName = desc;
 
             }
         }
@@ -730,16 +735,17 @@ namespace TESVSnip
             Name = "GRUP";
             this.data = new byte[4];
             for (int i = 0; i < 4; i++) this.data[i] = (byte)data[i];
-            descriptiveName = " (" + data + ")";
+            string desc = string.Format(" ({0})", data);
             if (groupType == 0)
             {
                 RecordStructure rec;
                 if (RecordStructure.Records.TryGetValue(data, out rec))
                 {
                     if (rec.description != data)
-                        descriptiveName += " - " + rec.description;
+                        desc += " - " + rec.description;
                 }
             }
+            DescriptiveName = desc;
         }
 
         private GroupRecord(GroupRecord gr)
@@ -752,7 +758,7 @@ namespace TESVSnip
             Records = new List<Rec>(gr.Records.Count);
             for (int i = 0; i < gr.Records.Count; i++) Records.Add((Rec)gr.Records[i].Clone());
             Name = gr.Name;
-            descriptiveName = gr.descriptiveName;
+            DescriptiveName = gr.DescriptiveName;
         }
 
         private string GetSubDesc()
@@ -870,6 +876,9 @@ namespace TESVSnip
         [Persistable]
         public uint FormID;
 
+        static Dictionary<string, Func<string>> overrideFunctionsByType = new Dictionary<string, Func<string>>();
+        Func<string> descNameOverride;
+
         public override long Size
         {
             get
@@ -918,7 +927,10 @@ namespace TESVSnip
 		{
             serializationItems = info.GetValue("SubRecords", typeof(SubRecord[])) as SubRecord[];
             SubRecords = new Collections.Generic.AdvancedList<SubRecord>(1);
+            descNameOverride = new Func<string>(DefaultDescriptiveName);
+            UpdateShortDescription();
 		}
+
         void ISerializable.GetObjectData(SerializationInfo info, StreamingContext context)
         {
             info.AddValue("SubRecords", SubRecords.ToArray());
@@ -966,9 +978,9 @@ namespace TESVSnip
             {
                 throw new TESParserException("Subrecord block did not match the size specified in the record header");
             }
-
+            descNameOverride = new Func<string>(DefaultDescriptiveName);
+            UpdateShortDescription();
             //br.BaseStream.Position+=Size;
-            if (SubRecords.Count > 0 && SubRecords[0].Name == "EDID") descriptiveName = " (" + SubRecords[0].GetStrData() + ")";
         }
 
         private Record(Record r)
@@ -982,18 +994,66 @@ namespace TESVSnip
             Flags3 = r.Flags3;
             FormID = r.FormID;
             Name = r.Name;
-            descriptiveName = r.descriptiveName;
+            DescriptiveName = r.DescriptiveName;
+            descNameOverride = new Func<string>(DefaultDescriptiveName);
+            UpdateShortDescription();
         }
 
         public Record()
         {
             Name = "NEW_";
             SubRecords = new TESVSnip.Collections.Generic.AdvancedList<SubRecord>();
+            descNameOverride = new Func<string>(DefaultDescriptiveName);
+            UpdateShortDescription();
         }
 
         public override BaseRecord Clone()
         {
             return new Record(this);
+        }
+
+        private string DefaultDescriptiveName() { return base.DescriptiveName; }
+
+        public override string DescriptiveName
+        {
+            get { return descNameOverride(); }
+            set { base.DescriptiveName = value; }
+        }
+
+        void UpdateShortDescription()
+        {
+            if (this.Name == "REFR") // temporary hack for references
+            {
+                var edid = SubRecords.FirstOrDefault( x => x.Name == "EDID" );
+                string desc = (edid != null) ? string.Format(" ({0})", edid.GetStrData()) : "";
+                //var name = SubRecords.FirstOrDefault( x => x.Name == "NAME" );
+                var data = SubRecords.FirstOrDefault(x => x.Name == "DATA");
+                if (data != null)
+                {
+                    desc = string.Format("{0} \t[{1:F0}; {2:F0}]", 
+                        desc, data.GetValue<float>(0), data.GetValue<float>(4)
+                        );
+                }
+                DescriptiveName = desc;
+            }
+            else if (this.Name == "ACHR") // temporary hack for references
+            {
+                var edid = SubRecords.FirstOrDefault(x => x.Name == "EDID");
+                string desc = (edid != null) ? string.Format(" ({0})", edid.GetStrData()) : "";
+                var data = SubRecords.FirstOrDefault(x => x.Name == "DATA");
+                if (data != null)
+                {
+                    desc = string.Format("{0} \t[{1:F0}; {2:F0}]",
+                        desc, data.GetValue<float>(0), data.GetValue<float>(4)
+                        );
+                }
+                DescriptiveName = desc;
+            }
+            else
+            {
+                var edid = SubRecords.FirstOrDefault(x => x.Name == "EDID");
+                if (edid != null) DescriptiveName = " (" + edid.GetStrData() + ")";
+            }
         }
 
         private string GetBaseDesc()
@@ -1549,6 +1609,22 @@ namespace TESVSnip
                 s.AppendLine("Warning: Subrecord doesn't seem to match the expected structure");
             }
         }
+
+        public bool TryGetValue<T>(int offset, out T value)
+        {
+            value = (T)TypeConverter.GetObject<T>(this.Data, offset);
+            return true;
+        }
+
+        public T GetValue<T>(int offset)
+        {
+            T value;
+            if (!TryGetValue<T>(offset, out value))
+                value = default(T);
+            return value;
+        }
+
+
         internal override List<string> GetIDs(bool lower)
         {
             List<string> list = new List<string>();

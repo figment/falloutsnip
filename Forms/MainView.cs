@@ -1181,7 +1181,7 @@ Do you still want to save?", "Modified Save", MessageBoxButtons.YesNo, MessageBo
                     tbInfo.Text = sr.GetFormattedData(context);
                     if (sr.Name == "EDID" && listSubrecord.SelectedIndices[0] == 0)
                     {
-                        context.Record.descriptiveName = " (" + sr.GetStrData() + ")";
+                        context.Record.DescriptiveName = " (" + sr.GetStrData() + ")";
                         PluginTree.SelectedNode.Text = context.Record.DescriptiveName;
                     }
                     //listSubrecord.SelectedItems[0].SubItems[1].Text = sr.Size.ToString() + " *";
@@ -1214,7 +1214,7 @@ Do you still want to save?", "Modified Save", MessageBoxButtons.YesNo, MessageBo
             MatchRecordStructureToRecord();
             if (sr.Name == "EDID" && listSubrecord.SelectedIndices[0] == 0)
             {
-                context.Record.descriptiveName = " (" + sr.GetStrData() + ")";
+                context.Record.DescriptiveName = " (" + sr.GetStrData() + ")";
                 PluginTree.SelectedNode.Text = context.Record.DescriptiveName;
             }
         }
@@ -1239,7 +1239,7 @@ Do you still want to save?", "Modified Save", MessageBoxButtons.YesNo, MessageBo
                 MatchRecordStructureToRecord();
                 if (sr.Name == "EDID" && listSubrecord.SelectedIndices[0] == 0)
                 {
-                    Selection.Record.descriptiveName = " (" + sr.GetStrData() + ")";
+                    Selection.Record.DescriptiveName = " (" + sr.GetStrData() + ")";
                     PluginTree.SelectedNode.Text = Selection.Record.DescriptiveName;
                 }
             }
@@ -2301,6 +2301,5 @@ Do you still want to save?", "Modified Save", MessageBoxButtons.YesNo, MessageBo
         {
             pasteToolStripMenuItem.Enabled = HasClipboardData();
         }
-
     }
 }

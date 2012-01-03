@@ -16,7 +16,9 @@ namespace TESVSnip
         {
             EditorID,
             FormID,
-            FullSearch
+            FullSearch,
+            TypeEditorIdSearch,
+            TypeFullSearch,
         }
         class ComboHelper<T, U>
         {
@@ -41,11 +43,67 @@ namespace TESVSnip
                 new ComboHelper<SearchType, string>(SearchType.EditorID, "Editor ID"),
                 new ComboHelper<SearchType, string>(SearchType.FormID, "Form ID"),
                 new ComboHelper<SearchType, string>(SearchType.FullSearch, "Full Search"),
+                new ComboHelper<SearchType, string>(SearchType.TypeEditorIdSearch, "Name w/Type"),
+                new ComboHelper<SearchType, string>(SearchType.TypeFullSearch, "Full w/Type"),
+                
             };
             toolStripIncrFindType.Items.Clear();
             foreach (var itm in items) toolStripIncrFindType.Items.Add(itm);
-            toolStripIncrFindType.SelectedItem = toolStripIncrFindType.Items[0];
-            toolStripIncrFindText.Tag = true; // text tag first search
+            toolStripIncrFindType.SelectedIndex = 0;
+            //toolStripIncrFindType.SelectedItem = toolStripIncrFindType.Items[0];
+            ResetSearch();
+            toolStripIncrFindStatus.Text = "";
+
+            if (!RecordStructure.Loaded)
+                RecordStructure.Load();
+            var recitems = RecordStructure.Records.Keys.OfType<object>().ToArray();
+            //var recitems = TESVSnip.Properties.Settings.Default.AllESMRecords != null
+            //    ? TESVSnip.Properties.Settings.Default.AllESMRecords.Trim().Split(new char[] { ';', ',' }, StringSplitOptions.RemoveEmptyEntries).OfType<object>().ToArray()
+            //    : new object[0];
+            toolStripIncrFindTypeFilter.Sorted = true;
+            toolStripIncrFindTypeFilter.Items.Clear();
+            toolStripIncrFindTypeFilter.Items.AddRange(recitems);
+            toolStripIncrFindTypeFilter.SelectedIndex = 0;
+        }
+
+        private void toolStripIncrFindType_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            var item = toolStripIncrFindType.SelectedItem as ComboHelper<SearchType, string>;
+            if (item != null && (item.Key == SearchType.TypeEditorIdSearch || item.Key == SearchType.TypeFullSearch))
+            {
+                toolStripIncrFindTypeFilter.Visible = true;
+                toolStripIncrFindExact.Visible = false;
+            }
+            else
+            {
+                toolStripIncrFindTypeFilter.Visible = false;
+                toolStripIncrFindExact.Visible = true;
+            }
+        }
+
+        private void toolStripIncrFindTypeFilter_VisibleChanged(object sender, EventArgs e)
+        {
+            if (toolStripIncrFindTypeFilter.Visible == true)
+            {
+                if (Selection != null)
+                {
+                    Selection.RecordChanged += new EventHandler(toolStripIncrFindSelection_RecordChanged);
+                    toolStripIncrFindSelection_RecordChanged(null, null);
+                }
+            }
+            else
+            {
+                Selection.RecordChanged -= new EventHandler(toolStripIncrFindSelection_RecordChanged);
+            }
+        }
+
+        void toolStripIncrFindSelection_RecordChanged(object sender, EventArgs e)
+        {
+            if (Selection != null && Selection.Record != null)
+            {
+                int idx = toolStripIncrFindTypeFilter.FindStringExact(Selection.Record.Name);
+                if (idx >= 0) toolStripIncrFindTypeFilter.SelectedIndex = idx;
+            }
         }
 
         private void RecurseFullSearch(List<TreeNode> matches, TreeNode node, string searchString, bool partial)
@@ -74,40 +132,46 @@ namespace TESVSnip
 
         internal TreeNode IncrementalSearch(TreeNode tn, bool first, bool forward, bool wrapAround, Predicate<TreeNode> searchFunc)
         {
-            if (PluginTree.Nodes.Count == 0)
-                return null;
-            if (tn == null)
-                tn = PluginTree.SelectedNode != null ? PluginTree.SelectedNode : PluginTree.Nodes[0];
-            if (tn == null)
-                return null;
-            TreeNode startNode = null;
-            bool keep = first;
-            do
+            try
             {
-                var prevNode = tn;
-                while (tn != null)
+                if (PluginTree.Nodes.Count == 0)
+                    return null;
+                if (tn == null)
+                    tn = PluginTree.SelectedNode != null ? PluginTree.SelectedNode : PluginTree.Nodes[0];
+                if (tn == null)
+                    return null;
+                TreeNode startNode = null;
+                bool keep = first;
+                do
                 {
-                    prevNode = tn;
-                    if (keep && searchFunc(tn))
-                        return tn;
-                    keep = true;
-                    if (startNode == null) // set the start node
-                        startNode = tn;
-                    else if (startNode == tn) // if we found the start node again then fail
-                        return null;
-                    if (forward)
-                        tn = GetNextNode(tn);
-                    else
-                        tn = GetPreviousNode(tn);
-                }
-                if (wrapAround)
-                {
-                    if (forward)
-                        tn = PluginTree.Nodes[0];
-                    else
-                        tn = GetLastNode(PluginTree.Nodes[PluginTree.Nodes.Count - 1]);
-                }
-            } while (tn != null);
+                    var prevNode = tn;
+                    while (tn != null)
+                    {
+                        prevNode = tn;
+                        if (keep && searchFunc(tn))
+                            return tn;
+                        keep = true;
+                        if (startNode == null) // set the start node
+                            startNode = tn;
+                        else if (startNode == tn) // if we found the start node again then fail
+                            return null;
+                        if (forward)
+                            tn = GetNextNode(tn);
+                        else
+                            tn = GetPreviousNode(tn);
+                    }
+                    if (wrapAround)
+                    {
+                        if (forward)
+                            tn = PluginTree.Nodes[0];
+                        else
+                            tn = GetLastNode(PluginTree.Nodes[PluginTree.Nodes.Count - 1]);
+                    }
+                } while (tn != null);
+            }
+            catch 
+            {
+            }
             return null;
         }
 
@@ -148,6 +212,43 @@ namespace TESVSnip
             return n;
         }
 
+        class SearchContext
+        {
+            public SearchType type;
+            public TreeNode tn;
+            public string text;
+            public string rectype;
+            public bool first;
+            public bool partial;
+            public bool forward;
+            public bool wrapAround;
+            public Predicate<TreeNode> updateFunc;
+
+            public SearchContext()
+            {
+                this.type = SearchType.EditorID;
+                this.tn = null;
+                this.text = null;
+                this.first = true;
+                this.partial = true;
+                this.forward = true;
+                this.wrapAround = true;
+                this.updateFunc = null;
+                this.rectype = null;
+            }
+            public SearchContext(SearchType type, TreeNode tn, string text, bool first, bool partial, bool forward, bool wrapAround, Predicate<TreeNode> updateFunc)
+            {
+                this.type = type;
+                this.tn = tn;
+                this.text = text;
+                this.first = first;
+                this.partial = partial;
+                this.forward = forward;
+                this.wrapAround = wrapAround;
+                this.updateFunc = updateFunc;
+                this.rectype = null;
+            }
+        }
         /// <summary>
         /// Helper routine for doing an actual search
         /// </summary>
@@ -160,14 +261,17 @@ namespace TESVSnip
         /// <param name="wrapAround">Whether to wrap around when reach top or bottom</param>
         /// <param name="updateFunc">Function to call to update the UI when doing select</param>
         /// <returns></returns>
-        private TreeNode PerformSearch(SearchType type, TreeNode tn, string text, bool first, bool partial, bool forward, bool wrapAround, Predicate<TreeNode> updateFunc)
+        private TreeNode PerformSearch(SearchContext ctx)
         {
             Predicate<TreeNode> searchFunction = null;
 
-            if (type == SearchType.FormID)
+            if (ctx.type == SearchType.FormID)
             {
+                if (string.IsNullOrEmpty(ctx.text))
+                    return null;
+
                 uint searchID;
-                if (!uint.TryParse(text, System.Globalization.NumberStyles.AllowHexSpecifier, null, out searchID))
+                if (!uint.TryParse(ctx.text, System.Globalization.NumberStyles.AllowHexSpecifier, null, out searchID))
                 {
                     MessageBox.Show("Invalid FormID");
                     return null;
@@ -175,60 +279,84 @@ namespace TESVSnip
                 searchFunction = (TreeNode node) =>
                 {
                     var rec = node.Tag as Record;
-                    if (updateFunc != null && updateFunc(node)) return true;
+                    if (ctx.updateFunc != null && ctx.updateFunc(node)) return true;
                     return (rec != null) ? rec.FormID == searchID : false;
                 };
             }
-            else if (type == SearchType.EditorID)
+            else if (ctx.type == SearchType.EditorID || ctx.type == SearchType.TypeEditorIdSearch)
             {
-                string searchString = text.ToLowerInvariant();
-                searchFunction = (TreeNode node) =>
-                {
-                    var rec = node.Tag as Record;
-                    if (rec != null && !string.IsNullOrEmpty(rec.descriptiveName))
-                    {
-                        if (partial)
-                        {
-                            var val = rec.descriptiveName.ToLowerInvariant();
-                            if (val.Contains(searchString))
-                                return true;
-                        }
-                        else
-                        {
-                            var val = rec.descriptiveName.ToLowerInvariant().Substring(2, rec.descriptiveName.Length - 3);
-                            if (val == searchString)
-                                return true;
-                        }
-                    }
-                    if (updateFunc != null && updateFunc(node)) return true;
-                    return false;
-                };
+                if (ctx.type == SearchType.TypeEditorIdSearch && string.IsNullOrEmpty(ctx.rectype))
+                    return null;
+                if (ctx.type == SearchType.EditorID && string.IsNullOrEmpty(ctx.text))
+                    return null;
 
-            }
-            else if (type == SearchType.FullSearch)
-            {
-                string searchString = text.ToLowerInvariant();
+                string searchString = string.IsNullOrEmpty(ctx.text) ? null : ctx.text.ToLowerInvariant();
                 searchFunction = (TreeNode node) =>
                 {
                     var rec = node.Tag as Record;
                     if (rec != null)
                     {
-                        foreach (SubRecord sr in rec.SubRecords)
+                        bool typeOk = true;
+                        if (ctx.type == SearchType.TypeEditorIdSearch)
+                            typeOk = !string.IsNullOrEmpty(rec.Name) && string.Compare(rec.Name, ctx.rectype, true) == 0;
+                        if (typeOk)
                         {
-                            var val = sr.GetStrData();
-                            if (!string.IsNullOrEmpty(val))
+                            if (string.IsNullOrEmpty(searchString))
                             {
-                                val = val.ToLowerInvariant();
-                                if ((partial && val.Contains(searchString)) || (val == searchString))
+                                return true;
+                            }
+                            else if (ctx.partial)
+                            {
+                                var val = rec.DescriptiveName.ToLowerInvariant();
+                                if (val.Contains(searchString))
+                                    return true;
+                            }
+                            else
+                            {
+                                var val = rec.DescriptiveName.ToLowerInvariant().Substring(2, rec.DescriptiveName.Length - 3);
+                                if (val == searchString)
                                     return true;
                             }
                         }
                     }
-                    if (updateFunc != null && updateFunc(node)) return true;
+                    if (ctx.updateFunc != null && ctx.updateFunc(node)) return true;
                     return false;
                 };
             }
-            return IncrementalSearch(tn, first, forward, wrapAround, searchFunction);
+            else if (ctx.type == SearchType.FullSearch || ctx.type == SearchType.TypeFullSearch)
+            {
+                if (ctx.type == SearchType.TypeFullSearch && string.IsNullOrEmpty(ctx.rectype))
+                    return null;
+                if (ctx.type == SearchType.FullSearch && string.IsNullOrEmpty(ctx.text))
+                    return null;
+                string searchString = ctx.text.ToLowerInvariant();
+                searchFunction = (TreeNode node) =>
+                {
+                    var rec = node.Tag as Record;
+                    if (rec != null)
+                    {
+                        bool typeOk = true;
+                        if (ctx.type == SearchType.TypeFullSearch)
+                            typeOk = !string.IsNullOrEmpty(rec.Name) && string.Compare(rec.Name, ctx.rectype, true) == 0;
+                        if (typeOk)
+                        {
+                            foreach (SubRecord sr in rec.SubRecords)
+                            {
+                                var val = sr.GetStrData();
+                                if (!string.IsNullOrEmpty(val))
+                                {
+                                    val = val.ToLowerInvariant();
+                                    if ((ctx.partial && val.Contains(searchString)) || (val == searchString))
+                                        return true;
+                                }
+                            }
+                        }
+                    }
+                    if (ctx.updateFunc != null && ctx.updateFunc(node)) return true;
+                    return false;
+                };
+            }
+            return IncrementalSearch(ctx.tn, ctx.first, ctx.forward, ctx.wrapAround, searchFunction);
         }
 
 
@@ -396,12 +524,19 @@ namespace TESVSnip
                 return false;
             };
 
+            SearchContext searchContext = new SearchContext();
+
             var item = toolStripIncrFindType.SelectedItem as ComboHelper<SearchType, string>;
-            var text = toolStripIncrFindText.Text;
-            var partial = !toolStripIncrFindExact.Checked;
-            var wrapAround = toolStripIncrFindWrapAround.Checked;
-            var first = toolStripIncrFindText.Tag == null ? true : (bool)toolStripIncrFindText.Tag;
-            if (string.IsNullOrEmpty(text))
+            searchContext.tn = start;
+            searchContext.type = item.Key;
+            searchContext.text = toolStripIncrFindText.Text;
+            searchContext.partial = !toolStripIncrFindExact.Checked;
+            searchContext.wrapAround = toolStripIncrFindWrapAround.Checked;
+            searchContext.first = toolStripIncrFindText.Tag == null ? true : (bool)toolStripIncrFindText.Tag;
+            searchContext.rectype = toolStripIncrFindTypeFilter.SelectedItem as string;
+
+            // exclude null text searches except for when type is specified
+            if (searchContext.type != SearchType.TypeEditorIdSearch && string.IsNullOrEmpty(searchContext.text))
             {
                 System.Media.SystemSounds.Beep.Play();
                 toolStripIncrFind.Focus();
@@ -410,7 +545,7 @@ namespace TESVSnip
                 return;
             }
 
-            StartBackgroundWork(() => { foundNode = PerformSearch(item.Key, start, text, first, partial, forward, wrapAround, updateFunc); }
+            StartBackgroundWork(() => { foundNode = PerformSearch(searchContext); }
                 , () =>
                 {
                     if (IsBackroundProcessCanceled())
@@ -442,7 +577,7 @@ namespace TESVSnip
                 }
             );
         }
-
+#if false
         private void PerformSearch(TreeNode start, bool forward)
         {
             BackgroundIncrementalSearch(start, forward);
@@ -462,7 +597,7 @@ namespace TESVSnip
                 toolStripIncrFindText.Focus();
                 return;
             }
-            var node = PerformSearch(item.Key, start, text, first, partial, forward, wrapAround, updateFunc);
+            var node = PerformSearch( item.Key, start, text, first, partial, forward, wrapAround, updateFunc);
             if (node != null)
             {
                 PluginTree.SelectedNode = node;
@@ -477,7 +612,7 @@ namespace TESVSnip
                 toolStripIncrFindText.Tag = true;
             }
         }
-
+#endif
         private void toolStripIncrFindPrev_Click(object sender, EventArgs e)
         {
             BackgroundIncrementalSearch(PluginTree.SelectedNode, false);
@@ -485,8 +620,7 @@ namespace TESVSnip
 
         private void toolStripIncrFindRestart_Click(object sender, EventArgs e)
         {
-            // use tag to indicate text changed and therefore reset the search
-            toolStripIncrFindText.Tag = true;
+            ResetSearch();
             BackgroundIncrementalSearch(PluginTree.Nodes.Count > 0 ? PluginTree.Nodes[0] : null, true);
         }
 
@@ -510,11 +644,22 @@ namespace TESVSnip
                 BackgroundIncrementalSearch(PluginTree.SelectedNode, !e.Shift);
             }
         }
-        private void toolStripIncrFindText_TextChanged(object sender, EventArgs e)
+
+        void ResetSearch()
         {
             // use tag to indicate text changed and therefore reset the search
             toolStripIncrFindText.Tag = true;
+            toolStripIncrFindStatus.Text = "";
         }
+        private void toolStripIncrFindText_TextChanged(object sender, EventArgs e)
+        {
+            ResetSearch();
+        }
+        private void toolStripIncrFindTypeFilter_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            ResetSearch();
+        }
+
 
         #endregion
 

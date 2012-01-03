@@ -42,6 +42,35 @@ namespace TESVSnip {
             return tc.f;
         }
 
+        public static object GetObject<T>(byte[] data, int offset)
+        {
+            T result = default(T);
+            if (result is float)
+                return h2f(data, offset);
+            return default(T);
+        }
+        public static bool TryGetObject<T>(byte[] data, int offset, out object result)
+        {
+            result = default(T);
+            if (result is float)
+            {
+                result = h2f(data, offset);
+                return true;
+            }            
+            return false;
+        }
+
+        public static float h2f(byte[] data, int offset)
+        {
+            if (offset + sizeof(float) > data.Length)
+                return default(float);
+            tc.b1 = data[offset+0];
+            tc.b2 = data[offset + 1];
+            tc.b3 = data[offset + 2];
+            tc.b4 = data[offset + 3];
+            return tc.f;
+        }
+
         public static uint h2i(byte b1, byte b2, byte b3, byte b4) {
             tc.b1=b1;
             tc.b2=b2;

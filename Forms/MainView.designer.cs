@@ -100,6 +100,7 @@ namespace TESVSnip {
             this.toolStripIncrFind = new System.Windows.Forms.ToolStrip();
             this.toolStripIncrFindCancel = new System.Windows.Forms.ToolStripButton();
             this.toolStripIncrFindText = new System.Windows.Forms.ToolStripTextBox();
+            this.toolStripIncrFindTypeFilter = new System.Windows.Forms.ToolStripComboBox();
             this.toolStripIncrFindNext = new System.Windows.Forms.ToolStripButton();
             this.toolStripIncrFindPrev = new System.Windows.Forms.ToolStripButton();
             this.toolStripIncrFindRestart = new System.Windows.Forms.ToolStripButton();
@@ -817,6 +818,7 @@ namespace TESVSnip {
             this.toolStripIncrFind.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.toolStripIncrFindCancel,
             this.toolStripIncrFindText,
+            this.toolStripIncrFindTypeFilter,
             this.toolStripIncrFindNext,
             this.toolStripIncrFindPrev,
             this.toolStripIncrFindRestart,
@@ -854,6 +856,20 @@ namespace TESVSnip {
             this.toolStripIncrFindText.Size = new System.Drawing.Size(100, 25);
             this.toolStripIncrFindText.KeyDown += new System.Windows.Forms.KeyEventHandler(this.toolStripIncrFindText_KeyDown);
             this.toolStripIncrFindText.TextChanged += new System.EventHandler(this.toolStripIncrFindText_TextChanged);
+            // 
+            // toolStripIncrFindTypeFilter
+            // 
+            this.toolStripIncrFindTypeFilter.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.toolStripIncrFindTypeFilter.Items.AddRange(new object[] {
+            "Editor ID",
+            "Form ID"});
+            this.toolStripIncrFindTypeFilter.Name = "toolStripIncrFindTypeFilter";
+            this.toolStripIncrFindTypeFilter.Overflow = System.Windows.Forms.ToolStripItemOverflow.Never;
+            this.toolStripIncrFindTypeFilter.Size = new System.Drawing.Size(80, 25);
+            this.toolStripIncrFindTypeFilter.ToolTipText = "Search Type";
+            this.toolStripIncrFindTypeFilter.Visible = false;
+            this.toolStripIncrFindTypeFilter.SelectedIndexChanged += new System.EventHandler(this.toolStripIncrFindTypeFilter_SelectedIndexChanged);
+            this.toolStripIncrFindTypeFilter.VisibleChanged += new System.EventHandler(this.toolStripIncrFindTypeFilter_VisibleChanged);
             // 
             // toolStripIncrFindNext
             // 
@@ -893,6 +909,7 @@ namespace TESVSnip {
             this.toolStripIncrFindType.Name = "toolStripIncrFindType";
             this.toolStripIncrFindType.Size = new System.Drawing.Size(80, 25);
             this.toolStripIncrFindType.ToolTipText = "Search Type";
+            this.toolStripIncrFindType.SelectedIndexChanged += new System.EventHandler(this.toolStripIncrFindType_SelectedIndexChanged);
             // 
             // toolStripIncrFindMatch
             // 
@@ -926,7 +943,7 @@ namespace TESVSnip {
             this.toolStripIncrFindWrapAround.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
             this.toolStripIncrFindWrapAround.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.toolStripIncrFindWrapAround.Name = "toolStripIncrFindWrapAround";
-            this.toolStripIncrFindWrapAround.Size = new System.Drawing.Size(102, 22);
+            this.toolStripIncrFindWrapAround.Size = new System.Drawing.Size(102, 19);
             this.toolStripIncrFindWrapAround.Text = "&Wrap Around";
             this.toolStripIncrFindWrapAround.ToolTipText = "Wrap Around";
             this.toolStripIncrFindWrapAround.CheckStateChanged += new System.EventHandler(this.toolStripCheck_CheckStateChanged);
@@ -963,7 +980,7 @@ namespace TESVSnip {
             this.toolStripIncrInvalidRec.Location = new System.Drawing.Point(0, 611);
             this.toolStripIncrInvalidRec.Name = "toolStripIncrInvalidRec";
             this.toolStripIncrInvalidRec.Padding = new System.Windows.Forms.Padding(0);
-            this.toolStripIncrInvalidRec.Size = new System.Drawing.Size(667, 25);
+            this.toolStripIncrInvalidRec.Size = new System.Drawing.Size(765, 25);
             this.toolStripIncrInvalidRec.TabIndex = 6;
             this.toolStripIncrInvalidRec.Text = "Incremental Invalid Record Search";
             this.toolStripIncrInvalidRec.Visible = false;
@@ -1187,5 +1204,6 @@ namespace TESVSnip {
         private System.Windows.Forms.ToolStripMenuItem useWindowsClipboardToolStripMenuItem;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator7;
         private System.Windows.Forms.ToolStripLabel toolStripIncrFindStatus;
+        private System.Windows.Forms.ToolStripComboBox toolStripIncrFindTypeFilter;
     }
 }

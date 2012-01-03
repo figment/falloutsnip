@@ -5036,7 +5036,7 @@
     </Subrecord>
 
     <Subrecord name="XCLW" desc="Water Height" optional="1" size="4">
-      <Element name="Height" type="float" />
+      <Element name="Height" type="int" />
     </Subrecord>
     <Subrecord name="XWCS" desc="XWCS" optional="1" size="4">
       <Element name="Unknown" type="int" />

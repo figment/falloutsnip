@@ -9,6 +9,12 @@ Requirements:
   .NET 3.5
 
 Change Log:
+v 1.7
+- Convert Text Search to a background incremental search 
+  (Enables cancel during full text searches)
+- Add Name w/Type and Full w/Type to allow for searches limited by record type
+- Experimental short descriptions for REFR, ACHR showing location information
+
 v 1.6
 - Add option to use Windows Clipboard instead of internal copy
   (This is experimental and may have issues especially when copying large chunks of data)
