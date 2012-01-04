@@ -109,6 +109,7 @@
     <Compile Include="Controls\FlagComboBox.Designer.cs">
       <DependentUpon>FlagComboBox.cs</DependentUpon>
     </Compile>
+    <Compile Include="Controls\History.cs" />
     <Compile Include="Controls\nativemethods.cs" />
     <Compile Include="Controls\OldNewEvent.cs" />
     <Compile Include="Controls\PopupControl.cs">
@@ -346,6 +347,8 @@
     <Content Include="conf\settings.xml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+    <None Include="Resources\agt_forward.png" />
+    <None Include="Resources\agt_back.png" />
     <None Include="Resources\quick_restart.png" />
     <None Include="Resources\up.png" />
     <None Include="Resources\down.png" />

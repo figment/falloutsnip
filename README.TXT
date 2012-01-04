@@ -16,6 +16,8 @@ v 1.7
 - Experimental short descriptions for REFR, ACHR showing location information
 - Fix FirstTimeLoad of skyrim.esm where user selects cancel to options and filter is still applied
 - Change main text field area to RichTextBox and add hyper links to items
+- Add Forward/Back navigation buttons for the Record TreeNode
+
 
 v 1.6
 - Add option to use Windows Clipboard instead of internal copy

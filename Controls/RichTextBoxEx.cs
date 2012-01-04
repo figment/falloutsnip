@@ -286,6 +286,16 @@ namespace RichTextBoxLinks
             set { SetRtfText(value); }
         }
 
+        public void BeginUpdate()
+        {
+            SendMessage(this.Handle, WM_SETREDRAW, (IntPtr)0, IntPtr.Zero);
+        }
+        public void EndUpdate()
+        {
+            SendMessage(this.Handle, WM_SETREDRAW, (IntPtr)1, IntPtr.Zero);
+        }
+        private const int WM_SETREDRAW = 0x0b;
+        
         static readonly System.Text.RegularExpressions.Regex linkRegex = new System.Text.RegularExpressions.Regex(
                 @"\{\\field\s+\{\\\*\\fldinst\s+HYPERLINK\s+\u0022?(?<link>[^\u0022}]+)\u0022?\s*\}\s*\{\\fldrslt\s+(?<name>[^}]+)\s*\}\s*\}"
                 );
@@ -294,7 +304,7 @@ namespace RichTextBoxLinks
 
             try
             {
-                this.SuspendLayout();
+                this.BeginUpdate();
                 var sb = new System.Text.StringBuilder(value);
                 List<LinkMatch> matches = new List<LinkMatch>();
                 int idx = 0;
@@ -337,7 +347,8 @@ namespace RichTextBoxLinks
             {
                 try
                 {
-                    this.ResumeLayout();
+                    this.EndUpdate();
+                    this.Invalidate();
                     this.Update();
                 }
                 catch {}

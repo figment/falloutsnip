@@ -77,6 +77,12 @@ namespace TESVSnip {
             this.splitHorizontal = new System.Windows.Forms.SplitContainer();
             this.splitVertical = new System.Windows.Forms.SplitContainer();
             this.PluginTree = new TESVSnip.Controls.CustomTreeView();
+            this.toolStripRecord = new System.Windows.Forms.ToolStrip();
+            this.toolStripRecordBack = new System.Windows.Forms.ToolStripSplitButton();
+            this.toolStripRecordNext = new System.Windows.Forms.ToolStripSplitButton();
+            this.toolStripRecordPaste = new System.Windows.Forms.ToolStripButton();
+            this.toolStripRecordCopy = new System.Windows.Forms.ToolStripButton();
+            this.toolStripRecordText = new System.Windows.Forms.ToolStripLabel();
             this.listSubrecord = new TESVSnip.Windows.Controls.BindingListView();
             this.columnHeader1 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.columnHeader2 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
@@ -129,6 +135,7 @@ namespace TESVSnip {
             this.splitVertical.Panel1.SuspendLayout();
             this.splitVertical.Panel2.SuspendLayout();
             this.splitVertical.SuspendLayout();
+            this.toolStripRecord.SuspendLayout();
             this.toolStripSubRecord.SuspendLayout();
             this.contextMenuRecord.SuspendLayout();
             this.toolStripIncrFind.SuspendLayout();
@@ -582,6 +589,7 @@ namespace TESVSnip {
             // splitVertical.Panel1
             // 
             this.splitVertical.Panel1.Controls.Add(this.PluginTree);
+            this.splitVertical.Panel1.Controls.Add(this.toolStripRecord);
             this.splitVertical.Panel1MinSize = 100;
             // 
             // splitVertical.Panel2
@@ -596,9 +604,9 @@ namespace TESVSnip {
             // 
             this.PluginTree.Dock = System.Windows.Forms.DockStyle.Fill;
             this.PluginTree.HideSelection = false;
-            this.PluginTree.Location = new System.Drawing.Point(0, 0);
+            this.PluginTree.Location = new System.Drawing.Point(0, 25);
             this.PluginTree.Name = "PluginTree";
-            this.PluginTree.Size = new System.Drawing.Size(259, 178);
+            this.PluginTree.Size = new System.Drawing.Size(259, 153);
             this.PluginTree.TabIndex = 0;
             this.PluginTree.OnContextMenuKey += new System.EventHandler(this.PluginTree_OnContextMenuKey);
             this.PluginTree.AfterExpand += new System.Windows.Forms.TreeViewEventHandler(this.PluginTree_AfterExpand);
@@ -606,6 +614,66 @@ namespace TESVSnip {
             this.PluginTree.NodeMouseClick += new System.Windows.Forms.TreeNodeMouseClickEventHandler(this.PluginTree_NodeMouseClick);
             this.PluginTree.Enter += new System.EventHandler(this.PluginTree_Enter);
             this.PluginTree.MouseDoubleClick += new System.Windows.Forms.MouseEventHandler(this.PluginTree_MouseDoubleClick);
+            // 
+            // toolStripRecord
+            // 
+            this.toolStripRecord.GripStyle = System.Windows.Forms.ToolStripGripStyle.Hidden;
+            this.toolStripRecord.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.toolStripRecordBack,
+            this.toolStripRecordNext,
+            this.toolStripRecordPaste,
+            this.toolStripRecordCopy,
+            this.toolStripRecordText});
+            this.toolStripRecord.Location = new System.Drawing.Point(0, 0);
+            this.toolStripRecord.Name = "toolStripRecord";
+            this.toolStripRecord.Size = new System.Drawing.Size(259, 25);
+            this.toolStripRecord.TabIndex = 1;
+            this.toolStripRecord.Text = "Record Tool Strip";
+            // 
+            // toolStripRecordBack
+            // 
+            this.toolStripRecordBack.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.toolStripRecordBack.Image = global::TESVSnip.Properties.Resources.agt_back;
+            this.toolStripRecordBack.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.toolStripRecordBack.Name = "toolStripRecordBack";
+            this.toolStripRecordBack.Size = new System.Drawing.Size(32, 22);
+            this.toolStripRecordBack.Text = "Navigation Back";
+            // 
+            // toolStripRecordNext
+            // 
+            this.toolStripRecordNext.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.toolStripRecordNext.Image = global::TESVSnip.Properties.Resources.agt_forward;
+            this.toolStripRecordNext.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.toolStripRecordNext.Name = "toolStripRecordNext";
+            this.toolStripRecordNext.Size = new System.Drawing.Size(32, 22);
+            this.toolStripRecordNext.Text = "Next";
+            // 
+            // toolStripRecordPaste
+            // 
+            this.toolStripRecordPaste.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
+            this.toolStripRecordPaste.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.toolStripRecordPaste.Image = global::TESVSnip.Properties.Resources.Paste;
+            this.toolStripRecordPaste.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.toolStripRecordPaste.Name = "toolStripRecordPaste";
+            this.toolStripRecordPaste.Size = new System.Drawing.Size(23, 22);
+            this.toolStripRecordPaste.Text = "Paste";
+            this.toolStripRecordPaste.Click += new System.EventHandler(this.toolStripRecordPaste_Click);
+            // 
+            // toolStripRecordCopy
+            // 
+            this.toolStripRecordCopy.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
+            this.toolStripRecordCopy.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.toolStripRecordCopy.Image = global::TESVSnip.Properties.Resources.Copy;
+            this.toolStripRecordCopy.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.toolStripRecordCopy.Name = "toolStripRecordCopy";
+            this.toolStripRecordCopy.Size = new System.Drawing.Size(23, 22);
+            this.toolStripRecordCopy.Text = "Copy";
+            this.toolStripRecordCopy.Click += new System.EventHandler(this.toolStripRecordCopy_Click);
+            // 
+            // toolStripRecordText
+            // 
+            this.toolStripRecordText.Name = "toolStripRecordText";
+            this.toolStripRecordText.Size = new System.Drawing.Size(0, 22);
             // 
             // listSubrecord
             // 
@@ -1083,6 +1151,7 @@ namespace TESVSnip {
             this.Text = "TESsnip (Skyrim edition)";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.TESsnip_FormClosing);
             this.Load += new System.EventHandler(this.MainView_Load);
+            this.KeyDown += new System.Windows.Forms.KeyEventHandler(this.MainView_KeyDown);
             this.menuStrip1.ResumeLayout(false);
             this.menuStrip1.PerformLayout();
             this.statusStrip1.ResumeLayout(false);
@@ -1091,9 +1160,12 @@ namespace TESVSnip {
             this.splitHorizontal.Panel2.ResumeLayout(false);
             this.splitHorizontal.ResumeLayout(false);
             this.splitVertical.Panel1.ResumeLayout(false);
+            this.splitVertical.Panel1.PerformLayout();
             this.splitVertical.Panel2.ResumeLayout(false);
             this.splitVertical.Panel2.PerformLayout();
             this.splitVertical.ResumeLayout(false);
+            this.toolStripRecord.ResumeLayout(false);
+            this.toolStripRecord.PerformLayout();
             this.toolStripSubRecord.ResumeLayout(false);
             this.toolStripSubRecord.PerformLayout();
             this.contextMenuRecord.ResumeLayout(false);
@@ -1204,5 +1276,11 @@ namespace TESVSnip {
         private System.Windows.Forms.ToolStripLabel toolStripIncrFindStatus;
         private System.Windows.Forms.ToolStripComboBox toolStripIncrFindTypeFilter;
         private RichTextBoxLinks.RichTextBoxEx rtfInfo;
+        private System.Windows.Forms.ToolStrip toolStripRecord;
+        private System.Windows.Forms.ToolStripSplitButton toolStripRecordBack;
+        private System.Windows.Forms.ToolStripSplitButton toolStripRecordNext;
+        private System.Windows.Forms.ToolStripButton toolStripRecordPaste;
+        private System.Windows.Forms.ToolStripButton toolStripRecordCopy;
+        private System.Windows.Forms.ToolStripLabel toolStripRecordText;
     }
 }

@@ -60,6 +60,20 @@ namespace TESVSnip.Properties {
             }
         }
         
+        internal static System.Drawing.Bitmap agt_back {
+            get {
+                object obj = ResourceManager.GetObject("agt_back", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        internal static System.Drawing.Bitmap agt_forward {
+            get {
+                object obj = ResourceManager.GetObject("agt_forward", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
         internal static System.Drawing.Bitmap agt_stop {
             get {
                 object obj = ResourceManager.GetObject("agt_stop", resourceCulture);

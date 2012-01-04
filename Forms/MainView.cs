@@ -20,6 +20,21 @@ namespace TESVSnip
         private uint[] Fixups;
         private Forms.StringsEditor stringEditor = null;
 
+        class SnipTreeNode : TreeNode
+        {
+            public SnipTreeNode() : base() { }
+            public SnipTreeNode(string text) : base(text) { }
+            public SnipTreeNode(string text, TreeNode[] children) : base(text, children) { }
+            public SnipTreeNode(string text, int imageIndex, int selectedImageIndex) : base(text, imageIndex, selectedImageIndex) { }
+            public SnipTreeNode(string text, int imageIndex, int selectedImageIndex, TreeNode[] children) : base(text, imageIndex, selectedImageIndex, children) { }
+            public override string ToString()
+            {
+                return this.Text.ToString();
+            }
+        }
+
+        OC.Windows.Forms.History<TreeNode> historyHandler;
+
         public MainView()
         {
             if (!RecordStructure.Loaded)
@@ -82,6 +97,8 @@ namespace TESVSnip
             Selection.formIDLookupR = new dFormIDLookupR(GetRecordByID);
 
             UpdateToolStripSelection();
+            InitializeToolStripRecords();
+
             Selection.RecordChanged += delegate(object o, EventArgs a) { UpdateToolStripSelection(); };
             Selection.SubRecordChanged += delegate(object o, EventArgs a){ UpdateToolStripSelection(); };
             
@@ -210,7 +227,7 @@ namespace TESVSnip
         internal void LoadPlugin(string s)
         {
             Plugin p = new Plugin(s, false, GetRecordFilter(s));
-            TreeNode tn = new TreeNode(p.Name);
+            TreeNode tn = new SnipTreeNode(p.Name);
             CreatePluginTree(p, tn);
             PluginTree.Nodes.Add(tn);
             UpdateStringEditor();
@@ -284,7 +301,7 @@ Would you like to apply the record exclusions?"
         }
         private void WalkPluginTree(Rec r, TreeNode tn)
         {
-            TreeNode tn2 = new TreeNode(r.DescriptiveName);
+            TreeNode tn2 = new SnipTreeNode(r.DescriptiveName);
             tn2.Tag = r;
             if (r is GroupRecord)
             {
@@ -324,9 +341,9 @@ Would you like to apply the record exclusions?"
             CloseStringEditor();
             UpdateMainText("");
             RebuildSelection();
+            historyHandler.Clear();
             GC.Collect();
         }
-
 
         private static void MatchRecordAddConditionals(Dictionary<int, Conditional> conditions, SubRecord sr, ElementStructure[] ess)
         {
@@ -763,6 +780,9 @@ Would you like to apply the record exclusions?"
 
         private void PluginTree_AfterSelect(object sender, TreeViewEventArgs e)
         {
+            toolStripRecordText.Text = PluginTree.SelectedNode == null ? "" : PluginTree.SelectedNode.Text;
+            if (historyHandler.CurrentItem != PluginTree.SelectedNode)
+                historyHandler.CurrentItem = PluginTree.SelectedNode;
             RebuildSelection();
         }
 
@@ -785,13 +805,17 @@ Would you like to apply the record exclusions?"
                 pasteToolStripMenuItem.Enabled = hasClipboard;
                 insertRecordToolStripMenuItem.Enabled = true;
                 insertSubrecordToolStripMenuItem.Enabled = false;
+                toolStripRecordCopy.Enabled = false;
+                toolStripRecordPaste.Enabled = hasClipboard;
             }
             else if (PluginTree.SelectedNode.Tag is Record)
             {
                 cutToolStripMenuItem.Enabled = true;
                 copyToolStripMenuItem.Enabled = true;
                 deleteToolStripMenuItem.Enabled = true;
-                pasteToolStripMenuItem.Enabled = hasClipboard;
+                pasteToolStripMenuItem.Enabled = false;
+                toolStripRecordCopy.Enabled = true;
+                toolStripRecordPaste.Enabled = hasClipboard;
                 insertRecordToolStripMenuItem.Enabled = false;
                 insertSubrecordToolStripMenuItem.Enabled = true;
                 Record r = (Record)PluginTree.SelectedNode.Tag;
@@ -809,6 +833,8 @@ Would you like to apply the record exclusions?"
                 copyToolStripMenuItem.Enabled = true;
                 deleteToolStripMenuItem.Enabled = true;
                 pasteToolStripMenuItem.Enabled = hasClipboard;
+                toolStripRecordCopy.Enabled = true;
+                toolStripRecordPaste.Enabled = hasClipboard;
                 insertRecordToolStripMenuItem.Enabled = true;
                 insertSubrecordToolStripMenuItem.Enabled = false;
             }
@@ -831,6 +857,8 @@ Would you like to apply the record exclusions?"
                 copyToolStripMenuItem.Enabled = false;
                 deleteToolStripMenuItem.Enabled = false;
                 pasteToolStripMenuItem.Enabled = hasClipboard;
+                toolStripRecordCopy.Enabled = false;
+                toolStripRecordPaste.Enabled = hasClipboard;
                 insertRecordToolStripMenuItem.Enabled = true;
                 insertSubrecordToolStripMenuItem.Enabled = false;
             }
@@ -847,6 +875,8 @@ Would you like to apply the record exclusions?"
                     copyToolStripMenuItem.Enabled = true;
                     deleteToolStripMenuItem.Enabled = true;
                     pasteToolStripMenuItem.Enabled = hasClipboard;
+                    toolStripRecordCopy.Enabled = true;
+                    toolStripRecordPaste.Enabled = hasClipboard;
                     insertRecordToolStripMenuItem.Enabled = false;
                     insertSubrecordToolStripMenuItem.Enabled = true;
                     UpdateMainText(((Record)PluginTree.SelectedNode.Tag));
@@ -859,6 +889,8 @@ Would you like to apply the record exclusions?"
                 copyToolStripMenuItem.Enabled = true;
                 deleteToolStripMenuItem.Enabled = true;
                 pasteToolStripMenuItem.Enabled = hasClipboard;
+                toolStripRecordCopy.Enabled = false;
+                toolStripRecordPaste.Enabled = false;
                 insertRecordToolStripMenuItem.Enabled = true;
                 insertSubrecordToolStripMenuItem.Enabled = false;
             }
@@ -972,6 +1004,12 @@ Do you still want to save?", "Modified Save", MessageBoxButtons.YesNo, MessageBo
         }
         private void pasteToolStripMenuItem_Click(object sender, EventArgs e)
         {
+            PasteFromClipboard(false);
+            return;
+        }
+
+        private void PasteFromClipboard(bool recordOnly)
+        {
             if (!ValidateMakeChange())
                 return;
             if (!HasClipboardData())
@@ -980,6 +1018,9 @@ Do you still want to save?", "Modified Save", MessageBoxButtons.YesNo, MessageBo
                 return;
             }
             var clipboardObject = this.Clipboard;
+
+            if (recordOnly && !(clipboardObject is Record || clipboardObject is GroupRecord) )
+                return;
 
             BaseRecord node = (BaseRecord)PluginTree.SelectedNode.Tag;
             if (clipboardObject is Plugin)
@@ -1004,7 +1045,7 @@ Do you still want to save?", "Modified Save", MessageBoxButtons.YesNo, MessageBo
                     else
                     {
                         string text = (br is Rec) ? ((Rec)br).DescriptiveName : br.Name;
-                        var dstRecNode = new TreeNode(text);
+                        var dstRecNode = new SnipTreeNode(text);
                         dstRecNode.Tag = br;
                         if (br is GroupRecord)
                         {
@@ -1022,7 +1063,6 @@ Do you still want to save?", "Modified Save", MessageBoxButtons.YesNo, MessageBo
                 }
             }
         }
-
         private void newToolStripMenuItem_Click(object sender, EventArgs e)
         {
             if (!ValidateMakeChange())
@@ -1039,9 +1079,9 @@ Do you still want to save?", "Modified Save", MessageBoxButtons.YesNo, MessageBo
             sr.SetData(System.Text.Encoding.ASCII.GetBytes("Default\0"));
             r.AddRecord(sr);
             p.AddRecord(r);
-            TreeNode tn = new TreeNode(p.Name);
+            TreeNode tn = new SnipTreeNode(p.Name);
             tn.Tag = p;
-            TreeNode tn2 = new TreeNode(r.DescriptiveName);
+            TreeNode tn2 = new SnipTreeNode(r.DescriptiveName);
             tn2.Tag = r;
             tn.Nodes.Add(tn2);
             PluginTree.Nodes.Add(tn);
@@ -1105,6 +1145,8 @@ Do you still want to save?", "Modified Save", MessageBoxButtons.YesNo, MessageBo
                     + "String: " + sr.GetStrData() + Environment.NewLine + Environment.NewLine
                     + "Hex:" + Environment.NewLine + sr.GetHexData());
             }
+            toolStripRecordCopy.Enabled = false;
+            toolStripRecordPaste.Enabled = false;
             pasteToolStripMenuItem.Enabled = false;
             copyToolStripMenuItem.Enabled = true;
             cutToolStripMenuItem.Enabled = true;
@@ -1307,7 +1349,7 @@ Do you still want to save?", "Modified Save", MessageBoxButtons.YesNo, MessageBo
             BaseRecord node = (BaseRecord)PluginTree.SelectedNode.Tag;
             Record p = new Record();
             node.AddRecord(p);
-            TreeNode tn = new TreeNode(p.Name);
+            TreeNode tn = new SnipTreeNode(p.Name);
             tn.Tag = p;
             PluginTree.SelectedNode.Nodes.Add(tn);
             GetPluginFromNode(PluginTree.SelectedNode).InvalidateCache();
@@ -2279,7 +2321,7 @@ Do you still want to save?", "Modified Save", MessageBoxButtons.YesNo, MessageBo
                         }
                         dst.AddRecord(dstRec);
                         dstNode.Nodes.Add(dstRecNode);
-                        //var tn = new TreeNode(dstRec.DescriptiveName);
+                        //var tn = new SnipTreeNode(dstRec.DescriptiveName);
                         //tn.Tag = dstRec;
                         //dstNode.Nodes.Add(tn);
                         GetPluginFromNode(dstRecNode).InvalidateCache();
@@ -2385,6 +2427,49 @@ Do you still want to save?", "Modified Save", MessageBoxButtons.YesNo, MessageBo
             	
             }            
         }
-   
+
+        #region ToolStrip Record Handlers
+        
+        void InitializeToolStripRecords()
+        {
+            historyHandler = new OC.Windows.Forms.History<TreeNode>(toolStripRecordBack, toolStripRecordNext, 100);
+            historyHandler.AllowDuplicates = true;
+            historyHandler.GotoItem +=new EventHandler<OC.Windows.Forms.HistoryEventArgs<TreeNode>>(historyHandler_GotoItem);
+            
+        }
+
+        void historyHandler_GotoItem(object sender, OC.Windows.Forms.HistoryEventArgs<TreeNode> e)
+        {
+            PluginTree.SelectedNode = e.Item;
+        }
+
+        private void toolStripRecordCopy_Click(object sender, EventArgs e)
+        {
+            CopySelectedRecord();
+        }
+        private void toolStripRecordPaste_Click(object sender, EventArgs e)
+        {
+            PasteFromClipboard(true);
+        }
+
+        private void MainView_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.Alt && !e.Control && !e.Shift)
+            {
+                if (e.KeyCode == Keys.Left)
+                {
+                    toolStripRecordBack.PerformButtonClick();
+                    e.Handled = true;
+                }
+                else if (e.KeyCode == Keys.Right)
+                {
+                    toolStripRecordNext.PerformButtonClick();
+                    e.Handled = true;
+                }
+            }
+        }
+
+        #endregion
+        
     }
 }
