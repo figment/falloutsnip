@@ -74,6 +74,12 @@ namespace MSBuildTasks
             set;
         }
 
+        public string StdIn
+        {
+            get;
+            set;
+        }
+
         public string WorkingDirectory
         {
             get;
@@ -259,6 +265,14 @@ namespace MSBuildTasks
                         startInfo.RedirectStandardOutput = true;
                         startInfo.RedirectStandardError = true;
                         startInfo.WorkingDirectory = this.WorkingDirectory;
+
+                        bool useStdIn = false;
+                        if (!string.IsNullOrEmpty(StdIn) && File.Exists(StdIn))
+                        {
+                            startInfo.RedirectStandardInput = true;
+                            useStdIn = true;
+                        }
+
                         StringBuilder stdOutput = new StringBuilder("");
                         StringBuilder stdError = new StringBuilder("");
                         p.StartInfo = startInfo;
@@ -277,6 +291,13 @@ namespace MSBuildTasks
                         {
                             p.BeginOutputReadLine();
                             p.BeginErrorReadLine();
+                            if (!string.IsNullOrEmpty(StdIn))
+                            {
+                                var r = new StreamReader(File.OpenRead(StdIn));
+                                p.StandardInput.Write(r.ReadToEnd());
+                                p.StandardInput.Flush();
+                                p.StandardInput.Close();
+                            }
                             p.WaitForExit();
                             this.StdOut = new TaskItem(stdOutput.ToString());
                             this.StdError = new TaskItem(stdError.ToString());
