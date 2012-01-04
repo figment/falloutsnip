@@ -2996,7 +2996,13 @@
       </Subrecord>
       <Subrecord name="NEXT" desc="NEXT" optional="1" size="0" />
     </Group>
-    <Group id="CONDITIONAL" optional="1" repeat="1"/>
+    <Group optional="1" repeat="1">
+        <Group id="CONDITIONAL" optional="1" repeat="1"/>
+        <Subrecord name="CNAM" desc="CNAM" optional="1" repeat="1">
+          <Element name="Unknown" type="lstring" />
+        </Subrecord>
+        <Subrecord name="NEXT" desc="Separator" optional="1" size="0" />
+    </Group>
     <Group optional="1" repeat="1">
       <Subrecord name="INDX" desc="Quest Stage" size="4">
         <Element name="Stage Number" type="int" />
