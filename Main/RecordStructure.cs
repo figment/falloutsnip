@@ -6,14 +6,15 @@ using System.Linq;
 namespace TESVSnip {
 
     class RecordXmlException : Exception { public RecordXmlException(string msg) : base(msg) { } }
-    enum ElementValueType {
+    public enum ElementValueType {
         String, Float, Int, Short, Byte, FormID, fstring, Blob, LString, BString, UShort, UInt, SByte, Str4
     }
-    enum CondType {
+    public enum CondType
+    {
         None, Equal, Not, Greater, Less, GreaterEqual, LessEqual, StartsWith, EndsWith, Contains, Exists, Missing
     }
 
-    struct Conditional
+    public struct Conditional
     {
         public readonly ElementValueType type;
         public readonly object value;

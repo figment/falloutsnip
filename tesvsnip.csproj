@@ -114,6 +114,9 @@
     <Compile Include="Controls\PopupControl.cs">
       <SubType>Component</SubType>
     </Compile>
+    <Compile Include="Controls\RichTextBoxEx.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="Controls\virtuallistview.cs">
       <SubType>Component</SubType>
     </Compile>
@@ -250,6 +253,25 @@
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
     <Compile Include="Main\RecordStructure.cs" />
+    <Compile Include="RTFLib\RTF\IRTFCell.cs" />
+    <Compile Include="RTFLib\RTF\IRtfProcessor.cs" />
+    <Compile Include="RTFLib\RTF\IRTFRow.cs" />
+    <Compile Include="RTFLib\RTF\RTFAlignment.cs" />
+    <Compile Include="RTFLib\RTF\RTFBorderSide.cs" />
+    <Compile Include="RTFLib\RTF\RTFBuilder.cs" />
+    <Compile Include="RTFLib\RTF\RTFBuilder.RTFFonts.cs" />
+    <Compile Include="RTFLib\RTF\RTFBuilder.RTFFormatWrap.cs" />
+    <Compile Include="RTFLib\RTF\RTFBuilder.RTFParaWrap.cs" />
+    <Compile Include="RTFLib\RTF\RTFBuilder.UnWrapped.cs" />
+    <Compile Include="RTFLib\RTF\RTFBuilderbase.cs" />
+    <Compile Include="RTFLib\RTF\RTFCell.cs" />
+    <Compile Include="RTFLib\RTF\RTFCellDefinition.cs" />
+    <Compile Include="RTFLib\RTF\RTFCellDefinitionBuilder.cs" />
+    <Compile Include="RTFLib\RTF\RTFFont.cs" />
+    <Compile Include="RTFLib\RTF\RTFImage.cs" />
+    <Compile Include="RTFLib\RTF\RTFRow.cs" />
+    <Compile Include="RTFLib\RTF\RTFRowDefinition.cs" />
+    <Compile Include="RTFLib\RTF\RTFUtil.cs" />
     <Compile Include="ScriptCompiler\ScriptCompiler.cs" />
     <Compile Include="ScriptCompiler\Tokenizer.cs" />
     <Compile Include="Main\Settings.cs" />
@@ -310,6 +332,7 @@
     <Content Include="build\buildver.txt" />
     <Content Include="conf\RecordStructure.xml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <SubType>Designer</SubType>
     </Content>
     <Content Include="conf\RecordStructureFormat.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>

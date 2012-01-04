@@ -92,7 +92,7 @@ namespace TESVSnip {
             this.toolStripPasteSubrecord = new System.Windows.Forms.ToolStripButton();
             this.toolStripCopySubrecord = new System.Windows.Forms.ToolStripButton();
             this.toolStripSeparator2 = new System.Windows.Forms.ToolStripSeparator();
-            this.tbInfo = new System.Windows.Forms.TextBox();
+            this.rtfInfo = new RichTextBoxLinks.RichTextBoxEx();
             this.contextMenuRecord = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.contextMenuRecordCopy = new System.Windows.Forms.ToolStripMenuItem();
             this.contextMenuRecordCopyTo = new System.Windows.Forms.ToolStripMenuItem();
@@ -512,7 +512,7 @@ namespace TESVSnip {
             this.toolStripStatusLabel,
             this.toolStripStatusProgressBar,
             this.toolStripStopProgress});
-            this.statusStrip1.Location = new System.Drawing.Point(0, 636);
+            this.statusStrip1.Location = new System.Drawing.Point(0, 524);
             this.statusStrip1.Name = "statusStrip1";
             this.statusStrip1.Size = new System.Drawing.Size(765, 22);
             this.statusStrip1.TabIndex = 4;
@@ -566,8 +566,8 @@ namespace TESVSnip {
             // 
             // splitHorizontal.Panel2
             // 
-            this.splitHorizontal.Panel2.Controls.Add(this.tbInfo);
-            this.splitHorizontal.Size = new System.Drawing.Size(765, 587);
+            this.splitHorizontal.Panel2.Controls.Add(this.rtfInfo);
+            this.splitHorizontal.Size = new System.Drawing.Size(765, 500);
             this.splitHorizontal.SplitterDistance = 259;
             this.splitHorizontal.TabIndex = 3;
             // 
@@ -588,8 +588,8 @@ namespace TESVSnip {
             // 
             this.splitVertical.Panel2.Controls.Add(this.listSubrecord);
             this.splitVertical.Panel2.Controls.Add(this.toolStripSubRecord);
-            this.splitVertical.Size = new System.Drawing.Size(259, 587);
-            this.splitVertical.SplitterDistance = 209;
+            this.splitVertical.Size = new System.Drawing.Size(259, 500);
+            this.splitVertical.SplitterDistance = 178;
             this.splitVertical.TabIndex = 1;
             // 
             // PluginTree
@@ -598,7 +598,7 @@ namespace TESVSnip {
             this.PluginTree.HideSelection = false;
             this.PluginTree.Location = new System.Drawing.Point(0, 0);
             this.PluginTree.Name = "PluginTree";
-            this.PluginTree.Size = new System.Drawing.Size(259, 209);
+            this.PluginTree.Size = new System.Drawing.Size(259, 178);
             this.PluginTree.TabIndex = 0;
             this.PluginTree.OnContextMenuKey += new System.EventHandler(this.PluginTree_OnContextMenuKey);
             this.PluginTree.AfterExpand += new System.Windows.Forms.TreeViewEventHandler(this.PluginTree_AfterExpand);
@@ -626,7 +626,7 @@ namespace TESVSnip {
             this.listSubrecord.Location = new System.Drawing.Point(0, 25);
             this.listSubrecord.Name = "listSubrecord";
             this.listSubrecord.ShowItemToolTips = true;
-            this.listSubrecord.Size = new System.Drawing.Size(259, 349);
+            this.listSubrecord.Size = new System.Drawing.Size(259, 293);
             this.listSubrecord.TabIndex = 0;
             this.listSubrecord.UseCompatibleStateImageBehavior = false;
             this.listSubrecord.View = System.Windows.Forms.View.Details;
@@ -765,19 +765,19 @@ namespace TESVSnip {
             this.toolStripSeparator2.Name = "toolStripSeparator2";
             this.toolStripSeparator2.Size = new System.Drawing.Size(6, 25);
             // 
-            // tbInfo
+            // rtfInfo
             // 
-            this.tbInfo.BackColor = System.Drawing.SystemColors.Window;
-            this.tbInfo.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.tbInfo.Location = new System.Drawing.Point(0, 0);
-            this.tbInfo.Multiline = true;
-            this.tbInfo.Name = "tbInfo";
-            this.tbInfo.ReadOnly = true;
-            this.tbInfo.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
-            this.tbInfo.ShortcutsEnabled = false;
-            this.tbInfo.Size = new System.Drawing.Size(502, 587);
-            this.tbInfo.TabIndex = 2;
-            this.tbInfo.PreviewKeyDown += new System.Windows.Forms.PreviewKeyDownEventHandler(this.tbInfo_PreviewKeyDown);
+            this.rtfInfo.AutoWordSelection = true;
+            this.rtfInfo.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.rtfInfo.Location = new System.Drawing.Point(0, 0);
+            this.rtfInfo.Name = "rtfInfo";
+            this.rtfInfo.ReadOnly = true;
+            this.rtfInfo.ShortcutsEnabled = false;
+            this.rtfInfo.Size = new System.Drawing.Size(502, 500);
+            this.rtfInfo.TabIndex = 3;
+            this.rtfInfo.Text = "";
+            this.rtfInfo.LinkClicked += new System.Windows.Forms.LinkClickedEventHandler(this.rtfInfo_LinkClicked);
+            this.rtfInfo.PreviewKeyDown += new System.Windows.Forms.PreviewKeyDownEventHandler(this.tbInfo_PreviewKeyDown);
             // 
             // contextMenuRecord
             // 
@@ -865,7 +865,7 @@ namespace TESVSnip {
             "Form ID"});
             this.toolStripIncrFindTypeFilter.Name = "toolStripIncrFindTypeFilter";
             this.toolStripIncrFindTypeFilter.Overflow = System.Windows.Forms.ToolStripItemOverflow.Never;
-            this.toolStripIncrFindTypeFilter.Size = new System.Drawing.Size(80, 25);
+            this.toolStripIncrFindTypeFilter.Size = new System.Drawing.Size(80, 23);
             this.toolStripIncrFindTypeFilter.ToolTipText = "Search Type";
             this.toolStripIncrFindTypeFilter.Visible = false;
             this.toolStripIncrFindTypeFilter.SelectedIndexChanged += new System.EventHandler(this.toolStripIncrFindTypeFilter_SelectedIndexChanged);
@@ -943,7 +943,7 @@ namespace TESVSnip {
             this.toolStripIncrFindWrapAround.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
             this.toolStripIncrFindWrapAround.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.toolStripIncrFindWrapAround.Name = "toolStripIncrFindWrapAround";
-            this.toolStripIncrFindWrapAround.Size = new System.Drawing.Size(102, 19);
+            this.toolStripIncrFindWrapAround.Size = new System.Drawing.Size(102, 22);
             this.toolStripIncrFindWrapAround.Text = "&Wrap Around";
             this.toolStripIncrFindWrapAround.ToolTipText = "Wrap Around";
             this.toolStripIncrFindWrapAround.CheckStateChanged += new System.EventHandler(this.toolStripCheck_CheckStateChanged);
@@ -1069,7 +1069,7 @@ namespace TESVSnip {
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(765, 658);
+            this.ClientSize = new System.Drawing.Size(765, 546);
             this.Controls.Add(this.splitHorizontal);
             this.Controls.Add(this.toolStripIncrFind);
             this.Controls.Add(this.toolStripIncrInvalidRec);
@@ -1089,7 +1089,6 @@ namespace TESVSnip {
             this.statusStrip1.PerformLayout();
             this.splitHorizontal.Panel1.ResumeLayout(false);
             this.splitHorizontal.Panel2.ResumeLayout(false);
-            this.splitHorizontal.Panel2.PerformLayout();
             this.splitHorizontal.ResumeLayout(false);
             this.splitVertical.Panel1.ResumeLayout(false);
             this.splitVertical.Panel2.ResumeLayout(false);
@@ -1115,7 +1114,6 @@ namespace TESVSnip {
         private System.Windows.Forms.ToolStripMenuItem openNewPluginToolStripMenuItem;
         private System.Windows.Forms.OpenFileDialog OpenModDialog;
         private System.Windows.Forms.ToolStripMenuItem closeAllToolStripMenuItem;
-        private System.Windows.Forms.TextBox tbInfo;
         private System.Windows.Forms.ToolStripMenuItem optionsToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem hexModeToolStripMenuItem;
         private System.Windows.Forms.SaveFileDialog SaveModDialog;
@@ -1205,5 +1203,6 @@ namespace TESVSnip {
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator7;
         private System.Windows.Forms.ToolStripLabel toolStripIncrFindStatus;
         private System.Windows.Forms.ToolStripComboBox toolStripIncrFindTypeFilter;
+        private RichTextBoxLinks.RichTextBoxEx rtfInfo;
     }
 }

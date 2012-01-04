@@ -1,4 +1,4 @@
-figments's TESsnip Fork (Skyrim Edition) version 1.6
+figments's TESsnip Fork (Skyrim Edition) version 1.7
 =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
 
 TESVSnip is a fork of the TESsnip utility bundled with Fallout Mod Manager with changes specifically for Skyrim.
@@ -15,6 +15,7 @@ v 1.7
 - Add Name w/Type and Full w/Type to allow for searches limited by record type
 - Experimental short descriptions for REFR, ACHR showing location information
 - Fix FirstTimeLoad of skyrim.esm where user selects cancel to options and filter is still applied
+- Change main text field area to RichTextBox and add hyper links to items
 
 v 1.6
 - Add option to use Windows Clipboard instead of internal copy

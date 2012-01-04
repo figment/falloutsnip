@@ -524,7 +524,7 @@ namespace TESVSnip
                 return false;
             };
 
-            SearchContext searchContext = new SearchContext();
+            var searchContext = new SearchContext();
 
             var item = toolStripIncrFindType.SelectedItem as ComboHelper<SearchType, string>;
             searchContext.tn = start;

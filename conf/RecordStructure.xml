@@ -1,18 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Records xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
   <Group id="CONDITIONAL" optional="1" repeat="1">
-    <Subrecord name="CTDA" desc="Conditional" optional = "1" repeat = "1">
-      <Element name = "Comparison Type" type = "uint" hexview="1"
-        options = "equal;0;not equal;32;greater;64;greater or equal;96;less;128;less or equal;160"
-        flags=";;;;;not equal;greater;less;;;;;;;;;;;;;;;;;;;;;;;;" />
-      <Element name="Comparison Value" type = "float"/>
-      <Element name="Function" type="uint" hexview="true"/>
-      <Element name="Unknown 3" type="int" />
-      <Element name="Unknown 4" type="short" />
-      <Element name="Unknown 4" type="short" />
-      <Element name="Unknown 5" type="int" />
-      <Element name="Unknown 6" type="int" />
-      <Element name="Unknown 7" type="int" />
+    <Subrecord name = "CTDA" desc = "Conditional" optional = "1" repeat = "1">
+      <Element name = "Comparison Type" type = "int" options="equal;0;or equal;1;not equal;32;or not equal;33;greater;64;or greater;65;greater/equal;96;or greater/equal;97;less;128;or less;129;less/equal;160;or less/equal;161" flags="OR;Run on target;Use global"/>
+      <Element name = "Comparison Value" type = "float"/>
+      <Element name = "Function (+4096)" type = "short"/>
+      <Element name = "unused (always 84)" type = "short" notininfo="true"/>
+      <Element name = "Param 1 (can be int / float / formID)" type = "formid"/>
+      <Element name = "Param 2 (can be int / float / formID)" type = "int" hexview="true"/>
+      <Element name = "Param 3 (can be int / float / formID)" type = "int" hexview="true"/>
+      <Element name = "Reference" type = "int"/>
+      <Element name = "Unknown (always -1)" type = "int" notininfo="true"/>
     </Subrecord>
     <Subrecord name="CIS1" desc="CIS1" optional="1">
       <Element name="Unknown" type="int" />
@@ -22,11 +20,8 @@
     <Subrecord name="CIS2" desc="CIS2" optional="1">
       <Element name="Unknown" type="string" />
     </Subrecord>
-    <Subrecord name="CNAM" desc="CNAM" optional="1" repeat="1">
-      <Element name="Unknown" type="lstring" />
-    </Subrecord>
-    <Subrecord name="NEXT" desc="Separator" optional="1" size="0" />
   </Group>
+  
 
   <Group id="EFFECT" optional="1" repeat="1">
     <Subrecord name="EFID" desc="EFID" size="4">
@@ -41,8 +36,8 @@
   </Group>
 
   <Group id="KEYWORDS" optional="1">
-    <Subrecord name="KSIZ" desc="KSIZ" optional="1" size="4">
-      <Element name="Unknown" type="int" />
+    <Subrecord name="KSIZ" desc="Number of Keywords" optional="1" size="4">
+      <Element name="Count" type="int" />
     </Subrecord>
     <Subrecord name="KWDA" desc="KWDA" optional="1">
       <Element name="ID" type="formid" reftype="KYWD" repeat="1" optional="1" />
@@ -1778,7 +1773,7 @@
       <Element name="Form ID" type="formid" reftype="SNDR" />
     </Subrecord>
     <Subrecord name="DATA" desc="Weapon Data" optional="1" size="10">
-      <Element name="Item Value" type="lstring" />
+      <Element name="Item Value" type="int" />
       <Element name="Item Weight" type="float" />
       <Element name="Weapon Damage" type="short" />
     </Subrecord>
@@ -2396,10 +2391,10 @@
       <Element name="Weight" type="float" />
     </Subrecord>
     <Subrecord name="SOUL" desc="Current Soul" optional="1" size="1">
-      <Element name="Level" type="byte" options="None;0;Lesser;1;Common;2;Greater;3;Grand;4;Black;5"/>
+      <Element name="Level" type="byte" options="None;0;Petty;1;Lesser;2;Common;3;Greater;4;Grand;5"/>
     </Subrecord>
-    <Subrecord name="SLCP" desc="SLCP" optional="1" size="1">
-      <Element name="Unknown" type="byte" />
+    <Subrecord name="SLCP" desc="Soul Gem Capacity" optional="1" size="1">
+      <Element name="Level" type="byte" options="None;0;Petty;1;Lesser;2;Common;3;Greater;4;Grand;5"/>
     </Subrecord>
     <Subrecord name="NAM0" desc="NAM0" optional="1" size="4">
       <Element name="ID" type="formid" reftype="SLGM" />
@@ -2431,7 +2426,7 @@
     </Subrecord>
     <Subrecord name="LVLO" desc="List Item" optional="1" repeat="1" size="12">
       <Element name="Level" type="int" />
-      <Element name="formid" type="int" />
+      <Element name="formid" type="formid" />
       <Element name="Count" type="int" />
     </Subrecord>
   </Record>
@@ -3889,7 +3884,7 @@
       <Element name="Editor ID" type="string" />
     </Subrecord>
     <Subrecord name="LNAM" desc="List Item" optional="1" repeat="1" size="4">
-      <Element name="Form ID" type="int" />
+      <Element name="Form ID" type="formid" />
     </Subrecord>
   </Record>
   <Record name="PERK" desc="Perk">
@@ -5032,11 +5027,11 @@
       <Element name="ID" type="formid" reftype="LGTM" />
     </Subrecord>
     <Subrecord name="LNAM" desc="LNAM" optional="1" size="4">
-      <Element name="Unknown" type="lstring" />
+      <Element name="Unknown" type="int" />
     </Subrecord>
 
     <Subrecord name="XCLW" desc="Water Height" optional="1" size="4">
-      <Element name="Height" type="int" />
+      <Element name="Height" type="float" />
     </Subrecord>
     <Subrecord name="XWCS" desc="XWCS" optional="1" size="4">
       <Element name="Unknown" type="int" />

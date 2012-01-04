@@ -79,6 +79,7 @@ namespace TESVSnip
             Selection = new SelectionContext();
             Selection.formIDLookup = new dFormIDLookupI(LookupFormIDI);
             Selection.strLookup = new dLStringLookup(LookupFormStrings);
+            Selection.formIDLookupR = new dFormIDLookupR(GetRecordByID);
 
             UpdateToolStripSelection();
             Selection.RecordChanged += delegate(object o, EventArgs a) { UpdateToolStripSelection(); };
@@ -321,6 +322,8 @@ Would you like to apply the record exclusions?"
             Clipboard = null;
             ClipboardNode = null;
             CloseStringEditor();
+            UpdateMainText("");
+            RebuildSelection();
             GC.Collect();
         }
 
@@ -775,7 +778,7 @@ Would you like to apply the record exclusions?"
             {
                 listSubrecord.DataSource = null;
                 Selection.Plugin = ((Plugin)PluginTree.SelectedNode.Tag);
-                tbInfo.Text = Selection.Plugin.GetDesc();
+                UpdateMainText(Selection.Plugin);
                 cutToolStripMenuItem.Enabled = false;
                 copyToolStripMenuItem.Enabled = false;
                 deleteToolStripMenuItem.Enabled = false;
@@ -795,13 +798,13 @@ Would you like to apply the record exclusions?"
                 Selection.Record = r;
                 listSubrecord.DataSource = r.SubRecords;
                 MatchRecordStructureToRecord();
-                tbInfo.Text = Selection.Record.GetDesc(Selection);
+                UpdateMainText(Selection.Record);
             }
             else
             {
                 Selection.Record = null;
                 listSubrecord.DataSource = null;
-                tbInfo.Text = ((BaseRecord)PluginTree.SelectedNode.Tag).GetDesc();
+                UpdateMainText(((BaseRecord)PluginTree.SelectedNode.Tag));
                 cutToolStripMenuItem.Enabled = true;
                 copyToolStripMenuItem.Enabled = true;
                 deleteToolStripMenuItem.Enabled = true;
@@ -823,7 +826,7 @@ Would you like to apply the record exclusions?"
             //Enable and disable relevant menu items
             if (PluginTree.SelectedNode.Tag is Plugin)
             {
-                tbInfo.Text = ((BaseRecord)PluginTree.SelectedNode.Tag).GetDesc();
+                UpdateMainText(((BaseRecord)PluginTree.SelectedNode.Tag));
                 cutToolStripMenuItem.Enabled = false;
                 copyToolStripMenuItem.Enabled = false;
                 deleteToolStripMenuItem.Enabled = false;
@@ -846,12 +849,12 @@ Would you like to apply the record exclusions?"
                     pasteToolStripMenuItem.Enabled = hasClipboard;
                     insertRecordToolStripMenuItem.Enabled = false;
                     insertSubrecordToolStripMenuItem.Enabled = true;
-                    tbInfo.Text = ((Record)PluginTree.SelectedNode.Tag).GetDesc(Selection);
+                    UpdateMainText(((Record)PluginTree.SelectedNode.Tag));
                 }
             }
             else
             {
-                tbInfo.Text = ((BaseRecord)PluginTree.SelectedNode.Tag).GetDesc();
+                UpdateMainText(((BaseRecord)PluginTree.SelectedNode.Tag));
                 cutToolStripMenuItem.Enabled = true;
                 copyToolStripMenuItem.Enabled = true;
                 deleteToolStripMenuItem.Enabled = true;
@@ -1064,7 +1067,7 @@ Do you still want to save?", "Modified Save", MessageBoxButtons.YesNo, MessageBo
                 {
                     GetPluginFromNode(PluginTree.SelectedNode).InvalidateCache();
                     PluginTree.SelectedNode.Text = r.DescriptiveName;
-                    tbInfo.Text = ((BaseRecord)PluginTree.SelectedNode.Tag).GetDesc();
+                    UpdateMainText(((BaseRecord)PluginTree.SelectedNode.Tag));
                 }
             }
             else if (PluginTree.SelectedNode.Tag is GroupRecord)
@@ -1074,7 +1077,7 @@ Do you still want to save?", "Modified Save", MessageBoxButtons.YesNo, MessageBo
                 {
                     GetPluginFromNode(PluginTree.SelectedNode).InvalidateCache();
                     PluginTree.SelectedNode.Text = gr.DescriptiveName;
-                    tbInfo.Text = ((BaseRecord)PluginTree.SelectedNode.Tag).GetDesc();
+                    UpdateMainText(((BaseRecord)PluginTree.SelectedNode.Tag));
                 }
 
             }
@@ -1086,7 +1089,7 @@ Do you still want to save?", "Modified Save", MessageBoxButtons.YesNo, MessageBo
             Selection.SubRecord = GetSelectedSubrecord();
             if (Selection.SubRecord == null)
             {
-                tbInfo.Text = "";
+                UpdateMainText("");
                 return;
             }
 
@@ -1094,13 +1097,13 @@ Do you still want to save?", "Modified Save", MessageBoxButtons.YesNo, MessageBo
             var sr = Selection.SubRecord;
             if (sr.Structure != null && sr.Structure.elements != null)
             {
-                tbInfo.Text = sr.GetFormattedData(context);
+                UpdateMainText(sr);
             }
             else
             {
-                tbInfo.Text = "[Subrecord data]" + Environment.NewLine
+                UpdateMainText("[Subrecord data]" + Environment.NewLine
                     + "String: " + sr.GetStrData() + Environment.NewLine + Environment.NewLine
-                    + "Hex:" + Environment.NewLine + sr.GetHexData();
+                    + "Hex:" + Environment.NewLine + sr.GetHexData());
             }
             pasteToolStripMenuItem.Enabled = false;
             copyToolStripMenuItem.Enabled = true;
@@ -1184,7 +1187,7 @@ Do you still want to save?", "Modified Save", MessageBoxButtons.YesNo, MessageBo
                 if (re != null)
                 {
                     re.ShowDialog();
-                    tbInfo.Text = sr.GetFormattedData(context);
+                    UpdateMainText(sr.GetFormattedData(context));
                     if (sr.Name == "EDID" && listSubrecord.SelectedIndices[0] == 0)
                     {
                         context.Record.DescriptiveName = " (" + sr.GetStrData() + ")";
@@ -1202,7 +1205,7 @@ Do you still want to save?", "Modified Save", MessageBoxButtons.YesNo, MessageBo
                 {
                     sr.SetData(HexDataEdit.result);
                     sr.Name = HexDataEdit.resultName;
-                    tbInfo.Text = "[Subrecord data]" + Environment.NewLine + sr.GetHexData();
+                    UpdateMainText("[Subrecord data]" + Environment.NewLine + sr.GetHexData());
                     listSubrecord.Refresh();
                 }
             }
@@ -1213,7 +1216,7 @@ Do you still want to save?", "Modified Save", MessageBoxButtons.YesNo, MessageBo
                 {
                     sr.SetData(DataEdit.result);
                     sr.Name = DataEdit.resultName;
-                    tbInfo.Text = "[Subrecord data]" + Environment.NewLine + sr.GetStrData();
+                    UpdateMainText("[Subrecord data]" + Environment.NewLine + sr.GetStrData());
                     listSubrecord.Refresh();
                 }
             }
@@ -1238,7 +1241,7 @@ Do you still want to save?", "Modified Save", MessageBoxButtons.YesNo, MessageBo
                     {
                         sr.SetData(HexDataEdit.result);
                         sr.Name = HexDataEdit.resultName;
-                        tbInfo.Text = "[Subrecord data]" + Environment.NewLine + sr.GetHexData();
+                        UpdateMainText("[Subrecord data]" + Environment.NewLine + sr.GetHexData());
                         listSubrecord.Refresh();
                     }
                 }
@@ -1353,15 +1356,19 @@ Do you still want to save?", "Modified Save", MessageBoxButtons.YesNo, MessageBo
 
         private void tbInfo_PreviewKeyDown(object sender, PreviewKeyDownEventArgs e)
         {
-            if (e.Control)
+            var tbBase = sender as TextBoxBase;
+            if (tbBase != null)
             {
-                if (e.KeyCode == Keys.A)
+                if (e.Control)
                 {
-                    tbInfo.SelectAll();
-                }
-                else if (e.KeyCode == Keys.C)
-                {
-                    tbInfo.Copy();
+                    if (e.KeyCode == Keys.A)
+                    {
+                        tbBase.SelectAll();
+                    }
+                    else if (e.KeyCode == Keys.C)
+                    {
+                        tbBase.Copy();
+                    }
                 }
             }
         }
@@ -1380,6 +1387,9 @@ Do you still want to save?", "Modified Save", MessageBoxButtons.YesNo, MessageBo
             tn.Tag = null;
             PluginTree.Nodes.Remove(tn);
             UpdateStringEditor();
+            UpdateMainText("");
+            RebuildSelection();
+            GC.Collect();
         }
 
         private bool DragDropInProgress;
@@ -1520,14 +1530,15 @@ Do you still want to save?", "Modified Save", MessageBoxButtons.YesNo, MessageBo
             if (pluginid < FormIDLookup.Length && FormIDLookup[pluginid] != null)
             {
                 p = FormIDLookup[pluginid];
-                if (p == null)
-                    return "Master not loaded";
-
                 id += Fixups[pluginid] << 24;
                 if (p.TryGetRecordByID(id, out r))
                     return r.DescriptiveName;
+                return "No match";
             }
-            return "No match";
+            else
+            {
+                return "Master not loaded";
+            }            
         }
         
         private Record GetRecordByID(uint id)
@@ -2126,11 +2137,13 @@ Do you still want to save?", "Modified Save", MessageBoxButtons.YesNo, MessageBo
             {
                 Selection.formIDLookup = new dFormIDLookupI(LookupFormIDI);
                 Selection.strLookup = new dLStringLookup(LookupFormStrings);
+                Selection.formIDLookupR = new dFormIDLookupR(GetRecordByID);
             }
             else
             {
                 Selection.formIDLookup = null;
                 Selection.strLookup = null;
+                Selection.formIDLookupR = null;
             }
         }
 
@@ -2307,5 +2320,71 @@ Do you still want to save?", "Modified Save", MessageBoxButtons.YesNo, MessageBo
         {
             pasteToolStripMenuItem.Enabled = HasClipboardData();
         }
+
+        private void UpdateMainText(BaseRecord rec)
+        {
+            if (rec == null) { 
+                UpdateMainText("");
+            } else {
+                //var sb = new System.Text.StringBuilder();
+                //rec.GetFormattedData(sb, GetSelectedContext());
+                //tbInfo.Text = sb.ToString();
+
+                var rb = new RTF.RTFBuilder(16);
+                rec.GetFormattedData(rb, GetSelectedContext());
+                rtfInfo.Rtf = rb.ToString();
+            }
+        }
+        private void UpdateMainText(string text)
+        {
+            //tbInfo.Text = text;
+            rtfInfo.Text = text;
+        }
+
+        TreeNode GetFirstPluginNode()
+        {
+            return PluginTree.Nodes.Count == 0 ? null : PluginTree.Nodes[0];
+        }
+
+        static readonly System.Text.RegularExpressions.Regex linkRegex = 
+            new System.Text.RegularExpressions.Regex(
+                "^(?<text>[^#]*)#(?<type>[0-z][A-Z][A-Z][A-Z]):(?<id>[0-9a-zA-Z]+)$"
+            , System.Text.RegularExpressions.RegexOptions.None);
+
+        private void rtfInfo_LinkClicked(object sender, LinkClickedEventArgs e)
+        {
+            try
+            {
+                var m = linkRegex.Match(e.LinkText);
+                if (m.Success)
+                {
+                    var n = PluginTree.SelectedNode;
+                    while (n != null && n.Parent != null)
+                        n = n.Parent;
+                    if (n == null) n = GetFirstPluginNode();
+
+                    // Search current plugin and then wrap around.  
+                    //   Should do it based on master plugin list first.
+                    var type = m.Groups["type"].Value;
+                    var searchContext = new SearchContext();
+                    searchContext.rectype = type == "XXXX" ? null : type;
+                    searchContext.text = m.Groups["id"].Value;
+                    searchContext.type = SearchType.FormID;
+                    searchContext.tn = n;
+                    searchContext.wrapAround = true;
+                    searchContext.partial = false;
+                    searchContext.forward = true;
+                    searchContext.first = true;
+                    var node = PerformSearch(searchContext);
+                    if (node != null)
+                        PluginTree.SelectedNode = node;
+                }
+            }
+            catch 
+            {
+            	
+            }            
+        }
+   
     }
 }

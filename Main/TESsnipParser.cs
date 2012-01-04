@@ -3,6 +3,9 @@ using System.Collections.Generic;
 using System.IO;
 using System.Runtime.Serialization;
 using System.Linq;
+using System.Drawing;
+using System.Text;
+using RTF;
 
 namespace TESVSnip
 {
@@ -13,7 +16,7 @@ namespace TESVSnip
     /// <summary>
     /// External state for holding single selection for use with evaluating descriptions and intelligent editors
     /// </summary>
-    class SelectionContext
+    public class SelectionContext
     {
         private Plugin plugin;
         private Record record;
@@ -63,9 +66,10 @@ namespace TESVSnip
                 }
             }
         }
-        public Dictionary<int, Conditional> Conditions = new Dictionary<int, Conditional>();
-        public dFormIDLookupI formIDLookup = null;
-        public dLStringLookup strLookup = null;
+        internal Dictionary<int, Conditional> Conditions = new Dictionary<int, Conditional>();
+        internal dFormIDLookupI formIDLookup = null;
+        internal dLStringLookup strLookup = null;
+        internal dFormIDLookupR formIDLookupR = null;
 
         public bool SelectedSubrecord
         {
@@ -146,6 +150,10 @@ namespace TESVSnip
         }
 
         public abstract string GetDesc();
+        public virtual void GetFormattedData(RTFBuilder rb, SelectionContext context) { rb.Append(GetDesc()); }
+        public virtual void GetFormattedData(StringBuilder sb, SelectionContext context) { sb.Append(GetDesc()); }
+        
+
         public abstract void DeleteRecord(BaseRecord br);
         public abstract void AddRecord(BaseRecord br);
         public virtual void InsertRecord(int index, BaseRecord br) { AddRecord(br); }
@@ -1069,6 +1077,71 @@ namespace TESVSnip
                 "Size: " + Size.ToString() + " bytes (excluding header)";
         }
 
+        private string GetLocalizedString(dLStringLookup strLookup)
+        {
+            return default(string);
+        }
+
+        public override string GetDesc()
+        {
+            return "[Record]" + Environment.NewLine + GetBaseDesc();
+        }
+
+        public override void GetFormattedData(RTFBuilder rb, SelectionContext context)
+        {
+            rb.FontStyle(FontStyle.Bold).FontSize(rb.DefaultFontSize + 2).AppendLine("[Record]");
+            rb.AppendLineFormat("Type: \t {0}", Name);
+            rb.AppendLineFormat("FormID: \t {0:X8}", FormID);
+            rb.AppendLineFormat("Flags 1: \t {0:X8}", Flags1);
+            if (Flags1 != 0) rb.AppendLineFormat(" ({0})", FlagDefs.GetRecFlags1Desc(Flags1));
+            rb.AppendLineFormat("Flags 2: \t {0:X8}", Flags2);
+            rb.AppendLineFormat("Flags 3: \t {0:X8}", Flags3);
+            rb.AppendLineFormat("Subrecords: \t {0}", SubRecords.Count);
+            rb.AppendLineFormat("Size: \t {0:N0}", Size);
+            rb.AppendLine();
+
+            try
+            {
+                rb.FontStyle(FontStyle.Bold).FontSize(rb.DefaultFontSize).AppendLine("[Formatted information]");
+
+                context = context.Clone();
+                context.Record = this;
+                RecordStructure rec;
+                if (!RecordStructure.Records.TryGetValue(Name, out rec))
+                    return;
+                rb.FontStyle(FontStyle.Bold).ForeColor(KnownColor.DarkBlue).FontSize(rb.DefaultFontSize+2).AppendLine(rec.description);
+                foreach (var subrec in SubRecords)
+                {
+                    if (subrec.Structure == null || subrec.Structure.elements == null || subrec.Structure.notininfo)
+                        continue;
+                    context.SubRecord = subrec;
+                    rb.AppendLine();
+                    subrec.GetFormattedData(rb, context);
+                }
+            }
+            catch
+            {
+                rb.ForeColor(KnownColor.Red).Append("Warning: An error occurred while processing the record. It may not conform to the structure defined in RecordStructure.xml");
+            }
+        }
+
+        internal string GetDesc(SelectionContext context)
+        {
+            string start = "[Record]" + Environment.NewLine + GetBaseDesc();
+            string end;
+            try
+            {
+                end = GetExtendedDesc(context);
+            }
+            catch
+            {
+                end = "Warning: An error occurred while processing the record. It may not conform to the structure defined in RecordStructure.xml";
+            }
+            if (end == null) return start;
+            else return start + Environment.NewLine + Environment.NewLine + "[Formatted information]" + Environment.NewLine + end;
+        }
+
+        #region Extended Description
         private string GetExtendedDesc(SelectionContext selectContext)
         {
             var context = selectContext.Clone();
@@ -1103,31 +1176,8 @@ namespace TESVSnip
             }
         }
 
-        private string GetLocalizedString(dLStringLookup strLookup)
-        {
-            return default(string);
-        }
+        #endregion
 
-        public override string GetDesc()
-        {
-            return "[Record]" + Environment.NewLine + GetBaseDesc();
-        }
-
-        internal string GetDesc(SelectionContext context)
-        {
-            string start = "[Record]" + Environment.NewLine + GetBaseDesc();
-            string end;
-            try
-            {
-                end = GetExtendedDesc(context);
-            }
-            catch
-            {
-                end = "Warning: An error occurred while processing the record. It may not conform to the structure defined in RecordStructure.xml";
-            }
-            if (end == null) return start;
-            else return start + Environment.NewLine + Environment.NewLine + "[Formatted information]" + Environment.NewLine + end;
-        }
 
         internal override void SaveData(BinaryWriter bw)
         {
@@ -1291,7 +1341,9 @@ namespace TESVSnip
             GetFormattedData(sb, context);
             return sb.ToString();
         }
-        internal void GetFormattedData(System.Text.StringBuilder s, SelectionContext context)
+
+        #region Get Formatted Data
+        public override void GetFormattedData(System.Text.StringBuilder s, SelectionContext context)
         {
             SubrecordStructure ss = this.Structure;
             if (ss == null)
@@ -1299,6 +1351,7 @@ namespace TESVSnip
 
             dFormIDLookupI formIDLookup = context.formIDLookup;
             dLStringLookup strLookup = context.strLookup;
+            dFormIDLookupR formIDLookupR = context.formIDLookupR;
 
             int offset = 0;
             s.AppendFormat("{0} ({1})", ss.name, ss.desc);
@@ -1609,6 +1662,361 @@ namespace TESVSnip
                 s.AppendLine("Warning: Subrecord doesn't seem to match the expected structure");
             }
         }
+
+        public override void GetFormattedData(RTF.RTFBuilder s, SelectionContext context)
+        {
+            SubrecordStructure ss = this.Structure;
+            if (ss == null)
+                return;
+
+            dFormIDLookupI formIDLookup = context.formIDLookup;
+            dLStringLookup strLookup = context.strLookup;
+            dFormIDLookupR formIDLookupR = context.formIDLookupR;
+
+            int offset = 0;
+
+            s.FontSize(s.DefaultFontSize+1).FontStyle(FontStyle.Bold).AppendFormat("{0} ({1})", ss.name, ss.desc);
+            s.AppendLine();
+            try
+            {
+                for (int eidx = 0, elen = 1; eidx < ss.elements.Length; eidx += elen)
+                {
+                    var sselem = ss.elements[eidx];
+                    bool repeat = sselem.repeat > 0;
+                    elen = sselem.repeat > 1 ? sselem.repeat : 1;
+                    do
+                    {
+                        for (int eoff = 0; eoff < elen && offset < Data.Length; ++eoff)
+                        {
+                            sselem = ss.elements[eidx + eoff];
+
+                            if (offset == Data.Length && eidx == ss.elements.Length - 1 && sselem.optional) break;
+                            if (!sselem.notininfo) 
+                                s.FontStyle(FontStyle.Bold).Append(sselem.name).Append(":\t");
+
+                            switch (sselem.type)
+                            {
+                                case ElementValueType.Int:
+                                    {
+
+                                        string tmps = TypeConverter.h2si(Data[offset], Data[offset + 1], Data[offset + 2], Data[offset + 3]).ToString();
+                                        if (!sselem.notininfo)
+                                        {
+                                            if (sselem.hexview) s.Append(TypeConverter.h2i(Data[offset], Data[offset + 1], Data[offset + 2], Data[offset + 3]).ToString("X8"));
+                                            else s.Append(tmps);
+                                            if (sselem.options != null)
+                                            {
+                                                for (int k = 0; k < sselem.options.Length; k += 2)
+                                                {
+                                                    if (tmps == sselem.options[k + 1])
+                                                        s.AppendFormat(" ({0})", sselem.options[k]);
+                                                }
+                                            }
+                                            else if (sselem.flags != null)
+                                            {
+                                                uint val = TypeConverter.h2i(Data[offset], Data[offset + 1], Data[offset + 2], Data[offset + 3]);
+                                                var tmp2 = new System.Text.StringBuilder();
+                                                for (int k = 0; k < sselem.flags.Length; k++)
+                                                {
+                                                    if ((val & (1 << k)) != 0)
+                                                    {
+                                                        if (tmp2.Length > 0) tmp2.Append(", ");
+                                                        tmp2.Append(sselem.flags[k]);
+                                                    }
+                                                }
+                                                if (tmp2.Length > 0)
+                                                    s.AppendFormat(" ({0})", tmp2);
+                                            }
+                                        }
+                                        offset += 4;
+                                    } break;
+                                case ElementValueType.UInt:
+                                    {
+                                        string tmps = TypeConverter.h2i(Data[offset], Data[offset + 1], Data[offset + 2], Data[offset + 3]).ToString();
+                                        if (!sselem.notininfo)
+                                        {
+                                            if (sselem.hexview) s.Append(TypeConverter.h2i(Data[offset], Data[offset + 1], Data[offset + 2], Data[offset + 3]).ToString("X8"));
+                                            else s.Append(tmps);
+                                            if (sselem.options != null)
+                                            {
+                                                for (int k = 0; k < sselem.options.Length; k += 2)
+                                                {
+                                                    if (tmps == sselem.options[k + 1])
+                                                        s.AppendFormat(" ({0})", sselem.options[k]);
+                                                }
+                                            }
+                                            else if (sselem.flags != null)
+                                            {
+                                                uint val = TypeConverter.h2i(Data[offset], Data[offset + 1], Data[offset + 2], Data[offset + 3]);
+                                                var tmp2 = new System.Text.StringBuilder();
+                                                for (int k = 0; k < sselem.flags.Length; k++)
+                                                {
+                                                    if ((val & (1 << k)) != 0)
+                                                    {
+                                                        if (tmp2.Length > 0) tmp2.Append(", ");
+                                                        tmp2.Append(sselem.flags[k]);
+                                                    }
+                                                }
+                                                if (tmp2.Length > 0)
+                                                    s.AppendFormat(" ({0})", tmp2);
+                                            }
+                                        }
+                                        offset += 4;
+                                    }
+                                    break;
+                                case ElementValueType.Short:
+                                    {
+                                        string tmps = TypeConverter.h2ss(Data[offset], Data[offset + 1]).ToString();
+                                        if (!sselem.notininfo)
+                                        {
+                                            if (sselem.hexview) s.Append(TypeConverter.h2ss(Data[offset], Data[offset + 1]).ToString("X4"));
+                                            else s.Append(tmps);
+                                            if (sselem.options != null)
+                                            {
+                                                for (int k = 0; k < sselem.options.Length; k += 2)
+                                                {
+                                                    if (tmps == sselem.options[k + 1]) s.AppendFormat(" ({0})", sselem.options[k]);
+                                                }
+                                            }
+                                            else if (sselem.flags != null)
+                                            {
+                                                uint val = TypeConverter.h2s(Data[offset], Data[offset + 1]);
+                                                var tmp2 = new System.Text.StringBuilder();
+                                                for (int k = 0; k < sselem.flags.Length; k++)
+                                                {
+                                                    if ((val & (1 << k)) != 0)
+                                                    {
+                                                        if (tmp2.Length > 0) tmp2.Append(", ");
+                                                        tmp2.Append(sselem.flags[k]);
+                                                    }
+                                                }
+                                                if (tmp2.Length > 0)
+                                                    s.AppendFormat(" ({0})", tmp2);
+                                            }
+                                        }
+                                        offset += 2;
+                                    }
+                                    break;
+                                case ElementValueType.UShort:
+                                    {
+                                        string tmps = TypeConverter.h2s(Data[offset], Data[offset + 1]).ToString();
+                                        if (!sselem.notininfo)
+                                        {
+                                            if (sselem.hexview) s.Append(TypeConverter.h2s(Data[offset], Data[offset + 1]).ToString("X4"));
+                                            else s.Append(tmps);
+                                            if (sselem.options != null)
+                                            {
+                                                for (int k = 0; k < sselem.options.Length; k += 2)
+                                                {
+                                                    if (tmps == sselem.options[k + 1]) s.Append(" (").Append(sselem.options[k]).Append(")");
+                                                }
+                                            }
+                                            else if (sselem.flags != null)
+                                            {
+                                                uint val = TypeConverter.h2s(Data[offset], Data[offset + 1]);
+                                                var tmp2 = new System.Text.StringBuilder();
+                                                for (int k = 0; k < sselem.flags.Length; k++)
+                                                {
+                                                    if ((val & (1 << k)) != 0)
+                                                    {
+                                                        if (tmp2.Length > 0) tmp2.Append(", ");
+                                                        tmp2.Append(sselem.flags[k]);
+                                                    }
+                                                }
+                                                if (tmp2.Length > 0)
+                                                    s.AppendFormat(" ({0})", tmp2);
+                                            }
+                                        }
+                                        offset += 2;
+                                    }
+                                    break;
+                                case ElementValueType.Byte:
+                                    {
+                                        string tmps = Data[offset].ToString();
+                                        if (!sselem.notininfo)
+                                        {
+                                            if (sselem.hexview) s.Append(Data[offset].ToString("X2"));
+                                            else s.Append(tmps);
+                                            if (sselem.options != null)
+                                            {
+                                                for (int k = 0; k < sselem.options.Length; k += 2)
+                                                {
+                                                    if (tmps == sselem.options[k + 1])
+                                                        s.AppendFormat(" ({0})", sselem.options[k]);
+                                                }
+                                            }
+                                            else if (sselem.flags != null)
+                                            {
+                                                int val = Data[offset];
+                                                var tmp2 = new System.Text.StringBuilder();
+                                                for (int k = 0; k < sselem.flags.Length; k++)
+                                                {
+                                                    if ((val & (1 << k)) != 0)
+                                                    {
+                                                        if (tmp2.Length > 0) tmp2.Append(", ");
+                                                        tmp2.Append(sselem.flags[k]);
+                                                    }
+                                                }
+                                                if (tmp2.Length > 0) s.AppendFormat(" ({0})", tmp2);
+                                            }
+                                        }
+                                        offset++;
+                                    }
+                                    break;
+                                case ElementValueType.SByte:
+                                    {
+                                        string tmps = ((sbyte)Data[offset]).ToString();
+                                        if (!sselem.notininfo)
+                                        {
+                                            if (sselem.hexview) s.Append(Data[offset].ToString("X2"));
+                                            else s.Append(tmps);
+                                            if (sselem.options != null)
+                                            {
+                                                for (int k = 0; k < sselem.options.Length; k += 2)
+                                                {
+                                                    if (tmps == sselem.options[k + 1])
+                                                        s.AppendFormat(" ({0})", sselem.options[k]);
+                                                }
+                                            }
+                                            else if (sselem.flags != null)
+                                            {
+                                                int val = Data[offset];
+                                                var tmp2 = new System.Text.StringBuilder();
+                                                for (int k = 0; k < sselem.flags.Length; k++)
+                                                {
+                                                    if ((val & (1 << k)) != 0)
+                                                    {
+                                                        if (tmp2.Length > 0) tmp2.Append(", ");
+                                                        tmp2.Append(sselem.flags[k]);
+                                                    }
+                                                }
+                                                if (tmp2.Length > 0) s.AppendFormat(" ({0})", tmp2);
+                                            }
+                                        }
+                                        offset++;
+                                    }
+                                    break;
+                                case ElementValueType.FormID:
+                                    {
+                                        uint id = TypeConverter.h2i(Data[offset], Data[offset + 1], Data[offset + 2], Data[offset + 3]);
+                                        if (!sselem.notininfo)
+                                        {
+                                            var strid = id.ToString("X8");
+                                            if (id != 0 && formIDLookupR != null)
+                                            {
+                                                var rec = formIDLookupR(id);
+                                                if (rec != null)
+                                                {
+                                                    s.AppendLink(strid, string.Format("{0}:{1}", rec.Name, strid));
+                                                    var strval = rec.DescriptiveName;
+                                                    if (!string.IsNullOrEmpty(strval))
+                                                        s.Append(":\t").Append(strval);
+                                                    else
+                                                        s.Append(":\t").Append(formIDLookup(id));
+                                                }
+                                                else if (formIDLookup != null)
+                                                {
+                                                    var strval = formIDLookup(id);
+                                                    s.AppendLink(strid, string.Format("XXXX:{0}", strid));
+                                                    if (!string.IsNullOrEmpty(strval))
+                                                        s.Append(":\t").Append(strval);
+                                                    else
+                                                        s.Append(":\t").Append(formIDLookup(id));
+                                                }
+                                                else
+                                                {
+                                                    s.AppendLink(strid, string.Format("XXXX:{0}", strid));
+                                                }
+                                            }
+                                            else
+                                            {
+                                                s.AppendLink(strid, string.Format("XXXX:{0}", strid));
+                                            }
+                                        }
+                                        offset += 4;
+                                    } break;
+                                case ElementValueType.Float:
+                                    if (!sselem.notininfo) s.Append(TypeConverter.h2f(Data[offset], Data[offset + 1], Data[offset + 2], Data[offset + 3]));
+                                    offset += 4;
+                                    break;
+                                case ElementValueType.String:
+                                    if (!sselem.notininfo)
+                                    {
+                                        while (Data[offset] != 0) s.Append((char)Data[offset++]);
+                                    }
+                                    else
+                                    {
+                                        while (Data[offset] != 0) offset++;
+                                    }
+                                    offset++;
+                                    break;
+                                case ElementValueType.fstring:
+                                    if (!sselem.notininfo) s.Append(GetStrData());
+                                    offset += Data.Length - offset;
+                                    break;
+                                case ElementValueType.Blob:
+                                    if (!sselem.notininfo) s.Append(TypeConverter.GetHexData(Data, offset, Data.Length - offset));
+                                    offset += Data.Length - offset;
+                                    break;
+                                case ElementValueType.BString:
+                                    {
+                                        int len = TypeConverter.h2s(Data[offset], Data[offset + 1]);
+                                        if (!sselem.notininfo)
+                                            s.Append(System.Text.Encoding.ASCII.GetString(Data, offset + 2, len));
+                                        offset += (2 + len);
+                                    }
+                                    break;
+                                case ElementValueType.LString:
+                                    {
+                                        // Try to guess if string or string index.  Do not know if the external string checkbox is set or not in this code
+                                        int left = Data.Length - offset;
+                                        var data = new ArraySegment<byte>(Data, offset, left);
+                                        bool isString = TypeConverter.IsLikelyString(data);
+                                        uint id = TypeConverter.h2i(data);
+                                        string lvalue = strLookup(id);
+                                        if (!string.IsNullOrEmpty(lvalue) || !isString)
+                                        {
+                                            if (!sselem.notininfo) s.Append(id.ToString("X8"));
+                                            if (strLookup != null) s.Append(":\t").Append(lvalue);
+                                            offset += 4;
+                                        }
+                                        else
+                                        {
+                                            if (!sselem.notininfo)
+                                                while (Data[offset] != 0) s.Append((char)Data[offset++]);
+                                            else
+                                                while (Data[offset] != 0) offset++;
+                                            offset++;
+                                        }
+                                    } break;
+                                case ElementValueType.Str4:
+                                    {
+                                        if (!sselem.notininfo)
+                                            s.Append(System.Text.Encoding.ASCII.GetString(Data, offset, 4));
+                                        offset += 4;
+                                    }
+                                    break;
+                                default:
+                                    throw new ApplicationException();
+                            }
+                            if (!sselem.notininfo) s.AppendLine();
+                        }
+                    } while (repeat && offset < Data.Length);
+                }
+
+                if (offset < Data.Length)
+                {
+                    s.AppendLine();
+                    s.AppendLine("Remaining Data: ");
+                    s.Append(TypeConverter.GetHexData(Data, offset, Data.Length - offset));
+                }
+            }
+            catch
+            {
+                s.AppendLine("Warning: Subrecord doesn't seem to match the expected structure");
+            }
+        }
+        #endregion
 
         public bool TryGetValue<T>(int offset, out T value)
         {
