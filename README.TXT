@@ -9,6 +9,9 @@ Requirements:
   .NET 3.5
 
 Change Log:
+v 1.8
+- Fix QUST after change to CONDITIONAL broke it
+
 v 1.7
 - Convert Text Search to a background incremental search 
   (Enables cancel during full text searches)
