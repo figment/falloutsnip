@@ -178,5 +178,17 @@ namespace TESVSnip.Properties {
                 this["UseWindowsClipboard"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("30")]
+        public uint MaxHistoryItem {
+            get {
+                return ((uint)(this["MaxHistoryItem"]));
+            }
+            set {
+                this["MaxHistoryItem"] = value;
+            }
+        }
     }
 }

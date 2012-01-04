@@ -2432,7 +2432,9 @@ Do you still want to save?", "Modified Save", MessageBoxButtons.YesNo, MessageBo
         
         void InitializeToolStripRecords()
         {
-            historyHandler = new OC.Windows.Forms.History<TreeNode>(toolStripRecordBack, toolStripRecordNext, 100);
+            historyHandler = new OC.Windows.Forms.History<TreeNode>(
+                toolStripRecordBack, toolStripRecordNext
+                , global::TESVSnip.Properties.Settings.Default.MaxHistoryItem);
             historyHandler.AllowDuplicates = true;
             historyHandler.GotoItem +=new EventHandler<OC.Windows.Forms.HistoryEventArgs<TreeNode>>(historyHandler_GotoItem);
             
