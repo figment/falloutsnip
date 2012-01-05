@@ -365,7 +365,9 @@ namespace RichTextBoxLinks
                         this.InsertLink(match.name, match.link, start);
                     }
                     base.SelectionStart = 0;
-                    base.ScrollToCaret();
+                    //Point factored = new Point(0,0);
+                    //SendMessage(this.Handle, (int)WindowsMessages.EM_SETSCROLLPOS, 0, ref factored);
+                    //base.ScrollToCaret();
                 }
                 catch
                 {

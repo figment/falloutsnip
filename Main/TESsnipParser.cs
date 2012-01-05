@@ -1043,7 +1043,7 @@ namespace TESVSnip
                 var data = SubRecords.FirstOrDefault(x => x.Name == "DATA");
                 if (data != null)
                 {
-                    desc = string.Format("{0} \t[{1:F0}; {2:F0}]", 
+                    desc = string.Format("{0} \t[{1:F0}, {2:F0}]", 
                         desc, data.GetValue<float>(0), data.GetValue<float>(4)
                         );
                 }
@@ -1056,9 +1056,27 @@ namespace TESVSnip
                 var data = SubRecords.FirstOrDefault(x => x.Name == "DATA");
                 if (data != null)
                 {
-                    desc = string.Format("{0} \t[{1:F0}; {2:F0}]",
+                    desc = string.Format("{0} \t[{1:F0}, {2:F0}]",
                         desc, data.GetValue<float>(0), data.GetValue<float>(4)
                         );
+                }
+                DescriptiveName = desc;
+            }
+            else if (this.Name == "CELL")
+            {
+                var edid = SubRecords.FirstOrDefault(x => x.Name == "EDID");
+                string desc = (edid != null) ? desc = " (" + edid.GetStrData() + ")" : "";
+
+                var xclc = SubRecords.FirstOrDefault(x => x.Name == "XCLC");
+                if (xclc != null)
+                {
+                    desc = string.Format(" [{1:F0},{2:F0}]\t{0}",
+                        desc, xclc.GetValue<int>(0), xclc.GetValue<int>(4)
+                        );
+                }
+                else
+                {
+                    desc = string.Format("{0} \t [Interior]",desc);
                 }
                 DescriptiveName = desc;
             }
@@ -1144,6 +1162,18 @@ namespace TESVSnip
             }
             if (end == null) return start;
             else return start + Environment.NewLine + Environment.NewLine + "[Formatted information]" + Environment.NewLine + end;
+        }
+
+        public override string Name
+        {
+            get
+            {
+                return base.Name;
+            }
+            set
+            {
+                base.Name = value;
+            }
         }
 
         #region Extended Description

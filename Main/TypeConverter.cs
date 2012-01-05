@@ -47,6 +47,8 @@ namespace TESVSnip {
             T result = default(T);
             if (result is float)
                 return h2f(data, offset);
+            else if (result is int)
+                return h2si(data, offset);
             return default(T);
         }
         public static bool TryGetObject<T>(byte[] data, int offset, out object result)
@@ -98,7 +100,20 @@ namespace TESVSnip {
             tc.b4=b4;
             return tc.si;
         }
-        public static ushort h2s(byte b1, byte b2) {
+        public static int h2si(byte[] data, int offset)
+        {
+            if (data.Length >= 4)
+            {
+                tc.b1 = data[offset + 0];
+                tc.b2 = data[offset + 1];
+                tc.b3 = data[offset + 2];
+                tc.b4 = data[offset + 3];
+                return tc.si;
+            }
+            return 0;            
+        }
+        public static ushort h2s(byte b1, byte b2)
+        {
             tc.b1=b1;
             tc.b2=b2;
             return tc.s;
