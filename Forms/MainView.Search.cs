@@ -394,7 +394,8 @@ namespace TESVSnip
             {
                 toolStripIncrInvalidRecStatus.Text = "No Plugins Loaded";
                 toolStripIncrInvalidRecStatus.ForeColor = System.Drawing.Color.Maroon;
-                System.Media.SystemSounds.Beep.Play();
+                if (!TESVSnip.Properties.Settings.Default.NoWindowsSounds)
+                    System.Media.SystemSounds.Beep.Play();
                 return;
             }
             int prevCount = 0;
@@ -438,7 +439,8 @@ namespace TESVSnip
                         {
                             toolStripIncrInvalidRecStatus.Text = "No Invalid Records Found";
                             toolStripIncrInvalidRecStatus.ForeColor = System.Drawing.Color.Maroon;
-                            System.Media.SystemSounds.Beep.Play();
+                            if (!TESVSnip.Properties.Settings.Default.NoWindowsSounds)
+                                System.Media.SystemSounds.Beep.Play();
                         }
                     }
                 }
@@ -500,7 +502,8 @@ namespace TESVSnip
             {
                 toolStripIncrInvalidRecStatus.Text = "No Plugins Loaded";
                 toolStripIncrInvalidRecStatus.ForeColor = System.Drawing.Color.Maroon;
-                System.Media.SystemSounds.Beep.Play();
+                if (!TESVSnip.Properties.Settings.Default.NoWindowsSounds)
+                    System.Media.SystemSounds.Beep.Play();
                 return;
             }
             int prevCount = 0;
@@ -534,11 +537,13 @@ namespace TESVSnip
             searchContext.wrapAround = toolStripIncrFindWrapAround.Checked;
             searchContext.first = toolStripIncrFindText.Tag == null ? true : (bool)toolStripIncrFindText.Tag;
             searchContext.rectype = toolStripIncrFindTypeFilter.SelectedItem as string;
+            searchContext.forward = forward;
 
             // exclude null text searches except for when type is specified
             if (searchContext.type != SearchType.TypeEditorIdSearch && string.IsNullOrEmpty(searchContext.text))
             {
-                System.Media.SystemSounds.Beep.Play();
+                if (!TESVSnip.Properties.Settings.Default.NoWindowsSounds)
+                    System.Media.SystemSounds.Beep.Play();
                 toolStripIncrFind.Focus();
                 toolStripIncrFindText.Select();
                 toolStripIncrFindText.Focus();
@@ -568,7 +573,8 @@ namespace TESVSnip
 
                             toolStripIncrFindStatus.Text = "No Matches Found";
                             toolStripIncrFindStatus.ForeColor = System.Drawing.Color.Maroon;
-                            System.Media.SystemSounds.Beep.Play();
+                            if (!TESVSnip.Properties.Settings.Default.NoWindowsSounds)
+                                System.Media.SystemSounds.Beep.Play();
                         }
                         toolStripIncrFind.Focus();
                         toolStripIncrFindText.Select();
@@ -591,7 +597,8 @@ namespace TESVSnip
             var first = toolStripIncrFindText.Tag == null ? true : (bool)toolStripIncrFindText.Tag;
             if (string.IsNullOrEmpty(text))
             {
-                System.Media.SystemSounds.Beep.Play();
+                if (!TESVSnip.Properties.Settings.Default.NoWindowsSounds)
+                    System.Media.SystemSounds.Beep.Play();
                 toolStripIncrFind.Focus();
                 toolStripIncrFindText.Select();
                 toolStripIncrFindText.Focus();
@@ -605,7 +612,8 @@ namespace TESVSnip
             }
             else
             {
-                System.Media.SystemSounds.Beep.Play();
+                if (!TESVSnip.Properties.Settings.Default.NoWindowsSounds)
+                    System.Media.SystemSounds.Beep.Play();
                 toolStripIncrFind.Focus();
                 toolStripIncrFindText.Select();
                 toolStripIncrFindText.Focus();

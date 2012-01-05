@@ -127,6 +127,7 @@ namespace OC.Windows.Forms
 
                     if (!inProc && _CurrentItem != null)
                     {
+                        truncateForward();
                         addCurrentItem(value);
                     }
                 }
@@ -164,6 +165,17 @@ namespace OC.Windows.Forms
         #endregion
 
         #region Private Interface
+
+        private void truncateForward()
+        {
+            if (current != null && current.Previous != null)
+            {
+                while (list.First != null && list.First != current.Previous)
+                    list.RemoveFirst();
+                if (current.Previous != null)
+                    list.Remove(current.Previous);
+            }
+        }
 
         private void addCurrentItem( T item)
         {

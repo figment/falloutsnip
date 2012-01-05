@@ -189,6 +189,7 @@ namespace TESVSnip {
                 char c = (char)data.Array[data.Offset + i];
                 if (c == 0) return sb.ToString();
                 isAscii = !Char.IsControl(c);
+                if (isAscii) sb.Append(c);
             }
             return sb.ToString();
         }

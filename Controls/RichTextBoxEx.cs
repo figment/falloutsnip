@@ -123,14 +123,16 @@ namespace RichTextBoxLinks
 		{
 			// Otherwise, non-standard links get lost when user starts typing
 			// next to a non-standard link
-			this.DetectUrls = false;
+			base.DetectUrls = false;
+            detectUrls = true;
 		}
 
-		[DefaultValue(false)]
+        bool detectUrls = false;
+		[DefaultValue(true)]
 		public new bool DetectUrls
 		{
-			get { return base.DetectUrls; }
-			set { base.DetectUrls = value; }
+            get { return detectUrls; }
+            set { detectUrls = value; }
 		}
 
 		/// <summary>
@@ -295,63 +297,92 @@ namespace RichTextBoxLinks
             SendMessage(this.Handle, WM_SETREDRAW, (IntPtr)1, IntPtr.Zero);
         }
         private const int WM_SETREDRAW = 0x0b;
-        
+
+        int lastSetHashCode = 0;
         static readonly System.Text.RegularExpressions.Regex linkRegex = new System.Text.RegularExpressions.Regex(
                 @"\{\\field\s+\{\\\*\\fldinst\s+HYPERLINK\s+\u0022?(?<link>[^\u0022}]+)\u0022?\s*\}\s*\{\\fldrslt\s+(?<name>[^}]+)\s*\}\s*\}"
                 );
         private void SetRtfText(string value)
         {
-
-            try
+            bool oldReadOnly = this.ReadOnly;
+            if (!detectUrls)
             {
-                this.BeginUpdate();
-                var sb = new System.Text.StringBuilder(value);
-                List<LinkMatch> matches = new List<LinkMatch>();
-                int idx = 0;
-                while (true)
-                {
-                    var match = linkRegex.Match(sb.ToString(), idx);
-                    if (!match.Success) break;
-                    var link = match.Groups["link"];
-                    var name = match.Groups["name"];
-                    var m2 = new LinkMatch(link.Value, name.Value, match.Index, name.Length);
-                    sb.Remove(match.Index, match.Length);
-                    string linkText = string.Format("#:@{0}@:#", matches.Count.ToString());
-                    sb.Insert(match.Index, linkText);
-                    matches.Add(m2);
-                    idx = match.Index + linkText.Length;
-                }
-                base.Rtf = sb.ToString();
-                idx = 0;
-                while (true)
-                {
-                    int start = base.Find("#:@", idx, RichTextBoxFinds.NoHighlight);
-                    if (start == -1) break;
-                    int end = base.Find("@:#", start + 3, RichTextBoxFinds.NoHighlight);
-                    if (end == -1) break; // Error?
-
-                    base.Select(start, end - start + 3);
-                    string text = base.SelectedText;
-                    int link = int.Parse(text.Substring(3, text.Length - 6));
-                    var match = matches[link];
-                    base.SelectedText = "";
-                    this.InsertLink(match.name, match.link, start);
-                }
-                base.SelectionStart = 0;
-            }
-            catch
-            {
+                this.ReadOnly = false;
                 base.Rtf = value;
+                this.ReadOnly = oldReadOnly;
+                return;
             }
-            finally
+            if (value == null)
             {
+                this.ReadOnly = false;
+                this.Text = "";
+                this.ReadOnly = oldReadOnly;
+                return;
+            }
+
+            // Quick check to see if current text equals last text to be set
+            int hashCode = value.GetHashCode();
+            if (hashCode == lastSetHashCode)
+                return;
+            lock (this)
+            {
+                lastSetHashCode = hashCode;
                 try
                 {
-                    this.EndUpdate();
-                    this.Invalidate();
-                    this.Update();
+                    Cursor.Hide();
+                    this.BeginUpdate();
+                    this.ReadOnly = false;
+                    var sb = new System.Text.StringBuilder(value);
+                    List<LinkMatch> matches = new List<LinkMatch>();
+                    int idx = 0;
+                    while (true)
+                    {
+                        var match = linkRegex.Match(sb.ToString(), idx);
+                        if (!match.Success) break;
+                        var link = match.Groups["link"];
+                        var name = match.Groups["name"];
+                        var m2 = new LinkMatch(link.Value, name.Value, match.Index, name.Length);
+                        sb.Remove(match.Index, match.Length);
+                        string linkText = string.Format("#:@{0}@:#", matches.Count.ToString());
+                        sb.Insert(match.Index, linkText);
+                        matches.Add(m2);
+                        idx = match.Index + linkText.Length;
+                    }
+                    base.Rtf = sb.ToString();
+                    idx = 0;
+                    while (true)
+                    {
+                        int start = base.Find("#:@", idx, RichTextBoxFinds.NoHighlight);
+                        if (start == -1) break;
+                        int end = base.Find("@:#", start + 3, RichTextBoxFinds.NoHighlight);
+                        if (end == -1) break; // Error?
+
+                        base.Select(start, end - start + 3);
+                        string text = base.SelectedText;
+                        int link = int.Parse(text.Substring(3, text.Length - 6));
+                        var match = matches[link];
+                        base.SelectedText = "";
+                        this.InsertLink(match.name, match.link, start);
+                    }
+                    base.SelectionStart = 0;
+                    base.ScrollToCaret();
                 }
-                catch {}
+                catch
+                {
+                    base.Rtf = value;
+                }
+                finally
+                {
+                    try
+                    {
+                        this.ReadOnly = oldReadOnly;
+                        this.EndUpdate();
+                        this.Invalidate();
+                        this.Update();
+                        Cursor.Show();
+                    }
+                    catch { }
+                }
             }
         }
 

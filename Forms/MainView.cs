@@ -11,6 +11,7 @@ namespace TESVSnip
     internal delegate Record dFormIDLookupR(uint id);
     internal delegate string dLStringLookup(uint id);
     internal delegate string[] dFormIDScan(string type);
+
     internal partial class MainView : Form
     {
         private static object s_clipboard;
@@ -19,7 +20,13 @@ namespace TESVSnip
         private Plugin[] FormIDLookup;
         private uint[] Fixups;
         private Forms.StringsEditor stringEditor = null;
+        OC.Windows.Forms.History<TreeNode> historyHandler;
+        private MainViewMessageFilter msgFilter;
 
+        #region Helper Tree Node Helper
+        /// <summary>
+        /// Tree node with override of ToString (for History)
+        /// </summary>
         class SnipTreeNode : TreeNode
         {
             public SnipTreeNode() : base() { }
@@ -32,8 +39,8 @@ namespace TESVSnip
                 return this.Text.ToString();
             }
         }
+        #endregion
 
-        OC.Windows.Forms.History<TreeNode> historyHandler;
 
         public MainView()
         {
@@ -49,6 +56,10 @@ namespace TESVSnip
                 }
             }
             InitializeComponent();
+
+            // Register message filter.
+            msgFilter = new MainViewMessageFilter(this);
+            Application.AddMessageFilter(msgFilter);
 
             InitializeToolStripFind();
             InitializeSubrecordForm();
@@ -90,6 +101,9 @@ namespace TESVSnip
                 global::TESVSnip.Properties.Settings.Default.Save();
             }
             useWindowsClipboardToolStripMenuItem.Checked = global::TESVSnip.Properties.Settings.Default.UseWindowsClipboard;
+            noWindowsSoundsToolStripMenuItem.Checked =  global::TESVSnip.Properties.Settings.Default.NoWindowsSounds;
+            disableHyperlinksToolStripMenuItem.Checked = global::TESVSnip.Properties.Settings.Default.DisableHyperlinks;
+            this.rtfInfo.DetectUrls = !global::TESVSnip.Properties.Settings.Default.DisableHyperlinks;
 
             Selection = new SelectionContext();
             Selection.formIDLookup = new dFormIDLookupI(LookupFormIDI);
@@ -798,6 +812,7 @@ Would you like to apply the record exclusions?"
             {
                 listSubrecord.DataSource = null;
                 Selection.Plugin = ((Plugin)PluginTree.SelectedNode.Tag);
+                Selection.Record = null;
                 UpdateMainText(Selection.Plugin);
                 cutToolStripMenuItem.Enabled = false;
                 copyToolStripMenuItem.Enabled = false;
@@ -898,28 +913,31 @@ Would you like to apply the record exclusions?"
             UpdateToolStripSelection();
             listSubrecord.Refresh();
         }
-        
+
         private void deleteToolStripMenuItem_Click(object sender, EventArgs e)
         {
             if (!ValidateMakeChange())
                 return;
-            if (Selection.SelectedSubrecord)
-            {
-                if (listSubrecord.SelectedIndices.Count != 1) return;
-                Selection.Record.SubRecords.RemoveAt(listSubrecord.SelectedIndices[0]);
-                listSubrecord.Refresh();
-
-            }
-            else
+            if (this.PluginTree.Focused)
             {
                 if (PluginTree.SelectedNode.Parent != null)
                 {
                     BaseRecord parent = (BaseRecord)PluginTree.SelectedNode.Parent.Tag;
                     BaseRecord node = (BaseRecord)PluginTree.SelectedNode.Tag;
-                    parent.DeleteRecord(node);
+                    if (!parent.DeleteRecord(node))
+                        return;
                 }
                 GetPluginFromNode(PluginTree.SelectedNode).InvalidateCache();
                 PluginTree.SelectedNode.Remove();
+            }
+            else if (this.listSubrecord.Focused)
+            {
+                if (Selection.SelectedSubrecord)
+                {
+                    if (listSubrecord.SelectedIndices.Count != 1) return;
+                    Selection.Record.SubRecords.RemoveAt(listSubrecord.SelectedIndices[0]);
+                    listSubrecord.Refresh();
+                }
             }
         }
 
@@ -968,7 +986,7 @@ Do you still want to save?", "Modified Save", MessageBoxButtons.YesNo, MessageBo
 
         private void CopySelection()
         {
-            if (Selection.SelectedSubrecord)
+            if (Selection.SelectedSubrecord && !this.PluginTree.Focused)
                 CopySelectedSubRecord();
             else CopySelectedTreeNode();
         }
@@ -983,12 +1001,11 @@ Do you still want to save?", "Modified Save", MessageBoxButtons.YesNo, MessageBo
 
         private void CopySelectedSubRecord()
         {
-            if (listSubrecord.SelectedIndices.Count != 1) return;
-            int idx = listSubrecord.SelectedIndices[0];
-            var sr = (SubRecord)listSubrecord.DataSource[idx];
-
-            Clipboard = sr.Clone();
+            var sr = GetSelectedSubrecords();
+            if (sr == null) return;
+            Clipboard = sr.Select(ss => { return (SubRecord)ss.Clone(); }).ToArray();
             ClipboardNode = null;
+            UpdateToolStripSelection();
         }
         private void CopySelectedRecord()
         {
@@ -1001,6 +1018,7 @@ Do you still want to save?", "Modified Save", MessageBoxButtons.YesNo, MessageBo
                 ClipboardNode.Nodes.Clear();
                 foreach (Rec r in ((GroupRecord)node).Records) WalkPluginTree(r, ClipboardNode);
             }
+            UpdateToolStripSelection();
         }
         private void pasteToolStripMenuItem_Click(object sender, EventArgs e)
         {
@@ -1061,6 +1079,59 @@ Do you still want to save?", "Modified Save", MessageBoxButtons.YesNo, MessageBo
                 {
                     MessageBox.Show(ex.Message);
                 }
+            }
+            else if (!recordOnly)
+            {
+                PasteSubRecord();
+            }
+        }
+
+        void PasteSubRecord()
+        {
+            if (!ValidateMakeChange())
+                return;
+
+            if (!HasClipboardData<SubRecord[]>())
+                return;
+
+            try
+            {
+                BaseRecord br = (BaseRecord)PluginTree.SelectedNode.Tag;
+
+
+                int insertIdx = listSubrecord.GetSelectionIndices().Length == 0 ? -1 : listSubrecord.GetFocusedItem();
+                var nodes = GetClipboardData<SubRecord[]>();
+                foreach (var clipSr in insertIdx < 0 ? nodes : nodes.Reverse()) // insert in revers
+                {
+                    SubRecord sr = clipSr.Clone() as SubRecord;
+                    if (sr == null)
+                        return;
+
+                    if (br is Record)
+                    {
+                        try
+                        {
+                            if (insertIdx >= 0 && insertIdx < listSubrecord.Items.Count)
+                            {
+                                br.InsertRecord(insertIdx, sr);
+                            }
+                            else
+                            {
+                                br.AddRecord(sr);
+                            }
+                        }
+                        catch (TESParserException ex)
+                        {
+                            MessageBox.Show(ex.Message);
+                        }
+                    }
+                }
+
+                RebuildSelection();
+            }
+            catch (System.Exception ex)
+            {
+                MessageBox.Show(ex.ToString(), "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
         private void newToolStripMenuItem_Click(object sender, EventArgs e)
@@ -1123,10 +1194,25 @@ Do you still want to save?", "Modified Save", MessageBoxButtons.YesNo, MessageBo
             }
         }
 
-        private void listView1_SelectedIndexChanged(object sender, EventArgs e)
+        void listSubrecord_SelectedIndexChanged(object sender, System.EventArgs e)
         {
+            //listSubrecord_VirtualItemsSelectionRangeChanged(sender, e);
+        }
+
+        private void listSubrecord_VirtualItemsSelectionRangeChanged(object sender, ListViewVirtualItemsSelectionRangeChangedEventArgs e)
+        {
+            UpdateSubRecordSelection(e);
+        }
+        void UpdateSubRecordSelection(ListViewVirtualItemsSelectionRangeChangedEventArgs e)
+        {
+            var n = this.listSubrecord.SelectedIndices.Count;
+            var oldSel = Selection.SubRecord;
+            var newSel = GetSelectedSubrecord();
+            if (oldSel == newSel)
+                return;
             // Update the current selection
-            Selection.SubRecord = GetSelectedSubrecord();
+            Selection.SubRecord = newSel;
+
             if (Selection.SubRecord == null)
             {
                 UpdateMainText("");
@@ -1145,8 +1231,6 @@ Do you still want to save?", "Modified Save", MessageBoxButtons.YesNo, MessageBo
                     + "String: " + sr.GetStrData() + Environment.NewLine + Environment.NewLine
                     + "Hex:" + Environment.NewLine + sr.GetHexData());
             }
-            toolStripRecordCopy.Enabled = false;
-            toolStripRecordPaste.Enabled = false;
             pasteToolStripMenuItem.Enabled = false;
             copyToolStripMenuItem.Enabled = true;
             cutToolStripMenuItem.Enabled = true;
@@ -1155,6 +1239,7 @@ Do you still want to save?", "Modified Save", MessageBoxButtons.YesNo, MessageBo
             insertSubrecordToolStripMenuItem.Enabled = false;
             UpdateToolStripSelection();
         }
+        
 
         private void UpdateToolStripSelection()
         {
@@ -1162,11 +1247,15 @@ Do you still want to save?", "Modified Save", MessageBoxButtons.YesNo, MessageBo
             {
                 toolStripInsertRecord.Enabled = true;
                 toolStripPasteSubrecord.Enabled = HasClipboardData<SubRecord[]>();
+                toolStripRecordCopy.Enabled = true;
+                toolStripRecordPaste.Enabled = false;
             }
             else
             {
                 toolStripInsertRecord.Enabled = false;
                 toolStripPasteSubrecord.Enabled = false;
+                toolStripRecordCopy.Enabled = false;
+                toolStripRecordPaste.Enabled = Selection.Plugin != null ? HasClipboardData() : false;
             }
             if (Selection.SubRecord != null)
             {                
@@ -1201,6 +1290,7 @@ Do you still want to save?", "Modified Save", MessageBoxButtons.YesNo, MessageBo
         }
         private void listView1_ItemActivate(object sender, EventArgs e)
         {
+            UpdateSubRecordSelection(null);
             //EditSelectedSubrecord();
         }
 
@@ -1922,69 +2012,35 @@ Do you still want to save?", "Modified Save", MessageBoxButtons.YesNo, MessageBo
 
         private void toolStripCopySubrecord_Click(object sender, EventArgs e)
         {
-            var sr = GetSelectedSubrecords();
-            if (sr == null) return;
-
-            Clipboard = sr.Select( ss => { return (SubRecord)ss.Clone(); }).ToArray();
-            ClipboardNode = null;
+            CopySelectedSubRecord();
         }
 
         private void toolStripPasteSubrecord_Click(object sender, EventArgs e)
         {
-            if (!ValidateMakeChange())
-                return;
-
-            if (!HasClipboardData<SubRecord[]>())
-                return;
-
-            try
-            {
-                BaseRecord br = (BaseRecord)PluginTree.SelectedNode.Tag;
-
-                
-                int insertIdx = listSubrecord.GetSelectionIndices().Length == 0 ? -1 : listSubrecord.GetFocusedItem();
-                var nodes =  GetClipboardData<SubRecord[]>();
-                foreach (var clipSr in insertIdx < 0 ? nodes : nodes.Reverse()) // insert in revers
-                {
-                    SubRecord sr = clipSr.Clone() as SubRecord;
-                    if (sr == null)
-                        return;
-
-                    if (br is Record)
-                    {
-                        try
-                        {
-                            if (insertIdx >= 0 && insertIdx < listSubrecord.Items.Count)
-                            {
-                                br.InsertRecord(insertIdx, sr);
-                            }
-                            else
-                            {
-                                br.AddRecord(sr);
-                            }
-                        }
-                        catch (TESParserException ex)
-                        {
-                            MessageBox.Show(ex.Message);
-                        }
-                    }
-                }
-
-                RebuildSelection();
-            }
-            catch (System.Exception ex)
-            {
-                MessageBox.Show(ex.ToString(), "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-            }
+            PasteSubRecord();
         }
+
+
+        #region Enable Disable User Interface
+        [System.Runtime.InteropServices.DllImport("user32.dll")]
+        private static extern IntPtr SendMessage(IntPtr hWnd, int msg, IntPtr wParam, IntPtr lParam);
+
+        private static void ControlEnable(Control control, bool enable)
+        {
+            IntPtr ipenable = new IntPtr(enable ? 1 : 0);
+            SendMessage(control.Handle, WM_SETREDRAW, ipenable, IntPtr.Zero);
+        }
+        private const int WM_SETREDRAW = 0x0b;
 
         void EnableUserInterface(bool enable)
         {
-            this.splitHorizontal.Enabled = enable;
-            this.menuStrip1.Enabled = enable;
-            this.toolStripIncrFind.Enabled = enable;
-            this.toolStripIncrInvalidRec.Enabled = enable;
+            ControlEnable(this.splitHorizontal, enable);
+            ControlEnable(this.splitVertical, enable);
+            ControlEnable(this.menuStrip1, enable);
+            ControlEnable(this.toolStripIncrFind, enable);
+            ControlEnable(this.toolStripIncrInvalidRec, enable);
         }
+        #endregion
         #region Action
 
         Action cancelBackgroundAction = null;
@@ -2345,7 +2401,8 @@ Do you still want to save?", "Modified Save", MessageBoxButtons.YesNo, MessageBo
                 {
                     BaseRecord parent = (BaseRecord)PluginTree.SelectedNode.Parent.Tag;
                     BaseRecord node = (BaseRecord)PluginTree.SelectedNode.Tag;
-                    parent.DeleteRecord(node);
+                    if (!parent.DeleteRecord(node))
+                        return;
                 }
                 GetPluginFromNode(PluginTree.SelectedNode).InvalidateCache();
                 PluginTree.SelectedNode.Remove();
@@ -2472,6 +2529,86 @@ Do you still want to save?", "Modified Save", MessageBoxButtons.YesNo, MessageBo
         }
 
         #endregion
-        
+
+        private void noWindowsSoundsToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            TESVSnip.Properties.Settings.Default.NoWindowsSounds =
+                noWindowsSoundsToolStripMenuItem.Checked = !noWindowsSoundsToolStripMenuItem.Checked;
+        }
+
+        private void listSubrecord_SelectedIndexChanged_1(object sender, EventArgs e)
+        {
+            UpdateSubRecordSelection(null);
+        }
+
+        private void disableHyperlinksToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            global::TESVSnip.Properties.Settings.Default.DisableHyperlinks =
+                disableHyperlinksToolStripMenuItem.Checked = !disableHyperlinksToolStripMenuItem.Checked;
+            this.rtfInfo.DetectUrls = !global::TESVSnip.Properties.Settings.Default.DisableHyperlinks;
+        }
+
+        #region Key Intercept Hack so Del does not override text box in find
+        public class MainViewMessageFilter : IMessageFilter
+        {
+            public const int WM_CHAR = 0x102;
+            public const int WM_KEYDOWN = 0x100;
+            public const int WM_KEYUP = 0x101;
+ 
+
+            private MainView owner = null;
+
+            public MainViewMessageFilter(MainView owner)
+            {
+                this.owner = owner;
+            }
+
+            public bool PreFilterMessage(ref Message m)
+            {
+                try {return this.owner.PreFilterMessage(ref m); }
+                catch { }
+                return true;
+            }
+        }
+        internal bool PreFilterMessage(ref Message m)
+        {
+            // Intercept the left mouse button down message.
+            if (m.Msg == MainViewMessageFilter.WM_KEYDOWN || m.Msg == MainViewMessageFilter.WM_CHAR || m.Msg == MainViewMessageFilter.WM_KEYUP)
+            {
+                if (m.WParam == new IntPtr((int)Keys.Delete))
+                {
+                    if (this.toolStripIncrFindText.Focused)
+                    {
+                        m.WParam = new IntPtr((int)Keys.Oem1);
+                        SendMessage(this.toolStripIncrFind.Handle, m.Msg, m.WParam,m.LParam);
+                        return true;
+                    }
+                }                
+            }
+            return false;
+        }
+
+
+        private void toolStripIncrFind_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.KeyCode == Keys.Oem1)
+            {
+                if (this.toolStripIncrFindText.Focused)
+                {
+                    // total hack
+                    if (this.toolStripIncrFindText.SelectionLength > 0)
+                        this.toolStripIncrFindText.SelectedText = "";// delete selected text
+                    else if (this.toolStripIncrFindText.SelectionStart + 1 <= this.toolStripIncrFindText.TextLength)
+                    {
+                        this.toolStripIncrFindText.SelectionLength = 1;
+                        this.toolStripIncrFindText.SelectedText = "";// delete selected text
+                    }
+                    e.SuppressKeyPress = true;
+                    e.Handled = true;
+                }
+            }
+        }
+        #endregion
+
     }
 }

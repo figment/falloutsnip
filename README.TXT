@@ -9,6 +9,15 @@ Requirements:
   .NET 3.5
 
 Change Log:
+v 1.9
+- Add Setting for MaxHistoryItems in config file and default to 30
+- Fix History control so that redo is truncated when a new selection is made
+- Add Disable Hyperlinks since some pages are very slow to load due to hyperlink processing
+- Fix subrecord copy/paste so Ctrl+C and Ctrl+V work again
+- Workaround issue with richtext box causing sound to be made when setting text
+- Fix bug with search backward not actually searching backward
+- Hacked workaround so that Del key mostly works on the find text field and is not handled by main menu
+
 v 1.8
 - Fix QUST after change to CONDITIONAL broke it
 

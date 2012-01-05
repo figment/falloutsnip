@@ -154,7 +154,7 @@ namespace TESVSnip
         public virtual void GetFormattedData(StringBuilder sb, SelectionContext context) { sb.Append(GetDesc()); }
         
 
-        public abstract void DeleteRecord(BaseRecord br);
+        public abstract bool DeleteRecord(BaseRecord br);
         public abstract void AddRecord(BaseRecord br);
         public virtual void InsertRecord(int index, BaseRecord br) { AddRecord(br); }
 
@@ -213,12 +213,13 @@ namespace TESVSnip
         }
         public override long Size2 { get { return Size; } }
 
-        public override void DeleteRecord(BaseRecord br)
+        public override bool DeleteRecord(BaseRecord br)
         {
             Rec r = br as Rec;
-            if (r == null) return;
-            Records.Remove(r);
+            if (r == null) return false;
+            bool result = Records.Remove(r);
             InvalidateCache();
+            return result;
         }
         
         public override void AddRecord(BaseRecord br)
@@ -382,9 +383,10 @@ namespace TESVSnip
             if (!headerOnly)
             {
                 string prefix = System.IO.Path.Combine(System.IO.Path.Combine(System.IO.Path.GetDirectoryName(FilePath), "Strings"), System.IO.Path.GetFileNameWithoutExtension(FilePath));
-                Strings = LoadPluginStrings(LocalizedStringFormat.Base, prefix + "_English.STRINGS");
-                ILStrings = LoadPluginStrings(LocalizedStringFormat.IL, prefix + "_English.ILSTRINGS");
-                DLStrings = LoadPluginStrings(LocalizedStringFormat.DL, prefix + "_English.DLSTRINGS");
+                prefix += "_" + global::TESVSnip.Properties.Settings.Default.LocalizationName;
+                Strings = LoadPluginStrings(LocalizedStringFormat.Base, prefix + ".STRINGS");
+                ILStrings = LoadPluginStrings(LocalizedStringFormat.IL, prefix + ".ILSTRINGS");
+                DLStrings = LoadPluginStrings(LocalizedStringFormat.DL, prefix + ".DLSTRINGS");
             }
         }
 
@@ -441,11 +443,14 @@ namespace TESVSnip
             catch { }
 
             //if (StringsDirty)
+            var tes4 = this.Records.OfType<Record>().FirstOrDefault(x => x.Name == "TES4");
+            if (tes4 != null && (tes4.Flags1 & 0x80) != 0)
             {
                 string prefix = System.IO.Path.Combine(System.IO.Path.Combine(System.IO.Path.GetDirectoryName(FilePath), "Strings"), System.IO.Path.GetFileNameWithoutExtension(FilePath));
-                SavePluginStrings(LocalizedStringFormat.Base, Strings, prefix + "_English.STRINGS");
-                SavePluginStrings(LocalizedStringFormat.IL, ILStrings, prefix + "_English.ILSTRINGS");
-                SavePluginStrings(LocalizedStringFormat.DL, DLStrings, prefix + "_English.DLSTRINGS");
+                prefix += "_" + global::TESVSnip.Properties.Settings.Default.LocalizationName;
+                SavePluginStrings(LocalizedStringFormat.Base, Strings, prefix + ".STRINGS");
+                SavePluginStrings(LocalizedStringFormat.IL, ILStrings, prefix + ".ILSTRINGS");
+                SavePluginStrings(LocalizedStringFormat.DL, DLStrings, prefix + ".DLSTRINGS");
             }
             StringsDirty = false;
         }
@@ -634,11 +639,11 @@ namespace TESVSnip
         }
         public override long Size2 { get { return Size; } }
 
-        public override void DeleteRecord(BaseRecord br)
+        public override bool DeleteRecord(BaseRecord br)
         {
             Rec r = br as Rec;
-            if (r == null) return;
-            Records.Remove(r);
+            if (r == null) return false;
+            return Records.Remove(r);
         }
         public override void AddRecord(BaseRecord br)
         {
@@ -906,11 +911,11 @@ namespace TESVSnip
             }
         }
 
-        public override void DeleteRecord(BaseRecord br)
+        public override bool DeleteRecord(BaseRecord br)
         {
             SubRecord sr = br as SubRecord;
-            if (sr == null) return;
-            SubRecords.Remove(sr);
+            if (sr == null) return false;
+            return SubRecords.Remove(sr);
         }
 
         public override void AddRecord(BaseRecord br)
@@ -1282,7 +1287,7 @@ namespace TESVSnip
                 "Name: " + Name + Environment.NewLine +
                 "Size: " + Size.ToString() + " bytes (Excluding header)";
         }
-        public override void DeleteRecord(BaseRecord br) { }
+        public override bool DeleteRecord(BaseRecord br) { return false; }
         public override void AddRecord(BaseRecord br)
         {
             throw new TESParserException("Subrecords cannot contain additional data.");
@@ -1663,6 +1668,15 @@ namespace TESVSnip
             }
         }
 
+        public static RTFBuilderbase AppendLink(RTFBuilderbase s, string text, string hyperlink)
+        {
+            if (global::TESVSnip.Properties.Settings.Default.DisableHyperlinks)
+                s.Append(text);
+            else
+                s.AppendLink(text, hyperlink);
+            return s;
+        }
+
         public override void GetFormattedData(RTF.RTFBuilder s, SelectionContext context)
         {
             SubrecordStructure ss = this.Structure;
@@ -1907,17 +1921,30 @@ namespace TESVSnip
                                                 var rec = formIDLookupR(id);
                                                 if (rec != null)
                                                 {
-                                                    s.AppendLink(strid, string.Format("{0}:{1}", rec.Name, strid));
+                                                    AppendLink(s, strid, string.Format("{0}:{1}", rec.Name, strid));
                                                     var strval = rec.DescriptiveName;
                                                     if (!string.IsNullOrEmpty(strval))
                                                         s.Append(":\t").Append(strval);
                                                     else
                                                         s.Append(":\t").Append(formIDLookup(id));
+                                                    var full = rec.SubRecords.FirstOrDefault(x => x.Name == "FULL");
+                                                    if (full != null)
+                                                    {
+                                                        var data = new ArraySegment<byte>(full.Data, 0, full.Data.Length);
+                                                        bool isString = TypeConverter.IsLikelyString(data);
+                                                        string lvalue = (isString) 
+                                                            ? full.GetStrData()
+                                                            : strLookup != null 
+                                                            ? strLookup(TypeConverter.h2i(data))
+                                                            : null;
+                                                        if (string.IsNullOrEmpty(lvalue)) 
+                                                            s.Append("\t").Append(lvalue);
+                                                    }
                                                 }
                                                 else if (formIDLookup != null)
                                                 {
                                                     var strval = formIDLookup(id);
-                                                    s.AppendLink(strid, string.Format("XXXX:{0}", strid));
+                                                    AppendLink(s, strid, string.Format("XXXX:{0}", strid));
                                                     if (!string.IsNullOrEmpty(strval))
                                                         s.Append(":\t").Append(strval);
                                                     else
@@ -1925,12 +1952,12 @@ namespace TESVSnip
                                                 }
                                                 else
                                                 {
-                                                    s.AppendLink(strid, string.Format("XXXX:{0}", strid));
+                                                    AppendLink(s, strid, string.Format("XXXX:{0}", strid));
                                                 }
                                             }
                                             else
                                             {
-                                                s.AppendLink(strid, string.Format("XXXX:{0}", strid));
+                                                AppendLink(s, strid, string.Format("XXXX:{0}", strid));
                                             }
                                         }
                                         offset += 4;

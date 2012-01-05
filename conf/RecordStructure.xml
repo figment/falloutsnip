@@ -273,7 +273,7 @@
     <Subrecord name="MODL" desc="Model Name" optional="1">
       <Element name="Name" type="string" />
     </Subrecord>
-    <Subrecord name="MODT" desc="Model Data" optional="1">
+    <Subrecord name="MODT" desc="Model Data" optional="1" notininfo="1">
       <Element name="Unknown" type="blob" />
     </Subrecord>
     <Subrecord name="DATA" desc="flags" optional="1" size="1">
@@ -328,7 +328,7 @@
       <Subrecord name="MODL" desc="Model Name" optional="1">
         <Element name="Name" type="string" />
       </Subrecord>
-      <Subrecord name="MODT" desc="Model Data" optional="1">
+      <Subrecord name="MODT" desc="Model Data" optional="1" notininfo="1">
         <Element name="Unknown" type="int" />
         <Element name="Unknown 1" type="int" />
         <Element name="Unknown 2" type="int" />
@@ -345,7 +345,7 @@
       <Subrecord name="MODL" desc="Model Name" optional="1">
         <Element name="Name" type="string" />
       </Subrecord>
-      <Subrecord name="MODT" desc="Model Data" optional="1">
+      <Subrecord name="MODT" desc="Model Data" optional="1" notininfo="1">
         <Element name="Unknown" type="int" />
         <Element name="Unknown 1" type="int" />
         <Element name="Unknown 2" type="int" />
@@ -897,7 +897,7 @@
     <Subrecord name="MODL" desc="Model Name" optional="1">
       <Element name="Name" type="string" />
     </Subrecord>
-    <Subrecord name="MODT" desc="Model Data" optional="1">
+    <Subrecord name="MODT" desc="Model Data" optional="1" notininfo="1">
       <Element name="Unknown" type="blob" />
     </Subrecord>
     <Group id="KEYWORDS" optional="1"/>
@@ -968,7 +968,7 @@
     <Subrecord name="MODL" desc="Model file" optional="1">
       <Element name="Name" type="string" />
     </Subrecord>
-    <Subrecord name="MODT" desc="Model Data" optional="1">
+    <Subrecord name="MODT" desc="Model Data" optional="1" notininfo="1">
       <Element name="Unknown" type="blob" />
     </Subrecord>
     <Subrecord name="PNAM" desc="PNAM" optional="1" size="4">
@@ -1005,19 +1005,19 @@
     <Subrecord name="MOD2" desc="Male Ground Model Path" optional="1">
       <Element name="Model Path 2" type="string" />
     </Subrecord>
-    <Subrecord name="MO2T" desc="Model Data 2" optional="1">
+    <Subrecord name="MO2T" desc="Model Data 2" optional="1" notininfo="1">
       <Element name="Model Data 2" type="blob" />
     </Subrecord>
-    <Subrecord name="MO2S" desc="Model Data 2S" optional="1">
+    <Subrecord name="MO2S" desc="Model Data 2S" optional="1" notininfo="1">
       <Element name="Model Data 2S" type="blob" />
     </Subrecord>
     <Subrecord name="MOD4" desc="Female Ground Model Path" optional="1">
       <Element name="Model Path 4" type="string" />
     </Subrecord>
-    <Subrecord name="MO4T" desc="Model Data 4" optional="1">
+    <Subrecord name="MO4T" desc="Model Data 4" optional="1" notininfo="1">
       <Element name="Model Data 4" type="blob" />
     </Subrecord>
-    <Subrecord name="MO4S" desc="Model Data 4S" optional="1">
+    <Subrecord name="MO4S" desc="Model Data 4S" optional="1" notininfo="1">
       <Element name="Model Data 4S" type="blob" />
     </Subrecord>
     <Subrecord name="BODT" desc="Unknown" optional="1" >
@@ -1136,7 +1136,7 @@
     <Subrecord name="MODL" desc="Model NIF" optional="1">
       <Element name="Model ID" type="string" />
     </Subrecord>
-    <Subrecord name="MODT" desc="Model Data" optional="1">
+    <Subrecord name="MODT" desc="Model Data" optional="1" notininfo="1">
       <Element name="Unknown" type="blob" />
     </Subrecord>
     <Subrecord name="MODS" desc="MODS" optional="1">
@@ -1189,7 +1189,7 @@
     <Subrecord name="MODL" desc="Model File" optional="1">
       <Element name="Name" type="string" />
     </Subrecord>
-    <Subrecord name="MODT" desc="Model Data" optional="1">
+    <Subrecord name="MODT" desc="Model Data" optional="1" notininfo="1">
       <Element name="Unknown" type="blob" />
     </Subrecord>
     <Subrecord name="MODS" desc="MODS" optional="1">
@@ -1273,7 +1273,7 @@
     <Subrecord name="MODL" desc="Model Name" optional="1">
       <Element name="Name" type="string" />
     </Subrecord>
-    <Subrecord name="MODT" desc="Model Data" optional="1">
+    <Subrecord name="MODT" desc="Model Data" optional="1" notininfo="1">
       <Element name="Unknown" type="blob" />
     </Subrecord>
     <Subrecord name="YNAM" desc="Pick Up Sound Ref" optional="1" size="4">
@@ -1307,7 +1307,7 @@
     <Subrecord name="MODL" desc="Model Name" optional="1">
       <Element name="Unknown" type="blob" />
     </Subrecord>
-    <Subrecord name="MODT" desc="Model Data" optional="1">
+    <Subrecord name="MODT" desc="Model Data" optional="1" notininfo="1">
       <Element name="Unknown" type="blob" />
     </Subrecord>
     <Subrecord name="FULL" desc="Full Name" optional="1">
@@ -1358,7 +1358,7 @@
     <Subrecord name="MODL" desc="Item Model" optional="1">
       <Element name="Model ID" type="string" />
     </Subrecord>
-    <Subrecord name="MODT" desc="Model Data" optional="1">
+    <Subrecord name="MODT" desc="Model Data" optional="1" notininfo="1">
       <Element name="Unknown" type="blob" />
     </Subrecord>
     <Subrecord name="ICON" desc="Item Icon" optional="1" size="19">
@@ -1420,7 +1420,7 @@
     <Subrecord name="MODL" desc="Model Name" optional="1">
       <Element name="Name" type="string" />
     </Subrecord>
-    <Subrecord name="MODT" desc="Model Data" optional="1">
+    <Subrecord name="MODT" desc="Model Data" optional="1" notininfo="1">
       <Element name="Unknown" type="blob" />
     </Subrecord>
     <Subrecord name="MODS" desc="MODS" optional="1">
@@ -1449,7 +1449,7 @@
     <Subrecord name="MODL" desc="Model Name" optional="1">
       <Element name="Name" type="string" />
     </Subrecord>
-    <Subrecord name="MODT" desc="Model Data" optional="1">
+    <Subrecord name="MODT" desc="Model Data" optional="1" notininfo="1">
       <Element name="Unknown" type="blob" />
     </Subrecord>
     <Subrecord name="DEST" desc="Descruction Data" optional="1" size="8">
@@ -1537,7 +1537,7 @@
     <Subrecord name="MODL" desc="Model Name" optional="1">
       <Element name="Name" type="string" />
     </Subrecord>
-    <Subrecord name="MODT" desc="Model Data" optional="1">
+    <Subrecord name="MODT" desc="Model Data" optional="1" notininfo="1">
       <Element name="Unknown" type="blob" />
     </Subrecord>
     <Subrecord name="PFIG" desc="Result Item" optional="1" size="4">
@@ -1588,7 +1588,7 @@
     <Subrecord name="MODL" desc="Model Name" optional="1">
       <Element name="Name" type="string" />
     </Subrecord>
-    <Subrecord name="MODT" desc="Model Data" optional="1">
+    <Subrecord name="MODT" desc="Model Data" optional="1" notininfo="1">
       <Element name="Unknown" type="blob" />
     </Subrecord>
     <Subrecord name="MODS" desc="MODS" optional="1">
@@ -1634,7 +1634,7 @@
     <Subrecord name="MODL" desc="Model Name" optional="1">
       <Element name="Name" type="string" />
     </Subrecord>
-    <Subrecord name="MODT" desc="Model Data" optional="1">
+    <Subrecord name="MODT" desc="Model Data" optional="1" notininfo="1">
       <Element name="Unknown" type="blob" />
     </Subrecord>
     <Subrecord name="DEST" desc="Destruction Data" optional="1" size="8">
@@ -1713,7 +1713,7 @@
     <Subrecord name="MODL" desc="Model NIF" optional="1">
       <Element name="Model Path" type="string" />
     </Subrecord>
-    <Subrecord name="MODT" desc="Model Data" optional="1">
+    <Subrecord name="MODT" desc="Model Data" optional="1" notininfo="1">
       <Element name="Unknown" type="blob" />
     </Subrecord>
     <Subrecord name="MODS" desc="MODS" optional="1" size="29">
@@ -1836,7 +1836,7 @@
     <Subrecord name="MODL" desc="Ammo Model" optional="1">
       <Element name="Model ID" type="string" />
     </Subrecord>
-    <Subrecord name="MODT" desc="Model Data" optional="1">
+    <Subrecord name="MODT" desc="Model Data" optional="1" notininfo="1">
       <Element name="Unknown" type="blob" />
     </Subrecord>
     <Subrecord name="YNAM" desc="Pick Up Sound Ref" optional="1" size="4">
@@ -2167,7 +2167,7 @@
     <Subrecord name="MODL" desc="Model Name" optional="1">
       <Element name="Name" type="string" />
     </Subrecord>
-    <Subrecord name="MODT" desc="Model Data" optional="1">
+    <Subrecord name="MODT" desc="Model Data" optional="1" notininfo="1">
       <Element name="Unknown" type="blob" />
     </Subrecord>
     <Subrecord name="YNAM" desc="Pick Up Sound Ref" optional="1" size="4">
@@ -2297,7 +2297,7 @@
     <Subrecord name="MODL" desc="Model NIF" optional="1">
       <Element name="Nif File Path" type="string" />
     </Subrecord>
-    <Subrecord name="MODT" desc="Model Data" optional="1">
+    <Subrecord name="MODT" desc="Model Data" optional="1" notininfo="1">
       <Element name="Unknown" type="blob" />
     </Subrecord>
     <Subrecord name="DEST" desc="Destruction Start" optional="1" size="8">
@@ -2345,7 +2345,7 @@
     <Subrecord name="MODL" desc="Model Name" optional="1">
       <Element name="Name" type="string" />
     </Subrecord>
-    <Subrecord name="MODT" desc="Model Data" optional="1">
+    <Subrecord name="MODT" desc="Model Data" optional="1" notininfo="1">
       <Element name="Unknown" type="blob" />
     </Subrecord>
     <Subrecord name="MNAM" desc="MNAM" optional="1" size="4">
@@ -2382,7 +2382,7 @@
     <Subrecord name="MODL" desc="Model Name" optional="1">
       <Element name="Name" type="string" />
     </Subrecord>
-    <Subrecord name="MODT" desc="Model Data" optional="1">
+    <Subrecord name="MODT" desc="Model Data" optional="1" notininfo="1">
       <Element name="Unknown" type="blob" />
     </Subrecord>
     <Group id="KEYWORDS" optional="1"/>
@@ -3500,7 +3500,7 @@
     <Subrecord name="MODL" desc="Model NIF" optional="1">
       <Element name="Model ID" type="string" />
     </Subrecord>
-    <Subrecord name="MODT" desc="Model Data" optional="1">
+    <Subrecord name="MODT" desc="Model Data" optional="1" notininfo="1">
       <Element name="Unknown" type="blob" />
     </Subrecord>
     <Subrecord name="EITM" desc="Enchantment Record" optional="1" size="4">
@@ -4015,7 +4015,7 @@
     <Subrecord name="MODL" desc="Effect NIF" optional="1">
       <Element name="Model ID" type="string" />
     </Subrecord>
-    <Subrecord name="MODT" desc="Model Data" optional="1">
+    <Subrecord name="MODT" desc="Model Data" optional="1" notininfo="1">
       <Element name="Unknown" type="blob" />
     </Subrecord>
     <Subrecord name="DATA" desc="Unique ID?" optional="1" size="4">
@@ -4229,7 +4229,7 @@
     <Subrecord name="MOD2" desc="Model NIF 2" optional="1">
       <Element name="Nif File Path" type="string" />
     </Subrecord>
-    <Subrecord name="MO2T" desc="Model Data 2" optional="1">
+    <Subrecord name="MO2T" desc="Model Data 2" optional="1" notininfo="1">
       <Element name="Model Data 2" type="blob" />
     </Subrecord>
     <Subrecord name="MO2S" desc="MO2S" optional="1">
@@ -4790,7 +4790,7 @@
     <Subrecord name="MODL" desc="Model Name" optional="1">
       <Element name="Name" type="string" />
     </Subrecord>
-    <Subrecord name="MODT" desc="Model Data" optional="1">
+    <Subrecord name="MODT" desc="Model Data" optional="1" notininfo="1">
       <Element name="Unknown" type="blob" />
     </Subrecord>
     <Subrecord name="DNAM" desc="DNAM" optional="1">

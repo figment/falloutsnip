@@ -190,5 +190,41 @@ namespace TESVSnip.Properties {
                 this["MaxHistoryItem"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool NoWindowsSounds {
+            get {
+                return ((bool)(this["NoWindowsSounds"]));
+            }
+            set {
+                this["NoWindowsSounds"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool DisableHyperlinks {
+            get {
+                return ((bool)(this["DisableHyperlinks"]));
+            }
+            set {
+                this["DisableHyperlinks"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("English")]
+        public string LocalizationName {
+            get {
+                return ((string)(this["LocalizationName"]));
+            }
+            set {
+                this["LocalizationName"] = value;
+            }
+        }
     }
 }

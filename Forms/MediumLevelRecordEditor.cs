@@ -53,14 +53,18 @@ namespace TESVSnip
             public CheckBox cb;
             public byte[] data;
             public int offset;
+            public string disp;
+            public bool isString;
 
-            public lTag(TextBox id, byte[] data, int offset)
+            public lTag(TextBox id, string disp, byte[] data, int offset, bool isString)
             {
                 this.id = id;
                 this.data = data;
                 this.offset = offset;
+                this.disp = disp;
                 this.str = null;
                 this.cb = null;
+                this.isString = isString;
             }
         }
 
@@ -237,18 +241,22 @@ namespace TESVSnip
                             uint id = TypeConverter.h2i(data[offset], data[offset + 1], data[offset + 2], data[offset + 3]);
                             bool isString = TypeConverter.IsLikelyString(new ArraySegment<byte>(data, offset, data.Length - offset));
                             int strOffset = offset;
+                            string s = null;
                             if (isString)
                             {
-                                string s = TypeConverter.GetString(new ArraySegment<byte>(data, offset, data.Length - offset));
-                                tb.Text = s;
+                                s = TypeConverter.GetString(new ArraySegment<byte>(data, offset, data.Length - offset));
+                                tb.Text = 0.ToString("X8");
                                 offset += s.Length;
+                                
                             }
                             else
                             {
                                 offset += 4;
                                 tb.Text = id.ToString("X8");
+                                if (strIDLookup != null)
+                                    s = strIDLookup(id);
                             }
-                            tb.Tag = new lTag(tb, data, strOffset);
+                            tb.Tag = new lTag(tb, s, data, strOffset, isString);
                         } break;
                     case ElementValueType.Str4:
                         {
@@ -317,7 +325,7 @@ namespace TESVSnip
 
                 ltag.cb = new CheckBox();
                 ltag.cb.Width = ltag.cb.Height;
-                ltag.cb.Checked = (ltag.data.Length != 4);
+                ltag.cb.Checked = ltag.isString;
                 panel1.Controls.Add(ltag.cb);
                 ltag.cb.Location = new System.Drawing.Point(8, ypos);
 
@@ -325,19 +333,7 @@ namespace TESVSnip
                 ltag.str.Width += (200 - ltag.cb.Width + 8);
                 panel1.Controls.Add(ltag.str);
                 ltag.str.Location = new System.Drawing.Point(ltag.cb.Location.X + ltag.cb.Width + 8, ypos);
-
-                string s = null;
-                if (strIDLookup != null)
-                {
-                    s = strIDLookup(uint.Parse(ltag.id.Text, System.Globalization.NumberStyles.HexNumber, null));
-                }
-                if (s == null)
-                {
-                    int i = ltag.offset;
-                    while (!char.IsControl((char)data[i]))
-                        s += (char)data[i++];
-                }
-                ltag.str.Text = s;
+                ltag.str.Text = string.IsNullOrEmpty(ltag.disp) ? "" : ltag.disp;
 
                 ypos += 24;
 
@@ -655,7 +651,7 @@ namespace TESVSnip
                                 {
                                     if (!uint.TryParse(ltag.id.Text, System.Globalization.NumberStyles.AllowHexSpecifier, null, out i))
                                     {
-                                        MessageBox.Show("Invalid formID: " + ltag.id.Text, "Error");
+                                        MessageBox.Show("Invalid string id: " + ltag.id.Text, "Error");
                                         return;
                                     }
                                     byte[] conv = TypeConverter.i2h(i);

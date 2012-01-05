@@ -138,10 +138,10 @@ namespace TESVSnip {
             this.cb7.AutoSize = true;
             this.cb7.Location = new System.Drawing.Point(12, 199);
             this.cb7.Name = "cb7";
-            this.cb7.Size = new System.Drawing.Size(85, 17);
+            this.cb7.Size = new System.Drawing.Size(196, 17);
             this.cb7.TabIndex = 7;
             this.cb7.Tag = "7";
-            this.cb7.Text = "0x00000080";
+            this.cb7.Text = "0x00000080 (Use Localized Strings)";
             this.cb7.UseVisualStyleBackColor = true;
             // 
             // cb6
