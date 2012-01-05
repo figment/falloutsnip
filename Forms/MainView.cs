@@ -2513,19 +2513,27 @@ Do you still want to save?", "Modified Save", MessageBoxButtons.YesNo, MessageBo
 
         private void MainView_KeyDown(object sender, KeyEventArgs e)
         {
-            if (e.Alt && !e.Control && !e.Shift)
+            if (e.KeyCode == Keys.Left && e.Alt && !e.Control && !e.Shift)
             {
-                if (e.KeyCode == Keys.Left)
-                {
-                    toolStripRecordBack.PerformButtonClick();
-                    e.Handled = true;
-                }
-                else if (e.KeyCode == Keys.Right)
-                {
-                    toolStripRecordNext.PerformButtonClick();
-                    e.Handled = true;
-                }
+                toolStripRecordBack.PerformButtonClick();
+                e.Handled = true;
             }
+            else if (e.KeyCode == Keys.Right && e.Alt && !e.Control && !e.Shift)
+            {
+                toolStripRecordNext.PerformButtonClick();
+                e.Handled = true;
+            }
+        }
+
+        private void historyNextToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            toolStripRecordNext.PerformButtonClick();
+
+        }
+
+        private void historyBackToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            toolStripRecordBack.PerformButtonClick();
         }
 
         #endregion
@@ -2569,7 +2577,45 @@ Do you still want to save?", "Modified Save", MessageBoxButtons.YesNo, MessageBo
                 catch { }
                 return true;
             }
+            [System.Runtime.InteropServices.DllImport("user32.dll")]
+            public static extern ushort GetKeyState(VirtualKeyStates nVirtKey);
+
+            [System.Runtime.InteropServices.DllImport("user32.dll")]
+            public static extern ushort GetAsyncKeyState(VirtualKeyStates nVirtKey);
+
+            internal enum VirtualKeyStates : int
+            {
+                VK_LBUTTON = 0x01,
+                VK_RBUTTON = 0x02,
+                VK_CANCEL = 0x03,
+                VK_MBUTTON = 0x04,
+                VK_LSHIFT = 0xA0,
+                VK_RSHIFT = 0xA1,
+                VK_LCONTROL = 0xA2,
+                VK_RCONTROL = 0xA3,
+                VK_LMENU = 0xA4,
+                VK_RMENU = 0xA5,
+                VK_LEFT = 0x25,
+                VK_UP = 0x26,
+                VK_RIGHT = 0x27,
+                VK_DOWN = 0x28,
+                VK_SHIFT = 0x10,
+                VK_CONTROL = 0x11,
+                VK_MENU = 0x12,
+            }
+            const ushort KEY_PRESSED = 0x8000;
+
+            public static bool IsControlDown()
+            {
+                return 1 == GetKeyState(VirtualKeyStates.VK_CONTROL);
+            }
+            public static bool IsAltDown()
+            {
+                return 1 == GetKeyState(VirtualKeyStates.VK_MENU);
+            }
+            
         }
+        
         internal bool PreFilterMessage(ref Message m)
         {
             // Intercept the left mouse button down message.
@@ -2583,7 +2629,7 @@ Do you still want to save?", "Modified Save", MessageBoxButtons.YesNo, MessageBo
                         SendMessage(this.toolStripIncrFind.Handle, m.Msg, m.WParam,m.LParam);
                         return true;
                     }
-                }                
+                }
             }
             return false;
         }
