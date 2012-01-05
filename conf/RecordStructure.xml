@@ -5425,10 +5425,12 @@
       <Element name="Unknown 1" type="float" />
     </Subrecord>
     <Subrecord name="MNAM" desc="MNAM" optional="1" size="16">
-      <Element name="Unknown" type="int" />
-      <Element name="Unknown 1" type="int" />
-      <Element name="Unknown 2" type="formid" reftype="NAVM" />
-      <Element name="Unknown 3" type="int" />
+      <Element name="Width" type="int" />
+      <Element name="Height" type="int" />
+      <Element name="NW Cell X" type="short"/>
+      <Element name="NW Cell Y" type="short"/>
+      <Element name="SE Cell X" type="short"/>
+      <Element name="SE Cell Y" type="short" />
     </Subrecord>
     <Subrecord name="ONAM" desc="ONAM" optional="1" size="16">
       <Element name="Unknown" type="float" />
