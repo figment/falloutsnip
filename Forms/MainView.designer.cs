@@ -98,6 +98,8 @@ namespace TESVSnip {
             this.toolStripPasteSubrecord = new System.Windows.Forms.ToolStripButton();
             this.toolStripCopySubrecord = new System.Windows.Forms.ToolStripButton();
             this.toolStripSeparator2 = new System.Windows.Forms.ToolStripSeparator();
+            this.columnHeader1 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.columnHeader2 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.contextMenuRecord = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.contextMenuRecordCopy = new System.Windows.Forms.ToolStripMenuItem();
             this.contextMenuRecordCopyTo = new System.Windows.Forms.ToolStripMenuItem();
@@ -127,9 +129,7 @@ namespace TESVSnip {
             this.toolStripSeparator5 = new System.Windows.Forms.ToolStripSeparator();
             this.toolStripIncrInvalidRecStatus = new System.Windows.Forms.ToolStripLabel();
             this.PluginTree = new TESVSnip.Controls.CustomTreeView();
-            this.listSubrecord = new TESVSnip.Windows.Controls.BindingListView();
-            this.columnHeader1 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-            this.columnHeader2 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.listSubrecord = new TESVSnip.Windows.Controls.ObjectBindingListView();
             this.rtfInfo = new RichTextBoxLinks.RichTextBoxEx();
             this.menuStrip1.SuspendLayout();
             this.statusStrip1.SuspendLayout();
@@ -144,6 +144,7 @@ namespace TESVSnip {
             this.contextMenuRecord.SuspendLayout();
             this.toolStripIncrFind.SuspendLayout();
             this.toolStripIncrInvalidRec.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.listSubrecord)).BeginInit();
             this.SuspendLayout();
             // 
             // menuStrip1
@@ -825,6 +826,14 @@ namespace TESVSnip {
             this.toolStripSeparator2.Name = "toolStripSeparator2";
             this.toolStripSeparator2.Size = new System.Drawing.Size(6, 25);
             // 
+            // columnHeader1
+            // 
+            this.columnHeader1.Text = "Name";
+            // 
+            // columnHeader2
+            // 
+            this.columnHeader2.Text = "Size";
+            // 
             // contextMenuRecord
             // 
             this.contextMenuRecord.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
@@ -1131,10 +1140,6 @@ namespace TESVSnip {
             // 
             this.listSubrecord.Activation = System.Windows.Forms.ItemActivation.OneClick;
             this.listSubrecord.AllowDrop = true;
-            this.listSubrecord.AutoScroll = false;
-            this.listSubrecord.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
-            this.columnHeader1,
-            this.columnHeader2});
             this.listSubrecord.DataSource = null;
             this.listSubrecord.Dock = System.Windows.Forms.DockStyle.Fill;
             this.listSubrecord.FullRowSelect = true;
@@ -1144,6 +1149,7 @@ namespace TESVSnip {
             this.listSubrecord.ItemCount = 0;
             this.listSubrecord.Location = new System.Drawing.Point(0, 25);
             this.listSubrecord.Name = "listSubrecord";
+            this.listSubrecord.OwnerDraw = true;
             this.listSubrecord.ShowItemToolTips = true;
             this.listSubrecord.Size = new System.Drawing.Size(259, 296);
             this.listSubrecord.TabIndex = 0;
@@ -1157,14 +1163,6 @@ namespace TESVSnip {
             this.listSubrecord.DragEnter += new System.Windows.Forms.DragEventHandler(this.listView1_DragEnter);
             this.listSubrecord.GiveFeedback += new System.Windows.Forms.GiveFeedbackEventHandler(this.listView1_GiveFeedback);
             this.listSubrecord.MouseDoubleClick += new System.Windows.Forms.MouseEventHandler(this.listSubrecord_MouseDoubleClick);
-            // 
-            // columnHeader1
-            // 
-            this.columnHeader1.Text = "Name";
-            // 
-            // columnHeader2
-            // 
-            this.columnHeader2.Text = "Size";
             // 
             // rtfInfo
             // 
@@ -1220,6 +1218,7 @@ namespace TESVSnip {
             this.toolStripIncrFind.PerformLayout();
             this.toolStripIncrInvalidRec.ResumeLayout(false);
             this.toolStripIncrInvalidRec.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.listSubrecord)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -1246,7 +1245,7 @@ namespace TESVSnip {
         private System.Windows.Forms.ToolStripMenuItem newToolStripMenuItem;
         private System.Windows.Forms.SplitContainer splitHorizontal;
         private System.Windows.Forms.SplitContainer splitVertical;
-        private TESVSnip.Windows.Controls.BindingListView listSubrecord;
+        private TESVSnip.Windows.Controls.ObjectBindingListView listSubrecord;
         private System.Windows.Forms.ColumnHeader columnHeader1;
         private System.Windows.Forms.ColumnHeader columnHeader2;
         private System.Windows.Forms.ToolStripMenuItem insertRecordToolStripMenuItem;

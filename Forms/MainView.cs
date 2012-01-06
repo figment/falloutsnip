@@ -3,6 +3,9 @@ using System.Windows.Forms;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using System.Drawing;
+using System.Drawing.Drawing2D;
+using TESVSnip.Windows.Controls;
 
 namespace TESVSnip
 {
@@ -64,8 +67,8 @@ namespace TESVSnip
             InitializeToolStripFind();
             InitializeSubrecordForm();
 
-            if (string.IsNullOrEmpty(global::TESVSnip.Properties.Settings.Default.DefaultSaveFolder) 
-                || !System.IO.Directory.Exists(global::TESVSnip.Properties.Settings.Default.DefaultSaveFolder) )
+            if (string.IsNullOrEmpty(global::TESVSnip.Properties.Settings.Default.DefaultSaveFolder)
+                || !System.IO.Directory.Exists(global::TESVSnip.Properties.Settings.Default.DefaultSaveFolder))
             {
                 this.SaveModDialog.InitialDirectory = Program.gameDataDir;
             }
@@ -82,7 +85,7 @@ namespace TESVSnip
             {
                 this.OpenModDialog.InitialDirectory = global::TESVSnip.Properties.Settings.Default.DefaultOpenFolder;
             }
-            
+
 
             this.Icon = Properties.Resources.tesv_ico;
 
@@ -101,7 +104,7 @@ namespace TESVSnip
                 global::TESVSnip.Properties.Settings.Default.Save();
             }
             useWindowsClipboardToolStripMenuItem.Checked = global::TESVSnip.Properties.Settings.Default.UseWindowsClipboard;
-            noWindowsSoundsToolStripMenuItem.Checked =  global::TESVSnip.Properties.Settings.Default.NoWindowsSounds;
+            noWindowsSoundsToolStripMenuItem.Checked = global::TESVSnip.Properties.Settings.Default.NoWindowsSounds;
             disableHyperlinksToolStripMenuItem.Checked = global::TESVSnip.Properties.Settings.Default.DisableHyperlinks;
             this.rtfInfo.DetectUrls = !global::TESVSnip.Properties.Settings.Default.DisableHyperlinks;
 
@@ -114,8 +117,8 @@ namespace TESVSnip
             InitializeToolStripRecords();
 
             Selection.RecordChanged += delegate(object o, EventArgs a) { UpdateToolStripSelection(); };
-            Selection.SubRecordChanged += delegate(object o, EventArgs a){ UpdateToolStripSelection(); };
-            
+            Selection.SubRecordChanged += delegate(object o, EventArgs a) { UpdateToolStripSelection(); };
+
             if (!DesignMode)
             {
                 try
@@ -145,7 +148,7 @@ namespace TESVSnip
                 return Clipboard != null;
             }
         }
-        
+
         private bool HasClipboardData<T>()
         {
             if (useWindowsClipboardToolStripMenuItem.Checked)
@@ -217,9 +220,9 @@ namespace TESVSnip
         public object Clipboard
         {
             get { return GetClipboardData(); }
-            set { SetClipboardData(value);}
+            set { SetClipboardData(value); }
         }
-        
+
         public TreeNode ClipboardNode
         {
             get { return s_clipboardNode; }
@@ -709,7 +712,7 @@ Would you like to apply the record exclusions?"
                     return true;
                 }
             }
-            catch{}
+            catch { }
             return false;
         }
 #else
@@ -1037,7 +1040,7 @@ Do you still want to save?", "Modified Save", MessageBoxButtons.YesNo, MessageBo
             }
             var clipboardObject = this.Clipboard;
 
-            if (recordOnly && !(clipboardObject is Record || clipboardObject is GroupRecord) )
+            if (recordOnly && !(clipboardObject is Record || clipboardObject is GroupRecord))
                 return;
 
             BaseRecord node = (BaseRecord)PluginTree.SelectedNode.Tag;
@@ -1098,8 +1101,8 @@ Do you still want to save?", "Modified Save", MessageBoxButtons.YesNo, MessageBo
             {
                 BaseRecord br = (BaseRecord)PluginTree.SelectedNode.Tag;
 
-
-                int insertIdx = listSubrecord.GetSelectionIndices().Length == 0 ? -1 : listSubrecord.GetFocusedItem();
+                
+                int insertIdx = listSubrecord.SelectedIndices.Count == 0 ? -1 : listSubrecord.GetFocusedItem();
                 var nodes = GetClipboardData<SubRecord[]>();
                 foreach (var clipSr in insertIdx < 0 ? nodes : nodes.Reverse()) // insert in revers
                 {
@@ -1239,7 +1242,7 @@ Do you still want to save?", "Modified Save", MessageBoxButtons.YesNo, MessageBo
             insertSubrecordToolStripMenuItem.Enabled = false;
             UpdateToolStripSelection();
         }
-        
+
 
         private void UpdateToolStripSelection()
         {
@@ -1258,7 +1261,7 @@ Do you still want to save?", "Modified Save", MessageBoxButtons.YesNo, MessageBo
                 toolStripRecordPaste.Enabled = Selection.Plugin != null ? HasClipboardData() : false;
             }
             if (Selection.SubRecord != null)
-            {                
+            {
                 toolStripEditSubrecordHex.Enabled = true;
                 toolStripEditSubrecord.Enabled = true;
                 toolStripCopySubrecord.Enabled = true;
@@ -1384,9 +1387,9 @@ Do you still want to save?", "Modified Save", MessageBoxButtons.YesNo, MessageBo
                     PluginTree.SelectedNode.Text = Selection.Record.DescriptiveName;
                 }
             }
-            catch 
+            catch
             {
-            	
+
             }
         }
 
@@ -1412,7 +1415,7 @@ Do you still want to save?", "Modified Save", MessageBoxButtons.YesNo, MessageBo
             int idx = listSubrecord.GetFocusedItem();
             if (listSubrecord.DataSource != null)
             {
-                if (idx >= 0 && idx < listSubrecord.DataSource.Count) 
+                if (idx >= 0 && idx < listSubrecord.DataSource.Count)
                     return listSubrecord.DataSource[idx] as SubRecord;
             }
             return null;
@@ -1422,12 +1425,12 @@ Do you still want to save?", "Modified Save", MessageBoxButtons.YesNo, MessageBo
         {
             if (listSubrecord.SelectedIndices.Count < 1) return null;
             List<SubRecord> recs = new List<SubRecord>();
-            foreach ( int idx in listSubrecord.SelectedIndices )
+            foreach (int idx in listSubrecord.SelectedIndices)
             {
                 var sr = listSubrecord.DataSource[idx] as SubRecord;
                 if (sr != null) recs.Add(sr);
             }
-            return recs;            
+            return recs;
         }
 
         private void insertRecordToolStripMenuItem_Click(object sender, EventArgs e)
@@ -1670,9 +1673,9 @@ Do you still want to save?", "Modified Save", MessageBoxButtons.YesNo, MessageBo
             else
             {
                 return "Master not loaded";
-            }            
+            }
         }
-        
+
         private Record GetRecordByID(uint id)
         {
             uint pluginid = (id & 0xff000000) >> 24;
@@ -1959,7 +1962,7 @@ Do you still want to save?", "Modified Save", MessageBoxButtons.YesNo, MessageBo
             SubRecord sr = rec.SubRecords[idx];
             rec.SubRecords.RemoveAt(idx);
             rec.SubRecords.Insert(idx - 1, sr);
-            
+
             listSubrecord.ClearSelection();
             listSubrecord.SelectItem(idx - 1);
             listSubrecord.FocusItem(idx - 1);
@@ -2290,7 +2293,7 @@ Do you still want to save?", "Modified Save", MessageBoxButtons.YesNo, MessageBo
 
         private void contexMenuRecordCopy_Click(object sender, EventArgs e)
         {
-            CopySelectedTreeNode();            
+            CopySelectedTreeNode();
         }
 
         private void contextMenuRecord_Opening(object sender, System.ComponentModel.CancelEventArgs e)
@@ -2323,16 +2326,16 @@ Do you still want to save?", "Modified Save", MessageBoxButtons.YesNo, MessageBo
                 var plugin = n.Tag as BaseRecord;
                 if (plugin == null) continue;
                 if (srcPlugin.Equals(plugin)) continue;
-                
+
                 var tsi = new System.Windows.Forms.ToolStripButton(n.Text);
-                tsi.Tag = new object[]{tn.Tag, tn, plugin, n};
+                tsi.Tag = new object[] { tn.Tag, tn, plugin, n };
                 var sz = TextRenderer.MeasureText(n.Text, contextMenuRecordCopyTo.Font);
                 if (sz.Width > tsi.Width)
                     tsi.Width = sz.Width;
                 tsi.AutoSize = true;
                 contextMenuRecordCopyTo.DropDownItems.Add(tsi);
             }
-            
+
         }
 
         private void contextMenuRecordCopyTo_DropDownOpening(object sender, EventArgs e)
@@ -2350,7 +2353,7 @@ Do you still want to save?", "Modified Save", MessageBoxButtons.YesNo, MessageBo
 
         private void PluginTree_OnContextMenuKey(object sender, EventArgs e)
         {
-            contextMenuRecord.Show(PluginTree.PointToScreen(new System.Drawing.Point(PluginTree.Width/4, PluginTree.Height/4)));
+            contextMenuRecord.Show(PluginTree.PointToScreen(new System.Drawing.Point(PluginTree.Width / 4, PluginTree.Height / 4)));
         }
 
         private void contextMenuRecordCopyTo_DropDownItemClicked(object sender, ToolStripItemClickedEventArgs e)
@@ -2372,7 +2375,7 @@ Do you still want to save?", "Modified Save", MessageBoxButtons.YesNo, MessageBo
                         if (dstRecNode.Nodes.Count > 0)
                         {
                             dstRecNode.Nodes.Clear();
-                            foreach (Rec r in ((GroupRecord)dstRec).Records) 
+                            foreach (Rec r in ((GroupRecord)dstRec).Records)
                                 WalkPluginTree(r, dstRecNode);
                         }
                         dst.AddRecord(dstRec);
@@ -2387,7 +2390,7 @@ Do you still want to save?", "Modified Save", MessageBoxButtons.YesNo, MessageBo
             }
             catch
             {
-            	
+
             }
         }
 
@@ -2411,7 +2414,7 @@ Do you still want to save?", "Modified Save", MessageBoxButtons.YesNo, MessageBo
 
         private void useWindowsClipboardToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            global::TESVSnip.Properties.Settings.Default.UseWindowsClipboard = 
+            global::TESVSnip.Properties.Settings.Default.UseWindowsClipboard =
             useWindowsClipboardToolStripMenuItem.Checked = !useWindowsClipboardToolStripMenuItem.Checked;
         }
 
@@ -2422,9 +2425,12 @@ Do you still want to save?", "Modified Save", MessageBoxButtons.YesNo, MessageBo
 
         private void UpdateMainText(BaseRecord rec)
         {
-            if (rec == null) { 
+            if (rec == null)
+            {
                 UpdateMainText("");
-            } else {
+            }
+            else
+            {
                 //var sb = new System.Text.StringBuilder();
                 //rec.GetFormattedData(sb, GetSelectedContext());
                 //tbInfo.Text = sb.ToString();
@@ -2445,7 +2451,7 @@ Do you still want to save?", "Modified Save", MessageBoxButtons.YesNo, MessageBo
             return PluginTree.Nodes.Count == 0 ? null : PluginTree.Nodes[0];
         }
 
-        static readonly System.Text.RegularExpressions.Regex linkRegex = 
+        static readonly System.Text.RegularExpressions.Regex linkRegex =
             new System.Text.RegularExpressions.Regex(
                 "^(?<text>[^#]*)#(?<type>[0-z][A-Z][A-Z][A-Z]):(?<id>[0-9a-zA-Z]+)$"
             , System.Text.RegularExpressions.RegexOptions.None);
@@ -2479,22 +2485,22 @@ Do you still want to save?", "Modified Save", MessageBoxButtons.YesNo, MessageBo
                         PluginTree.SelectedNode = node;
                 }
             }
-            catch 
+            catch
             {
-            	
-            }            
+
+            }
         }
 
         #region ToolStrip Record Handlers
-        
+
         void InitializeToolStripRecords()
         {
             historyHandler = new OC.Windows.Forms.History<TreeNode>(
                 toolStripRecordBack, toolStripRecordNext
                 , global::TESVSnip.Properties.Settings.Default.MaxHistoryItem);
             historyHandler.AllowDuplicates = true;
-            historyHandler.GotoItem +=new EventHandler<OC.Windows.Forms.HistoryEventArgs<TreeNode>>(historyHandler_GotoItem);
-            
+            historyHandler.GotoItem += new EventHandler<OC.Windows.Forms.HistoryEventArgs<TreeNode>>(historyHandler_GotoItem);
+
         }
 
         void historyHandler_GotoItem(object sender, OC.Windows.Forms.HistoryEventArgs<TreeNode> e)
@@ -2562,7 +2568,7 @@ Do you still want to save?", "Modified Save", MessageBoxButtons.YesNo, MessageBo
             public const int WM_CHAR = 0x102;
             public const int WM_KEYDOWN = 0x100;
             public const int WM_KEYUP = 0x101;
- 
+
 
             private MainView owner = null;
 
@@ -2573,7 +2579,7 @@ Do you still want to save?", "Modified Save", MessageBoxButtons.YesNo, MessageBo
 
             public bool PreFilterMessage(ref Message m)
             {
-                try {return this.owner.PreFilterMessage(ref m); }
+                try { return this.owner.PreFilterMessage(ref m); }
                 catch { }
                 return true;
             }
@@ -2613,9 +2619,9 @@ Do you still want to save?", "Modified Save", MessageBoxButtons.YesNo, MessageBo
             {
                 return 1 == GetKeyState(VirtualKeyStates.VK_MENU);
             }
-            
+
         }
-        
+
         internal bool PreFilterMessage(ref Message m)
         {
             // Intercept the left mouse button down message.
@@ -2626,7 +2632,7 @@ Do you still want to save?", "Modified Save", MessageBoxButtons.YesNo, MessageBo
                     if (this.toolStripIncrFindText.Focused)
                     {
                         m.WParam = new IntPtr((int)Keys.Oem1);
-                        SendMessage(this.toolStripIncrFind.Handle, m.Msg, m.WParam,m.LParam);
+                        SendMessage(this.toolStripIncrFind.Handle, m.Msg, m.WParam, m.LParam);
                         return true;
                     }
                 }
@@ -2655,6 +2661,5 @@ Do you still want to save?", "Modified Save", MessageBoxButtons.YesNo, MessageBo
             }
         }
         #endregion
-
     }
 }

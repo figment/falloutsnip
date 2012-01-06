@@ -1,18 +1,20 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Text;
 using System.Windows.Forms;
 using System.Runtime.InteropServices;
 using System.ComponentModel;
 using System.Reflection;
+using BrightIdeasSoftware;
 
 namespace TESVSnip.Windows.Controls
 {
 	/// <summary>
 	/// Summary description for BindingListView.
 	/// </summary>
-	public class BindingListView : VirtualListView
+    public class ObjectBindingListView : BrightIdeasSoftware.ObjectListView
 	{
 		IList _data = null;
 
@@ -20,14 +22,14 @@ namespace TESVSnip.Windows.Controls
         int lvcacheEnd = -1;
         private List<ListViewItem> lvcache = new List<ListViewItem>();
 
-		public BindingListView()
+        public ObjectBindingListView()
 		{
 			InitializeComponent();
 
 			this.FullRowSelect = true;
 			this.HideSelection = false;
 			this.View = System.Windows.Forms.View.Details;
-			base.QueryItemText += new QueryItemTextHandler(BindingListView_QueryItemText);
+            //base.QueryItemText += new QueryItemTextHandler(BindingListView_QueryItemText);
             base.CacheVirtualItems += new CacheVirtualItemsEventHandler(BindingListView_CacheVirtualItems);
             base.RetrieveVirtualItem += new RetrieveVirtualItemEventHandler(BindingListView_RetrieveVirtualItem);
 		}
@@ -43,10 +45,10 @@ namespace TESVSnip.Windows.Controls
 
         private ListViewItem CreateBlankListViewItem()
         {
-            ListViewItem.ListViewSubItem[] subItems = new ListViewItem.ListViewSubItem[this.Columns.Count];
+            var subItems = new OLVListSubItem[this.Columns.Count];
             for (int i=0; i<subItems.Length; ++i)
-                subItems[i] = new ListViewItem.ListViewSubItem();
-            return new ListViewItem(subItems,-1);
+                subItems[i] = new OLVListSubItem();
+            return new OLVListItem(null, subItems,-1);
         }
 
         void FillListViewItem(ListViewItem lvItem, int index)
@@ -99,12 +101,12 @@ namespace TESVSnip.Windows.Controls
             }            
         }
 
-        private event QueryItemTextHandler _QueryItemText;
-        public new event QueryItemTextHandler QueryItemText
-        {
-            add { _QueryItemText += value; }
-            remove { _QueryItemText -= value; }
-        }
+        //private event QueryItemTextHandler _QueryItemText;
+        //public new event QueryItemTextHandler QueryItemText
+        //{
+        //    add { _QueryItemText += value; }
+        //    remove { _QueryItemText -= value; }
+        //}
 		
 
 		public new IList Items
@@ -245,6 +247,12 @@ namespace TESVSnip.Windows.Controls
 			this.Columns.Clear();
 		}
 
+        public int ItemCount
+        {
+            get { return this.VirtualListSize; }
+            set { this.VirtualListSize = value; }
+        }
+
 		public IList DataSource
 		{
 			get{ return _data; }		
@@ -285,11 +293,12 @@ namespace TESVSnip.Windows.Controls
 			text = string.Empty;
 			try
 			{
-                if (_QueryItemText != null)
-                {
-                    _QueryItemText(item, subItem, out text);
-                }
-				else if( DataSource != null && item < DataSource.Count)
+                //if (_QueryItemText != null)
+                //{
+                //    _QueryItemText(item, subItem, out text);
+                //}
+                //else 
+                if( DataSource != null && item < DataSource.Count)
 				{
 					ColumnBinding header = this.Columns[subItem] as ColumnBinding;
 					if (header != null)
@@ -324,14 +333,14 @@ namespace TESVSnip.Windows.Controls
             // BindingListView
             // 
             this.KeyDown += new System.Windows.Forms.KeyEventHandler(this.BindingListView_KeyDown);
-            this.CustomSort += new CustomSortHandler(BindingListView_CustomSort);
+            //this.CustomSort += new CustomSortHandler(BindingListView_CustomSort);
             this.ResumeLayout(false);
 
 		}
 	
 		protected override void Dispose(bool disposing)
 		{
-			base.QueryItemText -= new QueryItemTextHandler(BindingListView_QueryItemText);
+            //base.QueryItemText -= new QueryItemTextHandler(BindingListView_QueryItemText);
 			DataSource = null;
 			base.Dispose (disposing);
         }
@@ -481,7 +490,7 @@ namespace TESVSnip.Windows.Controls
         #endregion
 
         #region class ColumnBinding
-        public class ColumnBinding : ColumnHeader
+        public class ColumnBinding : BrightIdeasSoftware.OLVColumn
 		{
 			PropertyDescriptor _propDesc = null;
             //string _propName = string.Empty;
@@ -521,7 +530,9 @@ namespace TESVSnip.Windows.Controls
         {
             if (e.Control && !e.Shift && !e.Alt && e.KeyValue == 'C')
             {
-                Copy();
+                //this.CopyObjectsToClipboard()
+                //Copy();
+                this.CopySelectionToClipboard();
             }
             else if (e.Control && !e.Shift && !e.Alt && e.KeyValue == 'A')
             {
@@ -597,6 +608,100 @@ namespace TESVSnip.Windows.Controls
                     }
 				}
 			}
+        }
+
+        #region SendMessage Variations
+        [DllImport("user32.dll", SetLastError = true)]
+        extern static int SendMessage(IntPtr hWnd, ListViewMessages Msg, int wParam, ref LVHITTESTINFO lvhti);
+
+        [DllImport("user32.dll", SetLastError = true)]
+        extern static int SendMessage(IntPtr hWnd, ListViewMessages Msg, int wParam, ref LVITEMA lvitem);
+
+        [DllImport("user32.dll", SetLastError = true)]
+        extern static int SendMessage(IntPtr hWnd, ListViewMessages Msg, int wParam, ref LVITEMW lvitem);
+
+        [DllImport("user32.dll", SetLastError = true)]
+        extern static int SendMessage(IntPtr hWnd, ListViewMessages Msg, int wParam, ref Rectangle lvitem);
+
+        [DllImport("user32.dll", SetLastError = true)]
+        extern static int SendMessage(IntPtr hWnd, ListViewMessages Msg, int wParam, int lvitem);
+
+        [DllImport("user32.dll", SetLastError = true)]
+        extern private static IntPtr SendMessage(IntPtr hWnd, uint Msg, UIntPtr wParam, IntPtr lParam);
+
+        [DllImport("user32.dll", SetLastError = true)]
+        extern private static IntPtr SendMessage(IntPtr hWnd, uint Msg, IntPtr wParam, IntPtr lParam);
+
+        [DllImport("user32.dll", EntryPoint = "SendMessage", CharSet = CharSet.Auto)]
+        private static extern IntPtr SendMessageLVI(IntPtr hWnd, int msg,
+            int wParam, ref LVITEMA lvi);
+
+        [DllImport("User32.dll")]
+        private static extern int SendMessage(IntPtr hWnd, HeaderMessageCodes uMsg, IntPtr wParam, ref HDHITTESTINFO lParam);
+        [DllImport("user32.dll", CharSet = CharSet.Auto)]
+        private static extern IntPtr SendMessage(IntPtr hWnd, int msg,
+            int wParam, int lParam);
+
+        [DllImport("User32.dll")]
+        private static extern uint GetMessagePos();
+
+        #endregion
+
+        public bool IsItemSelected(int index)
+        {
+            return (0 != SendMessage(this.Handle, ListViewMessages.LVM_GETITEMSTATE, index, (int)ListViewItemStates.LVIS_SELECTED));
+        }
+        public bool IsItemFocused(int index)
+        {
+            return (0 != SendMessage(this.Handle, ListViewMessages.LVM_GETITEMSTATE, index, (int)ListViewItemStates.LVIS_FOCUSED));
+        }
+
+        internal void SetItemState(int index, uint data, ListViewItemStates mask)
+        {
+            LVITEMA _ms_lvi = new LVITEMA();
+            _ms_lvi.stateMask = mask;
+            _ms_lvi.state = data;
+            SendMessage(this.Handle, ListViewMessages.LVM_SETITEMSTATE, index, ref _ms_lvi);
+        }
+        public void ClearSelection()
+        {
+            int next = -1;
+            while (true)
+            {
+                next = SendMessage(this.Handle, ListViewMessages.LVM_GETNEXTITEM, next, (int)ListViewNextItemCodes.LVNI_SELECTED);
+                if (next == -1) break;
+                SetItemState(next, 0, ListViewItemStates.LVIS_SELECTED);
+            }
+        }
+        public int[] GetSelectionIndices()
+        {
+            System.Collections.Generic.List<int> sel = new System.Collections.Generic.List<int>();
+            int next = -1;
+            while (true)
+            {
+                next = SendMessage(this.Handle, ListViewMessages.LVM_GETNEXTITEM, next, (int)ListViewNextItemCodes.LVNI_SELECTED);
+                if (next == -1) break;
+                sel.Add(next);
+                SetItemState(next, 0, ListViewItemStates.LVIS_SELECTED);
+            }
+            return sel.ToArray();
+        }
+        public void SelectItem(int index)
+        {
+            SetItemState(index, (unchecked((uint)-1)), ListViewItemStates.LVIS_SELECTED);
+        }
+        public int GetFocusedItem()
+        {
+            return SendMessage(this.Handle, ListViewMessages.LVM_GETNEXTITEM, -1, 1);
+        }
+        public void FocusItem(int index)
+        {
+            SetItemState(index, (unchecked((uint)-1)), ListViewItemStates.LVIS_FOCUSED);
+        }
+
+        public bool HasSelection()
+        {
+            return (0 != SendMessage(this.Handle, ListViewMessages.LVM_GETSELECTEDCOUNT, 0, 0));
         }
 
 	}

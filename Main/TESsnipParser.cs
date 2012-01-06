@@ -1076,7 +1076,7 @@ namespace TESVSnip
                 }
                 else
                 {
-                    desc = string.Format("{0} \t [Interior]",desc);
+                    desc = string.Format(" [Interior]\t{0}", desc);
                 }
                 DescriptiveName = desc;
             }

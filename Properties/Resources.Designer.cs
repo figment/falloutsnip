@@ -102,16 +102,23 @@ namespace TESVSnip.Properties {
             }
         }
         
-        internal static System.Drawing.Bitmap Copy {
+        internal static System.Drawing.Bitmap ClearFiltering {
             get {
-                object obj = ResourceManager.GetObject("Copy", resourceCulture);
+                object obj = ResourceManager.GetObject("ClearFiltering", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
         
-        internal static System.Drawing.Bitmap cut_2 {
+        internal static System.Drawing.Bitmap ColumnFilterIndicator {
             get {
-                object obj = ResourceManager.GetObject("cut-2", resourceCulture);
+                object obj = ResourceManager.GetObject("ColumnFilterIndicator", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        internal static System.Drawing.Bitmap Copy {
+            get {
+                object obj = ResourceManager.GetObject("Copy", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -168,6 +175,13 @@ namespace TESVSnip.Properties {
         internal static System.Drawing.Bitmap fileexport {
             get {
                 object obj = ResourceManager.GetObject("fileexport", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        internal static System.Drawing.Bitmap Filtering {
+            get {
+                object obj = ResourceManager.GetObject("Filtering", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -234,6 +248,20 @@ namespace TESVSnip.Properties {
         internal static System.Drawing.Bitmap quick_restart {
             get {
                 object obj = ResourceManager.GetObject("quick_restart", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        internal static System.Drawing.Bitmap SortAscending {
+            get {
+                object obj = ResourceManager.GetObject("SortAscending", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        internal static System.Drawing.Bitmap SortDescending {
+            get {
+                object obj = ResourceManager.GetObject("SortDescending", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
