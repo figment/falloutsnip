@@ -197,16 +197,18 @@ namespace TESVSnip {
         }
         public static string GetString(ArraySegment<byte> data)
         {
-            var sb = new System.Text.StringBuilder();
-            bool isAscii = true;
-            for (int i = 0; i < data.Count - 1 && isAscii; ++i)
-            {
-                char c = (char)data.Array[data.Offset + i];
-                if (c == 0) return sb.ToString();
-                isAscii = !Char.IsControl(c);
-                if (isAscii) sb.Append(c);
-            }
-            return sb.ToString();
+            return TESVSnip.Encoding.CP1252.GetString(data.Array, data.Offset, data.Count - 1);
+
+            //var sb = new System.Text.StringBuilder();
+            //bool isAscii = true;
+            //for (int i = 0; i < data.Count - 1 && isAscii; ++i)
+            //{
+            //    char c = (char)data.Array[data.Offset + i];
+            //    if (c == 0) return sb.ToString();
+            //    isAscii = !Char.IsControl(c);
+            //    if (isAscii) sb.Append(c);
+            //}
+            //return sb.ToString();
         }
 
         public static string GetHexData(byte[] data, int offset, int count)

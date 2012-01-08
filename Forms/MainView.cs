@@ -1329,7 +1329,7 @@ Do you still want to save?", "Modified Save", MessageBoxButtons.YesNo, MessageBo
                 if (re != null)
                 {
                     re.ShowDialog();
-                    UpdateMainText(sr.GetFormattedData(context));
+                    UpdateMainText(sr);
                     if (sr.Name == "EDID" && listSubrecord.SelectedIndices[0] == 0)
                     {
                         context.Record.SetDescription(" (" + sr.GetStrData() + ")");
@@ -2030,6 +2030,20 @@ Do you still want to save?", "Modified Save", MessageBoxButtons.YesNo, MessageBo
             PasteSubRecord();
         }
 
+        private void listSubrecord_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.KeyCode == Keys.C && e.Control && !e.Alt && !e.Shift)
+            {
+                CopySelectedSubRecord();
+                e.Handled = true;
+            }
+            else if (e.KeyCode == Keys.V && e.Control && !e.Alt && !e.Shift)
+            {
+                PasteSubRecord();
+                e.Handled = true;
+            }
+        }
+
 
         #region Enable Disable User Interface
         [System.Runtime.InteropServices.DllImport("user32.dll")]
@@ -2439,7 +2453,7 @@ Do you still want to save?", "Modified Save", MessageBoxButtons.YesNo, MessageBo
             else
             {
                 FontLangInfo defLang;
-                if (!defLangMap.TryGetValue(global::TESVSnip.Properties.Settings.Default.LocalizationName, out defLang))
+                if (!Encoding.TryGetFontInfo(global::TESVSnip.Properties.Settings.Default.LocalizationName, out defLang))
                     defLang = new FontLangInfo(1252, 1033, 0);
 
                 var rb = new RTF.RTFBuilder(RTF.RTFFont.Arial, 16, defLang.lcid, defLang.charset);
@@ -2675,21 +2689,7 @@ Do you still want to save?", "Modified Save", MessageBoxButtons.YesNo, MessageBo
         }
 
         #region String Tools
-        internal struct FontLangInfo
-        {
-            public readonly ushort CodePage;
-            public readonly ushort lcid;
-            public readonly byte charset;
-            public FontLangInfo(ushort CodePage, ushort lcid, byte charset)
-            {
-                this.CodePage = CodePage;
-                this.lcid = lcid;
-                this.charset = charset;
-            }
-        }
         internal  Dictionary<string, ToolStripMenuItem> languageToolBarItems = new Dictionary<string, ToolStripMenuItem>(StringComparer.InvariantCultureIgnoreCase);
-        internal Dictionary<string, FontLangInfo> defLangMap = new Dictionary<string, FontLangInfo>(StringComparer.InvariantCultureIgnoreCase);
-        
         void InitializeLanguage()
         {
             languageToolBarItems.Add("English", englishToolStripMenuItem);
@@ -2699,13 +2699,6 @@ Do you still want to save?", "Modified Save", MessageBoxButtons.YesNo, MessageBo
             languageToolBarItems.Add("Italian", italianToolStripMenuItem);
             languageToolBarItems.Add("Spanish", spanishToolStripMenuItem);
             languageToolBarItems.Add("Russian", russianToolStripMenuItem);
-            defLangMap.Add("English", new FontLangInfo(1252,1033,0));
-            defLangMap.Add("Czech", new FontLangInfo(1252, 1029, 238));
-            defLangMap.Add("French", new FontLangInfo(1252, 1036, 0));
-            defLangMap.Add("German", new FontLangInfo(1252, 1031, 0));
-            defLangMap.Add("Italian", new FontLangInfo(1252, 1040, 0));
-            defLangMap.Add("Spanish", new FontLangInfo(1252, 1034, 0));
-            defLangMap.Add("Russian", new FontLangInfo(1252, 1049, 204));
         }
 
         void ReloadLanguageFiles()
@@ -2878,5 +2871,6 @@ Do you still want to save?", "Modified Save", MessageBoxButtons.YesNo, MessageBo
         {
             ReloadLanguageFiles();
         }
+
     }
 }

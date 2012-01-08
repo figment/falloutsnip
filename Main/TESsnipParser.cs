@@ -404,11 +404,31 @@ namespace TESVSnip
         {
             if (string.IsNullOrEmpty(this.StringsFolder) || string.IsNullOrEmpty(this.FileName))
                 return;
+
+            string locName = global::TESVSnip.Properties.Settings.Default.LocalizationName;
+
+            if ( Directory.GetFiles(this.StringsFolder, this.FileName + "_" + locName + "*").Count() == 0 )
+            {
+                if (locName == "English")
+                    return;
+                locName = "English";
+            }
+
             string prefix = System.IO.Path.Combine(this.StringsFolder, this.FileName);
             prefix += "_" + global::TESVSnip.Properties.Settings.Default.LocalizationName;
-            Strings = LoadPluginStrings(LocalizedStringFormat.Base, prefix + ".STRINGS");
-            ILStrings = LoadPluginStrings(LocalizedStringFormat.IL, prefix + ".ILSTRINGS");
-            DLStrings = LoadPluginStrings(LocalizedStringFormat.DL, prefix + ".DLSTRINGS");
+
+            System.Text.Encoding enc = TESVSnip.Encoding.CP1252;
+            TESVSnip.FontLangInfo fontInfo;
+            if (TESVSnip.Encoding.TryGetFontInfo(locName, out fontInfo))
+            {
+                if (fontInfo.CodePage != 1252)
+                    enc = System.Text.Encoding.GetEncoding(fontInfo.CodePage);
+            }           
+            
+
+            Strings = LoadPluginStrings(enc, LocalizedStringFormat.Base, prefix + ".STRINGS");
+            ILStrings = LoadPluginStrings(enc, LocalizedStringFormat.IL, prefix + ".ILSTRINGS");
+            DLStrings = LoadPluginStrings(enc, LocalizedStringFormat.DL, prefix + ".DLSTRINGS");
 
             if (global::TESVSnip.Properties.Settings.Default.MonitorStringsFolderForChanges)
             {
@@ -489,9 +509,17 @@ namespace TESVSnip
                 {
                     string prefix = System.IO.Path.Combine(System.IO.Path.Combine(System.IO.Path.GetDirectoryName(FilePath), "Strings"), System.IO.Path.GetFileNameWithoutExtension(FilePath));
                     prefix += "_" + global::TESVSnip.Properties.Settings.Default.LocalizationName;
-                    SavePluginStrings(LocalizedStringFormat.Base, Strings, prefix + ".STRINGS");
-                    SavePluginStrings(LocalizedStringFormat.IL, ILStrings, prefix + ".ILSTRINGS");
-                    SavePluginStrings(LocalizedStringFormat.DL, DLStrings, prefix + ".DLSTRINGS");
+
+                    System.Text.Encoding enc = TESVSnip.Encoding.CP1252;
+                    TESVSnip.FontLangInfo fontInfo;
+                    if (TESVSnip.Encoding.TryGetFontInfo(global::TESVSnip.Properties.Settings.Default.LocalizationName, out fontInfo))
+                    {
+                        if (fontInfo.CodePage != 1252)
+                            enc = System.Text.Encoding.GetEncoding(fontInfo.CodePage);
+                    } 
+                    SavePluginStrings(enc, LocalizedStringFormat.Base, Strings, prefix + ".STRINGS");
+                    SavePluginStrings(enc, LocalizedStringFormat.IL, ILStrings, prefix + ".ILSTRINGS");
+                    SavePluginStrings(enc, LocalizedStringFormat.DL, DLStrings, prefix + ".DLSTRINGS");
                 }
             }
             StringsDirty = false;
@@ -514,22 +542,24 @@ namespace TESVSnip
             throw new NotImplementedException("The method or operation is not implemented.");
         }
 
-        private LocalizedStringDict LoadPluginStrings(LocalizedStringFormat format, string path)
+        private LocalizedStringDict LoadPluginStrings(System.Text.Encoding encoding, LocalizedStringFormat format, string path)
         {
             try
             {
                 if (File.Exists(path))
                 {
                     using (BinaryReader reader = new BinaryReader(File.OpenRead(path)))
-                        return LoadPluginStrings(format, reader);
+                        return LoadPluginStrings(encoding, format, reader);
                 }
             }
             catch{}
             return new LocalizedStringDict();
         }
 
-        private LocalizedStringDict LoadPluginStrings(LocalizedStringFormat format, BinaryReader reader)
+        private LocalizedStringDict LoadPluginStrings(System.Text.Encoding encoding, LocalizedStringFormat format, BinaryReader reader)
         {
+            if (encoding == null)
+                encoding = TESVSnip.Encoding.CP1252;
             LocalizedStringDict dict = new LocalizedStringDict();
             int length = reader.ReadInt32();
             int size = reader.ReadInt32(); // size of data section
@@ -574,23 +604,25 @@ namespace TESVSnip
                         if (len < 0) len = 0;
                         break;
                 }
-                string str = TESVSnip.Encoding.CP1252.GetString(data, start, len);
+                string str = encoding.GetString(data, start, len);
                 dict.Add(kvp.Key, str);
             }
             return dict;
         }
 
-        private void SavePluginStrings(LocalizedStringFormat format, LocalizedStringDict strings, string path)
+        private void SavePluginStrings(System.Text.Encoding enc, LocalizedStringFormat format, LocalizedStringDict strings, string path)
         {
             try
             {
                 using (BinaryWriter writer = new BinaryWriter(File.Create(path)))
-                    SavePluginStrings(format, strings, writer);
+                    SavePluginStrings(enc, format, strings, writer);
             }
             catch { }
         }
-        private void SavePluginStrings(LocalizedStringFormat format, LocalizedStringDict strings, BinaryWriter writer)
+        private void SavePluginStrings(System.Text.Encoding enc, LocalizedStringFormat format, LocalizedStringDict strings, BinaryWriter writer)
         {
+            if (enc == null) enc = TESVSnip.Encoding.CP1252;
+
             var list = new List<Pair<uint, uint>>();
 
             using (System.IO.MemoryStream stream = new System.IO.MemoryStream())
@@ -599,7 +631,7 @@ namespace TESVSnip
                 foreach (KeyValuePair<uint, string> kvp in strings)
                 {
                     list.Add(new Pair<uint, uint>(kvp.Key, (uint)stream.Position));
-                    byte[] data = TESVSnip.Encoding.CP1252.GetBytes(kvp.Value);
+                    byte[] data = enc.GetBytes(kvp.Value);
                     switch (format)
                     {
                         case LocalizedStringFormat.Base:

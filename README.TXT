@@ -1,5 +1,5 @@
-figments's TESsnip Fork (Skyrim Edition) version 1.7
-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
+figments's TESsnip Fork (Skyrim Edition)
+=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 
 TESVSnip is a fork of the TESsnip utility bundled with Fallout Mod Manager with changes specifically for Skyrim.
 
@@ -9,6 +9,11 @@ Requirements:
   .NET 3.5
 
 Change Log:
+v 1.10
+- New language handling items to better support localization (Experimental)
+- Better handling for Windows Copy/Paste mode
+- New Icon - Scissors snipping at Skyrim is what its supposed to be
+
 v 1.9
 - Add Setting for MaxHistoryItems in config file and default to 30
 - Fix History control so that redo is truncated when a new selection is made

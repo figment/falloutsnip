@@ -106,7 +106,7 @@ namespace TESVSnip
         {
             Panel panel1 = new Panel();
             panel1.AutoSize = true;
-            panel1.Width = fpanel1.Width-10;
+            panel1.Width = fpanel1.Width - 10;
             panel1.Height = 1;
             panel1.Anchor = AnchorStyles.Top | AnchorStyles.Right | AnchorStyles.Left | AnchorStyles.Bottom;
             int ypos = 0;
@@ -247,7 +247,7 @@ namespace TESVSnip
                                 s = TypeConverter.GetString(new ArraySegment<byte>(data, offset, data.Length - offset));
                                 tb.Text = 0.ToString("X8");
                                 offset += s.Length;
-                                
+
                             }
                             else
                             {
@@ -271,7 +271,7 @@ namespace TESVSnip
             }
             else
             {
-                if (es.type == ElementValueType.String || es.type == ElementValueType.BString 
+                if (es.type == ElementValueType.String || es.type == ElementValueType.BString
                     || es.type == ElementValueType.fstring || es.type == ElementValueType.LString)
                     tb.Width += 200;
                 if (removedStrings.ContainsKey(boxes.Count - 1)) tb.Text = removedStrings[boxes.Count - 1];
@@ -330,6 +330,7 @@ namespace TESVSnip
                 ltag.cb.Location = new System.Drawing.Point(8, ypos);
 
                 ltag.str = new TextBox();
+                //ltag.str.Font = this.baseFont;
                 ltag.str.Width += (200 - ltag.cb.Width + 8);
                 panel1.Controls.Add(ltag.str);
                 ltag.str.Location = new System.Drawing.Point(ltag.cb.Location.X + ltag.cb.Width + 8, ypos);
@@ -500,7 +501,7 @@ namespace TESVSnip
             tag.tb.Enabled = cb.Checked;
             if (cb.Checked)
             {
-                if (ss.elements[ss.elements.Length - 1].repeat > 0) 
+                if (ss.elements[ss.elements.Length - 1].repeat > 0)
                     AddElement(ss.elements[ss.elements.Length - 1]);
             }
             else
