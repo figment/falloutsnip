@@ -934,8 +934,7 @@ Would you like to apply the record exclusions?"
                 {
                     BaseRecord parent = (BaseRecord)PluginTree.SelectedNode.Parent.Tag;
                     BaseRecord node = (BaseRecord)PluginTree.SelectedNode.Tag;
-                    if (!parent.DeleteRecord(node))
-                        return;
+                    parent.DeleteRecord(node);
                 }
                 GetPluginFromNode(PluginTree.SelectedNode).InvalidateCache();
                 PluginTree.SelectedNode.Remove();
@@ -1065,9 +1064,10 @@ Do you still want to save?", "Modified Save", MessageBoxButtons.YesNo, MessageBo
                     node.AddRecord(br);
                     if (ClipboardNode != null)
                     {
-                        PluginTree.SelectedNode.Nodes.Add(ClipboardNode);
-                        ClipboardNode = (TreeNode)ClipboardNode.Clone();
-                        ClipboardNode.Tag = Clipboard;
+                        var newNode = (TreeNode)ClipboardNode.Clone();
+                        newNode.Tag = br;
+
+                        PluginTree.SelectedNode.Nodes.Add(newNode);
                         GetPluginFromNode(PluginTree.SelectedNode).InvalidateCache();
                     }
                     else
@@ -2425,8 +2425,7 @@ Do you still want to save?", "Modified Save", MessageBoxButtons.YesNo, MessageBo
                 {
                     BaseRecord parent = (BaseRecord)PluginTree.SelectedNode.Parent.Tag;
                     BaseRecord node = (BaseRecord)PluginTree.SelectedNode.Tag;
-                    if (!parent.DeleteRecord(node))
-                        return;
+                    parent.DeleteRecord(node);
                 }
                 GetPluginFromNode(PluginTree.SelectedNode).InvalidateCache();
                 PluginTree.SelectedNode.Remove();
