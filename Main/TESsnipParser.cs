@@ -196,10 +196,14 @@ namespace TESVSnip
         [Persistable]
         public readonly List<Rec> Records = new List<Rec>();
 
+        private string FileName { get; set; }
+        private string StringsFolder { get; set; }
+        private System.IO.FileSystemWatcher fsw;
+
         public bool StringsDirty { get; set; }
-        public readonly LocalizedStringDict Strings = new LocalizedStringDict();
-        public readonly LocalizedStringDict ILStrings = new LocalizedStringDict();
-        public readonly LocalizedStringDict DLStrings = new LocalizedStringDict();
+        public LocalizedStringDict Strings = new LocalizedStringDict();
+        public LocalizedStringDict ILStrings = new LocalizedStringDict();
+        public LocalizedStringDict DLStrings = new LocalizedStringDict();
 
         // Hash tables for quick FormID lookups
         public readonly Dictionary<uint, Record> FormIDLookup = new Dictionary<uint, Record>();
@@ -364,6 +368,8 @@ namespace TESVSnip
             try
             {
                 LoadPluginData(br, false, null);
+
+                this.FileName = System.IO.Path.GetFileNameWithoutExtension(name);
             }
             finally
             {
@@ -375,18 +381,51 @@ namespace TESVSnip
         internal Plugin(string FilePath, bool headerOnly, string[] recFilter)
         {
             Name = Path.GetFileName(FilePath);
-            FileInfo fi = new FileInfo(FilePath);
-            using (BinaryReader br = new BinaryReader(fi.OpenRead()))
+            try
             {
-                LoadPluginData(br, headerOnly, recFilter);
+                FileInfo fi = new FileInfo(FilePath);
+                using (BinaryReader br = new BinaryReader(fi.OpenRead()))
+                {
+                    LoadPluginData(br, headerOnly, recFilter);
+                }
+                this.FileName = System.IO.Path.GetFileNameWithoutExtension(FilePath);
+                if (!headerOnly)
+                {
+                    this.StringsFolder = System.IO.Path.Combine(System.IO.Path.GetDirectoryName(FilePath), "Strings");
+                }
+                ReloadStrings();
             }
-            if (!headerOnly)
+            catch
             {
-                string prefix = System.IO.Path.Combine(System.IO.Path.Combine(System.IO.Path.GetDirectoryName(FilePath), "Strings"), System.IO.Path.GetFileNameWithoutExtension(FilePath));
-                prefix += "_" + global::TESVSnip.Properties.Settings.Default.LocalizationName;
-                Strings = LoadPluginStrings(LocalizedStringFormat.Base, prefix + ".STRINGS");
-                ILStrings = LoadPluginStrings(LocalizedStringFormat.IL, prefix + ".ILSTRINGS");
-                DLStrings = LoadPluginStrings(LocalizedStringFormat.DL, prefix + ".DLSTRINGS");
+            }
+        }
+
+        public void  ReloadStrings()
+        {
+            if (string.IsNullOrEmpty(this.StringsFolder) || string.IsNullOrEmpty(this.FileName))
+                return;
+            string prefix = System.IO.Path.Combine(this.StringsFolder, this.FileName);
+            prefix += "_" + global::TESVSnip.Properties.Settings.Default.LocalizationName;
+            Strings = LoadPluginStrings(LocalizedStringFormat.Base, prefix + ".STRINGS");
+            ILStrings = LoadPluginStrings(LocalizedStringFormat.IL, prefix + ".ILSTRINGS");
+            DLStrings = LoadPluginStrings(LocalizedStringFormat.DL, prefix + ".DLSTRINGS");
+
+            if (global::TESVSnip.Properties.Settings.Default.MonitorStringsFolderForChanges)
+            {
+                if (fsw == null)
+                {
+                    fsw = new System.IO.FileSystemWatcher(this.StringsFolder, this.FileName + "*");
+                    fsw.EnableRaisingEvents = true;
+                    fsw.Changed += delegate(object sender, FileSystemEventArgs e) {
+                        ReloadStrings();
+                    };
+                }
+            }
+            else
+            {
+                if (fsw != null)
+                    fsw.Dispose();
+                fsw = null;
             }
         }
 
@@ -446,11 +485,14 @@ namespace TESVSnip
             var tes4 = this.Records.OfType<Record>().FirstOrDefault(x => x.Name == "TES4");
             if (tes4 != null && (tes4.Flags1 & 0x80) != 0)
             {
-                string prefix = System.IO.Path.Combine(System.IO.Path.Combine(System.IO.Path.GetDirectoryName(FilePath), "Strings"), System.IO.Path.GetFileNameWithoutExtension(FilePath));
-                prefix += "_" + global::TESVSnip.Properties.Settings.Default.LocalizationName;
-                SavePluginStrings(LocalizedStringFormat.Base, Strings, prefix + ".STRINGS");
-                SavePluginStrings(LocalizedStringFormat.IL, ILStrings, prefix + ".ILSTRINGS");
-                SavePluginStrings(LocalizedStringFormat.DL, DLStrings, prefix + ".DLSTRINGS");
+                if (global::TESVSnip.Properties.Settings.Default.SaveStringsFiles)
+                {
+                    string prefix = System.IO.Path.Combine(System.IO.Path.Combine(System.IO.Path.GetDirectoryName(FilePath), "Strings"), System.IO.Path.GetFileNameWithoutExtension(FilePath));
+                    prefix += "_" + global::TESVSnip.Properties.Settings.Default.LocalizationName;
+                    SavePluginStrings(LocalizedStringFormat.Base, Strings, prefix + ".STRINGS");
+                    SavePluginStrings(LocalizedStringFormat.IL, ILStrings, prefix + ".ILSTRINGS");
+                    SavePluginStrings(LocalizedStringFormat.DL, DLStrings, prefix + ".DLSTRINGS");
+                }
             }
             StringsDirty = false;
         }
@@ -527,9 +569,12 @@ namespace TESVSnip
                     case LocalizedStringFormat.IL:
                         len = BitConverter.ToInt32(data, start) - 1;
                         start = start + sizeof(int);
+                        if (start + len > data.Length)
+                            len = data.Length - start;
+                        if (len < 0) len = 0;
                         break;
                 }
-                string str = System.Text.ASCIIEncoding.ASCII.GetString(data, start, len);
+                string str = TESVSnip.Encoding.CP1252.GetString(data, start, len);
                 dict.Add(kvp.Key, str);
             }
             return dict;
@@ -554,7 +599,7 @@ namespace TESVSnip
                 foreach (KeyValuePair<uint, string> kvp in strings)
                 {
                     list.Add(new Pair<uint, uint>(kvp.Key, (uint)stream.Position));
-                    byte[] data = System.Text.ASCIIEncoding.ASCII.GetBytes(kvp.Value);
+                    byte[] data = TESVSnip.Encoding.CP1252.GetBytes(kvp.Value);
                     switch (format)
                     {
                         case LocalizedStringFormat.Base:
@@ -606,12 +651,17 @@ namespace TESVSnip
 		}
 
         [Persistable]
-        private string descriptiveName;
+        protected string descriptiveName;
         public virtual string DescriptiveName
         {
             get { return descriptiveName == null ? Name : (Name + descriptiveName); }
-            set { descriptiveName = value; }
+            //set { descriptiveName = value; }
         }
+        public virtual void SetDescription(string value)
+        {
+            this.descriptiveName = value;
+        }
+        public virtual void UpdateShortDescription() { this.descriptiveName = ""; }
     }
 
     [Persistable(Flags = PersistType.DeclaredOnly), Serializable]
@@ -690,7 +740,7 @@ namespace TESVSnip
             data = br.ReadBytes(4);
             groupType = br.ReadUInt32();
             dateStamp = br.ReadUInt32();
-            string contentType = groupType == 0 ? System.Text.Encoding.ASCII.GetString(data) : "";
+            string contentType = groupType == 0 ? TESVSnip.Encoding.CP1252.GetString(data) : "";
             if (!Oblivion) flags = br.ReadUInt32();
             uint AmountRead = 0;
             while (AmountRead < Size - (Oblivion ? 20 : 24))
@@ -728,19 +778,7 @@ namespace TESVSnip
             {
                 throw new TESParserException("Record block did not match the size specified in the group header");
             }
-            if (groupType == 0)
-            {
-                string name = System.Text.Encoding.ASCII.GetString(data, 0, 4);
-                string desc = string.Format(" ({0})", name);
-                RecordStructure rec;
-                if (RecordStructure.Records.TryGetValue(name, out rec))
-                {
-                    if (rec.description != name)
-                        desc += " - " + rec.description;
-                }
-                DescriptiveName = desc;
-
-            }
+            this.UpdateShortDescription();
         }
 
         public GroupRecord(string data)
@@ -748,17 +786,7 @@ namespace TESVSnip
             Name = "GRUP";
             this.data = new byte[4];
             for (int i = 0; i < 4; i++) this.data[i] = (byte)data[i];
-            string desc = string.Format(" ({0})", data);
-            if (groupType == 0)
-            {
-                RecordStructure rec;
-                if (RecordStructure.Records.TryGetValue(data, out rec))
-                {
-                    if (rec.description != data)
-                        desc += " - " + rec.description;
-                }
-            }
-            DescriptiveName = desc;
+            UpdateShortDescription();
         }
 
         private GroupRecord(GroupRecord gr)
@@ -771,7 +799,7 @@ namespace TESVSnip
             Records = new List<Rec>(gr.Records.Count);
             for (int i = 0; i < gr.Records.Count; i++) Records.Add((Rec)gr.Records[i].Clone());
             Name = gr.Name;
-            DescriptiveName = gr.DescriptiveName;
+            UpdateShortDescription();
         }
 
         private string GetSubDesc()
@@ -873,6 +901,29 @@ namespace TESVSnip
         {
             if (data.Length != 4) throw new ArgumentException("data length must be 4");
             for (int i = 0; i < 4; i++) this.data[i] = data[i];
+        }
+
+        public override void UpdateShortDescription() 
+        {
+            if (groupType == 0)
+            {
+                string data = TESVSnip.Encoding.CP1252.GetString(this.data);
+                string desc = string.Format(" ({0})", data);
+                if (groupType == 0)
+                {
+                    RecordStructure rec;
+                    if (RecordStructure.Records.TryGetValue(data, out rec))
+                    {
+                        if (rec.description != data)
+                            desc += " - " + rec.description;
+                    }
+                }
+                this.descriptiveName = desc;
+            }
+            else
+            {
+                this.descriptiveName = "";
+            }
         }
     }
 
@@ -1007,7 +1058,6 @@ namespace TESVSnip
             Flags3 = r.Flags3;
             FormID = r.FormID;
             Name = r.Name;
-            DescriptiveName = r.DescriptiveName;
             descNameOverride = new Func<string>(DefaultDescriptiveName);
             UpdateShortDescription();
         }
@@ -1030,10 +1080,10 @@ namespace TESVSnip
         public override string DescriptiveName
         {
             get { return descNameOverride(); }
-            set { base.DescriptiveName = value; }
+            //set { base.DescriptiveName = value; }
         }
 
-        void UpdateShortDescription()
+        public override void UpdateShortDescription()
         {
             if (this.Name == "REFR") // temporary hack for references
             {
@@ -1047,7 +1097,7 @@ namespace TESVSnip
                         desc, data.GetValue<float>(0), data.GetValue<float>(4)
                         );
                 }
-                DescriptiveName = desc;
+                this.descriptiveName = desc;
             }
             else if (this.Name == "ACHR") // temporary hack for references
             {
@@ -1060,7 +1110,7 @@ namespace TESVSnip
                         desc, data.GetValue<float>(0), data.GetValue<float>(4)
                         );
                 }
-                DescriptiveName = desc;
+                this.descriptiveName = desc;
             }
             else if (this.Name == "CELL")
             {
@@ -1078,12 +1128,13 @@ namespace TESVSnip
                 {
                     desc = string.Format(" [Interior]\t{0}", desc);
                 }
-                DescriptiveName = desc;
+                this.descriptiveName = desc;
             }
             else
             {
                 var edid = SubRecords.FirstOrDefault(x => x.Name == "EDID");
-                if (edid != null) DescriptiveName = " (" + edid.GetStrData() + ")";
+                if (edid != null) this.descriptiveName = " (" + edid.GetStrData() + ")";
+                else this.descriptiveName = "";
             }
         }
 
@@ -1162,18 +1213,6 @@ namespace TESVSnip
             }
             if (end == null) return start;
             else return start + Environment.NewLine + Environment.NewLine + "[Formatted information]" + Environment.NewLine + end;
-        }
-
-        public override string Name
-        {
-            get
-            {
-                return base.Name;
-            }
-            set
-            {
-                base.Name = value;
-            }
         }
 
         #region Extended Description
@@ -1643,7 +1682,7 @@ namespace TESVSnip
                                     {
                                         int len = TypeConverter.h2s(Data[offset], Data[offset + 1]);
                                         if (!sselem.notininfo)
-                                            s.Append(System.Text.Encoding.ASCII.GetString(Data, offset + 2, len));
+                                            s.Append(TESVSnip.Encoding.CP1252.GetString(Data, offset + 2, len));
                                         offset += (2 + len);
                                     }
                                     break;
@@ -1673,7 +1712,7 @@ namespace TESVSnip
                                 case ElementValueType.Str4:
                                     {
                                         if (!sselem.notininfo)
-                                            s.Append(System.Text.Encoding.ASCII.GetString(Data, offset, 4));
+                                            s.Append(TESVSnip.Encoding.CP1252.GetString(Data, offset, 4));
                                         offset += 4;
                                     }
                                     break;
@@ -2019,7 +2058,7 @@ namespace TESVSnip
                                     {
                                         int len = TypeConverter.h2s(Data[offset], Data[offset + 1]);
                                         if (!sselem.notininfo)
-                                            s.Append(System.Text.Encoding.ASCII.GetString(Data, offset + 2, len));
+                                            s.Append(TESVSnip.Encoding.CP1252.GetString(Data, offset + 2, len));
                                         offset += (2 + len);
                                     }
                                     break;
@@ -2049,7 +2088,7 @@ namespace TESVSnip
                                 case ElementValueType.Str4:
                                     {
                                         if (!sselem.notininfo)
-                                            s.Append(System.Text.Encoding.ASCII.GetString(Data, offset, 4));
+                                            s.Append(TESVSnip.Encoding.CP1252.GetString(Data, offset, 4));
                                         offset += 4;
                                     }
                                     break;

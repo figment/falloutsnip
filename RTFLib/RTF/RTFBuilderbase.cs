@@ -28,49 +28,62 @@ namespace RTF
     /// </summary>
     public abstract class RTFBuilderbase : IDisposable
     {
- 
+
         #region Fields
         private readonly Color _defaultbackcolor;
         private readonly float _defaultFontSize;
         private readonly Color _defaultforecolor;
         protected Color _backcolor;
-        protected List <Color> _colortbl;
+        protected List<Color> _colortbl;
         protected int _firstLineIndent;
         protected int _font;
-        protected  StringCollection _rawFonts;
+        protected StringCollection _rawFonts;
         protected float _fontSize;
         protected FontStyle _fontStyle;
         /// <summary>
         /// 
         /// </summary>
-        protected List <string> _fontTable;
+        protected List<string> _fontTable;
         protected Color _forecolor;
         protected int _lineIndent;
         protected StringFormat _sf;
         protected bool _unwrapped;
         #endregion
         #region Constructor
-        protected RTFBuilderbase(RTFFont  defaultFont, float defaultFontSize)
-        {
+        protected RTFBuilderbase(RTFFont defaultFont, float defaultFontSize)
+            : this(defaultFont, defaultFontSize, 1252, 0)
+        { }
 
+        protected RTFBuilderbase(RTFFont defaultFont, float defaultFontSize, ushort codepage, byte charset)
+        {
             _rawFonts = new StringCollection();
-            this._font = IndexOfFont(defaultFont);
+            this.DefLang = codepage;
+            this._font = IndexOfFont(defaultFont, charset);
             this._defaultFontSize = defaultFontSize;
             this._fontSize = this._defaultFontSize;
             this._defaultforecolor = SystemColors.WindowText;
             this._defaultbackcolor = SystemColors.Window;
-            this._colortbl = new List <Color>();
+            this._colortbl = new List<Color>();
             this._colortbl.Add(this._defaultforecolor);
             this._colortbl.Add(this._defaultbackcolor);
             this._fontStyle = System.Drawing.FontStyle.Regular;
             this._backcolor = this._defaultbackcolor;
             this._forecolor = this._defaultforecolor;
-            this._sf = (StringFormat) StringFormat.GenericDefault.Clone();
+            this._sf = (StringFormat)StringFormat.GenericDefault.Clone();
             this._sf.FormatFlags = StringFormatFlags.NoWrap;
             this._sf.Trimming = StringTrimming.Word;
         }
         #endregion
+
         #region Public Properties
+        
+        public ushort DefLang
+        {
+            [DebuggerStepThroughAttribute]get;
+            [DebuggerStepThroughAttribute]set;
+
+        }
+
         public int Length
         {
             get { return this.LengthInternal(); }
@@ -85,7 +98,7 @@ namespace RTF
             [DebuggerStepThrough]
             get { return this._defaultforecolor; }
         }
-        public List <RTFFont> Fonts
+        public List<RTFFont> Fonts
         {
             [DebuggerStepThrough]
             get { return null; }
@@ -124,7 +137,7 @@ namespace RTF
         protected abstract void AppendPageInternal();
         protected abstract void AppendParaInternal();
         protected abstract void AppendRTFInternal(string rtf);
-        protected abstract IEnumerable <RTFBuilderbase> EnumerateCellsInternal(RTFRowDefinition rowDefinition, RTFCellDefinition[] cellDefinitions);
+        protected abstract IEnumerable<RTFBuilderbase> EnumerateCellsInternal(RTFRowDefinition rowDefinition, RTFCellDefinition[] cellDefinitions);
         public abstract IDisposable FormatLock();
         protected abstract void InsertImageInternal(Image image);
         protected abstract int LengthInternal();
@@ -331,7 +344,7 @@ namespace RTF
         {
             Regex RegexObj = new Regex("\\{\\\\colortbl ;(?<colour>\\\\red(?<red>\\d{0,3})\\\\green(?<green>\\d{0,3})\\\\blue(?<blue>\\d{0,3});)*\\}");
             Match MatchResults = RegexObj.Match(rtf);
-            Dictionary <int, int> replaces = new Dictionary <int, int>();
+            Dictionary<int, int> replaces = new Dictionary<int, int>();
             while (MatchResults.Success)
             {
                 Group GroupObj = MatchResults.Groups["red"];
@@ -360,38 +373,40 @@ namespace RTF
             if (replaces.Count > 0)
             {
 
-                    //delegate string MatchEvaluator(System.Text.RegularExpressions.Match match)
-                    rtf = Regex.Replace(rtf, "(?:\\\\cf)([0-9]{1,2})", delegate(Match match)
-                                                                           {
-                                                                               int val;
-                                                                               if (int.TryParse(match.Groups[1].Value, out val) && val > 0)
-                                                                               {
-                                                                                       if (replaces.ContainsKey(val))
-                                                                                       {
-                                                                                           return string.Format(@"\cf{0}", replaces[val]);
-                                                                                       }
-                                                                               }
-                                                                               return match.Value;
-                                                                           });
+                //delegate string MatchEvaluator(System.Text.RegularExpressions.Match match)
+                rtf = Regex.Replace(rtf, "(?:\\\\cf)([0-9]{1,2})",
+                    delegate(Match match)
+                    {
+                        int val;
+                        if (int.TryParse(match.Groups[1].Value, out val) && val > 0)
+                        {
+                            if (replaces.ContainsKey(val))
+                            {
+                                return string.Format(@"\cf{0}", replaces[val]);
+                            }
+                        }
+                        return match.Value;
+                    });
 
-                    //delegate string MatchEvaluator(System.Text.RegularExpressions.Match match)
-                    rtf = Regex.Replace(rtf, "(?:\\\\highlight)([0-9]{1,2})", delegate(Match match)
-                                                                           {
-                                                                               int val;
-                                                                               if (int.TryParse(match.Groups[1].Value, out val) && val > 0)
-                                                                               {
-                                                                                       if (replaces.ContainsKey(val))
-                                                                                       {
-                                                                                           return string.Format(@"\highlight{0}", replaces[val]);
-                                                                                       }
-                                                                               }
-                                                                               return match.Value;
-                                                                           });
+                //delegate string MatchEvaluator(System.Text.RegularExpressions.Match match)
+                rtf = Regex.Replace(rtf, "(?:\\\\highlight)([0-9]{1,2})",
+                    delegate(Match match)
+                    {
+                        int val;
+                        if (int.TryParse(match.Groups[1].Value, out val) && val > 0)
+                        {
+                            if (replaces.ContainsKey(val))
+                            {
+                                return string.Format(@"\highlight{0}", replaces[val]);
+                            }
+                        }
+                        return match.Value;
+                    });
 
             }
             return rtf;
         }
-     
+
         private string GetFontsFromRtf(string rtf)
         {
             // Regex that almost works for MS Word
@@ -400,17 +415,17 @@ namespace RTF
             Match MatchResults = RegexObj.Match(rtf);
             Dictionary<int, int> replaces = new Dictionary<int, int>();
             Group GroupObj = MatchResults.Groups["raw"];
-            for (int i = 0; i <GroupObj.Captures.Count;i++)
+            for (int i = 0; i < GroupObj.Captures.Count; i++)
             {
                 string raw = GroupObj.Captures[i].Value;
                 //string font = MatchResults.Groups["FONT"].Captures[newdocindex].Value;
-                Capture cap =MatchResults.Groups["findex"].Captures[i];
-     
+                Capture cap = MatchResults.Groups["findex"].Captures[i];
+
                 //have to replace findex with {0}
-                raw =string.Concat( "{", Regex.Replace(raw, "\\{\\\\f\\d{1,3}", "{\\f{0}"),"}");
- 
+                raw = string.Concat("{", Regex.Replace(raw, @"\{\\f\d{1,3}", @"{\f{0}"), "}");
+
                 string curdocstringindex = MatchResults.Groups["findex"].Captures[i].Value;
-                
+
 
                 int sourceindex;
                 if (int.TryParse(curdocstringindex, out sourceindex))
@@ -425,21 +440,19 @@ namespace RTF
             }
             if (replaces.Count > 0)
             {
-
-
-                        rtf = Regex.Replace(rtf, "(?<!\\{)(\\\\f)(\\d{1,3})( ?|\\\\)", match => 
+                rtf = Regex.Replace(rtf, @"(?<!\{)(\\f)(\d{1,3})( ?|\\)", match =>
+                {
+                    int sourceindex2;
+                    if (int.TryParse(match.Groups[2].Value, out sourceindex2))
+                    {
+                        if (replaces.ContainsKey(sourceindex2))
                         {
-                            int sourceindex2;
-                            if (int.TryParse(match.Groups[2].Value, out sourceindex2))
-                            {
-                                if (replaces.ContainsKey(sourceindex2))
-                                {
-                                    string rep=  string.Format("\\f{0}{1}", replaces[sourceindex2], match.Groups[3].Value);
-                                   return rep;
-                                }
-                            } 
-                            return match.Value;
-                        });
+                            string rep = string.Format(@"\f{0}{1}", replaces[sourceindex2], match.Groups[3].Value);
+                            return rep;
+                        }
+                    }
+                    return match.Value;
+                });
 
             }
             return rtf;
@@ -449,10 +462,23 @@ namespace RTF
         /// </summary>
         /// <param name="font">The font.</param>
         /// <returns></returns>
-        public int IndexOfFont(RTFFont  font)
+        public int IndexOfFont(RTFFont font)
         {
-           return IndexOfRawFont(RTFBuilder.RawFonts.GetKnownFontstring(font));
+            return IndexOfFont(font, 0);
         }
+
+        /// <summary>
+        /// Indexes the of font.
+        /// </summary>
+        /// <param name="font">The font.</param>
+        /// <returns></returns>
+        public int IndexOfFont(RTFFont font, byte charset)
+        {
+            string s = RTFBuilder.RawFonts.GetKnownFontstring(font);
+            if (charset != 0) s = s.Replace(@"\fcharset0 ", @"\fcharset" + charset.ToString());
+            return IndexOfRawFont(s);
+        }
+
         private int IndexOfRawFont(string font)
         {
             if (!string.IsNullOrEmpty(font))
@@ -486,15 +512,15 @@ namespace RTF
             // You can vary the replacement text for each match on-the-fly
             return "";
         }
-        public IEnumerable <RTFBuilderbase> EnumerateCells(RTFRowDefinition rowDefinition, RTFCellDefinition[] cellDefinitions)
+        public IEnumerable<RTFBuilderbase> EnumerateCells(RTFRowDefinition rowDefinition, RTFCellDefinition[] cellDefinitions)
         {
             return this.EnumerateCellsInternal(rowDefinition, cellDefinitions);
         }
         [DebuggerStepThrough]
         public RTFBuilderbase Font(RTFFont font)
         {
-           this._font = IndexOfFont(font);
-           return this;
+            this._font = IndexOfFont(font);
+            return this;
         }
         [DebuggerStepThrough]
         public RTFBuilderbase Font(int index)

@@ -227,7 +227,7 @@ namespace TESVSnip
                     case ElementValueType.BString:
                         {
                             int len = TypeConverter.h2s(data[offset], data[offset + 1]);
-                            string s = System.Text.Encoding.ASCII.GetString(data, offset + 2, len);
+                            string s = TESVSnip.Encoding.CP1252.GetString(data, offset + 2, len);
                             offset = offset + (2 + len);
                             tb.Text = s;
                             tb.Width += 200;
@@ -260,7 +260,7 @@ namespace TESVSnip
                         } break;
                     case ElementValueType.Str4:
                         {
-                            string s = System.Text.Encoding.ASCII.GetString(data, offset, 4);
+                            string s = TESVSnip.Encoding.CP1252.GetString(data, offset, 4);
                             offset += 4;
                             tb.MaxLength = 4;
                             tb.Text = s;

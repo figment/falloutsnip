@@ -99,7 +99,7 @@ namespace ScriptCompiler {
                 this.end=end;
                 this.precedence=precedence;
                 //this.rtl=rtl;
-                this.opcode=System.Text.Encoding.ASCII.GetBytes(opcode);
+                this.opcode=TESVSnip.Encoding.CP1252.GetBytes(opcode);
             }
         }
 
@@ -549,7 +549,7 @@ namespace ScriptCompiler {
             case TokenType.Float:
             case TokenType.Integer:
                 if(type==ExpressionType.Ref&&t.token!="0") AddError("A reference assignment must consist of a single edid or function");
-                bw.Write(System.Text.Encoding.ASCII.GetBytes(t.token));
+                bw.Write(TESVSnip.Encoding.CP1252.GetBytes(t.token));
                 break;
             case TokenType.Function:
                 //FunctionSig fs=functionList[t.token];
@@ -1225,7 +1225,7 @@ namespace ScriptCompiler {
             sr.Name="EDID";
             sr.SetStrData(smt[1].utoken, true);
             r.AddRecord(sr);
-            r.DescriptiveName=" ("+smt[1].token+")";
+            r.UpdateShortDescription();
             schr=new SubRecord();
             schr.Name="SCHR";
             r.AddRecord(schr);

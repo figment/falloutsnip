@@ -3,8 +3,10 @@ using System.Windows.Forms;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using System.IO;
 using System.Drawing;
 using System.Drawing.Drawing2D;
+using Microsoft.Win32;
 using TESVSnip.Windows.Controls;
 
 namespace TESVSnip
@@ -19,6 +21,9 @@ namespace TESVSnip
     {
         private static object s_clipboard;
         private static TreeNode s_clipboardNode;
+        
+        static readonly System.Text.Encoding s_CP1252Encoding = System.Text.Encoding.GetEncoding(1252);
+
         private SelectionContext Selection;
         private Plugin[] FormIDLookup;
         private uint[] Fixups;
@@ -107,6 +112,7 @@ namespace TESVSnip
             noWindowsSoundsToolStripMenuItem.Checked = global::TESVSnip.Properties.Settings.Default.NoWindowsSounds;
             disableHyperlinksToolStripMenuItem.Checked = global::TESVSnip.Properties.Settings.Default.DisableHyperlinks;
             this.rtfInfo.DetectUrls = !global::TESVSnip.Properties.Settings.Default.DisableHyperlinks;
+            saveStringsFilesToolStripMenuItem.Checked = global::TESVSnip.Properties.Settings.Default.SaveStringsFiles;
 
             Selection = new SelectionContext();
             Selection.formIDLookup = new dFormIDLookupI(LookupFormIDI);
@@ -115,6 +121,7 @@ namespace TESVSnip
 
             UpdateToolStripSelection();
             InitializeToolStripRecords();
+            InitializeLanguage();
 
             Selection.RecordChanged += delegate(object o, EventArgs a) { UpdateToolStripSelection(); };
             Selection.SubRecordChanged += delegate(object o, EventArgs a) { UpdateToolStripSelection(); };
@@ -416,13 +423,13 @@ Would you like to apply the record exclusions?"
                         case ElementValueType.BString:
                             {
                                 int len = TypeConverter.h2s(data[offset], data[offset + 1]);
-                                string s = System.Text.Encoding.ASCII.GetString(data, offset + 2, len);
+                                string s = TESVSnip.Encoding.CP1252.GetString(data, offset + 2, len);
                                 offset = offset + (2 + len);
                                 conditions[essCondID] = new Conditional(ElementValueType.String, s);
                             } break;
                         case ElementValueType.Str4:
                             {
-                                string s = System.Text.Encoding.ASCII.GetString(data, offset, 4);
+                                string s = TESVSnip.Encoding.CP1252.GetString(data, offset, 4);
                                 offset += 4;
                                 conditions[essCondID] = new Conditional(ElementValueType.String, s);
                             } break;
@@ -1150,7 +1157,7 @@ Do you still want to save?", "Modified Save", MessageBoxButtons.YesNo, MessageBo
             r.AddRecord(sr);
             sr = new SubRecord();
             sr.Name = "CNAM";
-            sr.SetData(System.Text.Encoding.ASCII.GetBytes("Default\0"));
+            sr.SetData(TESVSnip.Encoding.CP1252.GetBytes("Default\0"));
             r.AddRecord(sr);
             p.AddRecord(r);
             TreeNode tn = new SnipTreeNode(p.Name);
@@ -1325,7 +1332,7 @@ Do you still want to save?", "Modified Save", MessageBoxButtons.YesNo, MessageBo
                     UpdateMainText(sr.GetFormattedData(context));
                     if (sr.Name == "EDID" && listSubrecord.SelectedIndices[0] == 0)
                     {
-                        context.Record.DescriptiveName = " (" + sr.GetStrData() + ")";
+                        context.Record.SetDescription(" (" + sr.GetStrData() + ")");
                         PluginTree.SelectedNode.Text = context.Record.DescriptiveName;
                     }
                     //listSubrecord.SelectedItems[0].SubItems[1].Text = sr.Size.ToString() + " *";
@@ -1358,7 +1365,7 @@ Do you still want to save?", "Modified Save", MessageBoxButtons.YesNo, MessageBo
             MatchRecordStructureToRecord();
             if (sr.Name == "EDID" && listSubrecord.SelectedIndices[0] == 0)
             {
-                context.Record.DescriptiveName = " (" + sr.GetStrData() + ")";
+                context.Record.UpdateShortDescription();
                 PluginTree.SelectedNode.Text = context.Record.DescriptiveName;
             }
         }
@@ -1383,7 +1390,7 @@ Do you still want to save?", "Modified Save", MessageBoxButtons.YesNo, MessageBo
                 MatchRecordStructureToRecord();
                 if (sr.Name == "EDID" && listSubrecord.SelectedIndices[0] == 0)
                 {
-                    Selection.Record.DescriptiveName = " (" + sr.GetStrData() + ")";
+                    Selection.Record.UpdateShortDescription();
                     PluginTree.SelectedNode.Text = Selection.Record.DescriptiveName;
                 }
             }
@@ -2431,11 +2438,11 @@ Do you still want to save?", "Modified Save", MessageBoxButtons.YesNo, MessageBo
             }
             else
             {
-                //var sb = new System.Text.StringBuilder();
-                //rec.GetFormattedData(sb, GetSelectedContext());
-                //tbInfo.Text = sb.ToString();
+                FontLangInfo defLang;
+                if (!defLangMap.TryGetValue(global::TESVSnip.Properties.Settings.Default.LocalizationName, out defLang))
+                    defLang = new FontLangInfo(1252, 1033, 0);
 
-                var rb = new RTF.RTFBuilder(16);
+                var rb = new RTF.RTFBuilder(RTF.RTFFont.Arial, 16, defLang.lcid, defLang.charset);
                 rec.GetFormattedData(rb, GetSelectedContext());
                 rtfInfo.Rtf = rb.ToString();
             }
@@ -2661,5 +2668,215 @@ Do you still want to save?", "Modified Save", MessageBoxButtons.YesNo, MessageBo
             }
         }
         #endregion
+
+        private void russianToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        #region String Tools
+        internal struct FontLangInfo
+        {
+            public readonly ushort CodePage;
+            public readonly ushort lcid;
+            public readonly byte charset;
+            public FontLangInfo(ushort CodePage, ushort lcid, byte charset)
+            {
+                this.CodePage = CodePage;
+                this.lcid = lcid;
+                this.charset = charset;
+            }
+        }
+        internal  Dictionary<string, ToolStripMenuItem> languageToolBarItems = new Dictionary<string, ToolStripMenuItem>(StringComparer.InvariantCultureIgnoreCase);
+        internal Dictionary<string, FontLangInfo> defLangMap = new Dictionary<string, FontLangInfo>(StringComparer.InvariantCultureIgnoreCase);
+        
+        void InitializeLanguage()
+        {
+            languageToolBarItems.Add("English", englishToolStripMenuItem);
+            languageToolBarItems.Add("Czech", czechToolStripMenuItem);
+            languageToolBarItems.Add("French", frenchToolStripMenuItem);
+            languageToolBarItems.Add("German", germanToolStripMenuItem);
+            languageToolBarItems.Add("Italian", italianToolStripMenuItem);
+            languageToolBarItems.Add("Spanish", spanishToolStripMenuItem);
+            languageToolBarItems.Add("Russian", russianToolStripMenuItem);
+            defLangMap.Add("English", new FontLangInfo(1252,1033,0));
+            defLangMap.Add("Czech", new FontLangInfo(1252, 1029, 238));
+            defLangMap.Add("French", new FontLangInfo(1252, 1036, 0));
+            defLangMap.Add("German", new FontLangInfo(1252, 1031, 0));
+            defLangMap.Add("Italian", new FontLangInfo(1252, 1040, 0));
+            defLangMap.Add("Spanish", new FontLangInfo(1252, 1034, 0));
+            defLangMap.Add("Russian", new FontLangInfo(1252, 1049, 204));
+        }
+
+        void ReloadLanguageFiles()
+        {
+            foreach ( var p in this.PluginTree.Nodes.OfType<TreeNode>().Select( x => x.Tag as Plugin).OfType<Plugin>() )
+            {
+                if (p != null) p.ReloadStrings();
+            }
+        }
+
+        private void languageToolStripMenuItem_DropDownOpening(object sender, EventArgs e)
+        {
+            foreach (var kvp in languageToolBarItems)
+                kvp.Value.Checked = string.Compare(kvp.Key, global::TESVSnip.Properties.Settings.Default.LocalizationName, true) == 0;
+        }
+
+        private void languageToolStripMenuItem_DropDownItemClicked(object sender, ToolStripItemClickedEventArgs e)
+        {
+            foreach( var kvp in languageToolBarItems)
+            {
+                if ( e.ClickedItem == kvp.Value)
+                {
+                    if ( global::TESVSnip.Properties.Settings.Default.LocalizationName != kvp.Key )
+                    {
+                        global::TESVSnip.Properties.Settings.Default.LocalizationName = kvp.Key;
+                        ReloadLanguageFiles();
+                    }
+                    break;
+                }
+            }
+        }
+
+        private void stringLocalizerToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if (string.IsNullOrEmpty(global::TESVSnip.Properties.Settings.Default.SkyrimLocalizerPath) ||
+                !System.IO.File.Exists(global::TESVSnip.Properties.Settings.Default.SkyrimLocalizerPath))
+            {
+                var result = MessageBox.Show(this, "Skyrim String Localizer is not found.\nWould you like to browse for it?"
+                    , "Program Not Found", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+                if (result == DialogResult.No)
+                    return;
+
+                using (var dlg = new System.Windows.Forms.OpenFileDialog())
+                {
+                    dlg.Title = "Select Record Structure XML To Merge";
+                    dlg.FileName = "Skyrim String Localizer.exe";
+                    if (dlg.ShowDialog() != DialogResult.OK)
+                        return;
+                    global::TESVSnip.Properties.Settings.Default.SkyrimLocalizerPath = dlg.FileName;
+                }
+            }
+            if (System.IO.File.Exists(global::TESVSnip.Properties.Settings.Default.SkyrimLocalizerPath))
+            {
+                try
+                {
+                    using (System.Diagnostics.Process p = new System.Diagnostics.Process())
+                    {
+                        System.Diagnostics.ProcessStartInfo startInfo = new System.Diagnostics.ProcessStartInfo(global::TESVSnip.Properties.Settings.Default.SkyrimLocalizerPath);
+                        p.StartInfo = startInfo;
+                        p.Start();
+                    }
+                }
+                catch (System.Exception ex)
+                {
+                    MessageBox.Show(ex.ToString(), "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }
+            }
+        }
+
+        private void toolsToolStripMenuItem_DropDownOpening(object sender, EventArgs e)
+        {
+            bool found = false;
+            //stringLocalizerToolStripMenuItem.Enabled = false;
+            if (!string.IsNullOrEmpty(global::TESVSnip.Properties.Settings.Default.SkyrimLocalizerPath))
+            {
+                if (System.IO.File.Exists(global::TESVSnip.Properties.Settings.Default.SkyrimLocalizerPath))
+                {
+                    found = true;
+                }
+            }
+            if (found)
+            {
+                stringLocalizerToolStripMenuItem.ToolTipText = "Open the Skyrim String Localizer...";
+            }
+            else
+            {
+                stringLocalizerToolStripMenuItem.ToolTipText = "Skyrim String Localizer is not found.  Select to browse for it...";
+            }
+        }
+
+        private static int SearchPath(string lpPath, string lpFileName, string lpExtension, out string lpBuffer, out string lpFilePart)
+        {
+            List<string> pathsToSearch = new List<string>();
+            lpBuffer = "";
+            lpFilePart = "";
+
+            if (lpPath == null)
+            {
+                string currentWorkingFolder = Environment.CurrentDirectory;
+                string path = System.Environment.GetEnvironmentVariable("path");
+
+                RegistryKey key = Registry.LocalMachine.OpenSubKey("SYSTEM\\CurrentControlSet\\Control\\Session Manager");
+                object safeProcessSearchModeObject = key.GetValue("SafeProcessSearchMode");
+                if (safeProcessSearchModeObject != null)
+                {
+                    int safeProcessSearchMode = (int)safeProcessSearchModeObject;
+                    if (safeProcessSearchMode == 1)
+                    {
+                        // When the value of this registry key is set to "1", 
+                        // SearchPath first searches the folders that are specified in the system path, 
+                        // and then searches the current working folder. 
+                        pathsToSearch.AddRange(Environment.GetEnvironmentVariable("PATH").Split(new char[] { Path.PathSeparator }, StringSplitOptions.None));
+                        pathsToSearch.Add(currentWorkingFolder);
+                    }
+                    else
+                    {
+                        // When the value of this registry entry is set to "0", 
+                        // the computer first searches the current working folder, 
+                        // and then searches the folders that are specified in the system path. 
+                        // The system default value for this registry key is "0".
+                        pathsToSearch.Add(currentWorkingFolder);
+                        pathsToSearch.AddRange(Environment.GetEnvironmentVariable("PATH").Split(new char[] { Path.PathSeparator }, StringSplitOptions.None));
+                    }
+                }
+                else
+                {
+                    // Default 0 case
+                    pathsToSearch.Add(currentWorkingFolder);
+                    pathsToSearch.AddRange(Environment.GetEnvironmentVariable("PATH").Split(new char[] { Path.PathSeparator }, StringSplitOptions.None));
+                }
+            }
+            else
+            {
+                // Path was provided, use it
+                pathsToSearch.Add(lpPath);
+            }
+
+            FileInfo foundFile = SearchPath(pathsToSearch, lpExtension, lpFileName);
+            if (foundFile != null)
+            {
+                lpBuffer = Path.Combine(foundFile.DirectoryName, foundFile.Name);
+                lpFilePart = foundFile.Name;
+
+            }
+
+            return lpBuffer.Length;
+        }
+
+        private static FileInfo SearchPath(List<string> paths, string extension, string fileNamePart)
+        {
+            string fileName = fileNamePart + extension;
+            foreach (string path in paths)
+            {
+                DirectoryInfo dir = new DirectoryInfo(path);
+                var fileInfo = dir.GetFiles().Where(file => string.Compare(file.Name, fileName, true) == 0);
+                if (fileInfo.Any())
+                    return fileInfo.First();
+            }
+            return null;
+        }
+        #endregion
+
+        private void saveStringsFilesToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            global::TESVSnip.Properties.Settings.Default.SaveStringsFiles =
+            saveStringsFilesToolStripMenuItem.Checked = !saveStringsFilesToolStripMenuItem.Checked;
+        }
+
+        private void reloadStringsToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            ReloadLanguageFiles();
+        }
     }
 }

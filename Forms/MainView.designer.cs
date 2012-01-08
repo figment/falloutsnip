@@ -54,6 +54,19 @@ namespace TESVSnip {
             this.noWindowsSoundsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.disableHyperlinksToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.eSMFilterSettingsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.languageToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.englishToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.czechToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.frenchToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.germanToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.italianToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.spanishToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.russianToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.editStringsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.saveStringsFilesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.stringLocalizerToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.reloadStringsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.spellsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.sanitizeToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.stripEDIDsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -69,7 +82,6 @@ namespace TESVSnip {
             this.createRecordStructureXmlToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.mergeRecordsXMLToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.reorderSubrecordsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.editStringsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.OpenModDialog = new System.Windows.Forms.OpenFileDialog();
             this.SaveModDialog = new System.Windows.Forms.SaveFileDialog();
             this.SaveEdidListDialog = new System.Windows.Forms.SaveFileDialog();
@@ -153,6 +165,7 @@ namespace TESVSnip {
             this.fileToolStripMenuItem,
             this.editToolStripMenuItem,
             this.optionsToolStripMenuItem,
+            this.toolsToolStripMenuItem,
             this.spellsToolStripMenuItem});
             this.menuStrip1.Location = new System.Drawing.Point(0, 0);
             this.menuStrip1.Name = "menuStrip1";
@@ -407,6 +420,105 @@ namespace TESVSnip {
             this.eSMFilterSettingsToolStripMenuItem.Text = "ESM &Filter Settings...";
             this.eSMFilterSettingsToolStripMenuItem.Click += new System.EventHandler(this.eSMFilterSettingsToolStripMenuItem_Click);
             // 
+            // toolsToolStripMenuItem
+            // 
+            this.toolsToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.languageToolStripMenuItem,
+            this.editStringsToolStripMenuItem,
+            this.saveStringsFilesToolStripMenuItem,
+            this.stringLocalizerToolStripMenuItem,
+            this.reloadStringsToolStripMenuItem});
+            this.toolsToolStripMenuItem.Name = "toolsToolStripMenuItem";
+            this.toolsToolStripMenuItem.Size = new System.Drawing.Size(48, 20);
+            this.toolsToolStripMenuItem.Text = "&Tools";
+            this.toolsToolStripMenuItem.DropDownOpening += new System.EventHandler(this.toolsToolStripMenuItem_DropDownOpening);
+            // 
+            // languageToolStripMenuItem
+            // 
+            this.languageToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.englishToolStripMenuItem,
+            this.czechToolStripMenuItem,
+            this.frenchToolStripMenuItem,
+            this.germanToolStripMenuItem,
+            this.italianToolStripMenuItem,
+            this.spanishToolStripMenuItem,
+            this.russianToolStripMenuItem});
+            this.languageToolStripMenuItem.Name = "languageToolStripMenuItem";
+            this.languageToolStripMenuItem.Size = new System.Drawing.Size(212, 22);
+            this.languageToolStripMenuItem.Text = "String &Language";
+            this.languageToolStripMenuItem.DropDownOpening += new System.EventHandler(this.languageToolStripMenuItem_DropDownOpening);
+            this.languageToolStripMenuItem.DropDownItemClicked += new System.Windows.Forms.ToolStripItemClickedEventHandler(this.languageToolStripMenuItem_DropDownItemClicked);
+            // 
+            // englishToolStripMenuItem
+            // 
+            this.englishToolStripMenuItem.Name = "englishToolStripMenuItem";
+            this.englishToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.englishToolStripMenuItem.Text = "&English";
+            // 
+            // czechToolStripMenuItem
+            // 
+            this.czechToolStripMenuItem.Name = "czechToolStripMenuItem";
+            this.czechToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.czechToolStripMenuItem.Text = "&Czech";
+            // 
+            // frenchToolStripMenuItem
+            // 
+            this.frenchToolStripMenuItem.Name = "frenchToolStripMenuItem";
+            this.frenchToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.frenchToolStripMenuItem.Text = "&French";
+            // 
+            // germanToolStripMenuItem
+            // 
+            this.germanToolStripMenuItem.Name = "germanToolStripMenuItem";
+            this.germanToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.germanToolStripMenuItem.Text = "&German";
+            // 
+            // italianToolStripMenuItem
+            // 
+            this.italianToolStripMenuItem.Name = "italianToolStripMenuItem";
+            this.italianToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.italianToolStripMenuItem.Text = "&Italian";
+            // 
+            // spanishToolStripMenuItem
+            // 
+            this.spanishToolStripMenuItem.Name = "spanishToolStripMenuItem";
+            this.spanishToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.spanishToolStripMenuItem.Text = "&Spanish";
+            // 
+            // russianToolStripMenuItem
+            // 
+            this.russianToolStripMenuItem.Name = "russianToolStripMenuItem";
+            this.russianToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.russianToolStripMenuItem.Text = "&Russian";
+            // 
+            // editStringsToolStripMenuItem
+            // 
+            this.editStringsToolStripMenuItem.Name = "editStringsToolStripMenuItem";
+            this.editStringsToolStripMenuItem.Size = new System.Drawing.Size(212, 22);
+            this.editStringsToolStripMenuItem.Text = "&Edit Strings...";
+            this.editStringsToolStripMenuItem.Click += new System.EventHandler(this.editStringsToolStripMenuItem_Click);
+            // 
+            // saveStringsFilesToolStripMenuItem
+            // 
+            this.saveStringsFilesToolStripMenuItem.Name = "saveStringsFilesToolStripMenuItem";
+            this.saveStringsFilesToolStripMenuItem.Size = new System.Drawing.Size(212, 22);
+            this.saveStringsFilesToolStripMenuItem.Text = "Enable Saving Strings Files";
+            this.saveStringsFilesToolStripMenuItem.Click += new System.EventHandler(this.saveStringsFilesToolStripMenuItem_Click);
+            // 
+            // stringLocalizerToolStripMenuItem
+            // 
+            this.stringLocalizerToolStripMenuItem.Name = "stringLocalizerToolStripMenuItem";
+            this.stringLocalizerToolStripMenuItem.Size = new System.Drawing.Size(212, 22);
+            this.stringLocalizerToolStripMenuItem.Text = "&String Localizer...";
+            this.stringLocalizerToolStripMenuItem.Click += new System.EventHandler(this.stringLocalizerToolStripMenuItem_Click);
+            // 
+            // reloadStringsToolStripMenuItem
+            // 
+            this.reloadStringsToolStripMenuItem.Name = "reloadStringsToolStripMenuItem";
+            this.reloadStringsToolStripMenuItem.Size = new System.Drawing.Size(212, 22);
+            this.reloadStringsToolStripMenuItem.Text = "&Reload Strings";
+            this.reloadStringsToolStripMenuItem.Click += new System.EventHandler(this.reloadStringsToolStripMenuItem_Click);
+            // 
             // spellsToolStripMenuItem
             // 
             this.spellsToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
@@ -423,8 +535,7 @@ namespace TESVSnip {
             this.martigensToolStripMenuItem,
             this.createRecordStructureXmlToolStripMenuItem,
             this.mergeRecordsXMLToolStripMenuItem,
-            this.reorderSubrecordsToolStripMenuItem,
-            this.editStringsToolStripMenuItem});
+            this.reorderSubrecordsToolStripMenuItem});
             this.spellsToolStripMenuItem.Name = "spellsToolStripMenuItem";
             this.spellsToolStripMenuItem.Size = new System.Drawing.Size(49, 20);
             this.spellsToolStripMenuItem.Text = "&Spells";
@@ -530,13 +641,6 @@ namespace TESVSnip {
             this.reorderSubrecordsToolStripMenuItem.Text = "Reorder Subrecords";
             this.reorderSubrecordsToolStripMenuItem.ToolTipText = "Attempt to restucture the Current Subrecord to match XML";
             this.reorderSubrecordsToolStripMenuItem.Click += new System.EventHandler(this.reorderSubrecordsToolStripMenuItem_Click);
-            // 
-            // editStringsToolStripMenuItem
-            // 
-            this.editStringsToolStripMenuItem.Name = "editStringsToolStripMenuItem";
-            this.editStringsToolStripMenuItem.Size = new System.Drawing.Size(264, 22);
-            this.editStringsToolStripMenuItem.Text = "Edit &Strings";
-            this.editStringsToolStripMenuItem.Click += new System.EventHandler(this.editStringsToolStripMenuItem_Click);
             // 
             // OpenModDialog
             // 
@@ -1268,7 +1372,6 @@ namespace TESVSnip {
         private System.Windows.Forms.ToolStripMenuItem generateLLXmlToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem makeEsmToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem martigensToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem editStringsToolStripMenuItem;
         private System.Windows.Forms.ToolStrip toolStripSubRecord;
         private System.Windows.Forms.ToolStripButton toolStripInsertRecord;
         private System.Windows.Forms.ToolStripButton toolStripDeleteRecord;
@@ -1333,5 +1436,18 @@ namespace TESVSnip {
         private System.Windows.Forms.ToolStripMenuItem disableHyperlinksToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem historyNextToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem historyBackToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem toolsToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem languageToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem englishToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem czechToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem frenchToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem germanToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem italianToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem spanishToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem russianToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem editStringsToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem stringLocalizerToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem reloadStringsToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem saveStringsFilesToolStripMenuItem;
     }
 }

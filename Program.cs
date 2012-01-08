@@ -83,4 +83,14 @@ namespace TESVSnip
             Properties.Settings.Default.Save();
         }
     }
+
+    internal static class Encoding
+    {
+        static readonly System.Text.Encoding s_CP1252Encoding = System.Text.Encoding.GetEncoding(1252);
+
+        internal static System.Text.Encoding CP1252
+        {
+            get { return s_CP1252Encoding; }
+        }
+    }
 }

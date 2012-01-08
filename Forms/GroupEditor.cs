@@ -89,7 +89,7 @@ namespace TESVSnip {
             byte[] data;
             switch(cmbGroupType.SelectedIndex) {
             case 0:
-                data=System.Text.Encoding.ASCII.GetBytes(tbRecType.Text);
+                data=TESVSnip.Encoding.CP1252.GetBytes(tbRecType.Text);
                 break;
             case 2:
             case 3:

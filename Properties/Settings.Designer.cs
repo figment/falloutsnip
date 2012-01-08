@@ -226,5 +226,41 @@ namespace TESVSnip.Properties {
                 this["LocalizationName"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("Skyrim String Localizer.exe")]
+        public string SkyrimLocalizerPath {
+            get {
+                return ((string)(this["SkyrimLocalizerPath"]));
+            }
+            set {
+                this["SkyrimLocalizerPath"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool SaveStringsFiles {
+            get {
+                return ((bool)(this["SaveStringsFiles"]));
+            }
+            set {
+                this["SaveStringsFiles"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("True")]
+        public bool MonitorStringsFolderForChanges {
+            get {
+                return ((bool)(this["MonitorStringsFolderForChanges"]));
+            }
+            set {
+                this["MonitorStringsFolderForChanges"] = value;
+            }
+        }
     }
 }

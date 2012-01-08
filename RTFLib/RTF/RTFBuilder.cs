@@ -31,13 +31,27 @@ namespace RTF
     {
         #region Fields
 
-        private static readonly char[] slashable = new[] {'{', '}', '\\'};
-
+        private static readonly char[] toHex = "0123456789ABCDEF".ToCharArray();
+        private static readonly char[][] charEscape;
+        private static System.Text.Encoding CP1252 ;
         private readonly StringBuilder _sb;
 
         #endregion
 
         #region Constructor
+        static RTFBuilder()
+        {
+            charEscape = new char[256][];
+            for (int i = 0x00; i < 0x20; ++i) charEscape[i] = new char[] {'\\', '\'', toHex[i>>4], toHex[(i&0xF)]};
+            for (int i = 0x20; i < 0x80; ++i) charEscape[i] = new char[] {(char)i};
+            for (int i = 0x80; i < 0x100; ++i) charEscape[i] = new char[] {'\\', '\'', toHex[i>>4], toHex[(i&0xF)]};
+            charEscape[0x5C] = new char[] {'\\', '\'', toHex[0x5], toHex[0xC]};
+            charEscape[0x7B] = new char[] {'\\', '\'', toHex[0x7], toHex[0xB]};
+            charEscape[0x7D] = new char[] {'\\', '\'', toHex[0x7], toHex[0xD]};
+            charEscape['\n'] = @"\line ".ToCharArray();
+            charEscape['\r'] = new char[0];
+            CP1252 = System.Text.Encoding.GetEncoding(1252);
+        }
 
         public RTFBuilder()
             : base(RTFFont.Arial , 20F)
@@ -60,6 +74,12 @@ namespace RTF
             this._sb = new StringBuilder();
         }
 
+        public RTFBuilder(RTFFont defaultFont, float defaultFontSize, ushort codepage, byte charset)
+            : base(defaultFont, defaultFontSize, codepage, charset)
+        {
+            this._sb = new StringBuilder();
+        }
+
         #endregion
 
         #region Override Methods
@@ -70,19 +90,12 @@ namespace RTF
             {
                 using (new RTFFormatWrap(this))
                 {
-                    value = this.CheckChar(value);
-                    if (value.IndexOf(Environment.NewLine) >= 0)
+                    foreach (char c in value)
                     {
-                        string[] lines = value.Split(new[] {Environment.NewLine}, StringSplitOptions.None);
-                        foreach (string line in lines)
-                        {
-                            this._sb.Append(line);
-                            this._sb.Append("\\line ");
-                        }
-                    }
-                    else
-                    {
-                        this._sb.Append(value);
+                        if (c > 0xFF) 
+                            _sb.Append("\\u").Append((int)c).Append("?");
+                        else
+                            _sb.Append( charEscape[(int)c] );
                     }
                 }
             }
@@ -177,13 +190,11 @@ namespace RTF
         public override string ToString()
         {
             StringBuilder sb = new StringBuilder();
-            sb.Append("{\\rtf1\\ansi\\ansicpg1252\\deff0\\deflang3081");
+            sb.Append("{\\rtf1\\ansi\\ansicpg1252\\deff0\\deflang").Append(DefLang);
             sb.Append("{\\fonttbl");
-
 
             for (int i = 0; i < _rawFonts.Count; i++)
             {
-
                 try
                 {
                     sb.Append(string.Format(_rawFonts[i], i));
@@ -227,57 +238,6 @@ namespace RTF
         public IRTFRow CreateRow(RTFRowDefinition rowDefinition, RTFCellDefinition[] cellDefinitions)
         {
             return new RTFRow(this, rowDefinition, cellDefinitions);
-        }
-
-        #endregion
-
-        #region Methods
-
-        /// <summary>
-        /// Checks the char.
-        /// </summary>
-        /// <param name="value">The value.</param>
-        /// <returns></returns>
-        private string CheckChar(string value)
-        {
-            if (!string.IsNullOrEmpty(value))
-            {
-                if (value.IndexOfAny(slashable) >= 0)
-                {
-                    value = value.Replace("{", "\\{").Replace("}", "\\}").Replace("\\", "\\\\");
-                }
-                bool replaceuni = false;
-                for (int i = 0; i < value.Length; i++)
-                {
-                    if (value[i] > 255)
-                    {
-                        replaceuni = true;
-                        break;
-                    }
-                }
-                if (replaceuni)
-                {
-                    StringBuilder sb = new StringBuilder();
-
-                    for (int i = 0; i < value.Length; i++)
-                    {
-                        if (value[i] <= 255)
-                        {
-                            sb.Append(value[i]);
-                        }
-                        else
-                        {
-                            sb.Append("\\u");
-                            sb.Append((int) value[i]);
-                            sb.Append("?");
-                        }
-                    }
-                    value = sb.ToString();
-                }
-            }
-
-
-            return value;
         }
 
         #endregion

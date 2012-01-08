@@ -53,5 +53,14 @@
     <Setting Name="LocalizationName" Type="System.String" Scope="User">
       <Value Profile="(Default)">English</Value>
     </Setting>
+    <Setting Name="SkyrimLocalizerPath" Type="System.String" Scope="User">
+      <Value Profile="(Default)">Skyrim String Localizer.exe</Value>
+    </Setting>
+    <Setting Name="SaveStringsFiles" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">False</Value>
+    </Setting>
+    <Setting Name="MonitorStringsFolderForChanges" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">True</Value>
+    </Setting>
   </Settings>
 </SettingsFile>

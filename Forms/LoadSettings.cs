@@ -34,7 +34,7 @@ namespace TESVSnip.Forms
             //this.rtfWarning = TESsnip.Properties.Resources.
             using (var s = new System.IO.MemoryStream())
             {
-                byte[] bytes = System.Text.Encoding.ASCII.GetBytes(TESVSnip.Properties.Resources.LoadWarning);
+                byte[] bytes = TESVSnip.Encoding.CP1252.GetBytes(TESVSnip.Properties.Resources.LoadWarning);
                 s.Write(bytes, 0, bytes.Length);
                 s.Position = 0;
                 this.rtfWarning.LoadFile(s, RichTextBoxStreamType.RichText);
