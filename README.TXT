@@ -9,6 +9,9 @@ Requirements:
   .NET 3.5
 
 Change Log:
+v 1.11
+- Change REFR display so X,Y are divided by 4096 to match cell locations
+
 v 1.10
 - New language handling items to better support localization (Experimental)
 - Better handling for Windows Copy/Paste mode

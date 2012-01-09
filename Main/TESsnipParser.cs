@@ -1125,8 +1125,8 @@ namespace TESVSnip
                 var data = SubRecords.FirstOrDefault(x => x.Name == "DATA");
                 if (data != null)
                 {
-                    desc = string.Format("{0} \t[{1:F0}, {2:F0}]", 
-                        desc, data.GetValue<float>(0), data.GetValue<float>(4)
+                    desc = string.Format(" [{1},{2}]\t{0}", 
+                        desc, (int)(data.GetValue<float>(0)/4096.0f), (int)(data.GetValue<float>(4)/4096.0f)
                         );
                 }
                 this.descriptiveName = desc;
@@ -1138,8 +1138,8 @@ namespace TESVSnip
                 var data = SubRecords.FirstOrDefault(x => x.Name == "DATA");
                 if (data != null)
                 {
-                    desc = string.Format("{0} \t[{1:F0}, {2:F0}]",
-                        desc, data.GetValue<float>(0), data.GetValue<float>(4)
+                    desc = string.Format(" [{1},{2}]\t{0}",
+                        desc, (int)(data.GetValue<float>(0) / 4096.0f), (int)(data.GetValue<float>(4) / 4096.0f)
                         );
                 }
                 this.descriptiveName = desc;
@@ -1158,7 +1158,7 @@ namespace TESVSnip
                 }
                 else
                 {
-                    desc = string.Format(" [Interior]\t{0}", desc);
+                    desc = string.Format(" [Intr]\t{0}", desc);
                 }
                 this.descriptiveName = desc;
             }
