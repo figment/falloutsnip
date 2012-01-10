@@ -9,6 +9,10 @@ Requirements:
   .NET 3.5
 
 Change Log:
+v 2.2
+- Add toggle all button to the ESM load filter dialog
+- Add expand/collapse options to tree context and edit menus
+
 v 2.1
 - Fix bug where hex editor was not saving changes
 

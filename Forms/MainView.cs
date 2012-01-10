@@ -2448,5 +2448,27 @@ Do you still want to save?", "Modified Save", MessageBoxButtons.YesNo, MessageBo
             ReloadLanguageFiles();
         }
 
+        private void expandAllToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            this.PluginTree.ExpandAll();
+        }
+
+        private void collapseAllToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            this.PluginTree.CollapseAll();
+        }
+
+        private void expandBranchToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if (this.PluginTree.SelectedNode != null)
+                this.PluginTree.SelectedNode.ExpandAll();
+        }
+
+        private void collapseBranchToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if (this.PluginTree.SelectedNode != null)
+                this.PluginTree.SelectedNode.Collapse(false);
+        }
+
     }
 }

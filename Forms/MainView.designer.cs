@@ -43,6 +43,11 @@ namespace TESVSnip {
             this.deleteToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.insertRecordToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.insertSubrecordToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.expandCollapseToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.expandAllToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.collapseAllToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.expandBranchToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.collapseBranchToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.findToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.historyNextToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.historyBackToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -143,6 +148,11 @@ namespace TESVSnip {
             this.toolStripIncrInvalidRecWrapAround = new System.Windows.Forms.ToolStripButton();
             this.toolStripSeparator5 = new System.Windows.Forms.ToolStripSeparator();
             this.toolStripIncrInvalidRecStatus = new System.Windows.Forms.ToolStripLabel();
+            this.toolStripMenuItem2 = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripMenuItem3 = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripMenuItem4 = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripMenuItem5 = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripMenuItem6 = new System.Windows.Forms.ToolStripMenuItem();
             this.menuStrip1.SuspendLayout();
             this.statusStrip1.SuspendLayout();
             this.splitHorizontal.Panel1.SuspendLayout();
@@ -261,6 +271,7 @@ namespace TESVSnip {
             this.deleteToolStripMenuItem,
             this.insertRecordToolStripMenuItem,
             this.insertSubrecordToolStripMenuItem,
+            this.expandCollapseToolStripMenuItem,
             this.findToolStripMenuItem,
             this.historyNextToolStripMenuItem,
             this.historyBackToolStripMenuItem});
@@ -320,6 +331,45 @@ namespace TESVSnip {
             this.insertSubrecordToolStripMenuItem.Size = new System.Drawing.Size(197, 22);
             this.insertSubrecordToolStripMenuItem.Text = "New subrecord";
             this.insertSubrecordToolStripMenuItem.Click += new System.EventHandler(this.insertSubrecordToolStripMenuItem_Click);
+            // 
+            // expandCollapseToolStripMenuItem
+            // 
+            this.expandCollapseToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.expandAllToolStripMenuItem,
+            this.collapseAllToolStripMenuItem,
+            this.expandBranchToolStripMenuItem,
+            this.collapseBranchToolStripMenuItem});
+            this.expandCollapseToolStripMenuItem.Name = "expandCollapseToolStripMenuItem";
+            this.expandCollapseToolStripMenuItem.Size = new System.Drawing.Size(197, 22);
+            this.expandCollapseToolStripMenuItem.Text = "&Expand/Collapse";
+            // 
+            // expandAllToolStripMenuItem
+            // 
+            this.expandAllToolStripMenuItem.Name = "expandAllToolStripMenuItem";
+            this.expandAllToolStripMenuItem.Size = new System.Drawing.Size(159, 22);
+            this.expandAllToolStripMenuItem.Text = "&Expand All";
+            this.expandAllToolStripMenuItem.Click += new System.EventHandler(this.expandAllToolStripMenuItem_Click);
+            // 
+            // collapseAllToolStripMenuItem
+            // 
+            this.collapseAllToolStripMenuItem.Name = "collapseAllToolStripMenuItem";
+            this.collapseAllToolStripMenuItem.Size = new System.Drawing.Size(159, 22);
+            this.collapseAllToolStripMenuItem.Text = "&Collapse All";
+            this.collapseAllToolStripMenuItem.Click += new System.EventHandler(this.collapseAllToolStripMenuItem_Click);
+            // 
+            // expandBranchToolStripMenuItem
+            // 
+            this.expandBranchToolStripMenuItem.Name = "expandBranchToolStripMenuItem";
+            this.expandBranchToolStripMenuItem.Size = new System.Drawing.Size(159, 22);
+            this.expandBranchToolStripMenuItem.Text = "E&xpand Branch";
+            this.expandBranchToolStripMenuItem.Click += new System.EventHandler(this.expandBranchToolStripMenuItem_Click);
+            // 
+            // collapseBranchToolStripMenuItem
+            // 
+            this.collapseBranchToolStripMenuItem.Name = "collapseBranchToolStripMenuItem";
+            this.collapseBranchToolStripMenuItem.Size = new System.Drawing.Size(159, 22);
+            this.collapseBranchToolStripMenuItem.Text = "C&ollapse Branch";
+            this.collapseBranchToolStripMenuItem.Click += new System.EventHandler(this.collapseBranchToolStripMenuItem_Click);
             // 
             // findToolStripMenuItem
             // 
@@ -1002,22 +1052,23 @@ namespace TESVSnip {
             this.contextMenuRecord.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.contextMenuRecordCopy,
             this.contextMenuRecordCopyTo,
-            this.contextMenuRecordDelete});
+            this.contextMenuRecordDelete,
+            this.toolStripMenuItem2});
             this.contextMenuRecord.Name = "contextMenuRecord";
-            this.contextMenuRecord.Size = new System.Drawing.Size(120, 70);
+            this.contextMenuRecord.Size = new System.Drawing.Size(163, 92);
             this.contextMenuRecord.Opening += new System.ComponentModel.CancelEventHandler(this.contextMenuRecord_Opening);
             // 
             // contextMenuRecordCopy
             // 
             this.contextMenuRecordCopy.Name = "contextMenuRecordCopy";
-            this.contextMenuRecordCopy.Size = new System.Drawing.Size(119, 22);
+            this.contextMenuRecordCopy.Size = new System.Drawing.Size(162, 22);
             this.contextMenuRecordCopy.Text = "&Copy";
             this.contextMenuRecordCopy.Click += new System.EventHandler(this.contexMenuRecordCopy_Click);
             // 
             // contextMenuRecordCopyTo
             // 
             this.contextMenuRecordCopyTo.Name = "contextMenuRecordCopyTo";
-            this.contextMenuRecordCopyTo.Size = new System.Drawing.Size(119, 22);
+            this.contextMenuRecordCopyTo.Size = new System.Drawing.Size(162, 22);
             this.contextMenuRecordCopyTo.Text = "Copy &To";
             this.contextMenuRecordCopyTo.DropDownOpening += new System.EventHandler(this.contextMenuRecordCopyTo_DropDownOpening);
             this.contextMenuRecordCopyTo.DropDownItemClicked += new System.Windows.Forms.ToolStripItemClickedEventHandler(this.contextMenuRecordCopyTo_DropDownItemClicked);
@@ -1025,7 +1076,7 @@ namespace TESVSnip {
             // contextMenuRecordDelete
             // 
             this.contextMenuRecordDelete.Name = "contextMenuRecordDelete";
-            this.contextMenuRecordDelete.Size = new System.Drawing.Size(119, 22);
+            this.contextMenuRecordDelete.Size = new System.Drawing.Size(162, 22);
             this.contextMenuRecordDelete.Text = "&Delete";
             this.contextMenuRecordDelete.Click += new System.EventHandler(this.contextMenuRecordDelete_Click);
             // 
@@ -1084,7 +1135,7 @@ namespace TESVSnip {
             "Form ID"});
             this.toolStripIncrFindTypeFilter.Name = "toolStripIncrFindTypeFilter";
             this.toolStripIncrFindTypeFilter.Overflow = System.Windows.Forms.ToolStripItemOverflow.Never;
-            this.toolStripIncrFindTypeFilter.Size = new System.Drawing.Size(80, 25);
+            this.toolStripIncrFindTypeFilter.Size = new System.Drawing.Size(80, 23);
             this.toolStripIncrFindTypeFilter.ToolTipText = "Search Type";
             this.toolStripIncrFindTypeFilter.Visible = false;
             this.toolStripIncrFindTypeFilter.SelectedIndexChanged += new System.EventHandler(this.toolStripIncrFindTypeFilter_SelectedIndexChanged);
@@ -1284,6 +1335,45 @@ namespace TESVSnip {
             this.toolStripIncrInvalidRecStatus.Size = new System.Drawing.Size(64, 22);
             this.toolStripIncrInvalidRecStatus.Text = "Status Text";
             // 
+            // toolStripMenuItem2
+            // 
+            this.toolStripMenuItem2.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.toolStripMenuItem3,
+            this.toolStripMenuItem4,
+            this.toolStripMenuItem5,
+            this.toolStripMenuItem6});
+            this.toolStripMenuItem2.Name = "toolStripMenuItem2";
+            this.toolStripMenuItem2.Size = new System.Drawing.Size(162, 22);
+            this.toolStripMenuItem2.Text = "&Expand/Collapse";
+            // 
+            // toolStripMenuItem3
+            // 
+            this.toolStripMenuItem3.Name = "toolStripMenuItem3";
+            this.toolStripMenuItem3.Size = new System.Drawing.Size(159, 22);
+            this.toolStripMenuItem3.Text = "&Expand All";
+            this.toolStripMenuItem3.Click += new System.EventHandler(this.expandAllToolStripMenuItem_Click);
+            // 
+            // toolStripMenuItem4
+            // 
+            this.toolStripMenuItem4.Name = "toolStripMenuItem4";
+            this.toolStripMenuItem4.Size = new System.Drawing.Size(159, 22);
+            this.toolStripMenuItem4.Text = "&Collapse All";
+            this.toolStripMenuItem4.Click += new System.EventHandler(this.collapseAllToolStripMenuItem_Click);
+            // 
+            // toolStripMenuItem5
+            // 
+            this.toolStripMenuItem5.Name = "toolStripMenuItem5";
+            this.toolStripMenuItem5.Size = new System.Drawing.Size(159, 22);
+            this.toolStripMenuItem5.Text = "E&xpand Branch";
+            this.toolStripMenuItem5.Click += new System.EventHandler(this.expandBranchToolStripMenuItem_Click);
+            // 
+            // toolStripMenuItem6
+            // 
+            this.toolStripMenuItem6.Name = "toolStripMenuItem6";
+            this.toolStripMenuItem6.Size = new System.Drawing.Size(159, 22);
+            this.toolStripMenuItem6.Text = "C&ollapse Branch";
+            this.toolStripMenuItem6.Click += new System.EventHandler(this.collapseBranchToolStripMenuItem_Click);
+            // 
             // MainView
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -1451,5 +1541,15 @@ namespace TESVSnip {
         private System.Windows.Forms.ToolStripMenuItem stringLocalizerToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem reloadStringsToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem saveStringsFilesToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem expandCollapseToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem expandAllToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem collapseAllToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem expandBranchToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem collapseBranchToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem toolStripMenuItem2;
+        private System.Windows.Forms.ToolStripMenuItem toolStripMenuItem3;
+        private System.Windows.Forms.ToolStripMenuItem toolStripMenuItem4;
+        private System.Windows.Forms.ToolStripMenuItem toolStripMenuItem5;
+        private System.Windows.Forms.ToolStripMenuItem toolStripMenuItem6;
     }
 }
