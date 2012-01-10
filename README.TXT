@@ -9,8 +9,11 @@ Requirements:
   .NET 3.5
 
 Change Log:
-v 1.11
+v 2.0
 - Change REFR display so X,Y are divided by 4096 to match cell locations
+- Add "Form ID Ref" search type which is a backreference search for records using given formid
+- Fix Conditionals on global variables display
+- Fix progress bar update / cancel during search
 
 v 1.10
 - New language handling items to better support localization (Experimental)

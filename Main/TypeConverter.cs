@@ -21,6 +21,8 @@ namespace TESVSnip {
         private byte b3;
         [System.Runtime.InteropServices.FieldOffset(3)]
         private byte b4;
+        [System.Runtime.InteropServices.FieldOffset(0)]
+        private sbyte sb1;
 
         private static TypeConverter tc;
         private static readonly byte[] bytes=new byte[4];
@@ -72,6 +74,18 @@ namespace TESVSnip {
             tc.b4 = data[offset + 3];
             return tc.f;
         }
+        public static float h2f(ArraySegment<byte> data)
+        {
+            if (data.Count >= 4)
+            {
+                tc.b1 = data.Array[data.Offset + 0];
+                tc.b2 = data.Array[data.Offset + 1];
+                tc.b3 = data.Array[data.Offset + 2];
+                tc.b4 = data.Array[data.Offset + 3];
+                return tc.f;
+            }
+            return default(float);
+        }
 
         public static uint h2i(byte b1, byte b2, byte b3, byte b4) {
             tc.b1=b1;
@@ -112,17 +126,70 @@ namespace TESVSnip {
             }
             return 0;            
         }
+        public static int h2si(ArraySegment<byte> data)
+        {
+            if (data.Count >= 4)
+            {
+                tc.b1 = data.Array[data.Offset + 0];
+                tc.b2 = data.Array[data.Offset + 1];
+                tc.b3 = data.Array[data.Offset + 2];
+                tc.b4 = data.Array[data.Offset + 3];
+                return tc.si;
+            }
+            return 0;
+        }
+
         public static ushort h2s(byte b1, byte b2)
         {
             tc.b1=b1;
             tc.b2=b2;
             return tc.s;
         }
-        public static short h2ss(byte b1, byte b2) {
+        public static ushort h2s(ArraySegment<byte> data)
+        {
+            if (data.Count >= 2)
+            {
+                tc.b1 = data.Array[data.Offset + 0];
+                tc.b2 = data.Array[data.Offset + 1];
+                return tc.s;
+            }
+            return default(ushort);
+        }
+        public static short h2ss(byte b1, byte b2)
+        {
             tc.b1=b1;
             tc.b2=b2;
             return tc.ss;
         }
+        public static short h2ss(ArraySegment<byte> data)
+        {
+            if (data.Count >= 2)
+            {
+                tc.b1 = data.Array[data.Offset + 0];
+                tc.b2 = data.Array[data.Offset + 1];
+                return tc.ss;
+            }
+            return default(short);
+        }
+
+        public static byte h2b(ArraySegment<byte> data)
+        {
+            if (data.Count >= 1)
+            {
+                return data.Array[data.Offset + 0];
+            }
+            return default(byte);
+        }
+        public static sbyte h2sb(ArraySegment<byte> data)
+        {
+            if (data.Count >= 1)
+            {
+                tc.b1 = data.Array[data.Offset + 0];
+                return tc.sb1;
+            }
+            return default(sbyte);
+        }
+
         private static byte[] UpdateBytes() {
             bytes[0]=tc.b1;
             bytes[1]=tc.b2;
@@ -195,20 +262,22 @@ namespace TESVSnip {
             }
             return (isAscii && data.Array[data.Count - 1] == 0);
         }
+
+        public static string GetZString(ArraySegment<byte> data)
+        {
+            var sb = new System.Text.StringBuilder();
+            for (int i = 0; i < data.Count; ++i)
+            {
+                char c = (char)data.Array[data.Offset + i];
+                if (c == 0) return sb.ToString();
+                sb.Append(c);
+            }
+            return sb.ToString();
+        }
+
         public static string GetString(ArraySegment<byte> data)
         {
-            return TESVSnip.Encoding.CP1252.GetString(data.Array, data.Offset, data.Count - 1);
-
-            //var sb = new System.Text.StringBuilder();
-            //bool isAscii = true;
-            //for (int i = 0; i < data.Count - 1 && isAscii; ++i)
-            //{
-            //    char c = (char)data.Array[data.Offset + i];
-            //    if (c == 0) return sb.ToString();
-            //    isAscii = !Char.IsControl(c);
-            //    if (isAscii) sb.Append(c);
-            //}
-            //return sb.ToString();
+            return TESVSnip.Encoding.CP1252.GetString(data.Array, data.Offset, data.Count);
         }
 
         public static string GetHexData(byte[] data, int offset, int count)

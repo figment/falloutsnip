@@ -1084,7 +1084,7 @@ namespace TESVSnip {
             "Form ID"});
             this.toolStripIncrFindTypeFilter.Name = "toolStripIncrFindTypeFilter";
             this.toolStripIncrFindTypeFilter.Overflow = System.Windows.Forms.ToolStripItemOverflow.Never;
-            this.toolStripIncrFindTypeFilter.Size = new System.Drawing.Size(80, 23);
+            this.toolStripIncrFindTypeFilter.Size = new System.Drawing.Size(80, 25);
             this.toolStripIncrFindTypeFilter.ToolTipText = "Search Type";
             this.toolStripIncrFindTypeFilter.Visible = false;
             this.toolStripIncrFindTypeFilter.SelectedIndexChanged += new System.EventHandler(this.toolStripIncrFindTypeFilter_SelectedIndexChanged);
@@ -1126,7 +1126,7 @@ namespace TESVSnip {
             "Editor ID",
             "Form ID"});
             this.toolStripIncrFindType.Name = "toolStripIncrFindType";
-            this.toolStripIncrFindType.Size = new System.Drawing.Size(80, 25);
+            this.toolStripIncrFindType.Size = new System.Drawing.Size(100, 25);
             this.toolStripIncrFindType.ToolTipText = "Search Type";
             this.toolStripIncrFindType.SelectedIndexChanged += new System.EventHandler(this.toolStripIncrFindType_SelectedIndexChanged);
             // 

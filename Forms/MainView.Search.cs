@@ -19,6 +19,7 @@ namespace TESVSnip
             FullSearch,
             TypeEditorIdSearch,
             TypeFullSearch,
+            FormIDRef,
         }
         class ComboHelper<T, U>
         {
@@ -45,7 +46,7 @@ namespace TESVSnip
                 new ComboHelper<SearchType, string>(SearchType.FullSearch, "Full Search"),
                 new ComboHelper<SearchType, string>(SearchType.TypeEditorIdSearch, "Name w/Type"),
                 new ComboHelper<SearchType, string>(SearchType.TypeFullSearch, "Full w/Type"),
-                
+                new ComboHelper<SearchType, string>(SearchType.FormIDRef, "Form ID Ref."),               
             };
             toolStripIncrFindType.Items.Clear();
             foreach (var itm in items) toolStripIncrFindType.Items.Add(itm);
@@ -356,9 +357,42 @@ namespace TESVSnip
                     return false;
                 };
             }
+            else if (ctx.type == SearchType.FormIDRef) // Back reference form id search
+            {
+                if (string.IsNullOrEmpty(ctx.text))
+                    return null;
+
+                uint searchID;
+                if (!uint.TryParse(ctx.text, System.Globalization.NumberStyles.AllowHexSpecifier, null, out searchID))
+                {
+                    MessageBox.Show("Invalid FormID");
+                    return null;
+                }
+                searchFunction = (TreeNode node) =>
+                {
+                    var rec = node.Tag as Record;
+                    if (rec != null)
+                    {
+                        rec.MatchRecordStructureToRecord();
+                        foreach (var sr in rec.SubRecords)
+                        {
+                            foreach (var elem in rec.EnumerateElements(sr) )
+                            {
+                                var es = elem.Structure;
+                                if (es != null && es.type == ElementValueType.FormID)
+                                {
+                                    if (searchID == TypeConverter.h2i(elem.Data))
+                                        return true;
+                                }                                    
+                            }
+                        }
+                    }
+                    if (ctx.updateFunc != null && ctx.updateFunc(node)) return true;
+                    return false;
+                };
+            }
             return IncrementalSearch(ctx.tn, ctx.first, ctx.forward, ctx.wrapAround, searchFunction);
         }
-
 
         #region Non-Conforming Records
         private bool findNonConformingRecordInternal(TreeNode tn)
@@ -461,7 +495,7 @@ namespace TESVSnip
             {
                 Record r = tn.Tag as Record;
 
-                if (!MatchRecordStructureToRecord(r))
+                if (r != null && !r.MatchRecordStructureToRecord())
                 {
                     return true;
                 }
@@ -538,6 +572,7 @@ namespace TESVSnip
             searchContext.first = toolStripIncrFindText.Tag == null ? true : (bool)toolStripIncrFindText.Tag;
             searchContext.rectype = toolStripIncrFindTypeFilter.SelectedItem as string;
             searchContext.forward = forward;
+            searchContext.updateFunc = updateFunc;
 
             // exclude null text searches except for when type is specified
             if (searchContext.type != SearchType.TypeEditorIdSearch && string.IsNullOrEmpty(searchContext.text))
