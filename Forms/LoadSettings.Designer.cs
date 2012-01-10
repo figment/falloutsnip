@@ -36,6 +36,7 @@
             this.chkDontAskAboutFiltering = new System.Windows.Forms.CheckBox();
             this.checkBox1 = new System.Windows.Forms.CheckBox();
             this.listRecordFilter = new System.Windows.Forms.CheckedListBox();
+            this.btnToggleAll = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
             // btnOk
@@ -127,6 +128,17 @@
             this.listRecordFilter.Size = new System.Drawing.Size(594, 214);
             this.listRecordFilter.TabIndex = 7;
             // 
+            // btnToggleAll
+            // 
+            this.btnToggleAll.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnToggleAll.Location = new System.Drawing.Point(531, 115);
+            this.btnToggleAll.Name = "btnToggleAll";
+            this.btnToggleAll.Size = new System.Drawing.Size(75, 23);
+            this.btnToggleAll.TabIndex = 8;
+            this.btnToggleAll.Text = "Toggle All";
+            this.btnToggleAll.UseVisualStyleBackColor = true;
+            this.btnToggleAll.Click += new System.EventHandler(this.btnToggleAll_Click);
+            // 
             // LoadSettings
             // 
             this.AcceptButton = this.btnOk;
@@ -134,6 +146,7 @@
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.CancelButton = this.btnCancel;
             this.ClientSize = new System.Drawing.Size(618, 460);
+            this.Controls.Add(this.btnToggleAll);
             this.Controls.Add(this.listRecordFilter);
             this.Controls.Add(this.checkBox1);
             this.Controls.Add(this.chkDontAskAboutFiltering);
@@ -160,6 +173,7 @@
         private System.Windows.Forms.CheckBox chkDontAskAboutFiltering;
         private System.Windows.Forms.CheckBox checkBox1;
         private System.Windows.Forms.CheckedListBox listRecordFilter;
+        private System.Windows.Forms.Button btnToggleAll;
 
     }
 }

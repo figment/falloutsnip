@@ -79,5 +79,12 @@ namespace TESVSnip.Forms
             TESVSnip.Properties.Settings.Default.FilteredESMRecords = string.Join(";", this.listRecordFilter.CheckedItems.Cast<string>().ToArray());           
             TESVSnip.Properties.Settings.Default.Save();
         }
+
+        private void btnToggleAll_Click(object sender, EventArgs e)
+        {
+            bool anyChecked = this.listRecordFilter.CheckedItems.Count > 0;
+            for (int i = 0, n = this.listRecordFilter.Items.Count; i < n; ++i)
+                this.listRecordFilter.SetItemChecked(i, !anyChecked);
+        }
     }
 }
