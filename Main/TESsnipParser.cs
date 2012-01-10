@@ -405,11 +405,11 @@ namespace TESVSnip
 
         public void ReloadStrings()
         {
-            if (string.IsNullOrEmpty(this.StringsFolder) || string.IsNullOrEmpty(this.FileName))
+            if (string.IsNullOrEmpty(this.StringsFolder) || string.IsNullOrEmpty(this.FileName) || !Directory.Exists(this.StringsFolder))
                 return;
 
             string locName = global::TESVSnip.Properties.Settings.Default.LocalizationName;
-
+            
             if (Directory.GetFiles(this.StringsFolder, this.FileName + "_" + locName + "*").Count() == 0)
             {
                 if (locName == "English")
@@ -672,6 +672,44 @@ namespace TESVSnip
                 }
             }
         }
+
+        public bool AddMaster(string masterName)
+        {
+            Record brcTES4 = this.Records.OfType<Record>().FirstOrDefault(x => x.Name == "TES4");
+            if (brcTES4 == null)
+                throw new ApplicationException("Plugin lacks a valid TES4 record. Cannot continue.");
+            // find existing if already present
+            foreach (var mast in brcTES4.SubRecords.Where(x => x.Name == "MAST") )
+            {
+                var path = mast.GetStrData();
+                if (string.Compare(path, masterName, true) == 0)
+                    return false;
+            }
+            int idx = brcTES4.SubRecords.IndexOf(brcTES4.SubRecords.FirstOrDefault(x => x.Name == "INTV"));
+            if (idx < 0) idx = brcTES4.SubRecords.Count;
+
+            SubRecord sbrMaster = new SubRecord();
+            sbrMaster = new SubRecord();
+            sbrMaster.Name = "DATA";
+            sbrMaster.SetData(new byte[] { 0, 0, 0, 0, 0, 0, 0, 0 });
+            brcTES4.InsertRecord(idx, sbrMaster);
+
+            sbrMaster = new SubRecord();
+            sbrMaster.Name = "MAST";
+            Int32 intCount = Encoding.CP1252.GetByteCount(masterName);
+            byte[] bteData = new byte[intCount + 1];
+            Array.Copy(Encoding.CP1252.GetBytes(masterName), bteData, intCount);
+            sbrMaster.SetData(bteData);
+            brcTES4.InsertRecord(idx, sbrMaster);
+            return true;
+        }
+        public string[] GetMasters()
+        {
+            Record brcTES4 = this.Records.OfType<Record>().FirstOrDefault(x => x.Name == "TES4");
+            if (brcTES4 == null)
+                return new string[0];
+            return brcTES4.SubRecords.Where(x => x.Name == "MAST").Select( x => x.GetStrData() ).ToArray();
+        }
     }
     #endregion
 
@@ -701,7 +739,7 @@ namespace TESVSnip
     }
     #endregion
 
-    #region Group Record
+    #region class Group Record
     [Persistable(Flags = PersistType.DeclaredOnly), Serializable]
     public sealed class GroupRecord : Rec
     {

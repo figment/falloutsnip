@@ -12,6 +12,7 @@ Change Log:
 v 2.2
 - Add toggle all button to the ESM load filter dialog
 - Add expand/collapse options to tree context and edit menus
+- Add option to Add Master to plugins from Edit menu or context when plugin selected
 
 v 2.1
 - Fix bug where hex editor was not saving changes

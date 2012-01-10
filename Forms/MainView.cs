@@ -1917,7 +1917,9 @@ Do you still want to save?", "Modified Save", MessageBoxButtons.YesNo, MessageBo
                 contextMenuRecordCopy.ToolTipText = "Copy Record to Clipboard";
                 contextMenuRecordCopyTo.Enabled = (PluginTree.GetNodeCount(false) > 1);
             }
+            contextMenuRecordAddMaster.Visible = false;
             contextMenuRecordCopyTo.DropDownItems.Clear();
+
             var srcPlugin = GetPluginFromNode(tn);
             foreach (TreeNode n in PluginTree.Nodes)
             {
@@ -1934,11 +1936,41 @@ Do you still want to save?", "Modified Save", MessageBoxButtons.YesNo, MessageBo
                 contextMenuRecordCopyTo.DropDownItems.Add(tsi);
             }
 
+            if (srcPlugin.Equals(tn.Tag))
+            {
+                string[] masters = srcPlugin.GetMasters();
+                Array.Sort<string>(masters, StringComparer.InvariantCultureIgnoreCase);
+
+                foreach (var item in contextMenuRecordAddMaster.DropDownItems.OfType<ToolStripButton>().Where(x => !x.Equals(browseToolStripMenuItem)).ToArray())
+                    contextMenuRecordAddMaster.DropDownItems.Remove(item);
+
+                foreach (TreeNode n in PluginTree.Nodes)
+                {
+                    var plugin = n.Tag as Plugin;
+                    if (plugin == null) continue;
+                    if (srcPlugin.Equals(plugin)) continue; // ignore self
+                    if ( Array.BinarySearch(masters, plugin.Name, StringComparer.InvariantCultureIgnoreCase) >= 0 ) // ignore masters
+                        continue;
+
+                    var tsi = new System.Windows.Forms.ToolStripButton(n.Text);
+                    tsi.Tag = new object[] { tn.Tag, tn, plugin, n };
+                    var sz = TextRenderer.MeasureText(n.Text, contextMenuRecordCopyTo.Font);
+                    if (sz.Width > tsi.Width)
+                        tsi.Width = sz.Width;
+                    tsi.AutoSize = true;
+                    contextMenuRecordAddMaster.DropDownItems.Add(tsi);
+                }
+                contextMenuRecordAddMaster.Visible = true;
+            }
+        }
+        private void contextMenuRecord_Closing(object sender, ToolStripDropDownClosingEventArgs e)
+        {
+            contextMenuRecordCopyTo.DropDownItems.Clear();
+            foreach (var item in contextMenuRecordAddMaster.DropDownItems.OfType<ToolStripButton>()
+                .Where(x => !x.Equals(browseToolStripMenuItem)).ToArray())
+                contextMenuRecordAddMaster.DropDownItems.Remove(item);
         }
 
-        private void contextMenuRecordCopyTo_DropDownOpening(object sender, EventArgs e)
-        {
-        }
 
         private void PluginTree_NodeMouseClick(object sender, TreeNodeMouseClickEventArgs e)
         {
@@ -2469,6 +2501,50 @@ Do you still want to save?", "Modified Save", MessageBoxButtons.YesNo, MessageBo
             if (this.PluginTree.SelectedNode != null)
                 this.PluginTree.SelectedNode.Collapse(false);
         }
+
+        private void addMasterToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            using (TESVsnip.AddMasterForm amfNewMaster = new TESVsnip.AddMasterForm())
+            {
+                if (amfNewMaster.ShowDialog() == DialogResult.OK)
+                {
+                    Plugin plugin = GetPluginFromNode(PluginTree.SelectedNode);
+                    if (plugin == null)
+                    {
+                        MessageBox.Show(this, "No plugin selected. Cannot continue.", "Missing Plugin", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        return;
+                    }
+                    try
+                    {
+                        if ( plugin.AddMaster(amfNewMaster.MasterName) )
+                            PluginTree_AfterSelect(null, null);
+                    }
+                    catch (System.ApplicationException ex)
+                    {
+                    	MessageBox.Show(this, ex.Message, "Missing Record", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    }
+                }
+            }
+        }
+
+        private void contextMenuRecordAddMaster_DropDownItemClicked(object sender, ToolStripItemClickedEventArgs e)
+        {
+            if (e.ClickedItem.Tag == null)
+                return;
+
+            try
+            {
+                var nodes = e.ClickedItem.Tag as object[];
+                var src = nodes[0] as Plugin;
+                var srcNode = nodes[1] as TreeNode;
+                var dst = nodes[2] as Plugin;
+                var dstNode = nodes[3] as TreeNode;
+                if (src != null && dst != null && dstNode != null && srcNode != null)
+                    src.AddMaster(dst.Name);
+            }
+            catch { }
+        }
+
 
     }
 }

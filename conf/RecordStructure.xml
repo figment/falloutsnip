@@ -60,15 +60,17 @@
     <Subrecord name="SNAM" desc="Plugin description" optional="1">
       <Element name="Description" type="string" multiline="true" />
     </Subrecord>
-    <Subrecord name="MAST" desc="Plugin dependencies" optional="1" repeat="1">
-      <Element name="Master file" type="string" />
-    </Subrecord>
-    <Subrecord name="SCRN" desc="Screenshot" optional="1" notininfo="1">
-      <Element name="Screenshot" type="blob" />
-    </Subrecord>
-    <Subrecord name="DATA" desc="DATA" optional="1" notininfo="1">
-      <Element name="DATA" type="blob" />
-    </Subrecord>
+    <Group optional="1" repeat="1">
+        <Subrecord name="MAST" desc="Plugin dependencies">
+          <Element name="Master file" type="string" />
+        </Subrecord>
+        <Subrecord name="SCRN" desc="Screenshot" optional="1" notininfo="1">
+          <Element name="Screenshot" type="blob" />
+        </Subrecord>
+        <Subrecord name="DATA" desc="DATA" optional="1" notininfo="1">
+          <Element name="DATA" type="blob" />
+        </Subrecord>
+    </Group>
     <Subrecord name="INTV" desc="INTV" optional="1" size="4">
       <Element name="Unknown" type="uint" hexview="1" />
     </Subrecord>
