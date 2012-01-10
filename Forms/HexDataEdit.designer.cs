@@ -42,14 +42,15 @@ namespace TESVSnip {
             this.bCFormID = new System.Windows.Forms.Button();
             this.tbEDID = new System.Windows.Forms.TextBox();
             this.label5 = new System.Windows.Forms.Label();
-            this.hexBox1 = new Be.Windows.Forms.HexBox();
             this.bFromFile = new System.Windows.Forms.Button();
             this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
+            this.hexBox1 = new Be.Windows.Forms.HexBox();
             this.SuspendLayout();
             // 
             // bSave
             // 
             this.bSave.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.bSave.DialogResult = System.Windows.Forms.DialogResult.OK;
             this.bSave.Location = new System.Drawing.Point(493, 403);
             this.bSave.Name = "bSave";
             this.bSave.Size = new System.Drawing.Size(75, 23);
@@ -233,23 +234,6 @@ namespace TESVSnip {
             this.label5.TabIndex = 22;
             this.label5.Text = "FormID";
             // 
-            // hexBox1
-            // 
-            this.hexBox1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.hexBox1.Font = new System.Drawing.Font("Courier New", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.hexBox1.LineInfoForeColor = System.Drawing.Color.Empty;
-            this.hexBox1.Location = new System.Drawing.Point(12, 38);
-            this.hexBox1.Name = "hexBox1";
-            this.hexBox1.ShadowSelectionColor = System.Drawing.Color.FromArgb(((int)(((byte)(100)))), ((int)(((byte)(60)))), ((int)(((byte)(188)))), ((int)(((byte)(255)))));
-            this.hexBox1.Size = new System.Drawing.Size(556, 305);
-            this.hexBox1.StringViewVisible = true;
-            this.hexBox1.TabIndex = 7;
-            this.hexBox1.UseFixedBytesPerLine = true;
-            this.hexBox1.InsertActiveChanged += new System.EventHandler(this.hexBox1_InsertActiveChanged);
-            this.hexBox1.SelectionStartChanged += new System.EventHandler(this.hexBox1_SelectionStartChanged);
-            // 
             // bFromFile
             // 
             this.bFromFile.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
@@ -269,10 +253,29 @@ namespace TESVSnip {
             this.openFileDialog1.RestoreDirectory = true;
             this.openFileDialog1.Title = "Pick file to import";
             // 
+            // hexBox1
+            // 
+            this.hexBox1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.hexBox1.Font = new System.Drawing.Font("Courier New", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.hexBox1.LineInfoForeColor = System.Drawing.Color.Empty;
+            this.hexBox1.Location = new System.Drawing.Point(12, 38);
+            this.hexBox1.Name = "hexBox1";
+            this.hexBox1.ShadowSelectionColor = System.Drawing.Color.FromArgb(((int)(((byte)(100)))), ((int)(((byte)(60)))), ((int)(((byte)(188)))), ((int)(((byte)(255)))));
+            this.hexBox1.Size = new System.Drawing.Size(556, 305);
+            this.hexBox1.StringViewVisible = true;
+            this.hexBox1.TabIndex = 7;
+            this.hexBox1.UseFixedBytesPerLine = true;
+            this.hexBox1.InsertActiveChanged += new System.EventHandler(this.hexBox1_InsertActiveChanged);
+            this.hexBox1.SelectionStartChanged += new System.EventHandler(this.hexBox1_SelectionStartChanged);
+            // 
             // HexDataEdit
             // 
+            this.AcceptButton = this.bSave;
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.CancelButton = this.bCancel;
             this.ClientSize = new System.Drawing.Size(580, 438);
             this.Controls.Add(this.bFromFile);
             this.Controls.Add(this.label5);

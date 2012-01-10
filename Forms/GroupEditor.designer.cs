@@ -185,6 +185,7 @@ namespace TESVSnip {
             // 
             // bCancel
             // 
+            this.bCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
             this.bCancel.Location = new System.Drawing.Point(183, 238);
             this.bCancel.Name = "bCancel";
             this.bCancel.Size = new System.Drawing.Size(75, 23);
@@ -195,6 +196,7 @@ namespace TESVSnip {
             // 
             // bSave
             // 
+            this.bSave.DialogResult = System.Windows.Forms.DialogResult.OK;
             this.bSave.Location = new System.Drawing.Point(102, 238);
             this.bSave.Name = "bSave";
             this.bSave.Size = new System.Drawing.Size(75, 23);
@@ -205,8 +207,10 @@ namespace TESVSnip {
             // 
             // GroupEditor
             // 
+            this.AcceptButton = this.bSave;
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.CancelButton = this.bCancel;
             this.ClientSize = new System.Drawing.Size(292, 273);
             this.Controls.Add(this.bSave);
             this.Controls.Add(this.bCancel);
