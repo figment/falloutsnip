@@ -9,6 +9,9 @@ Requirements:
   .NET 3.5
 
 Change Log:
+v 2.1
+- Fix bug where hex editor was not saving changes
+
 v 2.0
 - Change REFR display so X,Y are divided by 4096 to match cell locations
 - Add "Form ID Ref" search type which is a backreference search for records using given formid
