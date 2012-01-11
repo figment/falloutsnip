@@ -238,8 +238,9 @@ namespace TESVSnip
                         break;
                     case ElementValueType.LString:
                         {
-                            uint id = TypeConverter.h2i(data[offset], data[offset + 1], data[offset + 2], data[offset + 3]);
-                            bool isString = TypeConverter.IsLikelyString(new ArraySegment<byte>(data, offset, data.Length - offset));
+                            int left = data.Length - offset;
+                            uint id = (left < 4) ? 0 : TypeConverter.h2i(data[offset], data[offset + 1], data[offset + 2], data[offset + 3]);
+                            bool isString = TypeConverter.IsLikelyString(new ArraySegment<byte>(data, offset, left));
                             int strOffset = offset;
                             string s = null;
                             if (isString)
