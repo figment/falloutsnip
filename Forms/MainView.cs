@@ -16,17 +16,16 @@ namespace TESVSnip
     internal delegate Record dFormIDLookupR(uint id);
     internal delegate string dLStringLookup(uint id);
     internal delegate string[] dFormIDScan(string type);
+    internal delegate Record[] dFormIDScanR(string type);
+    internal delegate IEnumerable<KeyValuePair<uint, Record>> dFormIDScanRec(string type);
 
     internal partial class MainView : Form
     {
         private static object s_clipboard;
         private static TreeNode s_clipboardNode;
-        
         static readonly System.Text.Encoding s_CP1252Encoding = System.Text.Encoding.GetEncoding(1252);
 
         private SelectionContext Selection;
-        private Plugin[] FormIDLookup;
-        private uint[] Fixups;
         private Forms.StringsEditor stringEditor = null;
         OC.Windows.Forms.History<TreeNode> historyHandler;
         private MainViewMessageFilter msgFilter;
@@ -278,7 +277,7 @@ Would you like to configure which Records to exclude?"
                         TESVSnip.Properties.Settings.Default.DontAskUserAboutFiltering = true;
                         using (TESVSnip.Forms.LoadSettings settings = new TESVSnip.Forms.LoadSettings())
                         {
-                            result = settings.ShowDialog();
+                            result = settings.ShowDialog(this);
                             if (result == DialogResult.Cancel) // cancel will be same as No
                             {
                                 TESVSnip.Properties.Settings.Default.EnableESMFilter = false;
@@ -344,12 +343,13 @@ Would you like to apply the record exclusions?"
         {
             if (!ValidateMakeChange())
                 return;
-            if (OpenModDialog.ShowDialog() == DialogResult.OK)
+            if (OpenModDialog.ShowDialog(this) == DialogResult.OK)
             {
                 foreach (string s in OpenModDialog.FileNames)
                 {
                     LoadPlugin(s);
                 }
+                FixMasters();
             }
         }
 
@@ -394,7 +394,6 @@ Would you like to apply the record exclusions?"
 
             bool hasClipboard = HasClipboardData();
 
-            FindMasters();
             if (PluginTree.SelectedNode.Tag is Plugin)
             {
                 listSubrecord.DataSource = null;
@@ -545,11 +544,15 @@ Do you still want to save?", "Modified Save", MessageBoxButtons.YesNo, MessageBo
                     return;
             }
 
-            if (SaveModDialog.ShowDialog() == DialogResult.OK)
+            if (SaveModDialog.ShowDialog(this) == DialogResult.OK)
             {
                 p.Save(SaveModDialog.FileName);
             }
-            if (p.Name != tn.Text) tn.Text = p.Name;
+            if (p.Name != tn.Text)
+            {
+                tn.Text = p.Name;
+                FixMasters();
+            }
         }
 
         private void cutToolStripMenuItem_Click(object sender, EventArgs e)
@@ -685,7 +688,7 @@ Do you still want to save?", "Modified Save", MessageBoxButtons.YesNo, MessageBo
             {
                 BaseRecord br = (BaseRecord)PluginTree.SelectedNode.Tag;
 
-                
+
                 int insertIdx = listSubrecord.SelectedIndices.Count == 0 ? -1 : listSubrecord.GetFocusedItem();
                 var nodes = GetClipboardData<SubRecord[]>();
                 foreach (var clipSr in insertIdx < 0 ? nodes : nodes.Reverse()) // insert in revers
@@ -808,16 +811,7 @@ Do you still want to save?", "Modified Save", MessageBoxButtons.YesNo, MessageBo
 
             var context = GetSelectedContext();
             var sr = Selection.SubRecord;
-            if (sr.Structure != null && sr.Structure.elements != null)
-            {
-                UpdateMainText(sr);
-            }
-            else
-            {
-                UpdateMainText("[Subrecord data]" + Environment.NewLine
-                    + "String: " + sr.GetStrData() + Environment.NewLine + Environment.NewLine
-                    + "Hex:" + Environment.NewLine + sr.GetHexData());
-            }
+            UpdateMainText(sr);
             pasteToolStripMenuItem.Enabled = false;
             copyToolStripMenuItem.Enabled = true;
             cutToolStripMenuItem.Enabled = true;
@@ -893,10 +887,10 @@ Do you still want to save?", "Modified Save", MessageBoxButtons.YesNo, MessageBo
                 && sr.Structure.elements != null
                 && sr.Structure.elements[0].type != ElementValueType.Blob && !sr.Structure.UseHexEditor)
             {
-                MediumLevelRecordEditor re;
+                NewMediumLevelRecordEditor re;
                 try
                 {
-                    re = new MediumLevelRecordEditor(sr, sr.Structure, LookupFormIDS, FormIDScan, LookupFormStrings);
+                    re = new NewMediumLevelRecordEditor(context.Plugin, context.Record, sr, sr.Structure);
                 }
                 catch
                 {
@@ -905,7 +899,7 @@ Do you still want to save?", "Modified Save", MessageBoxButtons.YesNo, MessageBo
                 }
                 if (re != null)
                 {
-                    re.ShowDialog();
+                    re.ShowDialog(this);
                     UpdateMainText(sr);
                     if (sr.Name == "EDID" && listSubrecord.SelectedIndices[0] == 0)
                     {
@@ -919,23 +913,23 @@ Do you still want to save?", "Modified Save", MessageBoxButtons.YesNo, MessageBo
             }
             if (hexModeToolStripMenuItem.Checked)
             {
-                new HexDataEdit(sr.Name, sr.GetData(), LookupFormIDS).ShowDialog();
+                new HexDataEdit(sr.Name, sr.GetData(), LookupFormIDS).ShowDialog(this);
                 if (!HexDataEdit.Canceled)
                 {
                     sr.SetData(HexDataEdit.result);
                     sr.Name = HexDataEdit.resultName;
-                    UpdateMainText("[Subrecord data]" + Environment.NewLine + sr.GetHexData());
+                    UpdateMainText(sr);
                     listSubrecord.Refresh();
                 }
             }
             else
             {
-                new DataEdit(sr.Name, sr.GetData()).ShowDialog();
+                new DataEdit(sr.Name, sr.GetData()).ShowDialog(this);
                 if (!DataEdit.Canceled)
                 {
                     sr.SetData(DataEdit.result);
                     sr.Name = DataEdit.resultName;
-                    UpdateMainText("[Subrecord data]" + Environment.NewLine + sr.GetStrData());
+                    UpdateMainText(sr);
                     listSubrecord.Refresh();
                 }
             }
@@ -955,20 +949,21 @@ Do you still want to save?", "Modified Save", MessageBoxButtons.YesNo, MessageBo
                     return;
                 using (var form = new HexDataEdit(sr.Name, sr.GetData(), LookupFormIDS))
                 {
-                    DialogResult result = form.ShowDialog();
+                    DialogResult result = form.ShowDialog(this);
                     if (result == DialogResult.OK)
                     {
                         sr.SetData(HexDataEdit.result);
                         sr.Name = HexDataEdit.resultName;
-                        UpdateMainText("[Subrecord data]" + Environment.NewLine + sr.GetHexData());
+                        UpdateMainText(sr);
+
+                        MatchRecordStructureToRecord();
+                        if (sr.Name == "EDID" && listSubrecord.SelectedIndices[0] == 0)
+                        {
+                            Selection.Record.UpdateShortDescription();
+                            PluginTree.SelectedNode.Text = Selection.Record.DescriptiveName;
+                        }
                         listSubrecord.Refresh();
                     }
-                }
-                MatchRecordStructureToRecord();
-                if (sr.Name == "EDID" && listSubrecord.SelectedIndices[0] == 0)
-                {
-                    Selection.Record.UpdateShortDescription();
-                    PluginTree.SelectedNode.Text = Selection.Record.DescriptiveName;
                 }
             }
             catch
@@ -1107,6 +1102,7 @@ Do you still want to save?", "Modified Save", MessageBoxButtons.YesNo, MessageBo
             PluginTree.Nodes.Remove(tn);
             UpdateStringEditor();
             UpdateMainText("");
+            FixMasters();
             RebuildSelection();
             GC.Collect();
         }
@@ -1158,46 +1154,11 @@ Do you still want to save?", "Modified Save", MessageBoxButtons.YesNo, MessageBo
         }
 
 
-        private void FindMasters()
+        private void FixMasters()
         {
-            TreeNode tn = PluginTree.SelectedNode;
-            while (tn.Parent != null) tn = tn.Parent;
-            Plugin p = (Plugin)tn.Tag;
-            Plugin[] plugins = new Plugin[PluginTree.Nodes.Count];
-            for (int i = 0; i < plugins.Length; i++) plugins[i] = (Plugin)PluginTree.Nodes[i].Tag;
-
-            List<string> masters = new List<string>();
-            if (p.Records.Count > 0 && p.Records[0].Name == "TES4")
-            {
-                foreach (SubRecord sr in ((Record)p.Records[0]).SubRecords)
-                {
-                    if (sr.Name == "MAST") masters.Add(sr.GetStrData().ToLowerInvariant());
-                }
-            }
-            FormIDLookup = new Plugin[masters.Count + 1];
-            Fixups = new uint[masters.Count + 1];
-            for (int i = 0; i < masters.Count; i++)
-            {
-                for (int j = 0; j < plugins.Length; j++)
-                {
-                    if (masters[i] == plugins[j].Name.ToLowerInvariant())
-                    {
-                        FormIDLookup[i] = plugins[j];
-                        uint fixup = 0;
-                        if (plugins[j].Records.Count > 0 && plugins[j].Records[0].Name == "TES4")
-                        {
-                            foreach (SubRecord sr in ((Record)plugins[j].Records[0]).SubRecords)
-                            {
-                                if (sr.Name == "MAST") fixup++;
-                            }
-                        }
-                        Fixups[i] = fixup;
-                        break;
-                    }
-                }
-            }
-            FormIDLookup[masters.Count] = p;
-            Fixups[masters.Count] = (uint)masters.Count;
+            var plugins = PluginTree.Nodes.OfType<TreeNode>().Select(x => x.Tag).OfType<Plugin>().ToArray();
+            foreach (var plugin in plugins)
+                plugin.UpdateReferences(plugins);
         }
 
         private bool RecurseFormIDSearch(Rec rec, uint FormID, ref string edid)
@@ -1228,53 +1189,15 @@ Do you still want to save?", "Modified Save", MessageBoxButtons.YesNo, MessageBo
 
         private string LookupFormIDI(SelectionContext context, uint id)
         {
-            uint pluginid = (id & 0xff000000) >> 24;
-            if (pluginid > FormIDLookup.Length)
-                return "FormID was invalid";
-
-            Record r;
-            if (context.Plugin != null)
-            {
-
-                if (context.Plugin.TryGetRecordByID(id, out r))
-                    return r.DescriptiveName;
-            }
-
-            // what is this doing?
-            Plugin p = FormIDLookup[FormIDLookup.Length - 1];
-            if (p.TryGetRecordByID(id, out r))
-                return r.DescriptiveName;
-            id &= 0xffffff;
-
-            if (pluginid < FormIDLookup.Length && FormIDLookup[pluginid] != null)
-            {
-                p = FormIDLookup[pluginid];
-                id += Fixups[pluginid] << 24;
-                if (p.TryGetRecordByID(id, out r))
-                    return r.DescriptiveName;
-                return "No match";
-            }
-            else
-            {
-                return "Master not loaded";
-            }
+            if (context != null && context.Plugin != null)
+                context.Plugin.LookupFormID(id);
+            return "No selection";
         }
 
         private Record GetRecordByID(uint id)
         {
-            uint pluginid = (id & 0xff000000) >> 24;
-            if (pluginid > FormIDLookup.Length)
-                return null;
-            Record r;
-            // What is this check for???
-            if (FormIDLookup[FormIDLookup.Length - 1].TryGetRecordByID(id, out r))
-                return r;
-            id &= 0xffffff;
-            if (pluginid >= FormIDLookup.Length || FormIDLookup[pluginid] == null)
-                return null;
-            id += Fixups[pluginid] << 24;
-            if (FormIDLookup[pluginid].TryGetRecordByID(id, out r))
-                return r;
+            if (Selection != null && Selection.Plugin != null)
+                    return Selection.Plugin.GetRecordByID(id);
             return null;
         }
 
@@ -1282,93 +1205,30 @@ Do you still want to save?", "Modified Save", MessageBoxButtons.YesNo, MessageBo
         {
             uint id;
             if (!uint.TryParse(sid, System.Globalization.NumberStyles.AllowHexSpecifier, null, out id))
-            {
                 return "FormID was invalid";
-            }
             return LookupFormIDI(id);
         }
 
         private string LookupFormStrings(uint id)
         {
             string value = default(string);
-            foreach (var plugin in FormIDLookup)
-            {
-                if (plugin == null) continue;
-
-                if (plugin.Strings.TryGetValue(id, out value))
-                    break;
-                if (plugin.DLStrings.TryGetValue(id, out value))
-                    break;
-                if (plugin.ILStrings.TryGetValue(id, out value))
-                    break;
-            }
+            if (Selection != null && Selection.Plugin != null)
+                return Selection.Plugin.LookupFormStrings(id);
             return value;
         }
 
-
-        private void FormIDScanRecurse(Rec r, uint match, uint mask, Dictionary<uint, string> table, string type)
-        {
-            Record r2 = r as Record;
-            if (r2 != null)
-            {
-                if (r2.Name == type && (r2.FormID & 0xff000000) == match)
-                {
-                    table[(r2.FormID & 0xffffff) | mask] = r2.DescriptiveName;
-                }
-            }
-            else
-            {
-                GroupRecord gr = (GroupRecord)r;
-                if (gr.groupType == 0 && gr.ContentsType != type) return;
-                foreach (Rec r3 in gr.Records)
-                {
-                    FormIDScanRecurse(r3, match, mask, table, type);
-                }
-            }
-        }
-        private void FormIDScanRecurse2(Rec r, Dictionary<uint, string> table, string type)
-        {
-            Record r2 = r as Record;
-            if (r2 != null)
-            {
-                if (r2.Name == type)
-                {
-                    table[r2.FormID] = r2.DescriptiveName;
-                }
-            }
-            else
-            {
-                GroupRecord gr = (GroupRecord)r;
-                if (gr.groupType == 0 && gr.ContentsType != type) return;
-                foreach (Rec r3 in gr.Records)
-                {
-                    FormIDScanRecurse2(r3, table, type);
-                }
-            }
-        }
         private string[] FormIDScan(string type)
         {
-            Dictionary<uint, string> list = new Dictionary<uint, string>();
-            for (int i = 0; i < FormIDLookup.Length - 1; i++)
+            List<string> ret = new List<string>();
+            if (Selection != null && Selection.Plugin != null)
             {
-                if (FormIDLookup[i] == null) continue;
-                if (FormIDLookup[i].Records.Count < 2 || FormIDLookup[i].Records[0].Name != "TES4") continue;
-                uint match = 0;
-                foreach (SubRecord sr in ((Record)FormIDLookup[i].Records[0]).SubRecords) if (sr.Name == "MAST") match++;
-                match <<= 24;
-                uint mask = (uint)i << 24;
-                for (int j = 1; j < FormIDLookup[i].Records.Count; j++) FormIDScanRecurse(FormIDLookup[i].Records[j], match, mask, list, type);
+                foreach (var pair in Selection.Plugin.EnumerateRecords(type))
+                {
+                    ret.Add(pair.Value.DescriptiveName);
+                    ret.Add(pair.Key.ToString("X8"));
+                }
             }
-            for (int j = 1; j < FormIDLookup[FormIDLookup.Length - 1].Records.Count; j++) FormIDScanRecurse2(FormIDLookup[FormIDLookup.Length - 1].Records[j], list, type);
-
-            string[] ret = new string[list.Count * 2];
-            int count = 0;
-            foreach (KeyValuePair<uint, string> pair in list)
-            {
-                ret[count++] = pair.Value;
-                ret[count++] = pair.Key.ToString("X8");
-            }
-            return ret;
+            return ret.ToArray();
         }
 
         private void reloadXmlToolStripMenuItem_Click(object sender, EventArgs e)
@@ -1452,7 +1312,7 @@ Do you still want to save?", "Modified Save", MessageBoxButtons.YesNo, MessageBo
 
         private void MainView_Load(object sender, EventArgs e)
         {
-
+            FixMasters();
         }
 
         private void PluginTree_Enter(object sender, EventArgs e)
@@ -1722,7 +1582,7 @@ Do you still want to save?", "Modified Save", MessageBoxButtons.YesNo, MessageBo
                 dlg.Title = "Select Base Record Structure";
                 dlg.InitialDirectory = Program.settingsDir;
                 dlg.FileName = "RecordStructure.xml";
-                if (dlg.ShowDialog() != DialogResult.OK)
+                if (dlg.ShowDialog(this) != DialogResult.OK)
                     return;
 
                 using (System.IO.FileStream fs = System.IO.File.OpenRead(dlg.FileName))
@@ -1735,7 +1595,7 @@ Do you still want to save?", "Modified Save", MessageBoxButtons.YesNo, MessageBo
                 dlg.Title = "Select Record Structure XML To Merge";
                 dlg.InitialDirectory = System.IO.Path.GetTempPath();
                 dlg.FileName = "RecordStructure.xml";
-                if (dlg.ShowDialog() != DialogResult.OK)
+                if (dlg.ShowDialog(this) != DialogResult.OK)
                     return;
                 using (System.IO.FileStream fs = System.IO.File.OpenRead(dlg.FileName))
                 {
@@ -1755,7 +1615,7 @@ Do you still want to save?", "Modified Save", MessageBoxButtons.YesNo, MessageBo
                     dlg.InitialDirectory = System.IO.Path.GetTempPath();
                     dlg.FileName = "RecordStructure.xml";
                     dlg.OverwritePrompt = false;
-                    if (dlg.ShowDialog() == DialogResult.OK)
+                    if (dlg.ShowDialog(this) == DialogResult.OK)
                     {
                         using (System.IO.StreamWriter fs = System.IO.File.CreateText(dlg.FileName))
                         {
@@ -1808,7 +1668,7 @@ Do you still want to save?", "Modified Save", MessageBoxButtons.YesNo, MessageBo
 
             using (TESVSnip.Forms.LoadSettings settings = new TESVSnip.Forms.LoadSettings())
             {
-                settings.ShowDialog();
+                settings.ShowDialog(this);
             }
         }
 
@@ -1949,7 +1809,7 @@ Do you still want to save?", "Modified Save", MessageBoxButtons.YesNo, MessageBo
                     var plugin = n.Tag as Plugin;
                     if (plugin == null) continue;
                     if (srcPlugin.Equals(plugin)) continue; // ignore self
-                    if ( Array.BinarySearch(masters, plugin.Name, StringComparer.InvariantCultureIgnoreCase) >= 0 ) // ignore masters
+                    if (Array.BinarySearch(masters, plugin.Name, StringComparer.InvariantCultureIgnoreCase) >= 0) // ignore masters
                         continue;
 
                     var tsi = new System.Windows.Forms.ToolStripButton(n.Text);
@@ -2065,7 +1925,9 @@ Do you still want to save?", "Modified Save", MessageBoxButtons.YesNo, MessageBo
                     defLang = new FontLangInfo(1252, 1033, 0);
 
                 var rb = new RTF.RTFBuilder(RTF.RTFFont.Arial, 16, defLang.lcid, defLang.charset);
-                rec.GetFormattedData(rb, GetSelectedContext());
+                var sc = GetSelectedContext();
+                rec.GetFormattedHeader(rb, sc);
+                rec.GetFormattedData(rb, sc);
                 rtfInfo.Rtf = rb.ToString();
             }
         }
@@ -2297,7 +2159,7 @@ Do you still want to save?", "Modified Save", MessageBoxButtons.YesNo, MessageBo
         }
 
         #region String Tools
-        internal  Dictionary<string, ToolStripMenuItem> languageToolBarItems = new Dictionary<string, ToolStripMenuItem>(StringComparer.InvariantCultureIgnoreCase);
+        internal Dictionary<string, ToolStripMenuItem> languageToolBarItems = new Dictionary<string, ToolStripMenuItem>(StringComparer.InvariantCultureIgnoreCase);
         void InitializeLanguage()
         {
             languageToolBarItems.Add("English", englishToolStripMenuItem);
@@ -2311,7 +2173,7 @@ Do you still want to save?", "Modified Save", MessageBoxButtons.YesNo, MessageBo
 
         void ReloadLanguageFiles()
         {
-            foreach ( var p in this.PluginTree.Nodes.OfType<TreeNode>().Select( x => x.Tag as Plugin).OfType<Plugin>() )
+            foreach (var p in this.PluginTree.Nodes.OfType<TreeNode>().Select(x => x.Tag as Plugin).OfType<Plugin>())
             {
                 if (p != null) p.ReloadStrings();
             }
@@ -2325,11 +2187,11 @@ Do you still want to save?", "Modified Save", MessageBoxButtons.YesNo, MessageBo
 
         private void languageToolStripMenuItem_DropDownItemClicked(object sender, ToolStripItemClickedEventArgs e)
         {
-            foreach( var kvp in languageToolBarItems)
+            foreach (var kvp in languageToolBarItems)
             {
-                if ( e.ClickedItem == kvp.Value)
+                if (e.ClickedItem == kvp.Value)
                 {
-                    if ( global::TESVSnip.Properties.Settings.Default.LocalizationName != kvp.Key )
+                    if (global::TESVSnip.Properties.Settings.Default.LocalizationName != kvp.Key)
                     {
                         global::TESVSnip.Properties.Settings.Default.LocalizationName = kvp.Key;
                         ReloadLanguageFiles();
@@ -2353,7 +2215,7 @@ Do you still want to save?", "Modified Save", MessageBoxButtons.YesNo, MessageBo
                 {
                     dlg.Title = "Select Record Structure XML To Merge";
                     dlg.FileName = "Skyrim String Localizer.exe";
-                    if (dlg.ShowDialog() != DialogResult.OK)
+                    if (dlg.ShowDialog(this) != DialogResult.OK)
                         return;
                     global::TESVSnip.Properties.Settings.Default.SkyrimLocalizerPath = dlg.FileName;
                 }
@@ -2506,7 +2368,7 @@ Do you still want to save?", "Modified Save", MessageBoxButtons.YesNo, MessageBo
         {
             using (TESVsnip.AddMasterForm amfNewMaster = new TESVsnip.AddMasterForm())
             {
-                if (amfNewMaster.ShowDialog() == DialogResult.OK)
+                if (amfNewMaster.ShowDialog(this) == DialogResult.OK)
                 {
                     Plugin plugin = GetPluginFromNode(PluginTree.SelectedNode);
                     if (plugin == null)
@@ -2516,12 +2378,12 @@ Do you still want to save?", "Modified Save", MessageBoxButtons.YesNo, MessageBo
                     }
                     try
                     {
-                        if ( plugin.AddMaster(amfNewMaster.MasterName) )
+                        if (plugin.AddMaster(amfNewMaster.MasterName))
                             PluginTree_AfterSelect(null, null);
                     }
                     catch (System.ApplicationException ex)
                     {
-                    	MessageBox.Show(this, ex.Message, "Missing Record", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        MessageBox.Show(this, ex.Message, "Missing Record", MessageBoxButtons.OK, MessageBoxIcon.Error);
                     }
                 }
             }

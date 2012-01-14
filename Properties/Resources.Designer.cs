@@ -287,6 +287,13 @@ namespace TESVSnip.Properties {
             }
         }
         
+        internal static System.Drawing.Icon warning {
+            get {
+                object obj = ResourceManager.GetObject("warning", resourceCulture);
+                return ((System.Drawing.Icon)(obj));
+            }
+        }
+        
         internal static System.Drawing.Bitmap xdays {
             get {
                 object obj = ResourceManager.GetObject("xdays", resourceCulture);

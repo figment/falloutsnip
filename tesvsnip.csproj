@@ -223,6 +223,12 @@
     <Compile Include="Forms\AddMasterForm.designer.cs">
       <DependentUpon>AddMasterForm.cs</DependentUpon>
     </Compile>
+    <Compile Include="Forms\NewMediumLevelRecordEditor.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\NewMediumLevelRecordEditor.designer.cs">
+      <DependentUpon>NewMediumLevelRecordEditor.cs</DependentUpon>
+    </Compile>
     <Compile Include="Forms\LoadSettings.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -282,12 +288,6 @@
     <Compile Include="Forms\HexDataEdit.designer.cs">
       <DependentUpon>HexDataEdit.cs</DependentUpon>
     </Compile>
-    <Compile Include="Forms\MediumLevelRecordEditor.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Forms\MediumLevelRecordEditor.designer.cs">
-      <DependentUpon>MediumLevelRecordEditor.cs</DependentUpon>
-    </Compile>
     <Compile Include="Collections\LocalizedString.cs" />
     <Compile Include="Collections\ordereddictionary.cs" />
     <Compile Include="Main\Pair.cs" />
@@ -311,6 +311,9 @@
     <EmbeddedResource Include="Forms\AddMasterForm.resx">
       <DependentUpon>AddMasterForm.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="Forms\NewMediumLevelRecordEditor.resx">
+      <DependentUpon>NewMediumLevelRecordEditor.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Forms\LoadSettings.resx">
       <DependentUpon>LoadSettings.cs</DependentUpon>
     </EmbeddedResource>
@@ -332,9 +335,6 @@
     <EmbeddedResource Include="Forms\HexDataEdit.resx">
       <DependentUpon>HexDataEdit.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Forms\MediumLevelRecordEditor.resx">
-      <DependentUpon>MediumLevelRecordEditor.cs</DependentUpon>
-    </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
@@ -348,6 +348,30 @@
       <DependentUpon>Resources.resx</DependentUpon>
       <DesignTime>True</DesignTime>
     </Compile>
+    <EmbeddedResource Include="RecordControls\BaseElement.resx">
+      <DependentUpon>BaseElement.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="RecordControls\RepeatingElement.resx">
+      <DependentUpon>RepeatingElement.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="RecordControls\OptionsElement.resx">
+      <DependentUpon>OptionsElement.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="RecordControls\FlagsElement.resx">
+      <DependentUpon>FlagsElement.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="RecordControls\LStringElement.resx">
+      <DependentUpon>LStringElement.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="RecordControls\FormIDElement.resx">
+      <DependentUpon>FormIDElement.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="RecordControls\OptionalElement.resx">
+      <DependentUpon>OptionalElement.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="RecordControls\TextElement.resx">
+      <DependentUpon>TextElement.cs</DependentUpon>
+    </EmbeddedResource>
     <None Include="build\tesvsnip.snk" />
     <None Include="Controls\ObjectListView\ObjectListView.FxCop" />
     <None Include="Controls\ObjectListView\ObjectListView.shfb" />
@@ -364,6 +388,55 @@
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
     <Compile Include="Main\RecordStructure.cs" />
+    <Compile Include="RecordControls\BaseElement.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="RecordControls\BaseElement.Designer.cs">
+      <DependentUpon>BaseElement.cs</DependentUpon>
+    </Compile>
+    <Compile Include="RecordControls\RepeatingElement.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="RecordControls\RepeatingElement.Designer.cs">
+      <DependentUpon>RepeatingElement.cs</DependentUpon>
+    </Compile>
+    <Compile Include="RecordControls\OptionsElement.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="RecordControls\OptionsElement.Designer.cs">
+      <DependentUpon>OptionsElement.cs</DependentUpon>
+    </Compile>
+    <Compile Include="RecordControls\FlagsElement.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="RecordControls\FlagsElement.Designer.cs">
+      <DependentUpon>FlagsElement.cs</DependentUpon>
+    </Compile>
+    <Compile Include="RecordControls\LStringElement.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="RecordControls\LStringElement.Designer.cs">
+      <DependentUpon>LStringElement.cs</DependentUpon>
+    </Compile>
+    <Compile Include="RecordControls\FormIDElement.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="RecordControls\FormIDElement.Designer.cs">
+      <DependentUpon>FormIDElement.cs</DependentUpon>
+    </Compile>
+    <Compile Include="RecordControls\IElementControl.cs" />
+    <Compile Include="RecordControls\OptionalElement.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="RecordControls\OptionalElement.Designer.cs">
+      <DependentUpon>OptionalElement.cs</DependentUpon>
+    </Compile>
+    <Compile Include="RecordControls\TextElement.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="RecordControls\TextElement.Designer.cs">
+      <DependentUpon>TextElement.cs</DependentUpon>
+    </Compile>
     <Compile Include="RTFLib\RTF\IRTFCell.cs" />
     <Compile Include="RTFLib\RTF\IRtfProcessor.cs" />
     <Compile Include="RTFLib\RTF\IRTFRow.cs" />
@@ -466,6 +539,7 @@
     <Content Include="Resources\filter.png" />
     <Content Include="Resources\sort-ascending.png" />
     <Content Include="Resources\sort-descending.png" />
+    <None Include="Resources\warning.ico" />
     <None Include="Resources\agt_forward.png" />
     <None Include="Resources\agt_back.png" />
     <None Include="Resources\quick_restart.png" />
@@ -511,6 +585,7 @@
       <Install>true</Install>
     </BootstrapperPackage>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

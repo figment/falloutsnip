@@ -305,22 +305,25 @@ namespace TESVSnip
                 return;
             }
             if (MessageBox.Show("This may delete records from the esp.\nAre you sure you wish to continue?", "Warning", MessageBoxButtons.YesNo) != DialogResult.Yes) return;
-            FindMasters();
+            FixMasters();
+            var plugin = GetPluginFromNode(PluginTree.SelectedNode);
+
             Dictionary<uint, Record> lookup = new Dictionary<uint, Record>();
             bool missingMasters = false;
-            for (int i = 0; i < FormIDLookup.Length - 1; i++)
+            for (int i = 0; i < plugin.Masters.Length - 1; i++)
             {
-                if (FormIDLookup[i] == null)
+                if (plugin.Masters[i] == null)
                 {
                     missingMasters = true;
                     continue;
                 }
-                if (FormIDLookup[i].Records.Count < 2 || FormIDLookup[i].Records[0].Name != "TES4") continue;
+                if (plugin.Masters[i].Records.Count < 2 || plugin.Masters[i].Records[0].Name != "TES4") continue;
                 uint match = 0;
-                foreach (SubRecord sr in ((Record)FormIDLookup[i].Records[0]).SubRecords) if (sr.Name == "MAST") match++;
+                foreach (SubRecord sr in ((Record)plugin.Masters[i].Records[0]).SubRecords) if (sr.Name == "MAST") match++;
                 match <<= 24;
                 uint mask = (uint)i << 24;
-                for (int j = 1; j < FormIDLookup[i].Records.Count; j++) cleanRecurse(FormIDLookup[i].Records[j], match, mask, lookup);
+                for (int j = 1; j < plugin.Masters[i].Records.Count; j++) 
+                    cleanRecurse(plugin.Masters[i].Records[j], match, mask, lookup);
             }
 
             if (missingMasters)
@@ -329,21 +332,23 @@ namespace TESVSnip
             }
 
             int count = 0;
-            for (int j = 1; j < FormIDLookup[FormIDLookup.Length - 1].Records.Count; j++)
-                cleanRecurse2(FormIDLookup[FormIDLookup.Length - 1].Records[j], ref count, lookup);
+            for (int j = 1; j < plugin.Masters[plugin.Masters.Length - 1].Records.Count; j++)
+                cleanRecurse2(plugin.Masters[plugin.Masters.Length - 1].Records[j], ref count, lookup);
             if (count == 0) MessageBox.Show("No records removed");
             else MessageBox.Show("" + count + " records removed");
 
             TreeNode tn = PluginTree.SelectedNode;
             while (tn.Parent != null) tn = tn.Parent;
             tn.Nodes.Clear();
-            CreatePluginTree(FormIDLookup[FormIDLookup.Length - 1], tn);
+            CreatePluginTree(plugin.Masters[plugin.Masters.Length - 1], tn);
         }
 
 
         private void compileScriptToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            if (FormIDLookup == null || PluginTree.SelectedNode == null) return;
+            FixMasters();
+            var plugin = GetPluginFromNode(PluginTree.SelectedNode);
+            if (plugin == null) return;
             string errors;
             Record r;
             if (Selection.SelectedSubrecord && Selection.Record.Name != "SCPT")
@@ -355,7 +360,7 @@ namespace TESVSnip
                     MessageBox.Show("You need to select a SCPT record or SCTX subrecord to compile", "Error");
                     return;
                 }
-                ScriptCompiler.ScriptCompiler.Setup(FormIDLookup);
+                ScriptCompiler.ScriptCompiler.Setup(plugin.Masters);
                 if (!ScriptCompiler.ScriptCompiler.CompileResultScript(sr, out r, out errors))
                 {
                     MessageBox.Show("There were compilation errors:\n" + errors);
@@ -383,7 +388,7 @@ namespace TESVSnip
                 return;
             }
 
-            ScriptCompiler.ScriptCompiler.Setup(FormIDLookup);
+            ScriptCompiler.ScriptCompiler.Setup(plugin.Masters);
             if (!ScriptCompiler.ScriptCompiler.Compile(r, out errors))
             {
                 MessageBox.Show("There were compilation errors:\n" + errors);
@@ -400,7 +405,12 @@ namespace TESVSnip
             string thingy = "";
             int count = 0, failed = 0, failed2 = 0;
             int size;
-            ScriptCompiler.ScriptCompiler.Setup(FormIDLookup);
+
+            FixMasters();
+            var plugin = GetPluginFromNode(PluginTree.SelectedNode);
+            if (plugin == null) return;
+
+            ScriptCompiler.ScriptCompiler.Setup(plugin.Masters);
             TreeNode tn = PluginTree.SelectedNode;
             while (tn.Parent != null) tn = tn.Parent;
             foreach (Rec rec in ((Plugin)tn.Tag).Records)
@@ -450,8 +460,10 @@ namespace TESVSnip
 
         private void generateLLXmlToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            if (PluginTree.SelectedNode == null) return;
-            Plugin p = FormIDLookup[FormIDLookup.Length - 1];
+            FixMasters();
+            var plugin = GetPluginFromNode(PluginTree.SelectedNode);
+            if (plugin == null) return;
+            var p = plugin;
 
             {
                 Record r;
@@ -476,7 +488,7 @@ namespace TESVSnip
                 }
             }
 
-            uint mask = (uint)(FormIDLookup.Length - 1) << 24;
+            uint mask = (uint)(plugin.Masters.Length - 1) << 24;
             Queue<Rec> recs = new Queue<Rec>(p.Records);
 
             System.Text.StringBuilder sb2 = new System.Text.StringBuilder();

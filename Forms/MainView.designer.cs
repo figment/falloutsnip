@@ -1083,7 +1083,7 @@ namespace TESVSnip {
             // browseToolStripMenuItem
             // 
             this.browseToolStripMenuItem.Name = "browseToolStripMenuItem";
-            this.browseToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.browseToolStripMenuItem.Size = new System.Drawing.Size(121, 22);
             this.browseToolStripMenuItem.Text = "&Browse...";
             this.browseToolStripMenuItem.Click += new System.EventHandler(this.addMasterToolStripMenuItem_Click);
             // 

@@ -151,6 +151,7 @@ namespace TESVSnip
         }
 
         public abstract string GetDesc();
+        public virtual void GetFormattedHeader(RTFBuilder rb, SelectionContext context) { }
         public virtual void GetFormattedData(RTFBuilder rb, SelectionContext context) { rb.Append(GetDesc()); }
         public virtual void GetFormattedData(StringBuilder sb, SelectionContext context) { sb.Append(GetDesc()); }
 
@@ -162,6 +163,9 @@ namespace TESVSnip
         // internal iterators
         public virtual bool While(Predicate<BaseRecord> action) { return action(this); }
         public virtual void ForEach(Action<BaseRecord> action) { action(this); }
+        public virtual IEnumerable<BaseRecord> Enumerate(Predicate<BaseRecord> match) { 
+            if (match(this)) yield return this; 
+        }
 
         internal abstract List<string> GetIDs(bool lower);
         internal abstract void SaveData(BinaryWriter bw);
@@ -208,6 +212,10 @@ namespace TESVSnip
         public LocalizedStringDict ILStrings = new LocalizedStringDict();
         public LocalizedStringDict DLStrings = new LocalizedStringDict();
 
+        // References to masters
+        public Plugin[] Masters;
+        // Number of masters each master holds. (used to calculate internal id)
+        public uint[] Fixups;
         // Hash tables for quick FormID lookups
         public readonly Dictionary<uint, Record> FormIDLookup = new Dictionary<uint, Record>();
 
@@ -244,6 +252,14 @@ namespace TESVSnip
                    Environment.NewLine + "Plugins can only hold Groups or Records.");
             Records.Insert(idx, r);
             InvalidateCache();
+        }
+
+        public override IEnumerable<BaseRecord> Enumerate(Predicate<BaseRecord> match)
+        {
+            if (!match(this)) yield break;
+            foreach (var r in this.Records)
+                foreach (var itm in r.Enumerate(match))
+                    yield return itm;
         }
 
         public override bool While(Predicate<BaseRecord> action)
@@ -427,8 +443,7 @@ namespace TESVSnip
                 if (fontInfo.CodePage != 1252)
                     enc = System.Text.Encoding.GetEncoding(fontInfo.CodePage);
             }
-
-
+            
             Strings = LoadPluginStrings(enc, LocalizedStringFormat.Base, prefix + ".STRINGS");
             ILStrings = LoadPluginStrings(enc, LocalizedStringFormat.IL, prefix + ".ILSTRINGS");
             DLStrings = LoadPluginStrings(enc, LocalizedStringFormat.DL, prefix + ".DLSTRINGS");
@@ -623,6 +638,7 @@ namespace TESVSnip
             }
             catch { }
         }
+
         private void SavePluginStrings(System.Text.Encoding enc, LocalizedStringFormat format, LocalizedStringDict strings, BinaryWriter writer)
         {
             if (enc == null) enc = TESVSnip.Encoding.CP1252;
@@ -701,6 +717,9 @@ namespace TESVSnip
             Array.Copy(Encoding.CP1252.GetBytes(masterName), bteData, intCount);
             sbrMaster.SetData(bteData);
             brcTES4.InsertRecord(idx, sbrMaster);
+
+            // Fix Masters
+            //  Update IDs for current record to be +1
             return true;
         }
         public string[] GetMasters()
@@ -710,6 +729,168 @@ namespace TESVSnip
                 return new string[0];
             return brcTES4.SubRecords.Where(x => x.Name == "MAST").Select( x => x.GetStrData() ).ToArray();
         }
+
+        #region External references 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="plugins"></param>
+        /// <remarks>
+        /// Rules:  order 
+        /// </remarks>
+        public void UpdateReferences(IList<Plugin> plugins)
+        {
+            var masters = GetMasters();
+            Masters = new Plugin[masters.Length + 1];
+            Fixups = new uint[masters.Length + 1];
+            for (int i = 0; i < masters.Length; ++i)
+            {
+                var master = plugins.FirstOrDefault(x => string.Compare(masters[i], x.Name, true) == 0);
+                Masters[i] = master;
+                Fixups[i] = (uint)((master != null) ? master.GetMasters().Length : 0);
+            }
+            Masters[masters.Length] = this;
+            Fixups[masters.Length] = (uint)masters.Length;
+            InvalidateCache();
+       }
+
+
+        /// <summary>
+        /// Lookup FormID by index.  Search via defined masters
+        /// </summary>
+        /// <param name="context"></param>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        internal string LookupFormID(uint id)
+        {
+            uint pluginid = (id & 0xff000000) >> 24;
+            if (pluginid > this.Masters.Length)
+                return "FormID was invalid";
+
+            Record r;
+            // First search self for exact match
+            if (this.TryGetRecordByID(id, out r))
+                return r.DescriptiveName;
+            id &= 0xffffff;
+            if (pluginid < Masters.Length && Masters[pluginid] != null)
+            {
+                // find the reference master and search it for reference
+                //   TODO: in theory another master could override the first master
+                var p = Masters[pluginid];
+                id |= (Fixups[pluginid] << 24);
+                if (p.TryGetRecordByID(id, out r))
+                    return r.DescriptiveName;
+                return "No match";
+            }
+            else
+            {
+                return "Master not loaded";
+            }
+        }
+
+        internal Record GetRecordByID(uint id)
+        {
+            uint pluginid = (id & 0xff000000) >> 24;
+            if (pluginid > Masters.Length)
+                return null;
+            Record r;
+            // first check self for exact match
+            if (this.TryGetRecordByID(id, out r))
+                return r;
+            id &= 0xffffff;
+            if (pluginid >= Masters.Length || Masters[pluginid] == null)
+                return null;
+            // find the reference master and search it for reference
+            //   TODO: in theory another master could override the first master
+            id += Fixups[pluginid] << 24;
+            if (Masters[pluginid].TryGetRecordByID(id, out r))
+                return r;
+            return null;
+        }
+
+        internal string LookupFormIDS(string sid)
+        {
+            uint id;
+            if (!uint.TryParse(sid, System.Globalization.NumberStyles.AllowHexSpecifier, null, out id))
+                return "FormID was invalid";
+            return LookupFormID(id);
+        }
+
+        internal string LookupFormStrings(uint id)
+        {
+            string value = default(string);
+            foreach (var plugin in Masters)
+            {
+                if (plugin == null) continue;
+
+                if (plugin.Strings.TryGetValue(id, out value))
+                    break;
+                if (plugin.DLStrings.TryGetValue(id, out value))
+                    break;
+                if (plugin.ILStrings.TryGetValue(id, out value))
+                    break;
+            }
+            return value;
+        }
+
+        internal IEnumerable<KeyValuePair<uint, Record>> EnumerateRecords(string type)
+        {
+            Dictionary<uint, string> list = new Dictionary<uint, string>();
+            // search each master reference.  Override any 
+            for (int i = 0; i < Masters.Length - 1; i++)
+            {
+                if (Masters[i] == null) continue; // missing master
+
+                uint match = Fixups[i];
+                match <<= 24;
+                uint mask = (uint)i << 24;
+                // This enumerate misses any records that are children of masters
+                foreach (var r in Masters[i].Enumerate(r =>
+                    {
+                        if (r is Record) {
+                            if ((type == null || r.Name == type) && (((Record)r).FormID & 0xFF000000) == match)
+                                return true;
+                        } else if (r is GroupRecord) {
+                            var gr = (GroupRecord)r;
+                            if (gr.groupType != 0 || gr.ContentsType == type)
+                                return true;
+                        } else if (r is Plugin) {
+                            return true;
+                        }
+                        return false;
+                    })
+                )
+                {
+                    if (r is Record) {
+                        var r2 = r as Record;
+                        yield return new KeyValuePair<uint, Record>((r2.FormID & 0xffffff) | mask, r2);
+                    }
+                }
+            }
+            // finally add records of self in to the list
+            foreach (var r in this.Enumerate(r =>
+                {
+                    if (r is Record) {
+                        if (type == null || r.Name == type)
+                            return true;
+                    } else if (r is GroupRecord) {
+                        var gr = (GroupRecord)r;
+                        if (gr.groupType != 0 || gr.ContentsType == type)
+                            return true;
+                    } else if (r is Plugin) {
+                        return true;
+                    }
+                    return false;
+                })
+            )
+            {
+                if (r is Record) {
+                    var r2 = r as Record;
+                    yield return new KeyValuePair<uint, Record>(r2.FormID, r2);
+                }
+            } 
+        }
+        #endregion
     }
     #endregion
 
@@ -784,6 +965,14 @@ namespace TESVSnip
             if (r == null) throw new TESParserException("Record to add was not of the correct type." +
                    Environment.NewLine + "Groups can only hold records or other groups.");
             Records.Insert(idx, r);
+        }
+
+        public override IEnumerable<BaseRecord> Enumerate(Predicate<BaseRecord> match)
+        {
+            if (!match(this)) yield break;
+            foreach (var r in this.Records)
+                foreach (var itm in r.Enumerate(match))
+                    yield return itm;
         }
 
         public override bool While(Predicate<BaseRecord> action)
@@ -1239,7 +1428,7 @@ namespace TESVSnip
             return "[Record]" + Environment.NewLine + GetBaseDesc();
         }
 
-        public override void GetFormattedData(RTFBuilder rb, SelectionContext context)
+        public override void GetFormattedHeader(RTFBuilder rb, SelectionContext context)
         {
             rb.FontStyle(FontStyle.Bold).FontSize(rb.DefaultFontSize + 2).AppendLine("[Record]");
             rb.AppendLineFormat("Type: \t {0}", Name);
@@ -1251,11 +1440,13 @@ namespace TESVSnip
             rb.AppendLineFormat("Subrecords: \t {0}", SubRecords.Count);
             rb.AppendLineFormat("Size: \t {0:N0}", Size);
             rb.AppendLine();
+        }
 
+        public override void GetFormattedData(RTFBuilder rb, SelectionContext context)
+        {
             try
             {
                 rb.FontStyle(FontStyle.Bold).FontSize(rb.DefaultFontSize).AppendLine("[Formatted information]");
-
                 context = context.Clone();
                 context.Record = this;
                 RecordStructure rec;
@@ -1584,6 +1775,17 @@ namespace TESVSnip
 
         internal IEnumerable<Element> EnumerateElements(SubRecord sr)
         {
+            return EnumerateElements(sr, false);
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="sr"></param>
+        /// <param name="rawData">Retain raw data instead of converting to more usuable form</param>
+        /// <returns></returns>
+        internal IEnumerable<Element> EnumerateElements(SubRecord sr, bool rawData)
+        {
             if (sr != null && sr.Structure != null)
             {
                 byte[] data = sr.GetReadonlyData();
@@ -1596,7 +1798,7 @@ namespace TESVSnip
                         int startoffset = offset;
                         int maxlen = data.Length - offset;
                         if ((es.optional || es.repeat > 0) && maxlen == 0) break;
-                        var elem = Element.CreateElement(es, data, ref offset);
+                        var elem = Element.CreateElement(es, data, ref offset, rawData);
                         yield return elem;
                         if (es.repeat > 0 && startoffset < offset)
                             continue;
@@ -2099,11 +2301,19 @@ namespace TESVSnip
             return s;
         }
 
+        public override void GetFormattedHeader(RTF.RTFBuilder s, SelectionContext context)
+        {
+            s.FontStyle(FontStyle.Bold).FontSize(s.DefaultFontSize + 2).AppendLine("[Subrecord data]");
+        }
         public override void GetFormattedData(RTF.RTFBuilder s, SelectionContext context)
         {
             SubrecordStructure ss = this.Structure;
-            if (ss == null)
+            if (ss == null || ss.elements == null)
+            {
+                s.Append("String:\t").AppendLine(this.GetStrData()).AppendLine();
+                s.Append("Hex: \t").AppendLine(this.GetHexData());
                 return;
+            }
 
             dFormIDLookupI formIDLookup = context.formIDLookup;
             dLStringLookup strLookup = context.strLookup;
@@ -2508,13 +2718,17 @@ namespace TESVSnip
     }
     #endregion
 
+
+    /// <summary>
+    /// Helper for reference to Element structure including data
+    /// </summary>
     internal sealed class Element
     {
         TESVSnip.ElementValueType type = ElementValueType.Blob;
 
         public Element() { }
 
-        public static Element CreateElement(TESVSnip.ElementStructure es, byte[] data, ref int offset)
+        public static Element CreateElement(TESVSnip.ElementStructure es, byte[] data, ref int offset, bool rawData)
         {
             int maxlen = data.Length - offset;
             int len;
@@ -2562,30 +2776,61 @@ namespace TESVSnip
                     case ElementValueType.String:
                         len = 0;
                         for (int i=offset; i < data.Length && data[i] != 0; ++i, ++len);
-                        elem = new Element(es, ElementValueType.String, new ArraySegment<byte>(data, offset, len));
-                        offset += (len == 0 ? 0 : len+1);
+                        if (rawData) // raw form includes the zero termination byte
+                        {
+                            len = (len == 0 ? 0 : len + 1);
+                            elem = new Element(es, ElementValueType.String, new ArraySegment<byte>(data, offset, len));
+                            offset += len;
+                        }
+                        else
+                        {
+                            elem = new Element(es, ElementValueType.String, new ArraySegment<byte>(data, offset, len));
+                            offset += (len == 0 ? 0 : len + 1);
+                        }
                         break;
                     case ElementValueType.fstring:
-                        elem = new Element(es, ElementValueType.String, new ArraySegment<byte>(data, offset, maxlen));
-                        offset += maxlen;
+                        if (rawData) // raw form includes the zero termination byte
+                        {
+                            elem = new Element(es, ElementValueType.fstring, new ArraySegment<byte>(data, offset, maxlen));
+                            offset += maxlen;
+                        }
+                        else
+                        {
+                            elem = new Element(es, ElementValueType.String, new ArraySegment<byte>(data, offset, maxlen));
+                            offset += maxlen;
+                        }
                         break;
                     case ElementValueType.BString:
                         if (maxlen >= sizeof(ushort))
                         {
                             len = TypeConverter.h2s(data[offset], data[offset+1]);
                             len = (len < maxlen - 2) ? len : maxlen - 2;
-                            elem = new Element(es, ElementValueType.String, new ArraySegment<byte>(data, offset+2, len));
-                            offset += (len + 2);
+                            if (rawData) // raw data includes short prefix
+                            {
+                                elem = new Element(es, ElementValueType.BString, new ArraySegment<byte>(data, offset, len+2));
+                                offset += (len + 2);
+                            }
+                            else
+                            {
+                                elem = new Element(es, ElementValueType.String, new ArraySegment<byte>(data, offset + 2, len));
+                                offset += (len + 2);
+                            }
                         }
                         else
                         {
-                            elem = new Element(es, ElementValueType.String, new ArraySegment<byte>(new byte[0], 0, 0));
+                            if (rawData)
+                                elem = new Element(es, ElementValueType.BString, new ArraySegment<byte>(new byte[2] { 0, 0 }));
+                            else
+                                elem = new Element(es, ElementValueType.String, new ArraySegment<byte>(new byte[0]));
                             offset += maxlen;
                         }
                         break;
                     case ElementValueType.Str4:
                         len = maxlen >= 4 ? 4 : maxlen;
-                        elem = new Element(es, ElementValueType.String, new ArraySegment<byte>(data, offset, len));
+                        if (rawData)
+                            elem = new Element(es, ElementValueType.Str4, new ArraySegment<byte>(data, offset, len));
+                        else
+                            elem = new Element(es, ElementValueType.String, new ArraySegment<byte>(data, offset, len));
                         offset += len;
                         break;
 
@@ -2609,8 +2854,17 @@ namespace TESVSnip
                             {
                                 len = 0;
                                 for (int i = offset; i < data.Length && data[i] != 0; ++i, ++len) ;
-                                elem = new Element(es, ElementValueType.String, new ArraySegment<byte>(data, offset, len));
-                                offset += (len == 0 ? 0 : len + 1);
+                                if (rawData) // lstring as raw string includes the terminating null
+                                {
+                                    len = (len == 0 ? 0 : len + 1);
+                                    elem = new Element(es, ElementValueType.LString, new ArraySegment<byte>(data, offset, len));
+                                    offset += len;
+                                }
+                                else
+                                {
+                                    elem = new Element(es, ElementValueType.String, new ArraySegment<byte>(data, offset, len));
+                                    offset += (len == 0 ? 0 : len + 1);
+                                }
                             }
                         }
                         break;

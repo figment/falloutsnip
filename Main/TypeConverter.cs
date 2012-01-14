@@ -211,12 +211,12 @@ namespace TESVSnip {
         }
         public static byte[] ss2h(short ss) {
             tc.ss=ss;
-            return UpdateBytes();
+            return new byte[] { tc.b1, tc.b2 };
         }
         public static byte[] s2h(ushort ss)
         {
             tc.s = ss;
-            return UpdateBytes();
+            return new byte[] { tc.b1, tc.b2 };
         }
 
         /*public static void f2h(float f, byte[] data, int offset) {
@@ -275,9 +275,19 @@ namespace TESVSnip {
             return sb.ToString();
         }
 
+        public static string GetBString(ArraySegment<byte> data)
+        {
+            ushort len = h2s(data);
+            if (len > 0 && len <= data.Count + 2)
+                return TESVSnip.Encoding.CP1252.GetString(data.Array, data.Offset + 2, len);
+            return "";
+        }
+
         public static string GetString(ArraySegment<byte> data)
         {
-            return TESVSnip.Encoding.CP1252.GetString(data.Array, data.Offset, data.Count);
+            // remove the tailing null
+            int len = data.Count > 0 && data.Array[data.Count - 1] == 0 ? data.Count - 1 : data.Count;
+            return TESVSnip.Encoding.CP1252.GetString(data.Array, data.Offset, len);
         }
 
         public static string GetHexData(byte[] data, int offset, int count)
@@ -287,5 +297,44 @@ namespace TESVSnip {
                 sb.Append( data[offset + i].ToString("X2") ).Append( " " );            
             return sb.ToString();
         }
+
+        /// <summary>
+        /// Encode string including null termination character
+        /// </summary>
+        /// <param name="str"></param>
+        /// <returns></returns>
+        public static byte[] str2h(string str)
+        {
+            int len = TESVSnip.Encoding.CP1252.GetByteCount(str);
+            byte[] data = new byte[len + 1];
+            TESVSnip.Encoding.CP1252.GetBytes(str,0,len,data,0);
+            data[len] = 0;
+            return data;
+        }
+
+        /// <summary>
+        /// Encode short byte length prefixed string
+        /// </summary>
+        /// <param name="str"></param>
+        /// <returns></returns>
+        public static byte[] bstr2h(string str)
+        {
+            int len = TESVSnip.Encoding.CP1252.GetByteCount(str);
+            byte[] data = new byte[2 + len];
+            Array.Copy(TypeConverter.s2h((ushort)len), 0, data, 0, 2);
+            Array.Copy(TESVSnip.Encoding.CP1252.GetBytes(str), 0, data, 2, len);
+            return data;
+        }
+
+        public static byte[] b2h(byte i)
+        {
+            return new byte[] { i };
+        }
+
+        public static byte[] sb2h(sbyte i)
+        {
+            return new byte[] { (byte)i };
+        }
+
     }
 }

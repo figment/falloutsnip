@@ -9,10 +9,14 @@ Requirements:
   .NET 3.5
 
 Change Log:
+v 2.3
+- New Medium Level Record (looks like old but overhauled for future extensibility)
+
 v 2.2
 - Add toggle all button to the ESM load filter dialog
 - Add expand/collapse options to tree context and edit menus
 - Add option to Add Master to plugins from Edit menu or context when plugin selected
+- Bug fixes for errors preventing subrecord from loading
 
 v 2.1
 - Fix bug where hex editor was not saving changes
