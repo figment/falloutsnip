@@ -59,6 +59,7 @@ namespace TESVSnip {
             this.useWindowsClipboardToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.noWindowsSoundsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.disableHyperlinksToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.resetDockingWindowsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.eSMFilterSettingsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.languageToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -96,16 +97,12 @@ namespace TESVSnip {
             this.toolStripStatusProgressBar = new System.Windows.Forms.ToolStripProgressBar();
             this.toolStripStopProgress = new System.Windows.Forms.ToolStripStatusLabel();
             this.backgroundWorker1 = new System.ComponentModel.BackgroundWorker();
-            this.splitHorizontal = new System.Windows.Forms.SplitContainer();
-            this.splitVertical = new System.Windows.Forms.SplitContainer();
-            this.PluginTree = new TESVSnip.Controls.CustomTreeView();
             this.toolStripRecord = new System.Windows.Forms.ToolStrip();
             this.toolStripRecordBack = new System.Windows.Forms.ToolStripSplitButton();
             this.toolStripRecordNext = new System.Windows.Forms.ToolStripSplitButton();
             this.toolStripRecordPaste = new System.Windows.Forms.ToolStripButton();
             this.toolStripRecordCopy = new System.Windows.Forms.ToolStripButton();
             this.toolStripRecordText = new System.Windows.Forms.ToolStripLabel();
-            this.listSubrecord = new TESVSnip.Windows.Controls.ObjectBindingListView();
             this.toolStripSubRecord = new System.Windows.Forms.ToolStrip();
             this.toolStripInsertRecord = new System.Windows.Forms.ToolStripButton();
             this.toolStripDeleteRecord = new System.Windows.Forms.ToolStripButton();
@@ -118,7 +115,6 @@ namespace TESVSnip {
             this.toolStripPasteSubrecord = new System.Windows.Forms.ToolStripButton();
             this.toolStripCopySubrecord = new System.Windows.Forms.ToolStripButton();
             this.toolStripSeparator2 = new System.Windows.Forms.ToolStripSeparator();
-            this.rtfInfo = new RichTextBoxLinks.RichTextBoxEx();
             this.columnHeader1 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.columnHeader2 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.contextMenuRecord = new System.Windows.Forms.ContextMenuStrip(this.components);
@@ -156,24 +152,28 @@ namespace TESVSnip {
             this.toolStripIncrInvalidRecWrapAround = new System.Windows.Forms.ToolStripButton();
             this.toolStripSeparator5 = new System.Windows.Forms.ToolStripSeparator();
             this.toolStripIncrInvalidRecStatus = new System.Windows.Forms.ToolStripLabel();
+            this.recordPanel = new System.Windows.Forms.Panel();
+            this.subrecordPanel = new System.Windows.Forms.Panel();
+            this.listSubrecord = new TESVSnip.Windows.Controls.ObjectBindingListView();
+            this.PluginTree = new TESVSnip.Controls.CustomTreeView();
+            this.rtfInfo = new RichTextBoxLinks.RichTextBoxEx();
+            this.dockingManagerExtender = new DockingManagerExtender.DockingManagerExtender(this.components);
             this.menuStrip1.SuspendLayout();
             this.statusStrip1.SuspendLayout();
-            this.splitHorizontal.Panel1.SuspendLayout();
-            this.splitHorizontal.Panel2.SuspendLayout();
-            this.splitHorizontal.SuspendLayout();
-            this.splitVertical.Panel1.SuspendLayout();
-            this.splitVertical.Panel2.SuspendLayout();
-            this.splitVertical.SuspendLayout();
             this.toolStripRecord.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.listSubrecord)).BeginInit();
             this.toolStripSubRecord.SuspendLayout();
             this.contextMenuRecord.SuspendLayout();
             this.toolStripIncrFind.SuspendLayout();
             this.toolStripIncrInvalidRec.SuspendLayout();
+            this.recordPanel.SuspendLayout();
+            this.subrecordPanel.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.listSubrecord)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.dockingManagerExtender)).BeginInit();
             this.SuspendLayout();
             // 
             // menuStrip1
             // 
+            this.dockingManagerExtender.SetCloseButton(this.menuStrip1, false);
             this.menuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.fileToolStripMenuItem,
             this.editToolStripMenuItem,
@@ -182,9 +182,10 @@ namespace TESVSnip {
             this.spellsToolStripMenuItem});
             this.menuStrip1.Location = new System.Drawing.Point(0, 0);
             this.menuStrip1.Name = "menuStrip1";
+            this.dockingManagerExtender.SetPreferredSize(this.menuStrip1, new System.Drawing.Size(0, 0));
             this.menuStrip1.Size = new System.Drawing.Size(765, 24);
-            this.menuStrip1.TabIndex = 1;
-            this.menuStrip1.Text = "menuStrip1";
+            this.dockingManagerExtender.SetTabbedMode(this.menuStrip1, true);
+            this.menuStrip1.TabIndex = 104;
             // 
             // fileToolStripMenuItem
             // 
@@ -417,6 +418,7 @@ namespace TESVSnip {
             this.useWindowsClipboardToolStripMenuItem,
             this.noWindowsSoundsToolStripMenuItem,
             this.disableHyperlinksToolStripMenuItem,
+            this.resetDockingWindowsToolStripMenuItem,
             this.eSMFilterSettingsToolStripMenuItem});
             this.optionsToolStripMenuItem.Name = "optionsToolStripMenuItem";
             this.optionsToolStripMenuItem.Size = new System.Drawing.Size(61, 20);
@@ -473,6 +475,13 @@ namespace TESVSnip {
             this.disableHyperlinksToolStripMenuItem.Text = "Disable Hyperlinks";
             this.disableHyperlinksToolStripMenuItem.ToolTipText = "Hyperlink processing code can be slow. Disable for better performance";
             this.disableHyperlinksToolStripMenuItem.Click += new System.EventHandler(this.disableHyperlinksToolStripMenuItem_Click);
+            // 
+            // resetDockingWindowsToolStripMenuItem
+            // 
+            this.resetDockingWindowsToolStripMenuItem.Name = "resetDockingWindowsToolStripMenuItem";
+            this.resetDockingWindowsToolStripMenuItem.Size = new System.Drawing.Size(208, 22);
+            this.resetDockingWindowsToolStripMenuItem.Text = "Reset Docking Windows";
+            this.resetDockingWindowsToolStripMenuItem.Click += new System.EventHandler(this.resetDockingWindowsToolStripMenuItem_Click);
             // 
             // eSMFilterSettingsToolStripMenuItem
             // 
@@ -726,13 +735,16 @@ namespace TESVSnip {
             // 
             // statusStrip1
             // 
+            this.dockingManagerExtender.SetCloseButton(this.statusStrip1, false);
             this.statusStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.toolStripStatusLabel,
             this.toolStripStatusProgressBar,
             this.toolStripStopProgress});
             this.statusStrip1.Location = new System.Drawing.Point(0, 524);
             this.statusStrip1.Name = "statusStrip1";
+            this.dockingManagerExtender.SetPreferredSize(this.statusStrip1, new System.Drawing.Size(0, 0));
             this.statusStrip1.Size = new System.Drawing.Size(765, 22);
+            this.dockingManagerExtender.SetTabbedMode(this.statusStrip1, true);
             this.statusStrip1.TabIndex = 4;
             this.statusStrip1.Text = "statusStrip1";
             // 
@@ -770,64 +782,9 @@ namespace TESVSnip {
             this.backgroundWorker1.ProgressChanged += new System.ComponentModel.ProgressChangedEventHandler(this.backgroundWorker1_ProgressChanged);
             this.backgroundWorker1.RunWorkerCompleted += new System.ComponentModel.RunWorkerCompletedEventHandler(this.backgroundWorker1_RunWorkerCompleted);
             // 
-            // splitHorizontal
-            // 
-            this.splitHorizontal.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.splitHorizontal.Location = new System.Drawing.Point(0, 24);
-            this.splitHorizontal.MinimumSize = new System.Drawing.Size(100, 200);
-            this.splitHorizontal.Name = "splitHorizontal";
-            // 
-            // splitHorizontal.Panel1
-            // 
-            this.splitHorizontal.Panel1.Controls.Add(this.splitVertical);
-            this.splitHorizontal.Panel1MinSize = 100;
-            // 
-            // splitHorizontal.Panel2
-            // 
-            this.splitHorizontal.Panel2.Controls.Add(this.rtfInfo);
-            this.splitHorizontal.Size = new System.Drawing.Size(765, 500);
-            this.splitHorizontal.SplitterDistance = 259;
-            this.splitHorizontal.TabIndex = 3;
-            // 
-            // splitVertical
-            // 
-            this.splitVertical.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.splitVertical.Location = new System.Drawing.Point(0, 0);
-            this.splitVertical.MinimumSize = new System.Drawing.Size(100, 100);
-            this.splitVertical.Name = "splitVertical";
-            this.splitVertical.Orientation = System.Windows.Forms.Orientation.Horizontal;
-            // 
-            // splitVertical.Panel1
-            // 
-            this.splitVertical.Panel1.Controls.Add(this.PluginTree);
-            this.splitVertical.Panel1.Controls.Add(this.toolStripRecord);
-            this.splitVertical.Panel1MinSize = 100;
-            // 
-            // splitVertical.Panel2
-            // 
-            this.splitVertical.Panel2.Controls.Add(this.listSubrecord);
-            this.splitVertical.Panel2.Controls.Add(this.toolStripSubRecord);
-            this.splitVertical.Size = new System.Drawing.Size(259, 500);
-            this.splitVertical.SplitterDistance = 175;
-            this.splitVertical.TabIndex = 1;
-            // 
-            // PluginTree
-            // 
-            this.PluginTree.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.PluginTree.HideSelection = false;
-            this.PluginTree.Location = new System.Drawing.Point(0, 25);
-            this.PluginTree.Name = "PluginTree";
-            this.PluginTree.Size = new System.Drawing.Size(259, 150);
-            this.PluginTree.TabIndex = 0;
-            this.PluginTree.OnContextMenuKey += new System.EventHandler(this.PluginTree_OnContextMenuKey);
-            this.PluginTree.AfterExpand += new System.Windows.Forms.TreeViewEventHandler(this.PluginTree_AfterExpand);
-            this.PluginTree.AfterSelect += new System.Windows.Forms.TreeViewEventHandler(this.PluginTree_AfterSelect);
-            this.PluginTree.NodeMouseClick += new System.Windows.Forms.TreeNodeMouseClickEventHandler(this.PluginTree_NodeMouseClick);
-            this.PluginTree.Enter += new System.EventHandler(this.PluginTree_Enter);
-            this.PluginTree.MouseDoubleClick += new System.Windows.Forms.MouseEventHandler(this.PluginTree_MouseDoubleClick);
-            // 
             // toolStripRecord
             // 
+            this.dockingManagerExtender.SetCloseButton(this.toolStripRecord, false);
             this.toolStripRecord.GripStyle = System.Windows.Forms.ToolStripGripStyle.Hidden;
             this.toolStripRecord.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.toolStripRecordBack,
@@ -837,7 +794,9 @@ namespace TESVSnip {
             this.toolStripRecordText});
             this.toolStripRecord.Location = new System.Drawing.Point(0, 0);
             this.toolStripRecord.Name = "toolStripRecord";
-            this.toolStripRecord.Size = new System.Drawing.Size(259, 25);
+            this.dockingManagerExtender.SetPreferredSize(this.toolStripRecord, new System.Drawing.Size(0, 0));
+            this.toolStripRecord.Size = new System.Drawing.Size(228, 25);
+            this.dockingManagerExtender.SetTabbedMode(this.toolStripRecord, true);
             this.toolStripRecord.TabIndex = 1;
             this.toolStripRecord.Text = "Record Tool Strip";
             // 
@@ -888,38 +847,9 @@ namespace TESVSnip {
             this.toolStripRecordText.Name = "toolStripRecordText";
             this.toolStripRecordText.Size = new System.Drawing.Size(0, 22);
             // 
-            // listSubrecord
-            // 
-            this.listSubrecord.Activation = System.Windows.Forms.ItemActivation.OneClick;
-            this.listSubrecord.AllowDrop = true;
-            this.listSubrecord.DataSource = null;
-            this.listSubrecord.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.listSubrecord.EnableSearchByKeyboard = false;
-            this.listSubrecord.FullRowSelect = true;
-            this.listSubrecord.GridLines = true;
-            this.listSubrecord.HeaderStyle = System.Windows.Forms.ColumnHeaderStyle.Nonclickable;
-            this.listSubrecord.HideSelection = false;
-            this.listSubrecord.ItemCount = 0;
-            this.listSubrecord.Location = new System.Drawing.Point(0, 25);
-            this.listSubrecord.Name = "listSubrecord";
-            this.listSubrecord.OwnerDraw = true;
-            this.listSubrecord.ShowItemToolTips = true;
-            this.listSubrecord.Size = new System.Drawing.Size(259, 296);
-            this.listSubrecord.TabIndex = 0;
-            this.listSubrecord.UseCompatibleStateImageBehavior = false;
-            this.listSubrecord.View = System.Windows.Forms.View.Details;
-            this.listSubrecord.VirtualMode = true;
-            this.listSubrecord.ItemActivate += new System.EventHandler(this.listView1_ItemActivate);
-            this.listSubrecord.ItemDrag += new System.Windows.Forms.ItemDragEventHandler(this.listView1_ItemDrag);
-            this.listSubrecord.SelectedIndexChanged += new System.EventHandler(this.listSubrecord_SelectedIndexChanged_1);
-            this.listSubrecord.DragDrop += new System.Windows.Forms.DragEventHandler(this.listView1_DragDrop);
-            this.listSubrecord.DragEnter += new System.Windows.Forms.DragEventHandler(this.listView1_DragEnter);
-            this.listSubrecord.GiveFeedback += new System.Windows.Forms.GiveFeedbackEventHandler(this.listView1_GiveFeedback);
-            this.listSubrecord.KeyDown += new System.Windows.Forms.KeyEventHandler(this.listSubrecord_KeyDown);
-            this.listSubrecord.MouseDoubleClick += new System.Windows.Forms.MouseEventHandler(this.listSubrecord_MouseDoubleClick);
-            // 
             // toolStripSubRecord
             // 
+            this.dockingManagerExtender.SetCloseButton(this.toolStripSubRecord, false);
             this.toolStripSubRecord.GripStyle = System.Windows.Forms.ToolStripGripStyle.Hidden;
             this.toolStripSubRecord.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.toolStripInsertRecord,
@@ -935,7 +865,9 @@ namespace TESVSnip {
             this.toolStripSeparator2});
             this.toolStripSubRecord.Location = new System.Drawing.Point(0, 0);
             this.toolStripSubRecord.Name = "toolStripSubRecord";
-            this.toolStripSubRecord.Size = new System.Drawing.Size(259, 25);
+            this.dockingManagerExtender.SetPreferredSize(this.toolStripSubRecord, new System.Drawing.Size(0, 0));
+            this.toolStripSubRecord.Size = new System.Drawing.Size(228, 25);
+            this.dockingManagerExtender.SetTabbedMode(this.toolStripSubRecord, true);
             this.toolStripSubRecord.TabIndex = 1;
             // 
             // toolStripInsertRecord
@@ -1036,20 +968,6 @@ namespace TESVSnip {
             this.toolStripSeparator2.Name = "toolStripSeparator2";
             this.toolStripSeparator2.Size = new System.Drawing.Size(6, 25);
             // 
-            // rtfInfo
-            // 
-            this.rtfInfo.AutoWordSelection = true;
-            this.rtfInfo.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.rtfInfo.Location = new System.Drawing.Point(0, 0);
-            this.rtfInfo.Name = "rtfInfo";
-            this.rtfInfo.ReadOnly = true;
-            this.rtfInfo.ShortcutsEnabled = false;
-            this.rtfInfo.Size = new System.Drawing.Size(502, 500);
-            this.rtfInfo.TabIndex = 3;
-            this.rtfInfo.Text = "";
-            this.rtfInfo.LinkClicked += new System.Windows.Forms.LinkClickedEventHandler(this.rtfInfo_LinkClicked);
-            this.rtfInfo.PreviewKeyDown += new System.Windows.Forms.PreviewKeyDownEventHandler(this.tbInfo_PreviewKeyDown);
-            // 
             // columnHeader1
             // 
             this.columnHeader1.Text = "Name";
@@ -1060,6 +978,7 @@ namespace TESVSnip {
             // 
             // contextMenuRecord
             // 
+            this.dockingManagerExtender.SetCloseButton(this.contextMenuRecord, false);
             this.contextMenuRecord.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.contextMenuRecordAddMaster,
             this.contextMenuRecordCopy,
@@ -1067,7 +986,9 @@ namespace TESVSnip {
             this.contextMenuRecordDelete,
             this.toolStripMenuItem2});
             this.contextMenuRecord.Name = "contextMenuRecord";
-            this.contextMenuRecord.Size = new System.Drawing.Size(163, 136);
+            this.dockingManagerExtender.SetPreferredSize(this.contextMenuRecord, new System.Drawing.Size(0, 0));
+            this.contextMenuRecord.Size = new System.Drawing.Size(163, 114);
+            this.dockingManagerExtender.SetTabbedMode(this.contextMenuRecord, true);
             this.contextMenuRecord.Closing += new System.Windows.Forms.ToolStripDropDownClosingEventHandler(this.contextMenuRecord_Closing);
             this.contextMenuRecord.Opening += new System.ComponentModel.CancelEventHandler(this.contextMenuRecord_Opening);
             // 
@@ -1149,6 +1070,7 @@ namespace TESVSnip {
             // 
             // toolStripIncrFind
             // 
+            this.dockingManagerExtender.SetCloseButton(this.toolStripIncrFind, false);
             this.toolStripIncrFind.Dock = System.Windows.Forms.DockStyle.Bottom;
             this.toolStripIncrFind.GripStyle = System.Windows.Forms.ToolStripGripStyle.Hidden;
             this.toolStripIncrFind.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
@@ -1167,7 +1089,9 @@ namespace TESVSnip {
             this.toolStripIncrFind.Location = new System.Drawing.Point(0, 499);
             this.toolStripIncrFind.Name = "toolStripIncrFind";
             this.toolStripIncrFind.Padding = new System.Windows.Forms.Padding(0);
+            this.dockingManagerExtender.SetPreferredSize(this.toolStripIncrFind, new System.Drawing.Size(0, 0));
             this.toolStripIncrFind.Size = new System.Drawing.Size(765, 25);
+            this.dockingManagerExtender.SetTabbedMode(this.toolStripIncrFind, true);
             this.toolStripIncrFind.TabIndex = 5;
             this.toolStripIncrFind.Text = "Incremental Find";
             this.toolStripIncrFind.Visible = false;
@@ -1202,7 +1126,7 @@ namespace TESVSnip {
             "Form ID"});
             this.toolStripIncrFindTypeFilter.Name = "toolStripIncrFindTypeFilter";
             this.toolStripIncrFindTypeFilter.Overflow = System.Windows.Forms.ToolStripItemOverflow.Never;
-            this.toolStripIncrFindTypeFilter.Size = new System.Drawing.Size(80, 23);
+            this.toolStripIncrFindTypeFilter.Size = new System.Drawing.Size(80, 25);
             this.toolStripIncrFindTypeFilter.ToolTipText = "Search Type";
             this.toolStripIncrFindTypeFilter.Visible = false;
             this.toolStripIncrFindTypeFilter.SelectedIndexChanged += new System.EventHandler(this.toolStripIncrFindTypeFilter_SelectedIndexChanged);
@@ -1301,6 +1225,7 @@ namespace TESVSnip {
             // 
             // toolStripIncrInvalidRec
             // 
+            this.dockingManagerExtender.SetCloseButton(this.toolStripIncrInvalidRec, false);
             this.toolStripIncrInvalidRec.Dock = System.Windows.Forms.DockStyle.Bottom;
             this.toolStripIncrInvalidRec.GripStyle = System.Windows.Forms.ToolStripGripStyle.Hidden;
             this.toolStripIncrInvalidRec.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
@@ -1317,7 +1242,9 @@ namespace TESVSnip {
             this.toolStripIncrInvalidRec.Location = new System.Drawing.Point(0, 499);
             this.toolStripIncrInvalidRec.Name = "toolStripIncrInvalidRec";
             this.toolStripIncrInvalidRec.Padding = new System.Windows.Forms.Padding(0);
+            this.dockingManagerExtender.SetPreferredSize(this.toolStripIncrInvalidRec, new System.Drawing.Size(0, 0));
             this.toolStripIncrInvalidRec.Size = new System.Drawing.Size(765, 25);
+            this.dockingManagerExtender.SetTabbedMode(this.toolStripIncrInvalidRec, true);
             this.toolStripIncrInvalidRec.TabIndex = 6;
             this.toolStripIncrInvalidRec.Text = "Incremental Invalid Record Search";
             this.toolStripIncrInvalidRec.Visible = false;
@@ -1402,17 +1329,127 @@ namespace TESVSnip {
             this.toolStripIncrInvalidRecStatus.Size = new System.Drawing.Size(64, 22);
             this.toolStripIncrInvalidRecStatus.Text = "Status Text";
             // 
+            // recordPanel
+            // 
+            this.dockingManagerExtender.SetADockingEnable(this.recordPanel, true);
+            this.dockingManagerExtender.SetCloseButton(this.recordPanel, false);
+            this.recordPanel.Controls.Add(this.PluginTree);
+            this.recordPanel.Controls.Add(this.toolStripRecord);
+            this.dockingManagerExtender.SetFullTitle(this.recordPanel, "Record Panel");
+            this.recordPanel.Location = new System.Drawing.Point(23, 27);
+            this.recordPanel.MinimumSize = new System.Drawing.Size(225, 100);
+            this.recordPanel.Name = "recordPanel";
+            this.dockingManagerExtender.SetPreferredSize(this.recordPanel, new System.Drawing.Size(200, 100));
+            this.recordPanel.Size = new System.Drawing.Size(228, 217);
+            this.dockingManagerExtender.SetTabbedMode(this.recordPanel, true);
+            this.recordPanel.TabIndex = 5;
+            this.dockingManagerExtender.SetTitle(this.recordPanel, "Record Panel");
+            // 
+            // subrecordPanel
+            // 
+            this.dockingManagerExtender.SetADockingEnable(this.subrecordPanel, true);
+            this.dockingManagerExtender.SetCloseButton(this.subrecordPanel, false);
+            this.subrecordPanel.Controls.Add(this.listSubrecord);
+            this.subrecordPanel.Controls.Add(this.toolStripSubRecord);
+            this.dockingManagerExtender.SetFullTitle(this.subrecordPanel, "Subrecord Panel");
+            this.subrecordPanel.Location = new System.Drawing.Point(23, 247);
+            this.subrecordPanel.MinimumSize = new System.Drawing.Size(225, 100);
+            this.subrecordPanel.Name = "subrecordPanel";
+            this.dockingManagerExtender.SetPreferredSize(this.subrecordPanel, new System.Drawing.Size(200, 100));
+            this.subrecordPanel.Size = new System.Drawing.Size(228, 255);
+            this.dockingManagerExtender.SetTabbedMode(this.subrecordPanel, true);
+            this.subrecordPanel.TabIndex = 6;
+            this.dockingManagerExtender.SetTitle(this.subrecordPanel, "Subrecord Panel");
+            this.dockingManagerExtender.SetZoneIndex(this.subrecordPanel, 1);
+            // 
+            // listSubrecord
+            // 
+            this.listSubrecord.Activation = System.Windows.Forms.ItemActivation.OneClick;
+            this.listSubrecord.AllowDrop = true;
+            this.dockingManagerExtender.SetCloseButton(this.listSubrecord, false);
+            this.listSubrecord.DataSource = null;
+            this.listSubrecord.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.listSubrecord.EnableSearchByKeyboard = false;
+            this.listSubrecord.FullRowSelect = true;
+            this.listSubrecord.GridLines = true;
+            this.listSubrecord.HeaderStyle = System.Windows.Forms.ColumnHeaderStyle.Nonclickable;
+            this.listSubrecord.HideSelection = false;
+            this.listSubrecord.ItemCount = 0;
+            this.listSubrecord.Location = new System.Drawing.Point(0, 25);
+            this.listSubrecord.Name = "listSubrecord";
+            this.listSubrecord.OwnerDraw = true;
+            this.dockingManagerExtender.SetPreferredSize(this.listSubrecord, new System.Drawing.Size(0, 0));
+            this.listSubrecord.ShowItemToolTips = true;
+            this.listSubrecord.Size = new System.Drawing.Size(228, 230);
+            this.dockingManagerExtender.SetTabbedMode(this.listSubrecord, true);
+            this.listSubrecord.TabIndex = 0;
+            this.listSubrecord.UseCompatibleStateImageBehavior = false;
+            this.listSubrecord.View = System.Windows.Forms.View.Details;
+            this.listSubrecord.VirtualMode = true;
+            this.listSubrecord.ItemActivate += new System.EventHandler(this.listView1_ItemActivate);
+            this.listSubrecord.ItemDrag += new System.Windows.Forms.ItemDragEventHandler(this.listView1_ItemDrag);
+            this.listSubrecord.SelectedIndexChanged += new System.EventHandler(this.listSubrecord_SelectedIndexChanged_1);
+            this.listSubrecord.DragDrop += new System.Windows.Forms.DragEventHandler(this.listView1_DragDrop);
+            this.listSubrecord.DragEnter += new System.Windows.Forms.DragEventHandler(this.listView1_DragEnter);
+            this.listSubrecord.GiveFeedback += new System.Windows.Forms.GiveFeedbackEventHandler(this.listView1_GiveFeedback);
+            this.listSubrecord.KeyDown += new System.Windows.Forms.KeyEventHandler(this.listSubrecord_KeyDown);
+            this.listSubrecord.MouseDoubleClick += new System.Windows.Forms.MouseEventHandler(this.listSubrecord_MouseDoubleClick);
+            // 
+            // PluginTree
+            // 
+            this.dockingManagerExtender.SetCloseButton(this.PluginTree, false);
+            this.PluginTree.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.PluginTree.HideSelection = false;
+            this.PluginTree.Location = new System.Drawing.Point(0, 25);
+            this.PluginTree.Name = "PluginTree";
+            this.dockingManagerExtender.SetPreferredSize(this.PluginTree, new System.Drawing.Size(0, 0));
+            this.PluginTree.Size = new System.Drawing.Size(228, 192);
+            this.dockingManagerExtender.SetTabbedMode(this.PluginTree, true);
+            this.PluginTree.TabIndex = 0;
+            this.PluginTree.OnContextMenuKey += new System.EventHandler(this.PluginTree_OnContextMenuKey);
+            this.PluginTree.AfterExpand += new System.Windows.Forms.TreeViewEventHandler(this.PluginTree_AfterExpand);
+            this.PluginTree.AfterSelect += new System.Windows.Forms.TreeViewEventHandler(this.PluginTree_AfterSelect);
+            this.PluginTree.NodeMouseClick += new System.Windows.Forms.TreeNodeMouseClickEventHandler(this.PluginTree_NodeMouseClick);
+            this.PluginTree.Enter += new System.EventHandler(this.PluginTree_Enter);
+            this.PluginTree.MouseDoubleClick += new System.Windows.Forms.MouseEventHandler(this.PluginTree_MouseDoubleClick);
+            // 
+            // rtfInfo
+            // 
+            this.rtfInfo.AutoWordSelection = true;
+            this.dockingManagerExtender.SetCloseButton(this.rtfInfo, false);
+            this.rtfInfo.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.rtfInfo.Location = new System.Drawing.Point(0, 24);
+            this.rtfInfo.Name = "rtfInfo";
+            this.dockingManagerExtender.SetPreferredSize(this.rtfInfo, new System.Drawing.Size(0, 0));
+            this.rtfInfo.ReadOnly = true;
+            this.rtfInfo.ShortcutsEnabled = false;
+            this.rtfInfo.Size = new System.Drawing.Size(765, 500);
+            this.dockingManagerExtender.SetTabbedMode(this.rtfInfo, true);
+            this.rtfInfo.TabIndex = 3;
+            this.rtfInfo.Text = "";
+            this.rtfInfo.LinkClicked += new System.Windows.Forms.LinkClickedEventHandler(this.rtfInfo_LinkClicked);
+            this.rtfInfo.PreviewKeyDown += new System.Windows.Forms.PreviewKeyDownEventHandler(this.tbInfo_PreviewKeyDown);
+            // 
+            // dockingManagerExtender
+            // 
+            this.dockingManagerExtender.ContainerControl = this;
+            this.dockingManagerExtender.InnerControl = this.rtfInfo;
+            this.dockingManagerExtender.OuterControl = this.menuStrip1;
+            // 
             // MainView
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(765, 546);
-            this.Controls.Add(this.splitHorizontal);
+            this.Controls.Add(this.subrecordPanel);
+            this.Controls.Add(this.recordPanel);
+            this.Controls.Add(this.rtfInfo);
+            this.Controls.Add(this.menuStrip1);
             this.Controls.Add(this.toolStripIncrFind);
             this.Controls.Add(this.toolStripIncrInvalidRec);
             this.Controls.Add(this.statusStrip1);
-            this.Controls.Add(this.menuStrip1);
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
+            this.IsMdiContainer = true;
             this.MainMenuStrip = this.menuStrip1;
             this.MinimumSize = new System.Drawing.Size(380, 300);
             this.Name = "MainView";
@@ -1425,17 +1462,8 @@ namespace TESVSnip {
             this.menuStrip1.PerformLayout();
             this.statusStrip1.ResumeLayout(false);
             this.statusStrip1.PerformLayout();
-            this.splitHorizontal.Panel1.ResumeLayout(false);
-            this.splitHorizontal.Panel2.ResumeLayout(false);
-            this.splitHorizontal.ResumeLayout(false);
-            this.splitVertical.Panel1.ResumeLayout(false);
-            this.splitVertical.Panel1.PerformLayout();
-            this.splitVertical.Panel2.ResumeLayout(false);
-            this.splitVertical.Panel2.PerformLayout();
-            this.splitVertical.ResumeLayout(false);
             this.toolStripRecord.ResumeLayout(false);
             this.toolStripRecord.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.listSubrecord)).EndInit();
             this.toolStripSubRecord.ResumeLayout(false);
             this.toolStripSubRecord.PerformLayout();
             this.contextMenuRecord.ResumeLayout(false);
@@ -1443,6 +1471,12 @@ namespace TESVSnip {
             this.toolStripIncrFind.PerformLayout();
             this.toolStripIncrInvalidRec.ResumeLayout(false);
             this.toolStripIncrInvalidRec.PerformLayout();
+            this.recordPanel.ResumeLayout(false);
+            this.recordPanel.PerformLayout();
+            this.subrecordPanel.ResumeLayout(false);
+            this.subrecordPanel.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.listSubrecord)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.dockingManagerExtender)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -1467,8 +1501,6 @@ namespace TESVSnip {
         private System.Windows.Forms.ToolStripMenuItem pasteToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem deleteToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem newToolStripMenuItem;
-        private System.Windows.Forms.SplitContainer splitHorizontal;
-        private System.Windows.Forms.SplitContainer splitVertical;
         private TESVSnip.Windows.Controls.ObjectBindingListView listSubrecord;
         private System.Windows.Forms.ColumnHeader columnHeader1;
         private System.Windows.Forms.ColumnHeader columnHeader2;
@@ -1582,5 +1614,9 @@ namespace TESVSnip {
         private System.Windows.Forms.ToolStripMenuItem addMasterToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem contextMenuRecordAddMaster;
         private System.Windows.Forms.ToolStripMenuItem browseToolStripMenuItem;
+        private System.Windows.Forms.Panel recordPanel;
+        private System.Windows.Forms.Panel subrecordPanel;
+        private System.Windows.Forms.ToolStripMenuItem resetDockingWindowsToolStripMenuItem;
+        private DockingManagerExtender.DockingManagerExtender dockingManagerExtender;
     }
 }

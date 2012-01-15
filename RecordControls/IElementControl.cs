@@ -25,6 +25,7 @@ namespace TESVSnip.RecordControls
 
     interface ITextElementControl : IElementControl
     {
+        Label LabelType { get; }
         Label Label { get; }
         TextBoxBase TextBox { get; }
     }

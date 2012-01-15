@@ -8,6 +8,7 @@ using System.Drawing;
 using System.Drawing.Drawing2D;
 using Microsoft.Win32;
 using TESVSnip.Windows.Controls;
+using Crownwood.Magic.Docking;
 
 namespace TESVSnip
 {
@@ -25,10 +26,12 @@ namespace TESVSnip
         private static TreeNode s_clipboardNode;
         static readonly System.Text.Encoding s_CP1252Encoding = System.Text.Encoding.GetEncoding(1252);
 
+
         private SelectionContext Selection;
         private Forms.StringsEditor stringEditor = null;
         OC.Windows.Forms.History<TreeNode> historyHandler;
         private MainViewMessageFilter msgFilter;
+        private DockingManager dockingManager;
 
         #region Helper Tree Node Helper
         /// <summary>
@@ -63,6 +66,7 @@ namespace TESVSnip
                 }
             }
             InitializeComponent();
+            //InitializeDockingWindows();
 
             // Register message filter.
             msgFilter = new MainViewMessageFilter(this);
@@ -96,15 +100,15 @@ namespace TESVSnip
             if (!global::TESVSnip.Properties.Settings.Default.IsFirstTimeOpening)
             {
                 Settings.GetWindowPosition("TESsnip", this);
-                splitHorizontal.SplitterDistance = global::TESVSnip.Properties.Settings.Default.MainHorzSplitterPct;
-                splitVertical.SplitterDistance = global::TESVSnip.Properties.Settings.Default.MainVertSplitterPct;
+                //splitHorizontal.SplitterDistance = global::TESVSnip.Properties.Settings.Default.MainHorzSplitterPct;
+                //splitVertical.SplitterDistance = global::TESVSnip.Properties.Settings.Default.MainVertSplitterPct;
             }
             else
             {
                 Settings.SetWindowPosition("TESsnip", this);
                 global::TESVSnip.Properties.Settings.Default.IsFirstTimeOpening = false;
-                global::TESVSnip.Properties.Settings.Default.MainHorzSplitterPct = splitHorizontal.SplitterDistance;
-                global::TESVSnip.Properties.Settings.Default.MainVertSplitterPct = splitVertical.SplitterDistance;
+                //global::TESVSnip.Properties.Settings.Default.MainHorzSplitterPct = splitHorizontal.SplitterDistance;
+                //global::TESVSnip.Properties.Settings.Default.MainVertSplitterPct = splitVertical.SplitterDistance;
                 global::TESVSnip.Properties.Settings.Default.Save();
             }
             useWindowsClipboardToolStripMenuItem.Checked = global::TESVSnip.Properties.Settings.Default.UseWindowsClipboard;
@@ -420,6 +424,7 @@ Would you like to apply the record exclusions?"
                 insertRecordToolStripMenuItem.Enabled = false;
                 insertSubrecordToolStripMenuItem.Enabled = true;
                 Record r = (Record)PluginTree.SelectedNode.Tag;
+                Selection.Plugin = GetPluginFromNode(PluginTree.SelectedNode);
                 Selection.Record = r;
                 listSubrecord.DataSource = r.SubRecords;
                 MatchRecordStructureToRecord();
@@ -427,6 +432,7 @@ Would you like to apply the record exclusions?"
             }
             else
             {
+                Selection.Plugin = GetPluginFromNode(PluginTree.SelectedNode);
                 Selection.Record = null;
                 listSubrecord.DataSource = null;
                 UpdateMainText(((BaseRecord)PluginTree.SelectedNode.Tag));
@@ -1056,8 +1062,8 @@ Do you still want to save?", "Modified Save", MessageBoxButtons.YesNo, MessageBo
 
         private void TESsnip_FormClosing(object sender, FormClosingEventArgs e)
         {
-            global::TESVSnip.Properties.Settings.Default.MainHorzSplitterPct = splitHorizontal.SplitterDistance;
-            global::TESVSnip.Properties.Settings.Default.MainVertSplitterPct = splitVertical.SplitterDistance;
+            //global::TESVSnip.Properties.Settings.Default.MainHorzSplitterPct = splitHorizontal.SplitterDistance;
+            //global::TESVSnip.Properties.Settings.Default.MainVertSplitterPct = splitVertical.SplitterDistance;
             global::TESVSnip.Properties.Settings.Default.UseWindowsClipboard = useWindowsClipboardToolStripMenuItem.Checked;
 
             PluginTree.Nodes.Clear();
@@ -1495,8 +1501,8 @@ Do you still want to save?", "Modified Save", MessageBoxButtons.YesNo, MessageBo
 
         void EnableUserInterface(bool enable)
         {
-            ControlEnable(this.splitHorizontal, enable);
-            ControlEnable(this.splitVertical, enable);
+            //ControlEnable(this.splitHorizontal, enable);
+            //ControlEnable(this.splitVertical, enable);
             ControlEnable(this.menuStrip1, enable);
             ControlEnable(this.toolStripIncrFind, enable);
             ControlEnable(this.toolStripIncrInvalidRec, enable);
@@ -2407,6 +2413,40 @@ Do you still want to save?", "Modified Save", MessageBoxButtons.YesNo, MessageBo
             catch { }
         }
 
+        private void resetDockingWindowsToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            ResetDockingWindows();
+        }
 
+        private void ResetDockingWindows()
+        {
+            switch (MessageBox.Show("Would you like to reset your custom layout back to default layout?\n\r Remark: You have to restart application until new setting can take effect.", "Automatic State Persistence", MessageBoxButtons.YesNo))
+            {
+                case DialogResult.Yes:
+                    //this.dockingManagerExtender.ResetAutoPersistent(false);
+                    break;
+            }
+        }
+
+        private void InitializeDockingWindows()
+        {
+            this.SuspendLayout();
+            dockingManager = new DockingManager(this, Crownwood.Magic.Common.VisualStyle.IDE);
+            this.dockingManager.OuterControl = menuStrip1;
+            this.dockingManager.InnerControl = rtfInfo;
+            var recContent = new Crownwood.Magic.Docking.Content(dockingManager, recordPanel, "Record Panel");
+            dockingManager.Contents.Add(recContent);
+            
+            var subRecContent = new Crownwood.Magic.Docking.Content(dockingManager, subrecordPanel, "Subrecord Panel");
+            dockingManager.Contents.Add(subRecContent);
+
+            recContent.CloseButton = false;
+            subRecContent.CloseButton = false;
+
+            var recWinContent = dockingManager.AddContentWithState(recContent, State.DockLeft) as WindowContent;
+            dockingManager.AddContentToZone(subRecContent, recWinContent.ParentZone, 1);
+
+            this.ResumeLayout();
+        }
     }
 }

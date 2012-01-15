@@ -44,9 +44,9 @@ namespace TESVSnip.RecordControls
             this.cboFlags.DropDownSizeMode = TESVSnip.Windows.Controls.CustomComboBox.SizeMode.UseDropDownSize;
             this.cboFlags.DropSize = new System.Drawing.Size(121, 106);
             this.cboFlags.FormattingEnabled = true;
-            this.cboFlags.Location = new System.Drawing.Point(3, 25);
+            this.cboFlags.Location = new System.Drawing.Point(66, 25);
             this.cboFlags.Name = "cboFlags";
-            this.cboFlags.Size = new System.Drawing.Size(394, 21);
+            this.cboFlags.Size = new System.Drawing.Size(331, 21);
             this.cboFlags.TabIndex = 2;
             this.cboFlags.ValueSeparator = ",";
             this.cboFlags.TextUpdate += new System.EventHandler(this.cboFlags_TextUpdate);

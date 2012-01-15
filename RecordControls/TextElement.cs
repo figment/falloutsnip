@@ -17,7 +17,10 @@ namespace TESVSnip.RecordControls
         }
 
         #region ITextElementControl Members
-
+        public Label LabelType
+        {
+            get { return this.lblType; }
+        }
         public Label Label
         {
             get { return this.lblText; }
@@ -39,10 +42,9 @@ namespace TESVSnip.RecordControls
         {
             if (this.element != null && !string.IsNullOrEmpty(this.element.name))
             {
-                //this.lblText.AutoSize = false;
-                this.lblText.Text = string.Format("{0}: {1}", this.element.type, this.element.name)
+                this.lblType.Text = this.element.type.ToString();
+                this.lblText.Text = this.element.name
                     + (!string.IsNullOrEmpty(element.desc) ? (" (" + element.desc + ")") : "");
-                //this.lblText.Width = this.lblText.PreferredWidth;
             }
         }
 
@@ -127,6 +129,7 @@ namespace TESVSnip.RecordControls
                 if (fitTextBoxToWidth)
                 {
                     this.lblText.Left = ((this.Width - this.lblText.Width - 50) /  50) * 50;
+                    this.lblText.Anchor = AnchorStyles.Right | AnchorStyles.Top;
                     this.textBox.Width = (this.lblText.Left - 20 - this.textBox.Left);
                     this.textBox.Anchor = AnchorStyles.Left | AnchorStyles.Right | AnchorStyles.Top;
                 }

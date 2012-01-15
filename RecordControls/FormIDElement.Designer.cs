@@ -38,9 +38,9 @@
             this.cboFormID.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.cboFormID.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.cboFormID.Location = new System.Drawing.Point(69, 23);
+            this.cboFormID.Location = new System.Drawing.Point(66, 23);
             this.cboFormID.Name = "cboFormID";
-            this.cboFormID.Size = new System.Drawing.Size(328, 21);
+            this.cboFormID.Size = new System.Drawing.Size(331, 21);
             this.cboFormID.TabIndex = 3;
             this.cboFormID.SelectedIndexChanged += new System.EventHandler(this.cboFormID_SelectedIndexChanged);
             // 

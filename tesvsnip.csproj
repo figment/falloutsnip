@@ -68,6 +68,9 @@
     <GenerateSerializationAssemblies>On</GenerateSerializationAssemblies>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="MagicLibrary">
+      <HintPath>thirdparty\MagicLibrary.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core">
       <RequiredTargetFramework>3.5</RequiredTargetFramework>
@@ -293,6 +296,12 @@
     <Compile Include="Main\Pair.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Views\RichTextView.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Views\RichTextView.Designer.cs">
+      <DependentUpon>RichTextView.cs</DependentUpon>
+    </Compile>
     <EmbeddedResource Include="Controls\ballontooltip.resx">
       <DependentUpon>ballontooltip.cs</DependentUpon>
     </EmbeddedResource>
@@ -371,6 +380,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="RecordControls\TextElement.resx">
       <DependentUpon>TextElement.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Views\RichTextView.resx">
+      <DependentUpon>RichTextView.cs</DependentUpon>
     </EmbeddedResource>
     <None Include="build\tesvsnip.snk" />
     <None Include="Controls\ObjectListView\ObjectListView.FxCop" />
@@ -585,7 +597,6 @@
       <Install>true</Install>
     </BootstrapperPackage>
   </ItemGroup>
-  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

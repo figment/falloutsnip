@@ -36,7 +36,7 @@
             // chkUseText
             // 
             this.chkUseText.AutoSize = true;
-            this.chkUseText.Location = new System.Drawing.Point(3, 31);
+            this.chkUseText.Location = new System.Drawing.Point(26, 30);
             this.chkUseText.Name = "chkUseText";
             this.chkUseText.Size = new System.Drawing.Size(15, 14);
             this.chkUseText.TabIndex = 5;
@@ -46,9 +46,9 @@
             // 
             this.txtString.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.txtString.Location = new System.Drawing.Point(37, 27);
+            this.txtString.Location = new System.Drawing.Point(66, 27);
             this.txtString.Name = "txtString";
-            this.txtString.Size = new System.Drawing.Size(360, 20);
+            this.txtString.Size = new System.Drawing.Size(331, 20);
             this.txtString.TabIndex = 6;
             this.txtString.Validated += new System.EventHandler(this.txtString_Validated);
             // 

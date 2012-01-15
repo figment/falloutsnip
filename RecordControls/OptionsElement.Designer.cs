@@ -38,9 +38,9 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.cboOptions.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.cboOptions.FormattingEnabled = true;
-            this.cboOptions.Location = new System.Drawing.Point(4, 25);
+            this.cboOptions.Location = new System.Drawing.Point(66, 25);
             this.cboOptions.Name = "cboOptions";
-            this.cboOptions.Size = new System.Drawing.Size(393, 21);
+            this.cboOptions.Size = new System.Drawing.Size(331, 21);
             this.cboOptions.TabIndex = 2;
             this.cboOptions.SelectedIndexChanged += new System.EventHandler(this.cboOptions_SelectedIndexChanged);
             this.cboOptions.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.cboOptions_KeyPress);
