@@ -364,6 +364,7 @@ Would you like to apply the record exclusions?"
             if (MessageBox.Show("This will close all open plugins, and you will lose any unsaved changes.\n" +
                 "Are you sure you wish to continue", "Warning", MessageBoxButtons.YesNo) != DialogResult.Yes) return;
             PluginTree.Nodes.Clear();
+            listSubrecord.DataSource = null;
             Clipboard = null;
             ClipboardNode = null;
             CloseStringEditor();
@@ -394,7 +395,12 @@ Would you like to apply the record exclusions?"
         void RebuildSelection()
         {
             if (PluginTree.SelectedNode == null)
+            {
+                listSubrecord.DataSource = null;
+                Selection.Plugin = null;
+                UpdateMainText("");
                 return;
+            }
 
             bool hasClipboard = HasClipboardData();
 
