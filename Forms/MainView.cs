@@ -1951,7 +1951,7 @@ Do you still want to save?", "Modified Save", MessageBoxButtons.YesNo, MessageBo
 
         static readonly System.Text.RegularExpressions.Regex linkRegex =
             new System.Text.RegularExpressions.Regex(
-                "^(?:(?<text>[^#]*)#)?(?<type>[0-z][A-Z][A-Z][A-Z]):(?<id>[0-9a-zA-Z]+)$"
+                "^(?:(?<text>[^#]*)#)?(?<type>[0-z][A-Z][A-Z][A-Z_]):(?<id>[0-9a-zA-Z]+)$"
             , System.Text.RegularExpressions.RegexOptions.None);
 
         private void rtfInfo_LinkClicked(object sender, LinkClickedEventArgs e)

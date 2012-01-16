@@ -26,6 +26,11 @@ namespace TESVSnip.RecordControls
             base.UpdateLabel();
         }
 
+        protected override void UpdateText()
+        {
+
+        }
+
         protected override void UpdateAllControls()
         {
             try
@@ -102,7 +107,7 @@ namespace TESVSnip.RecordControls
         {
             if (chkUseText.Checked)
             {
-                this.Data = new ArraySegment<byte>(TypeConverter.str2h(this.txtString.Text));
+                this.data = new ArraySegment<byte>(TypeConverter.str2h(this.txtString.Text));
                 this.Error.SetError(TextBox, null);
             }
             else
@@ -115,7 +120,7 @@ namespace TESVSnip.RecordControls
                 else
                 {
                     this.Error.SetError(TextBox, null);
-                    this.Data = new ArraySegment<byte>(TypeConverter.i2h(i));
+                    this.data = new ArraySegment<byte>(TypeConverter.i2h(i));
                 }
             }
         }

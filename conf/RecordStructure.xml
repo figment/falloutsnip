@@ -2,13 +2,19 @@
 <Records xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
   <Group id="CONDITIONAL" optional="1" repeat="1">
     <Subrecord name = "CTDA" desc = "Conditional" optional = "1" repeat = "1">
-      <Element name = "Comparison Type" type = "int" options="equal;0;or equal;1;not equal;32;or not equal;33;greater;64;or greater;65;greater/equal;96;or greater/equal;97;less;128;or less;129;less/equal;160;or less/equal;161" flags="OR;Run on target;Use global"/>
+      <Element name = "Comparison Type" type = "byte" 
+        options="equal;0;or equal;1;not equal;32;or not equal;33;greater;64;or greater;65;greater/equal;96;or greater/equal;97;less;128;or less;129;less/equal;160;or less/equal;161" 
+        flags="OR;Run on target;Use global"
+        />
+      <Element name = "Unknown 1" type = "byte" hexview="1"/>
+      <Element name = "Unknown 2" type = "byte" hexview="1"/>
+      <Element name = "Unknown 3" type = "byte" hexview="1"/>
       <Element name = "Comparison Value" type = "float"/>
       <Element name = "Function (+4096)" type = "short"/>
-      <Element name = "unused (always 84)" type = "short" notininfo="true"/>
+      <Element name = "unused" type = "short" notininfo="true"/>
       <Element name = "Param 1 (can be int / float / formID)" type = "formid"/>
-      <Element name = "Param 2 (can be int / float / formID)" type = "int" hexview="true"/>
-      <Element name = "Param 3 (can be int / float / formID)" type = "int" hexview="true"/>
+      <Element name = "Param 2 (can be int / float / formID)" type = "formid"/>
+      <Element name = "Param 3 (can be int / float / formID)" type = "formid"/>
       <Element name = "Reference" type = "int"/>
       <Element name = "Unknown (always -1)" type = "int" notininfo="true"/>
     </Subrecord>
@@ -97,15 +103,19 @@
       <Element name="Name" type="string" />
     </Subrecord>
     <Subrecord name="CNAM" desc="CNAM" optional="1" size="4">
-      <Element name="Unknown" type="uint" hexview="1" />
+      <Element name="Unknown 1" type="ushort" />
+      <Element name="Unknown 2" type="ushort" />
     </Subrecord>
   </Record>
   <Record name="LCRT" desc="Loc Ref Type">
     <Subrecord name="EDID" desc="Editor ID">
       <Element name="Name" type="string" />
     </Subrecord>
-    <Subrecord name="CNAM" desc="CNAM" optional="1" size="4">
-      <Element name="Value" type="uint" hexview="1"/>
+    <Subrecord name="CNAM" desc="Marker Color" optional="1" size="4">
+      <Element name="R" type="byte" hexview="1"/>
+      <Element name="G" type="byte" hexview="1"/>
+      <Element name="B" type="byte" hexview="1"/>
+      <Element name="A" type="byte" hexview="1"/>
     </Subrecord>
   </Record>
   <Record name="AACT" desc="Action">
@@ -186,7 +196,7 @@
       <Element name="Tag Skill 1 (AV Code)" type="int" />
       <Element name="Tag Skill 2 (AV Code)" type="int" />
       <Element name="Tag Skill 3 (AV Code)" type="int" />
-      <Element name="Unused Tag Slot (-1 indicates no more tag skills/may be updated if player uses Tag! Perk)" type="int" />
+      <Element name="Unused Tag Slot" type="int" />
       <Element name="Unused Tag Slot" type="int" />
       <Element name="Unused Tag Slot" type="short" />
       <Element name="Unused Tag Slot" type="short" />
@@ -375,9 +385,9 @@
       <Element name="ID" type="formid" reftype="ARMO" />
     </Subrecord>
     <Subrecord name="BODT" desc="BODT" optional="1">
-      <Element name="Name" type="lstring" />
       <Element name="Unknown 1" type="int" />
       <Element name="Unknown 2" type="int" />
+      <Element name="Unknown 3" type="int" />
     </Subrecord>
     <Group id="KEYWORDS" optional="1"/>
     <Group>
@@ -1875,7 +1885,7 @@
       <Element name="z2" type="short" />
     </Subrecord>
     <Subrecord name="ACBS" desc="ACBS Data" optional="1" size="24">
-      <Element name="Flags ??" type="uint" hexview="true" flags="Female;Essential;2;Respawn;AutoCalcStats;Dialog?;Rorikstead Cow;PCLevelOffset;8;9;10;11;12;NoRumors;Summonable;NoPersuasion;CanCorpseCheck;17;Owned/Follow?;19;20;21;22;23;24;25;26;27;28;Ghost/Non-interactable;30;31" />
+      <Element name="Flags ??" type="uint" hexview="true" flags="Female;Essential;2;Respawn;UseStats;Dialog?;Rorikstead Cow;PCLevelOffset;8;9;10;11;12;NoRumors;Summonable;NoPersuasion;CanCorpseCheck;17;Owned/Follow?;19;20;21;22;23;24;25;26;27;28;Ghost/Non-interactable;30;31" />
       <Element name="baseSpell" type="ushort" />
       <Element name="fatigue" type="ushort" />
       <Element name="barterGold" type="ushort" />
@@ -2716,11 +2726,8 @@
     <Subrecord name="GNAM" desc="GNAM" optional="1" notininfo="1">
       <Element name="Unknown" type="blob" />
     </Subrecord>
-    <Subrecord name="MODL" desc="Model Name" optional="1" size="14">
-      <Element name="Unknown" type="int" />
-      <Element name="Unknown 1" type="int" />
-      <Element name="Unknown 2" type="int" />
-      <Element name="Unknown 3" type="short" />
+    <Subrecord name="MODL" desc="Model Name" optional="1">
+        <Element name="Name" type="string" />
     </Subrecord>
     <Subrecord name="MODT" desc="Model Data" optional="1" size="12">
       <Element name="Unknown" type="int" />

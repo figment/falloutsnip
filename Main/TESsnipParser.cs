@@ -2328,7 +2328,7 @@ namespace TESVSnip
                 foreach (var element in elems)
                 {
                     Size sz = s.MeasureText(element.Structure.name);
-                    int width = Math.Max(sz.Width / 13, 10); // approximate convert pixels to twips as the rtflib has crap documentation
+                    int width = Math.Max(sz.Width / 11, 10); // approximate convert pixels to twips as the rtflib has crap documentation
                     if (width > maxFirstCellWidth)
                         maxFirstCellWidth = width;
                 }
@@ -2348,19 +2348,19 @@ namespace TESVSnip
                     switch (sselem.type)
                     {
                         case ElementValueType.FormID:
-                            row.Add(new RTFCellDefinition(10, RTFAlignment.MiddleLeft, RTFBorderSide.Default, 15, Color.DarkGray, System.Windows.Forms.Padding.Empty));
+                            row.Add(new RTFCellDefinition(12, RTFAlignment.MiddleLeft, RTFBorderSide.Default, 15, Color.DarkGray, System.Windows.Forms.Padding.Empty));
                             row.Add(new RTFCellDefinition(30, RTFAlignment.MiddleLeft, RTFBorderSide.Default, 15, Color.DarkGray, System.Windows.Forms.Padding.Empty));
                             // Optional Add cell for 
                             break;
                         case ElementValueType.LString:
-                            row.Add(new RTFCellDefinition(10, RTFAlignment.MiddleLeft, RTFBorderSide.Default, 15, Color.DarkGray, System.Windows.Forms.Padding.Empty));
+                            row.Add(new RTFCellDefinition(12, RTFAlignment.MiddleLeft, RTFBorderSide.Default, 15, Color.DarkGray, System.Windows.Forms.Padding.Empty));
                             row.Add(new RTFCellDefinition(30, RTFAlignment.MiddleLeft, RTFBorderSide.Default, 15, Color.DarkGray, System.Windows.Forms.Padding.Empty));
                             break;
 
                         case ElementValueType.BString:
                         case ElementValueType.String:
                         case ElementValueType.fstring:
-                            row.Add(new RTFCellDefinition(40, RTFAlignment.MiddleLeft, RTFBorderSide.Default, 15, Color.DarkGray, System.Windows.Forms.Padding.Empty));
+                            row.Add(new RTFCellDefinition(42, RTFAlignment.MiddleLeft, RTFBorderSide.Default, 15, Color.DarkGray, System.Windows.Forms.Padding.Empty));
                             break;
                         case ElementValueType.Int:
                         case ElementValueType.UInt:
@@ -2369,18 +2369,18 @@ namespace TESVSnip
                         case ElementValueType.Short:
                         case ElementValueType.UShort:
                         case ElementValueType.Float:
-                            row.Add(new RTFCellDefinition(10, RTFAlignment.MiddleLeft, RTFBorderSide.Default, 15, Color.DarkGray, System.Windows.Forms.Padding.Empty));
+                            row.Add(new RTFCellDefinition(12, RTFAlignment.MiddleLeft, RTFBorderSide.Default, 15, Color.DarkGray, System.Windows.Forms.Padding.Empty));
                             row.Add(new RTFCellDefinition(30, RTFAlignment.MiddleLeft, hasOptions || hasFlags ? RTFBorderSide.Default : RTFBorderSide.Default
                                 , 15, Color.DarkGray, System.Windows.Forms.Padding.Empty));
                             break;
                         case ElementValueType.Blob:
-                            row.Add(new RTFCellDefinition(40, RTFAlignment.MiddleLeft, RTFBorderSide.Default, 15, Color.DarkGray, System.Windows.Forms.Padding.Empty));
+                            row.Add(new RTFCellDefinition(42, RTFAlignment.MiddleLeft, RTFBorderSide.Default, 15, Color.DarkGray, System.Windows.Forms.Padding.Empty));
                             break;
                         case ElementValueType.Str4:
-                            row.Add(new RTFCellDefinition(10, RTFAlignment.MiddleLeft, RTFBorderSide.Default, 15, Color.DarkGray, System.Windows.Forms.Padding.Empty));
+                            row.Add(new RTFCellDefinition(42, RTFAlignment.MiddleLeft, RTFBorderSide.Default, 15, Color.DarkGray, System.Windows.Forms.Padding.Empty));
                             break;
                         default:
-                            row.Add(new RTFCellDefinition(40, RTFAlignment.MiddleLeft, RTFBorderSide.Default, 15, Color.DarkGray, System.Windows.Forms.Padding.Empty));
+                            row.Add(new RTFCellDefinition(42, RTFAlignment.MiddleLeft, RTFBorderSide.Default, 15, Color.DarkGray, System.Windows.Forms.Padding.Empty));
                             break;
                     }
                     maxWidth = Math.Max(maxWidth, row.Sum(x => x.CellWidthRaw));
@@ -2401,8 +2401,6 @@ namespace TESVSnip
                     foreach (var item in ie)
                     {
                         var rb = item.Content;
-                        //int dg = rb.IndexOf(Color.FromKnownColor(KnownColor.DarkGray));
-                        //item.Content.AppendRTF(@"\tscellcbpat" + dg.ToString());
                         item.Content
                             .FontSize(s.DefaultFontSize + 1)
                             .FontStyle(FontStyle.Bold)
@@ -2431,6 +2429,7 @@ namespace TESVSnip
                             {
                                 uint id = (uint)value;
                                 strValue = id.ToString("X8");
+                                if (id != 0)
                                 rec = formIDLookupR != null ? formIDLookupR(id) : null;
                                 if (rec != null)
                                 {
@@ -2449,11 +2448,8 @@ namespace TESVSnip
                                         {
                                             var first = cds[cds.Count - 1];
                                             Size sz = s.MeasureText(lvalue);
-                                            int width = Math.Max(sz.Width / 13, 10); // approximate convert pixels to twips as the rtflib has crap documentation
+                                            int width = Math.Min(40, Math.Max(sz.Width / 12, 10)); // approximate convert pixels to twips as the rtflib has crap documentation
                                             var second = new RTFCellDefinition(width, RTFAlignment.MiddleLeft, RTFBorderSide.Default, 0, Color.DarkGray, System.Windows.Forms.Padding.Empty);
-                                            //float width = first.CellWidthRaw;
-                                            //first.CellWidthRaw = width / 3.0f;
-                                            //second.CellWidthRaw = width * 2.0f / 3.0f;
                                             cds.Add(second);
                                             strDesc2 = lvalue;
                                         }
@@ -2462,9 +2458,22 @@ namespace TESVSnip
                             } break;
                         case ElementValueType.LString:
                             {
-                                uint id = TypeConverter.h2i(elem.Data);
-                                strValue = id.ToString("X8");
-                                strDesc = strLookup != null ? strLookup(id) : null;
+                                if (elem.Type == ElementValueType.String)
+                                {
+                                    strValue = "";
+                                    strDesc = value.ToString();
+                                }
+                                else if (TypeConverter.IsLikelyString(elem.Data))
+                                {
+                                    strValue = "";
+                                    strDesc = TypeConverter.GetString(elem.Data);
+                                }
+                                else
+                                {
+                                    uint id = TypeConverter.h2i(elem.Data);
+                                    strValue = id.ToString("X8");
+                                    strDesc = strLookup != null ? strLookup(id) : null;
+                                }
                             } break;
                         case ElementValueType.Blob:
                             strValue = TypeConverter.GetHexData(elem.Data);
@@ -2504,7 +2513,12 @@ namespace TESVSnip
                                     strDesc = tmp2.ToString();
                                 }
                             } break;
-
+                        case ElementValueType.Str4:
+                            strValue = TypeConverter.GetString(elem.Data);
+                            break;
+                        case ElementValueType.BString:
+                            strValue = TypeConverter.GetBString(elem.Data);
+                            break;
                         default:
                             strValue = value == null ? "" : value.ToString();
                             break;
