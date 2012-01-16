@@ -162,6 +162,7 @@
             this.bindingNavigatorPositionItem.Size = new System.Drawing.Size(50, 23);
             this.bindingNavigatorPositionItem.Text = "0";
             this.bindingNavigatorPositionItem.ToolTipText = "Current position";
+            this.bindingNavigatorPositionItem.KeyDown += new System.Windows.Forms.KeyEventHandler(this.bindingNavigatorPositionItem_KeyDown);
             // 
             // bindingNavigatorSeparator1
             // 

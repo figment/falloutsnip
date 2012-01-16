@@ -297,6 +297,10 @@ namespace TESVSnip {
                 sb.Append( data[offset + i].ToString("X2") ).Append( " " );            
             return sb.ToString();
         }
+        public static string GetHexData(ArraySegment<byte> data)
+        {
+            return GetHexData(data.Array, data.Offset, data.Count);
+        }
 
         /// <summary>
         /// Encode string including null termination character

@@ -70,13 +70,10 @@ namespace RTF
                 //Pad();
 
 
-                this._definitionBuilder.AppendFormat("\\cellx{0}", (int) (this._cellDefinition.CellWidthRaw * TWIPSA4) + this._cellDefinition.X);
+                this._definitionBuilder.AppendFormat(@"\clFitText\clftsWidth1\cellx{0}", (int)(this._cellDefinition.CellWidthRaw * TWIPSA4) + this._cellDefinition.X);
                 //_definitionBuilder.AppendFormat("\\clwWidth{0}", _cellDefinition.CellWidth);
-
                 //_definitionBuilder.Append("\\cltxlrtb\\clFitText");
-
                 this._definitionBuilder.AppendLine();
-
 
                 //Cell text flow
             }

@@ -35,7 +35,6 @@ namespace RTF
         private static readonly char[][] charEscape;
         private static System.Text.Encoding CP1252 ;
         private readonly StringBuilder _sb;
-
         #endregion
 
         #region Constructor
@@ -144,7 +143,7 @@ namespace RTF
             }
         }
 
-        protected override IEnumerable <RTFBuilderbase> EnumerateCellsInternal(RTFRowDefinition rowDefinition, RTFCellDefinition[] cellDefinitions)
+        protected override IEnumerable<RTFBuilderbase> EnumerateCellsInternal(RTFRowDefinition rowDefinition, IEnumerable<RTFCellDefinition> cellDefinitions)
         {
             using (IRTFRow ie = this.CreateRow(rowDefinition, cellDefinitions))
             {
@@ -235,7 +234,7 @@ namespace RTF
 
         #region Public Methods
 
-        public IRTFRow CreateRow(RTFRowDefinition rowDefinition, RTFCellDefinition[] cellDefinitions)
+        public IRTFRow CreateRow(RTFRowDefinition rowDefinition, IEnumerable<RTFCellDefinition> cellDefinitions)
         {
             return new RTFRow(this, rowDefinition, cellDefinitions);
         }

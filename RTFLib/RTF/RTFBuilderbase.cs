@@ -48,6 +48,8 @@ namespace RTF
         protected int _lineIndent;
         protected StringFormat _sf;
         protected bool _unwrapped;
+        protected Font _sysfont;
+
         #endregion
         #region Constructor
         protected RTFBuilderbase(RTFFont defaultFont, float defaultFontSize)
@@ -72,10 +74,23 @@ namespace RTF
             this._sf = (StringFormat)StringFormat.GenericDefault.Clone();
             this._sf.FormatFlags = StringFormatFlags.NoWrap;
             this._sf.Trimming = StringTrimming.Word;
+            this._sysfont = LookupFont(defaultFont, defaultFontSize);
         }
         #endregion
 
         #region Public Properties
+
+        protected Font LookupFont(RTFFont defaultFont, float defaultFontSize)
+        {
+            try
+            {
+                return new System.Drawing.Font(defaultFont.ToString(), defaultFontSize);
+            }
+            catch 
+            {
+                return System.Drawing.SystemFonts.DefaultFont;
+            }            
+        }
         
         public ushort DefLang
         {
@@ -137,7 +152,7 @@ namespace RTF
         protected abstract void AppendPageInternal();
         protected abstract void AppendParaInternal();
         protected abstract void AppendRTFInternal(string rtf);
-        protected abstract IEnumerable<RTFBuilderbase> EnumerateCellsInternal(RTFRowDefinition rowDefinition, RTFCellDefinition[] cellDefinitions);
+        protected abstract IEnumerable<RTFBuilderbase> EnumerateCellsInternal(RTFRowDefinition rowDefinition, IEnumerable<RTFCellDefinition> cellDefinitions);
         public abstract IDisposable FormatLock();
         protected abstract void InsertImageInternal(Image image);
         protected abstract int LengthInternal();
@@ -285,7 +300,6 @@ namespace RTF
             return this;
         }
 
-
         /// <summary>
         /// Insert a Hyper link into RTF
         /// </summary>
@@ -295,7 +309,23 @@ namespace RTF
         /// <remarks>Figment added 1/3/12</remarks>
         public RTFBuilderbase AppendLink(string text, string hyperlink)
         {
-            this.AppendRTFInternal(@"{\field {\*\fldinst HYPERLINK " + '\"' + hyperlink + '\"' + @"} {\fldrslt " + text + @"}}");
+            //AppendLink(text, hyperlink, Color.FromKnownColor(KnownColor.Blue));
+            AppendLink(text, hyperlink, SystemColors.HotTrack);
+            return this;
+        }
+
+        /// <summary>
+        /// Insert a Hyper link into RTF
+        /// </summary>
+        /// <param name="text"></param>
+        /// <param name="hyperlink"></param>
+        /// <returns></returns>
+        /// <remarks>Figment added 1/3/12</remarks>
+        public RTFBuilderbase AppendLink(string text, string hyperlink, Color linkColor)
+        {
+            int idx = this.IndexOf(linkColor);
+            //this.AppendRTFInternal(string.Format(@"{\field {\*\fldinst HYPERLINK ""{0}""}{\fldrslt\cf{1}\ul {2}}}", hyperlink, idx, text));
+            this.AppendRTFInternal(@"{\field {\*\fldinst HYPERLINK " + '\"' + hyperlink + '\"' + @"} {\fldrslt\cf" + idx.ToString() + @"\ul " + text + @"}}");
             return this;
         }
 
@@ -512,7 +542,7 @@ namespace RTF
             // You can vary the replacement text for each match on-the-fly
             return "";
         }
-        public IEnumerable<RTFBuilderbase> EnumerateCells(RTFRowDefinition rowDefinition, RTFCellDefinition[] cellDefinitions)
+        public IEnumerable<RTFBuilderbase> EnumerateCells(RTFRowDefinition rowDefinition, IEnumerable<RTFCellDefinition> cellDefinitions)
         {
             return this.EnumerateCellsInternal(rowDefinition, cellDefinitions);
         }
@@ -683,5 +713,10 @@ namespace RTF
         }
 
         #endregion
+
+        public Size MeasureText(string text)
+        {
+            return System.Windows.Forms.TextRenderer.MeasureText(text, _sysfont);
+        }
     }
 }

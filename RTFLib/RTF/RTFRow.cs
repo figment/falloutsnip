@@ -50,7 +50,7 @@ namespace RTF
 
             #region Fields
 
-            private readonly RTFCellDefinition[] _cellDefinitions;
+            private readonly IEnumerable<RTFCellDefinition> _cellDefinitions;
             private readonly List <RTFCellDefinitionBuilder> _cells;
             private readonly StringBuilder _definitionBuilder;
             private RTFBuilder _builder;
@@ -60,7 +60,7 @@ namespace RTF
 
             #region Constructor
 
-            internal RTFRow(RTFBuilder builder, RTFRowDefinition rowDefinition, RTFCellDefinition[] cellDefinitions)
+            internal RTFRow(RTFBuilder builder, RTFRowDefinition rowDefinition, IEnumerable<RTFCellDefinition> cellDefinitions)
             {
                 if (builder == null)
                 {
@@ -74,25 +74,12 @@ namespace RTF
                 {
                     throw new ArgumentNullException("rowDefinition.RowWidth");
                 }
-                if (cellDefinitions.Length == 0)
-                {
-                    throw new ArgumentNullException("cellDefinitions.Length");
-                }
-                this._definitionBuilder = new StringBuilder();
-
-
+                this._cells = null;
+                this._definitionBuilder = null;
                 this._rowDefinition = rowDefinition;
-                this._cellDefinitions = cellDefinitions;
-                this._builder = builder;
-
-                StringBuilder sb = this._definitionBuilder;
-
-                sb.Append("\\trowd\\trgaph115\\trleft-115");
-                sb.AppendLine("\\trautofit1"); //AutoFit: ON
-                this.TableCellBorderSide();
-                this.BorderDef();
-                //Pad();
-
+                this._cellDefinitions = null;
+                this._builder = null;
+                var sb = new StringBuilder();
 
                 // \trhdr	Table row header. This row should appear at the top of every page on which the current table appears.
                 // \trkeep	Keep table row together. This row cannot be split by a page break. This property is assumed to be off unless the control word is present.
@@ -118,16 +105,30 @@ namespace RTF
                 //0	Null. Ignore \trpaddtN in favor of \trgaphN (Word 97 style padding).
                 //3	Twips.
 
-
-                this._cells = new List <RTFCellDefinitionBuilder>();
+                bool first = true;
                 int x = 0;
-                foreach (RTFCellDefinition item in this._cellDefinitions)
+                foreach (RTFCellDefinition item in cellDefinitions)
                 {
+                    if (first)
+                    {
+                        this._definitionBuilder = sb;
+                        this._cellDefinitions = cellDefinitions;
+                        this._builder = builder;
+                        this._cells = new List<RTFCellDefinitionBuilder>();
+
+                        sb.Append("\\trowd\\trgaph115\\trleft-115");
+                        sb.AppendLine("\\trautofit1"); //AutoFit: ON
+                        this.TableCellBorderSide();
+                        this.BorderDef();
+                        //Pad();
+                    }
+                    first = false;
                     item.SetX(x);
                     x += (int) (item.CellWidthRaw * TWIPSA4);
                     this._cells.Add(new RTFCellDefinitionBuilder(this._builder, this._definitionBuilder, item));
                 }
-                this._builder._sb.Append(this._definitionBuilder.ToString());
+                if (!first)
+                    this._builder._sb.Append(this._definitionBuilder.ToString());
             }
 
             #endregion

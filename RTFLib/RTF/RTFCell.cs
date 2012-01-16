@@ -60,7 +60,7 @@ namespace RTF
             {
                 if (disposing && this._builder != null)
                 {
-                    this._builder._sb.AppendLine("\\cell ");
+                    this._builder._sb.AppendLine(@"\cell ");
                 }
                 this._builder = null;
                 if (disposing)

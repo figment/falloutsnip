@@ -1967,12 +1967,12 @@
       <Element name="ID" type="int" />
     </Subrecord>
     <Subrecord name="CNTO" desc="Container Item" optional="1" repeat="1" size="8">
-      <Element name="Item Form ID" type="int" />
+      <Element name="Item Form ID" type="formid" />
       <Element name="Count" type="int" />
     </Subrecord>
     <Subrecord name="AIDT" desc="AIDT" optional="1" size="20">
-      <Element name="Unknown" type="int" />
-      <Element name="Name" type="lstring" />
+      <Element name="Unknown 1" type="int" />
+      <Element name="Unknown 2" type="int" />
       <Element name="ID" type="formid" reftype="WEAP" />
       <Element name="ID" type="formid" reftype="WEAP" />
       <Element name="ID" type="formid" reftype="WEAP" />
@@ -1992,22 +1992,52 @@
     </Subrecord>
     <Subrecord name="DATA" desc="Data" optional="1" size="0" />
     <Subrecord name="DNAM" desc="DNAM" optional="1" size="52">
-      <Element name="Unknown" type="int" />
-      <Element name="Unknown 1" type="int" />
-      <Element name="Unknown 2" type="int" />
-      <Element name="Unknown 3" type="int" />
-      <Element name="Unknown 4" type="int" />
-      <Element name="Unknown 5" type="int" />
-      <Element name="Unknown 6" type="float" />
-      <Element name="Unknown 7" type="int" />
-      <Element name="Unknown 8" type="short" />
-      <Element name="Unknown 8" type="short" />
-      <Element name="Unknown 9" type="short" />
-      <Element name="Unknown 9" type="short" />
-      <Element name="Unknown 10" type="short" />
-      <Element name="Unknown 10" type="short" />
-      <Element name="Unknown 11" type="float" />
-      <Element name="Unknown 12" type="int" />
+        <Element name='OneHanded Base' type='byte'/>
+        <Element name='TwoHanded Base' type='byte'/>
+        <Element name='Marksman Base' type='byte'/>
+        <Element name='Block Base' type='byte'/>
+        <Element name='Smithing Base' type='byte'/>
+        <Element name='HeavyArmor Base' type='byte'/>
+        <Element name='LightArmor Base' type='byte'/>
+        <Element name='Pickpocket Base' type='byte'/>
+        <Element name='Lockpicking Base' type='byte'/>
+        <Element name='Sneak Base' type='byte'/>
+        <Element name='Alchemy Base' type='byte'/>
+        <Element name='Speechcraft Base' type='byte'/>
+        <Element name='Alteration Base' type='byte'/>
+        <Element name='Conjuration Base' type='byte'/>
+        <Element name='Destruction Base' type='byte'/>
+        <Element name='Illusion Base' type='byte'/>
+        <Element name='Restoration Base' type='byte'/>
+        <Element name='Enchanting  Base' type='byte'/>
+        
+        <Element name='OneHanded Mod' type='sbyte'/>
+        <Element name='TwoHanded Mod' type='sbyte'/>
+        <Element name='Marksman Mod' type='sbyte'/>
+        <Element name='Block Mod' type='sbyte'/>
+        <Element name='Smithing Mod' type='sbyte'/>
+        <Element name='HeavyArmor Mod' type='sbyte'/>
+        <Element name='LightArmor Mod' type='sbyte'/>
+        <Element name='Pickpocket Mod' type='sbyte'/>
+        <Element name='Lockpicking Mod' type='sbyte'/>
+        <Element name='Sneak Mod' type='sbyte'/>
+        <Element name='Alchemy Mod' type='sbyte'/>
+        <Element name='Speechcraft Mod' type='sbyte'/>
+        <Element name='Alteration Mod' type='sbyte'/>
+        <Element name='Conjuration Mod' type='sbyte'/>
+        <Element name='Destruction Mod' type='sbyte'/>
+        <Element name='Illusion Mod' type='sbyte'/>
+        <Element name='Restoration Mod' type='sbyte'/>
+        <Element name='Enchanting Mod' type='sbyte'/>
+        
+        <Element name="Health" type="ushort" />
+        <Element name="Magika" type="ushort" />
+        <Element name="Stamina" type="ushort" />
+        <Element name="Base Armor/Unarmed?" type="ushort" />
+        <Element name="Flags 1" type="ushort" />
+        <Element name="Unknown 1" type="ushort" />
+        <Element name="Unknown 2" type="ushort" />
+        <Element name="Unknown 3" type="ushort" />
     </Subrecord>
     <Subrecord name="PNAM" desc="Head Parts" optional="1" repeat="1" size="4">
       <Element name="ID" type="formid" reftype="HDPT" />
@@ -2022,7 +2052,7 @@
       <Element name="ID" type="formid" reftype="FLST" />
     </Subrecord>
     <Subrecord name="NAM5" desc="NAM5" optional="1">
-      <Element name="Name" type="string" />
+      <Element name="Unknown" type="ushort" />
     </Subrecord>
     <Subrecord name="NAM6" desc="NAM6" optional="1" size="4">
       <Element name="Unknown" type="float" />
@@ -2099,7 +2129,10 @@
         <Element name="Unknown" type="short" />
       </Subrecord>
       <Subrecord name="TINC" desc="Tint Mask Color?" optional="1" size="4">
-        <Element name="Unknown" type="uint" hexview="true" />
+          <Element name="R" type="byte" hexview="1"/>
+          <Element name="G" type="byte" hexview="1"/>
+          <Element name="B" type="byte" hexview="1"/>
+          <Element name="A" type="byte" hexview="1"/>
       </Subrecord>
       <Subrecord name="TINV" desc="Tint Mask Value?" optional="1" size="4">
         <Element name="Unknown" type="int" />

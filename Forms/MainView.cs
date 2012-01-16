@@ -31,7 +31,6 @@ namespace TESVSnip
         private Forms.StringsEditor stringEditor = null;
         OC.Windows.Forms.History<TreeNode> historyHandler;
         private MainViewMessageFilter msgFilter;
-        private DockingManager dockingManager;
 
         #region Helper Tree Node Helper
         /// <summary>
@@ -66,7 +65,7 @@ namespace TESVSnip
                 }
             }
             InitializeComponent();
-            //InitializeDockingWindows();
+            this.dockingManagerExtender.AutomaticStatePersistence = global::TESVSnip.Properties.Settings.Default.AutoSaveDockingState;
 
             // Register message filter.
             msgFilter = new MainViewMessageFilter(this);
@@ -100,15 +99,11 @@ namespace TESVSnip
             if (!global::TESVSnip.Properties.Settings.Default.IsFirstTimeOpening)
             {
                 Settings.GetWindowPosition("TESsnip", this);
-                //splitHorizontal.SplitterDistance = global::TESVSnip.Properties.Settings.Default.MainHorzSplitterPct;
-                //splitVertical.SplitterDistance = global::TESVSnip.Properties.Settings.Default.MainVertSplitterPct;
             }
             else
             {
                 Settings.SetWindowPosition("TESsnip", this);
                 global::TESVSnip.Properties.Settings.Default.IsFirstTimeOpening = false;
-                //global::TESVSnip.Properties.Settings.Default.MainHorzSplitterPct = splitHorizontal.SplitterDistance;
-                //global::TESVSnip.Properties.Settings.Default.MainVertSplitterPct = splitVertical.SplitterDistance;
                 global::TESVSnip.Properties.Settings.Default.Save();
             }
             useWindowsClipboardToolStripMenuItem.Checked = global::TESVSnip.Properties.Settings.Default.UseWindowsClipboard;
@@ -1956,7 +1951,7 @@ Do you still want to save?", "Modified Save", MessageBoxButtons.YesNo, MessageBo
 
         static readonly System.Text.RegularExpressions.Regex linkRegex =
             new System.Text.RegularExpressions.Regex(
-                "^(?<text>[^#]*)#(?<type>[0-z][A-Z][A-Z][A-Z]):(?<id>[0-9a-zA-Z]+)$"
+                "^(?:(?<text>[^#]*)#)?(?<type>[0-z][A-Z][A-Z][A-Z]):(?<id>[0-9a-zA-Z]+)$"
             , System.Text.RegularExpressions.RegexOptions.None);
 
         private void rtfInfo_LinkClicked(object sender, LinkClickedEventArgs e)
@@ -2429,30 +2424,9 @@ Do you still want to save?", "Modified Save", MessageBoxButtons.YesNo, MessageBo
             switch (MessageBox.Show("Would you like to reset your custom layout back to default layout?\n\r Remark: You have to restart application until new setting can take effect.", "Automatic State Persistence", MessageBoxButtons.YesNo))
             {
                 case DialogResult.Yes:
-                    //this.dockingManagerExtender.ResetAutoPersistent(false);
+                    this.dockingManagerExtender.ResetAutoPersistent(false);
                     break;
             }
-        }
-
-        private void InitializeDockingWindows()
-        {
-            this.SuspendLayout();
-            dockingManager = new DockingManager(this, Crownwood.Magic.Common.VisualStyle.IDE);
-            this.dockingManager.OuterControl = menuStrip1;
-            this.dockingManager.InnerControl = rtfInfo;
-            var recContent = new Crownwood.Magic.Docking.Content(dockingManager, recordPanel, "Record Panel");
-            dockingManager.Contents.Add(recContent);
-            
-            var subRecContent = new Crownwood.Magic.Docking.Content(dockingManager, subrecordPanel, "Subrecord Panel");
-            dockingManager.Contents.Add(subRecContent);
-
-            recContent.CloseButton = false;
-            subRecContent.CloseButton = false;
-
-            var recWinContent = dockingManager.AddContentWithState(recContent, State.DockLeft) as WindowContent;
-            dockingManager.AddContentToZone(subRecContent, recWinContent.ParentZone, 1);
-
-            this.ResumeLayout();
         }
     }
 }

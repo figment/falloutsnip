@@ -85,5 +85,13 @@ namespace TESVSnip.RecordControls
                 //c.MinimumSize = new Size(this.Width - c.Left - 24, this.MinimumSize.Height);
             }
         }
+
+        private void bindingNavigatorPositionItem_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.KeyCode == Keys.Enter)
+            {
+                e.Handled = true;
+            }
+        }
     }
 }

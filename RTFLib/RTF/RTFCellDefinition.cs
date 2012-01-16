@@ -1,10 +1,7 @@
 ﻿
-
-
- 
-
 namespace RTF
 {
+    using System;
     using System.Diagnostics;
     using System.Drawing;
     using System.Windows.Forms;
@@ -41,7 +38,9 @@ namespace RTF
 
         #region Constructor
 
-        public RTFCellDefinition(int cellwidth, RTFAlignment alignment, RTFBorderSide rTFBorderSide, int borderWidth, Color borderColor, Padding padding)
+        public RTFCellDefinition(int cellwidth, RTFAlignment alignment
+            , RTFBorderSide rTFBorderSide, int borderWidth, Color borderColor, Padding padding
+            )
         {
             this._x = 0;
             this._padding = padding;
@@ -49,7 +48,7 @@ namespace RTF
             this._rTFBorderSide = rTFBorderSide;
             this._borderWidth = borderWidth;
             this._borderColor = borderColor;
-            this._cellWidth = (float) cellwidth / 100;
+            this._cellWidth = (float)cellwidth / 100;
         }
 
         #endregion

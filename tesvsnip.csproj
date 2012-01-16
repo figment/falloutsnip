@@ -605,9 +605,25 @@
   <Target Name="AfterBuild">
   </Target>
   -->
+    <PropertyGroup>
+        <StageOutputDir>$(ProjectDir)\Output\</StageOutputDir>
+        <MergeOutputFile>$(StageOutputDir)\$(TargetName)$(TargetExt)</MergeOutputFile>
+    </PropertyGroup>
+    <ItemGroup>
+        <inputAssemblies Include="$(TargetPath)" />
+        <inputAssemblies Include="$(TargetDir)\*.dll" />
+        <CopyToStaging Include="$(ProjectDir)\LICENSE"/>
+        <CopyToStaging Include="$(ProjectDir)\README.TXT"/>
+        <CopyToStagingConf Include="$(ProjectDir)conf\**"/>
+    </ItemGroup>  
   <Target Name="Package">
-    <Delete Files="$(TargetDir)\$(ProjectName)_v$(Major).$(Minor).rar" />
-    <SimpleExec Command="$(ProgramFiles)\WinRar\rar.exe" Args="a -r $(ProjectName)_v$(Major).$(Minor).rar * -x*.pdb -x*vshost* -x*.rar" WorkingDirectory="$(TargetDir)" />
-    <SimpleExec Command="$(ProgramFiles)\WinRar\rar.exe" Args="c $(ProjectName)_v$(Major).$(Minor).rar" StdIn="README.TXT" WorkingDirectory="$(TargetDir)" />
+    <MakeDir Directories="$(StageOutputDir)"/>
+    <Copy SourceFiles="@(CopyToStaging)" DestinationFolder="$(StageOutputDir)"></Copy>
+    <Copy SourceFiles="@(CopyToStagingConf)" DestinationFolder="$(StageOutputDir)conf"></Copy>
+    <Copy SourceFiles="$(TargetPath).config" DestinationFolder="$(StageOutputDir)"></Copy>
+    <ILMerge InputAssemblies="@(inputAssemblies)" OutputFile="$(MergeOutputFile)" DebugInfo="true"/>
+    <Delete Files="$(StageOutputDir)\$(ProjectName)_v$(Major).$(Minor).rar" />
+    <SimpleExec Command="$(ProgramFiles)\WinRar\rar.exe" Args="a -r $(ProjectName)_v$(Major).$(Minor).rar * -x*.pdb -x*vshost* -x*.rar" WorkingDirectory="$(StageOutputDir)" />
+    <SimpleExec Command="$(ProgramFiles)\WinRar\rar.exe" Args="c $(ProjectName)_v$(Major).$(Minor).rar" StdIn="README.TXT" WorkingDirectory="$(StageOutputDir)" />
   </Target>
 </Project>

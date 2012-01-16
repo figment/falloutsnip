@@ -163,8 +163,9 @@ namespace TESVSnip
         // internal iterators
         public virtual bool While(Predicate<BaseRecord> action) { return action(this); }
         public virtual void ForEach(Action<BaseRecord> action) { action(this); }
-        public virtual IEnumerable<BaseRecord> Enumerate(Predicate<BaseRecord> match) { 
-            if (match(this)) yield return this; 
+        public virtual IEnumerable<BaseRecord> Enumerate(Predicate<BaseRecord> match)
+        {
+            if (match(this)) yield return this;
         }
 
         internal abstract List<string> GetIDs(bool lower);
@@ -425,7 +426,7 @@ namespace TESVSnip
                 return;
 
             string locName = global::TESVSnip.Properties.Settings.Default.LocalizationName;
-            
+
             if (Directory.GetFiles(this.StringsFolder, this.FileName + "_" + locName + "*").Count() == 0)
             {
                 if (locName == "English")
@@ -443,7 +444,7 @@ namespace TESVSnip
                 if (fontInfo.CodePage != 1252)
                     enc = System.Text.Encoding.GetEncoding(fontInfo.CodePage);
             }
-            
+
             Strings = LoadPluginStrings(enc, LocalizedStringFormat.Base, prefix + ".STRINGS");
             ILStrings = LoadPluginStrings(enc, LocalizedStringFormat.IL, prefix + ".ILSTRINGS");
             DLStrings = LoadPluginStrings(enc, LocalizedStringFormat.DL, prefix + ".DLSTRINGS");
@@ -695,7 +696,7 @@ namespace TESVSnip
             if (brcTES4 == null)
                 throw new ApplicationException("Plugin lacks a valid TES4 record. Cannot continue.");
             // find existing if already present
-            foreach (var mast in brcTES4.SubRecords.Where(x => x.Name == "MAST") )
+            foreach (var mast in brcTES4.SubRecords.Where(x => x.Name == "MAST"))
             {
                 var path = mast.GetStrData();
                 if (string.Compare(path, masterName, true) == 0)
@@ -727,10 +728,10 @@ namespace TESVSnip
             Record brcTES4 = this.Records.OfType<Record>().FirstOrDefault(x => x.Name == "TES4");
             if (brcTES4 == null)
                 return new string[0];
-            return brcTES4.SubRecords.Where(x => x.Name == "MAST").Select( x => x.GetStrData() ).ToArray();
+            return brcTES4.SubRecords.Where(x => x.Name == "MAST").Select(x => x.GetStrData()).ToArray();
         }
 
-        #region External references 
+        #region External references
         /// <summary>
         /// 
         /// </summary>
@@ -752,7 +753,7 @@ namespace TESVSnip
             Masters[masters.Length] = this;
             Fixups[masters.Length] = (uint)masters.Length;
             InvalidateCache();
-       }
+        }
 
 
         /// <summary>
@@ -847,21 +848,27 @@ namespace TESVSnip
                 // This enumerate misses any records that are children of masters
                 foreach (var r in Masters[i].Enumerate(r =>
                     {
-                        if (r is Record) {
+                        if (r is Record)
+                        {
                             if ((type == null || r.Name == type) && (((Record)r).FormID & 0xFF000000) == match)
                                 return true;
-                        } else if (r is GroupRecord) {
+                        }
+                        else if (r is GroupRecord)
+                        {
                             var gr = (GroupRecord)r;
                             if (gr.groupType != 0 || gr.ContentsType == type)
                                 return true;
-                        } else if (r is Plugin) {
+                        }
+                        else if (r is Plugin)
+                        {
                             return true;
                         }
                         return false;
                     })
                 )
                 {
-                    if (r is Record) {
+                    if (r is Record)
+                    {
                         var r2 = r as Record;
                         yield return new KeyValuePair<uint, Record>((r2.FormID & 0xffffff) | mask, r2);
                     }
@@ -870,25 +877,31 @@ namespace TESVSnip
             // finally add records of self in to the list
             foreach (var r in this.Enumerate(r =>
                 {
-                    if (r is Record) {
+                    if (r is Record)
+                    {
                         if (type == null || r.Name == type)
                             return true;
-                    } else if (r is GroupRecord) {
+                    }
+                    else if (r is GroupRecord)
+                    {
                         var gr = (GroupRecord)r;
                         if (gr.groupType != 0 || gr.ContentsType == type)
                             return true;
-                    } else if (r is Plugin) {
+                    }
+                    else if (r is Plugin)
+                    {
                         return true;
                     }
                     return false;
                 })
             )
             {
-                if (r is Record) {
+                if (r is Record)
+                {
                     var r2 = r as Record;
                     yield return new KeyValuePair<uint, Record>(r2.FormID, r2);
                 }
-            } 
+            }
         }
         #endregion
     }
@@ -1430,29 +1443,33 @@ namespace TESVSnip
 
         public override void GetFormattedHeader(RTFBuilder rb, SelectionContext context)
         {
-            rb.FontStyle(FontStyle.Bold).FontSize(rb.DefaultFontSize + 2).AppendLine("[Record]");
-            rb.AppendLineFormat("Type: \t {0}", Name);
-            rb.AppendLineFormat("FormID: \t {0:X8}", FormID);
-            rb.AppendLineFormat("Flags 1: \t {0:X8}", Flags1);
+            rb.FontStyle(FontStyle.Bold).FontSize(rb.DefaultFontSize + 4).ForeColor(KnownColor.DarkGray).AppendLine("[Record]");
+
+
+            rb.Append("Type: \t").FontStyle(FontStyle.Bold).FontSize(rb.DefaultFontSize + 2).AppendFormat("{0}", Name).AppendLine();
+            rb.Append("FormID: \t").FontStyle(FontStyle.Bold).FontSize(rb.DefaultFontSize + 2).ForeColor(KnownColor.DarkRed).AppendFormat("{0:X8}", FormID).AppendLine();
+            rb.AppendLineFormat("Flags 1: \t{0:X8}", Flags1);
             if (Flags1 != 0) rb.AppendLineFormat(" ({0})", FlagDefs.GetRecFlags1Desc(Flags1));
-            rb.AppendLineFormat("Flags 2: \t {0:X8}", Flags2);
-            rb.AppendLineFormat("Flags 3: \t {0:X8}", Flags3);
-            rb.AppendLineFormat("Subrecords: \t {0}", SubRecords.Count);
-            rb.AppendLineFormat("Size: \t {0:N0}", Size);
-            rb.AppendLine();
+            rb.AppendLineFormat("Flags 2: \t{0:X8}", Flags2);
+            rb.AppendLineFormat("Flags 3: \t{0:X8}", Flags3);
+            rb.AppendLineFormat("Size: \t{0:N0}", Size);
+            rb.AppendLineFormat("Subrecords:\t{0}", SubRecords.Count);
+            rb.AppendPara();
         }
 
         public override void GetFormattedData(RTFBuilder rb, SelectionContext context)
         {
             try
             {
-                rb.FontStyle(FontStyle.Bold).FontSize(rb.DefaultFontSize).AppendLine("[Formatted information]");
+                rb.FontStyle(FontStyle.Bold).FontSize(rb.DefaultFontSize).ForeColor(KnownColor.DarkGray).AppendLine("[Formatted information]");
+                rb.Reset();
+
                 context = context.Clone();
                 context.Record = this;
                 RecordStructure rec;
                 if (!RecordStructure.Records.TryGetValue(Name, out rec))
                     return;
-                rb.FontStyle(FontStyle.Bold).ForeColor(KnownColor.DarkBlue).FontSize(rb.DefaultFontSize + 2).AppendLine(rec.description);
+                rb.FontStyle(FontStyle.Bold).ForeColor(KnownColor.DarkBlue).FontSize(rb.DefaultFontSize + 4).AppendLine(rec.description);
                 foreach (var subrec in SubRecords)
                 {
                     if (subrec.Structure == null || subrec.Structure.elements == null || subrec.Structure.notininfo)
@@ -1773,11 +1790,6 @@ namespace TESVSnip
             return false;
         }
 
-        internal IEnumerable<Element> EnumerateElements(SubRecord sr)
-        {
-            return EnumerateElements(sr, false);
-        }
-
         /// <summary>
         /// 
         /// </summary>
@@ -1786,41 +1798,19 @@ namespace TESVSnip
         /// <returns></returns>
         internal IEnumerable<Element> EnumerateElements(SubRecord sr, bool rawData)
         {
-            if (sr != null && sr.Structure != null)
-            {
-                byte[] data = sr.GetReadonlyData();
-                var ss = sr.Structure;
-                int offset = 0;
-                foreach (var es in ss.elements)
-                {
-                    while (true)
-                    {
-                        int startoffset = offset;
-                        int maxlen = data.Length - offset;
-                        if ((es.optional || es.repeat > 0) && maxlen == 0) break;
-                        var elem = Element.CreateElement(es, data, ref offset, rawData);
-                        yield return elem;
-                        if (es.repeat > 0 && startoffset < offset)
-                            continue;
-                        break;
-                    }
-                }
-            }
+            if (sr == null) return new Element[0];
+            return sr.EnumerateElements(rawData);
+        }
+
+        internal IEnumerable<Element> EnumerateElements(SubRecord sr)
+        {
+            return EnumerateElements(sr, false);
         }
 
         internal IEnumerable<Element> EnumerateElements(SubRecord sr, Dictionary<int, Conditional> conditions)
         {
-            foreach (var elem in EnumerateElements(sr))
-            {
-                if (elem != null && elem.Structure != null)
-                {
-                    var es = elem.Structure;
-                    var essCondID = es.CondID;
-                    if (essCondID != 0)
-                        conditions[essCondID] = new Conditional(elem.Type, elem.Value);
-                }
-                yield return elem;
-            }
+            if (sr == null) return new Element[0];
+            return sr.EnumerateElements(conditions);
         }
         #endregion
     }
@@ -2303,9 +2293,294 @@ namespace TESVSnip
 
         public override void GetFormattedHeader(RTF.RTFBuilder s, SelectionContext context)
         {
-            s.FontStyle(FontStyle.Bold).FontSize(s.DefaultFontSize + 2).AppendLine("[Subrecord data]");
+            s.FontStyle(FontStyle.Bold).FontSize(s.DefaultFontSize + 4).ForeColor(KnownColor.DarkGray).AppendLine("[Subrecord data]");
         }
+
         public override void GetFormattedData(RTF.RTFBuilder s, SelectionContext context)
+        {
+            SubrecordStructure ss = this.Structure;
+            if (ss == null || ss.elements == null)
+            {
+                s.Append("String:\t").AppendLine(this.GetStrData()).AppendLine();
+                s.Append("Hex: \t").AppendLine(this.GetHexData());
+                s.AppendPara();
+                return;
+            }
+
+            bool addTerminatingParagraph = false;
+            try
+            {
+                var formIDLookup = context.formIDLookup;
+                var strLookup = context.strLookup;
+                var formIDLookupR = context.formIDLookupR;
+
+                // Table of items
+                var table = new List<List<RTFCellDefinition>>();
+
+                // set up elements
+                float maxWidth = 0;
+                int maxFirstCellWidth = 0;
+
+                var elems = EnumerateElements(true).Where( x => x.Structure != null && !x.Structure.notininfo).ToList();
+                if (elems.Count == 0)
+                    return;
+
+                foreach (var element in elems)
+                {
+                    Size sz = s.MeasureText(element.Structure.name);
+                    int width = Math.Max(sz.Width / 13, 10); // approximate convert pixels to twips as the rtflib has crap documentation
+                    if (width > maxFirstCellWidth)
+                        maxFirstCellWidth = width;
+                }
+
+                foreach (var element in elems)
+                {
+                    var row = new List<RTFCellDefinition>();
+                    table.Add(row);
+                    var sselem = element.Structure;
+                    bool hasOptions = (sselem.options != null && sselem.options.Length > 0);
+                    bool hasFlags = (sselem.flags != null && sselem.flags.Length > 1);
+
+                    // setup borders for header
+                    var value = element.Value;
+                    var nameCell = new RTFCellDefinition(maxFirstCellWidth, RTFAlignment.MiddleLeft, RTFBorderSide.Default, 15, Color.DarkGray, System.Windows.Forms.Padding.Empty);
+                    row.Add(nameCell);
+                    switch (sselem.type)
+                    {
+                        case ElementValueType.FormID:
+                            row.Add(new RTFCellDefinition(10, RTFAlignment.MiddleLeft, RTFBorderSide.Default, 15, Color.DarkGray, System.Windows.Forms.Padding.Empty));
+                            row.Add(new RTFCellDefinition(30, RTFAlignment.MiddleLeft, RTFBorderSide.Default, 15, Color.DarkGray, System.Windows.Forms.Padding.Empty));
+                            // Optional Add cell for 
+                            break;
+                        case ElementValueType.LString:
+                            row.Add(new RTFCellDefinition(10, RTFAlignment.MiddleLeft, RTFBorderSide.Default, 15, Color.DarkGray, System.Windows.Forms.Padding.Empty));
+                            row.Add(new RTFCellDefinition(30, RTFAlignment.MiddleLeft, RTFBorderSide.Default, 15, Color.DarkGray, System.Windows.Forms.Padding.Empty));
+                            break;
+
+                        case ElementValueType.BString:
+                        case ElementValueType.String:
+                        case ElementValueType.fstring:
+                            row.Add(new RTFCellDefinition(40, RTFAlignment.MiddleLeft, RTFBorderSide.Default, 15, Color.DarkGray, System.Windows.Forms.Padding.Empty));
+                            break;
+                        case ElementValueType.Int:
+                        case ElementValueType.UInt:
+                        case ElementValueType.Byte:
+                        case ElementValueType.SByte:
+                        case ElementValueType.Short:
+                        case ElementValueType.UShort:
+                        case ElementValueType.Float:
+                            row.Add(new RTFCellDefinition(10, RTFAlignment.MiddleLeft, RTFBorderSide.Default, 15, Color.DarkGray, System.Windows.Forms.Padding.Empty));
+                            row.Add(new RTFCellDefinition(30, RTFAlignment.MiddleLeft, hasOptions || hasFlags ? RTFBorderSide.Default : RTFBorderSide.Default
+                                , 15, Color.DarkGray, System.Windows.Forms.Padding.Empty));
+                            break;
+                        case ElementValueType.Blob:
+                            row.Add(new RTFCellDefinition(40, RTFAlignment.MiddleLeft, RTFBorderSide.Default, 15, Color.DarkGray, System.Windows.Forms.Padding.Empty));
+                            break;
+                        case ElementValueType.Str4:
+                            row.Add(new RTFCellDefinition(10, RTFAlignment.MiddleLeft, RTFBorderSide.Default, 15, Color.DarkGray, System.Windows.Forms.Padding.Empty));
+                            break;
+                        default:
+                            row.Add(new RTFCellDefinition(40, RTFAlignment.MiddleLeft, RTFBorderSide.Default, 15, Color.DarkGray, System.Windows.Forms.Padding.Empty));
+                            break;
+                    }
+                    maxWidth = Math.Max(maxWidth, row.Sum(x => x.CellWidthRaw));
+                }
+
+                int rowWidth = (int)(maxWidth * 100.0f);
+                var p = new System.Windows.Forms.Padding { All = 50 };
+
+                var hdrd = new RTFRowDefinition(rowWidth, RTFAlignment.TopLeft, RTFBorderSide.Default, 15, SystemColors.WindowText, p);
+                var hdrcds = new RTFCellDefinition[] {
+                    new RTFCellDefinition(rowWidth, RTFAlignment.MiddleLeft, RTFBorderSide.Default, 15, Color.DarkGray, System.Windows.Forms.Padding.Empty)
+                };
+
+                addTerminatingParagraph = true;
+                s.Reset();
+                using (IRTFRow ie = s.CreateRow(hdrd, hdrcds))
+                {
+                    foreach (var item in ie)
+                    {
+                        var rb = item.Content;
+                        //int dg = rb.IndexOf(Color.FromKnownColor(KnownColor.DarkGray));
+                        //item.Content.AppendRTF(@"\tscellcbpat" + dg.ToString());
+                        item.Content
+                            .FontSize(s.DefaultFontSize + 1)
+                            .FontStyle(FontStyle.Bold)
+                            .ForeColor(KnownColor.DarkCyan)
+                            .AppendFormat("{0} ({1})", ss.name, ss.desc);
+                    }
+                }
+                for (int rowIdx = 0; rowIdx < elems.Count; ++rowIdx)
+                {
+                    var rd = new RTFRowDefinition(rowWidth, RTFAlignment.TopLeft, RTFBorderSide.Default, 15, SystemColors.WindowText, p);
+                    var cds = table[rowIdx];
+                    var elem = elems[rowIdx];
+                    var sselem = elem.Structure;
+                    var value = elem.Value;
+                    Record rec = null;
+                    string strValue = null; // value to display
+                    string strDesc = null; // first description
+                    string strDesc2 = null; // second description
+                    bool hasOptions = (sselem.options != null && sselem.options.Length > 0);
+                    bool hasFlags = (sselem.flags != null && sselem.flags.Length > 1);
+
+                    // Pre row write caching to avoid expensive duplicate calls between cells
+                    switch (sselem.type)
+                    {
+                        case ElementValueType.FormID:
+                            {
+                                uint id = (uint)value;
+                                strValue = id.ToString("X8");
+                                rec = formIDLookupR != null ? formIDLookupR(id) : null;
+                                if (rec != null)
+                                {
+                                    strDesc = rec.DescriptiveName;
+                                    var full = rec.SubRecords.FirstOrDefault(x => x.Name == "FULL");
+                                    if (full != null) //  split the cell 2 in 2 if full name found
+                                    {
+                                        var data = new ArraySegment<byte>(full.Data, 0, full.Data.Length);
+                                        bool isString = TypeConverter.IsLikelyString(data);
+                                        string lvalue = (isString)
+                                            ? full.GetStrData()
+                                            : strLookup != null
+                                            ? strLookup(TypeConverter.h2i(data))
+                                            : null;
+                                        if (!string.IsNullOrEmpty(lvalue))
+                                        {
+                                            var first = cds[cds.Count - 1];
+                                            Size sz = s.MeasureText(lvalue);
+                                            int width = Math.Max(sz.Width / 13, 10); // approximate convert pixels to twips as the rtflib has crap documentation
+                                            var second = new RTFCellDefinition(width, RTFAlignment.MiddleLeft, RTFBorderSide.Default, 0, Color.DarkGray, System.Windows.Forms.Padding.Empty);
+                                            //float width = first.CellWidthRaw;
+                                            //first.CellWidthRaw = width / 3.0f;
+                                            //second.CellWidthRaw = width * 2.0f / 3.0f;
+                                            cds.Add(second);
+                                            strDesc2 = lvalue;
+                                        }
+                                    }
+                                }
+                            } break;
+                        case ElementValueType.LString:
+                            {
+                                uint id = TypeConverter.h2i(elem.Data);
+                                strValue = id.ToString("X8");
+                                strDesc = strLookup != null ? strLookup(id) : null;
+                            } break;
+                        case ElementValueType.Blob:
+                            strValue = TypeConverter.GetHexData(elem.Data);
+                            break;
+                        case ElementValueType.Int:
+                        case ElementValueType.UInt:
+                        case ElementValueType.Byte:
+                        case ElementValueType.SByte:
+                        case ElementValueType.Short:
+                        case ElementValueType.UShort:
+                            {
+                                if (sselem.hexview || hasFlags)
+                                    strValue = string.Format(string.Format("{{0:X{0}}}", elem.Data.Count * 2), value);
+                                else
+                                    strValue = value == null ? "" : value.ToString();
+                                if (hasOptions)
+                                {
+                                    int intVal = Convert.ToInt32(value);
+                                    for (int k = 0; k < sselem.options.Length; k += 2)
+                                    {
+                                        if (intVal == int.Parse(sselem.options[k + 1]))
+                                            strDesc = sselem.options[k];
+                                    }
+                                }
+                                else if (hasFlags)
+                                {
+                                    uint intVal = Convert.ToUInt32(value);
+                                    var tmp2 = new System.Text.StringBuilder();
+                                    for (int k = 0; k < sselem.flags.Length; k++)
+                                    {
+                                        if ((intVal & (1 << k)) != 0)
+                                        {
+                                            if (tmp2.Length > 0) tmp2.Append(", ");
+                                            tmp2.Append(sselem.flags[k]);
+                                        }
+                                    }
+                                    strDesc = tmp2.ToString();
+                                }
+                            } break;
+
+                        default:
+                            strValue = value == null ? "" : value.ToString();
+                            break;
+                    }
+
+                    // Now create row and fill in cells
+                    using (IRTFRow ie = s.CreateRow(rd, cds))
+                    {
+                        int colIdx = 0;
+                        IEnumerator<IBuilderContent> ie2 = ie.GetEnumerator();
+                        for (bool ok = ie2.MoveNext(); ok; ok = ie2.MoveNext(), ++colIdx)
+                        {
+                            using (var item = ie2.Current)
+                            {
+                                var rb = item.Content;
+                                if (colIdx == 0) // name
+                                {
+                                    rb.FontStyle(FontStyle.Bold).Append(sselem.name);
+                                }
+                                else if (colIdx == 1) // value
+                                {
+                                    switch (sselem.type)
+                                    {
+                                        case ElementValueType.FormID:
+                                            if (((uint)value) == 0)
+                                            {
+                                                rb.Append(strValue);
+                                            }
+                                            else if (rec != null)
+                                            {
+                                                AppendLink(rb, strValue, string.Format("{0}:{1}", rec.Name, strValue));
+                                            }
+                                            else if (!string.IsNullOrEmpty(sselem.FormIDType))
+                                            {
+                                                AppendLink(rb, strValue, string.Format("{0}:{1}", sselem.FormIDType, strValue));
+                                            }
+                                            else
+                                            {
+                                                AppendLink(rb, strValue, string.Format("XXXX:{0}", strValue));
+                                            }
+                                            break;
+                                        default:
+                                            rb.Append(strValue);
+                                            break;
+                                    }
+                                }
+                                else if (colIdx == 2) // desc
+                                {
+                                    if (!string.IsNullOrEmpty(strDesc))
+                                        rb.Append(strDesc);
+                                }
+                                else if (colIdx == 3) // desc2
+                                {
+                                    if (!string.IsNullOrEmpty(strDesc2))
+                                        rb.Append(strDesc2);
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            catch
+            {
+                s.AppendLine("Warning: Subrecord doesn't seem to match the expected structure");
+            }
+            finally
+            {
+                if (addTerminatingParagraph)
+                {
+                    s.Reset();
+                    s.AppendPara();
+                }
+            }
+        }
+#if false
+        public void GetFormattedDataOriginal(RTF.RTFBuilder s, SelectionContext context)
         {
             SubrecordStructure ss = this.Structure;
             if (ss == null || ss.elements == null)
@@ -2337,6 +2612,7 @@ namespace TESVSnip
                             sselem = ss.elements[eidx + eoff];
 
                             if (offset == Data.Length && eidx == ss.elements.Length - 1 && sselem.optional) break;
+
                             if (!sselem.notininfo)
                                 s.FontStyle(FontStyle.Bold).Append(sselem.name).Append(":\t");
 
@@ -2569,7 +2845,7 @@ namespace TESVSnip
                                                             : strLookup != null
                                                             ? strLookup(TypeConverter.h2i(data))
                                                             : null;
-                                                        if (string.IsNullOrEmpty(lvalue))
+                                                        if (!string.IsNullOrEmpty(lvalue))
                                                             s.Append("\t").Append(lvalue);
                                                     }
                                                 }
@@ -2675,6 +2951,7 @@ namespace TESVSnip
                 s.AppendLine("Warning: Subrecord doesn't seem to match the expected structure");
             }
         }
+#endif
         #endregion
 
         public bool TryGetValue<T>(int offset, out T value)
@@ -2708,6 +2985,57 @@ namespace TESVSnip
             }
             return list;
         }
+
+        #region Enumerate Elements
+        internal IEnumerable<Element> EnumerateElements()
+        {
+            return EnumerateElements(false);
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="sr"></param>
+        /// <param name="rawData">Retain raw data instead of converting to more usuable form</param>
+        /// <returns></returns>
+        internal IEnumerable<Element> EnumerateElements(bool rawData)
+        {
+            if (this.Structure != null)
+            {
+                byte[] data = this.GetReadonlyData();
+                var ss = this.Structure;
+                int offset = 0;
+                foreach (var es in ss.elements)
+                {
+                    while (true)
+                    {
+                        int startoffset = offset;
+                        int maxlen = data.Length - offset;
+                        if ((es.optional || es.repeat > 0) && maxlen == 0) break;
+                        var elem = Element.CreateElement(es, data, ref offset, rawData);
+                        yield return elem;
+                        if (es.repeat > 0 && startoffset < offset)
+                            continue;
+                        break;
+                    }
+                }
+            }
+        }
+        internal IEnumerable<Element> EnumerateElements(Dictionary<int, Conditional> conditions)
+        {
+            foreach (var elem in EnumerateElements())
+            {
+                if (elem != null && elem.Structure != null)
+                {
+                    var es = elem.Structure;
+                    var essCondID = es.CondID;
+                    if (essCondID != 0)
+                        conditions[essCondID] = new Conditional(elem.Type, elem.Value);
+                }
+                yield return elem;
+            }
+        }
+        #endregion
 
         public override string ToString()
         {
@@ -2775,7 +3103,7 @@ namespace TESVSnip
                         break;
                     case ElementValueType.String:
                         len = 0;
-                        for (int i=offset; i < data.Length && data[i] != 0; ++i, ++len);
+                        for (int i = offset; i < data.Length && data[i] != 0; ++i, ++len) ;
                         if (rawData) // raw form includes the zero termination byte
                         {
                             len = (len == 0 ? 0 : len + 1);
@@ -2803,11 +3131,11 @@ namespace TESVSnip
                     case ElementValueType.BString:
                         if (maxlen >= sizeof(ushort))
                         {
-                            len = TypeConverter.h2s(data[offset], data[offset+1]);
+                            len = TypeConverter.h2s(data[offset], data[offset + 1]);
                             len = (len < maxlen - 2) ? len : maxlen - 2;
                             if (rawData) // raw data includes short prefix
                             {
-                                elem = new Element(es, ElementValueType.BString, new ArraySegment<byte>(data, offset, len+2));
+                                elem = new Element(es, ElementValueType.BString, new ArraySegment<byte>(data, offset, len + 2));
                                 offset += (len + 2);
                             }
                             else
@@ -2916,10 +3244,10 @@ namespace TESVSnip
         public object Value
         {
             get
-            {                    
+            {
                 switch (this.Type)
                 {
-                    case ElementValueType.Int: 
+                    case ElementValueType.Int:
                         return TypeConverter.h2si(this.Data);
                     case ElementValueType.UInt:
                     case ElementValueType.FormID:

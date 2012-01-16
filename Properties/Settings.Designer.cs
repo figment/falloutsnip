@@ -262,5 +262,29 @@ namespace TESVSnip.Properties {
                 this["MonitorStringsFolderForChanges"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("True")]
+        public bool UseMsftEdit {
+            get {
+                return ((bool)(this["UseMsftEdit"]));
+            }
+            set {
+                this["UseMsftEdit"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("True")]
+        public bool AutoSaveDockingState {
+            get {
+                return ((bool)(this["AutoSaveDockingState"]));
+            }
+            set {
+                this["AutoSaveDockingState"] = value;
+            }
+        }
     }
 }

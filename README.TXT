@@ -10,6 +10,10 @@ Requirements:
 
 Change Log:
 v 2.3
+- Use RTF5 control if installed
+  Greatly improves text rendering when links are involved and has better layout as well
+- Docking windows for Record and Subrecord (not much new but can undock and relocate)
+- Reformated the main display text for subrecords to use tables
 - New Medium Level Record (looks like old but overhauled for future extensibility)
 
 v 2.2
