@@ -253,6 +253,7 @@ namespace TESVSnip
             CreatePluginTree(p, tn);
             PluginTree.Nodes.Add(tn);
             UpdateStringEditor();
+            FixMasters();
             GC.Collect();
         }
 
@@ -754,6 +755,7 @@ Do you still want to save?", "Modified Save", MessageBoxButtons.YesNo, MessageBo
             tn.Nodes.Add(tn2);
             PluginTree.Nodes.Add(tn);
             UpdateStringEditor();
+            FixMasters();
         }
 
         private Plugin GetPluginFromNode(TreeNode node)
@@ -2386,7 +2388,10 @@ Do you still want to save?", "Modified Save", MessageBoxButtons.YesNo, MessageBo
                     try
                     {
                         if (plugin.AddMaster(amfNewMaster.MasterName))
+                        {
+                            FixMasters();
                             PluginTree_AfterSelect(null, null);
+                        }
                     }
                     catch (System.ApplicationException ex)
                     {
@@ -2409,7 +2414,13 @@ Do you still want to save?", "Modified Save", MessageBoxButtons.YesNo, MessageBo
                 var dst = nodes[2] as Plugin;
                 var dstNode = nodes[3] as TreeNode;
                 if (src != null && dst != null && dstNode != null && srcNode != null)
-                    src.AddMaster(dst.Name);
+                {
+                    if (src.AddMaster(dst.Name))
+                    {
+                        FixMasters();
+                        PluginTree_AfterSelect(null, null);
+                    }
+                }
             }
             catch { }
         }

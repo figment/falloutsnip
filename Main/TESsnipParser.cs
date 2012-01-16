@@ -214,9 +214,9 @@ namespace TESVSnip
         public LocalizedStringDict DLStrings = new LocalizedStringDict();
 
         // References to masters
-        public Plugin[] Masters;
+        public Plugin[] Masters = new Plugin[0];
         // Number of masters each master holds. (used to calculate internal id)
-        public uint[] Fixups;
+        public uint[] Fixups = new uint[0];
         // Hash tables for quick FormID lookups
         public readonly Dictionary<uint, Record> FormIDLookup = new Dictionary<uint, Record>();
 
