@@ -19,7 +19,6 @@ namespace TESVSnip.RecordControls
         public RepeatingElement()
         {
             InitializeComponent();
-            
             bs.DataSource = elements;
             this.bindingNavigator.BindingSource = bs;
             bs.CurrentChanged += new EventHandler(bs_CurrentChanged);
@@ -29,8 +28,15 @@ namespace TESVSnip.RecordControls
         {
             if (this.innerControl != null)
             {
-                var data = (ArraySegment<byte>)bs.Current;
-                this.innerControl.Data = data;
+                if (bs.Current != null)
+                {
+                    var data = (ArraySegment<byte>)bs.Current;
+                    this.innerControl.Data = data;
+                }
+                else
+                {
+                    this.innerControl.Data = default(ArraySegment<byte>);
+                }
             }
         }
 
@@ -92,6 +98,42 @@ namespace TESVSnip.RecordControls
             {
                 e.Handled = true;
             }
+        }
+
+        private void bindingNavigatorAddNewItem2_Click(object sender, EventArgs e)
+        {
+            if ( this.Element != null )
+            {
+                byte[] bytes = new byte[0];
+                switch (this.Element.type)
+                {
+                    case ElementValueType.SByte:
+                    case ElementValueType.Byte:
+                    case ElementValueType.String:
+                    case ElementValueType.LString:
+                        bytes = new byte[1];
+                        break;
+                    case ElementValueType.Float:
+                    case ElementValueType.Str4:
+                    case ElementValueType.FormID:
+                    case ElementValueType.UInt:
+                    case ElementValueType.Int:
+                        bytes = new byte[4];
+                        break;
+                    case ElementValueType.Short:
+                    case ElementValueType.UShort:
+                    case ElementValueType.BString:
+                        bytes = new byte[2];
+                        break;
+                }
+                elements.Add(new ArraySegment<byte>(bytes));
+
+            }
+            else
+            {
+                elements.Add( default(ArraySegment<byte>) );
+            }
+            bs.MoveLast();
         }
     }
 }

@@ -286,5 +286,17 @@ namespace TESVSnip.Properties {
                 this["AutoSaveDockingState"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool UseOldSubRecordEditor {
+            get {
+                return ((bool)(this["UseOldSubRecordEditor"]));
+            }
+            set {
+                this["UseOldSubRecordEditor"] = value;
+            }
+        }
     }
 }

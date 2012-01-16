@@ -153,9 +153,9 @@ namespace TESVSnip {
             this.toolStripSeparator5 = new System.Windows.Forms.ToolStripSeparator();
             this.toolStripIncrInvalidRecStatus = new System.Windows.Forms.ToolStripLabel();
             this.recordPanel = new System.Windows.Forms.Panel();
+            this.PluginTree = new TESVSnip.Controls.CustomTreeView();
             this.subrecordPanel = new System.Windows.Forms.Panel();
             this.listSubrecord = new TESVSnip.Windows.Controls.ObjectBindingListView();
-            this.PluginTree = new TESVSnip.Controls.CustomTreeView();
             this.rtfInfo = new RichTextBoxLinks.RichTextBoxEx();
             this.dockingManagerExtender = new DockingManagerExtender.DockingManagerExtender(this.components);
             this.menuStrip1.SuspendLayout();
@@ -1126,7 +1126,7 @@ namespace TESVSnip {
             "Form ID"});
             this.toolStripIncrFindTypeFilter.Name = "toolStripIncrFindTypeFilter";
             this.toolStripIncrFindTypeFilter.Overflow = System.Windows.Forms.ToolStripItemOverflow.Never;
-            this.toolStripIncrFindTypeFilter.Size = new System.Drawing.Size(80, 25);
+            this.toolStripIncrFindTypeFilter.Size = new System.Drawing.Size(80, 23);
             this.toolStripIncrFindTypeFilter.ToolTipText = "Search Type";
             this.toolStripIncrFindTypeFilter.Visible = false;
             this.toolStripIncrFindTypeFilter.SelectedIndexChanged += new System.EventHandler(this.toolStripIncrFindTypeFilter_SelectedIndexChanged);
@@ -1345,6 +1345,24 @@ namespace TESVSnip {
             this.recordPanel.TabIndex = 5;
             this.dockingManagerExtender.SetTitle(this.recordPanel, "Record Panel");
             // 
+            // PluginTree
+            // 
+            this.dockingManagerExtender.SetCloseButton(this.PluginTree, false);
+            this.PluginTree.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.PluginTree.HideSelection = false;
+            this.PluginTree.Location = new System.Drawing.Point(0, 25);
+            this.PluginTree.Name = "PluginTree";
+            this.dockingManagerExtender.SetPreferredSize(this.PluginTree, new System.Drawing.Size(0, 0));
+            this.PluginTree.Size = new System.Drawing.Size(228, 192);
+            this.dockingManagerExtender.SetTabbedMode(this.PluginTree, true);
+            this.PluginTree.TabIndex = 0;
+            this.PluginTree.OnContextMenuKey += new System.EventHandler(this.PluginTree_OnContextMenuKey);
+            this.PluginTree.AfterExpand += new System.Windows.Forms.TreeViewEventHandler(this.PluginTree_AfterExpand);
+            this.PluginTree.AfterSelect += new System.Windows.Forms.TreeViewEventHandler(this.PluginTree_AfterSelect);
+            this.PluginTree.NodeMouseClick += new System.Windows.Forms.TreeNodeMouseClickEventHandler(this.PluginTree_NodeMouseClick);
+            this.PluginTree.Enter += new System.EventHandler(this.PluginTree_Enter);
+            this.PluginTree.MouseDoubleClick += new System.Windows.Forms.MouseEventHandler(this.PluginTree_MouseDoubleClick);
+            // 
             // subrecordPanel
             // 
             this.dockingManagerExtender.SetADockingEnable(this.subrecordPanel, true);
@@ -1394,24 +1412,6 @@ namespace TESVSnip {
             this.listSubrecord.GiveFeedback += new System.Windows.Forms.GiveFeedbackEventHandler(this.listView1_GiveFeedback);
             this.listSubrecord.KeyDown += new System.Windows.Forms.KeyEventHandler(this.listSubrecord_KeyDown);
             this.listSubrecord.MouseDoubleClick += new System.Windows.Forms.MouseEventHandler(this.listSubrecord_MouseDoubleClick);
-            // 
-            // PluginTree
-            // 
-            this.dockingManagerExtender.SetCloseButton(this.PluginTree, false);
-            this.PluginTree.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.PluginTree.HideSelection = false;
-            this.PluginTree.Location = new System.Drawing.Point(0, 25);
-            this.PluginTree.Name = "PluginTree";
-            this.dockingManagerExtender.SetPreferredSize(this.PluginTree, new System.Drawing.Size(0, 0));
-            this.PluginTree.Size = new System.Drawing.Size(228, 192);
-            this.dockingManagerExtender.SetTabbedMode(this.PluginTree, true);
-            this.PluginTree.TabIndex = 0;
-            this.PluginTree.OnContextMenuKey += new System.EventHandler(this.PluginTree_OnContextMenuKey);
-            this.PluginTree.AfterExpand += new System.Windows.Forms.TreeViewEventHandler(this.PluginTree_AfterExpand);
-            this.PluginTree.AfterSelect += new System.Windows.Forms.TreeViewEventHandler(this.PluginTree_AfterSelect);
-            this.PluginTree.NodeMouseClick += new System.Windows.Forms.TreeNodeMouseClickEventHandler(this.PluginTree_NodeMouseClick);
-            this.PluginTree.Enter += new System.EventHandler(this.PluginTree_Enter);
-            this.PluginTree.MouseDoubleClick += new System.Windows.Forms.MouseEventHandler(this.PluginTree_MouseDoubleClick);
             // 
             // rtfInfo
             // 

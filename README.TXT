@@ -9,6 +9,10 @@ Requirements:
   .NET 3.5
 
 Change Log:
+v 2.4
+- Bug fix to so that repeating elements such as KWDA can be added in new control
+- Add config only option to allow old subrecord editor to be used
+
 v 2.3
 - Use RTF5 control if installed
   Greatly improves text rendering when links are involved and has better layout as well

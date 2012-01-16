@@ -57,6 +57,10 @@ namespace TESVSnip.Collections.Generic
         
 		#endregion
 
+        protected override object AddNewCore()
+        {
+            return base.AddNewCore();
+        }
 
         public virtual bool AllowSorting
         {

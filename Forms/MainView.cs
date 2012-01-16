@@ -896,10 +896,22 @@ Do you still want to save?", "Modified Save", MessageBoxButtons.YesNo, MessageBo
                 && sr.Structure.elements != null
                 && sr.Structure.elements[0].type != ElementValueType.Blob && !sr.Structure.UseHexEditor)
             {
-                NewMediumLevelRecordEditor re;
+                Form re;
                 try
                 {
-                    re = new NewMediumLevelRecordEditor(context.Plugin, context.Record, sr, sr.Structure);
+                    if (global::TESVSnip.Properties.Settings.Default.UseOldSubRecordEditor)
+                    {
+                        var p = context.Plugin;
+                        var r = context.Record;
+                        var formIDLookup = new dFormIDLookupS(p.LookupFormIDS);
+                        var formIDScan = new dFormIDScan(this.FormIDScan);
+                        var strIDLookup = new dLStringLookup(p.LookupFormStrings);
+                        re = new MediumLevelRecordEditor(sr, sr.Structure, formIDLookup, formIDScan, strIDLookup);
+                    }
+                    else
+                    {
+                        re = new NewMediumLevelRecordEditor(context.Plugin, context.Record, sr, sr.Structure);
+                    }                    
                 }
                 catch
                 {

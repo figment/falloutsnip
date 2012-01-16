@@ -226,6 +226,12 @@
     <Compile Include="Forms\AddMasterForm.designer.cs">
       <DependentUpon>AddMasterForm.cs</DependentUpon>
     </Compile>
+    <Compile Include="Forms\MediumLevelRecordEditor.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\MediumLevelRecordEditor.designer.cs">
+      <DependentUpon>MediumLevelRecordEditor.cs</DependentUpon>
+    </Compile>
     <Compile Include="Forms\NewMediumLevelRecordEditor.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -319,6 +325,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\AddMasterForm.resx">
       <DependentUpon>AddMasterForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\MediumLevelRecordEditor.resx">
+      <DependentUpon>MediumLevelRecordEditor.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\NewMediumLevelRecordEditor.resx">
       <DependentUpon>NewMediumLevelRecordEditor.cs</DependentUpon>
@@ -605,23 +614,26 @@
   <Target Name="AfterBuild">
   </Target>
   -->
-    <PropertyGroup>
-        <StageOutputDir>$(ProjectDir)\Output\</StageOutputDir>
-        <MergeOutputFile>$(StageOutputDir)\$(TargetName)$(TargetExt)</MergeOutputFile>
-    </PropertyGroup>
-    <ItemGroup>
-        <inputAssemblies Include="$(TargetPath)" />
-        <inputAssemblies Include="$(TargetDir)\*.dll" />
-        <CopyToStaging Include="$(ProjectDir)\LICENSE"/>
-        <CopyToStaging Include="$(ProjectDir)\README.TXT"/>
-        <CopyToStagingConf Include="$(ProjectDir)conf\**"/>
-    </ItemGroup>  
+  <PropertyGroup>
+    <StageOutputDir>$(ProjectDir)\Output\</StageOutputDir>
+    <MergeOutputFile>$(StageOutputDir)\$(TargetName)$(TargetExt)</MergeOutputFile>
+  </PropertyGroup>
+  <ItemGroup>
+    <inputAssemblies Include="$(TargetPath)" />
+    <inputAssemblies Include="$(TargetDir)\*.dll" />
+    <CopyToStaging Include="$(ProjectDir)\LICENSE" />
+    <CopyToStaging Include="$(ProjectDir)\README.TXT" />
+    <CopyToStagingConf Include="$(ProjectDir)conf\**" />
+  </ItemGroup>
   <Target Name="Package">
-    <MakeDir Directories="$(StageOutputDir)"/>
-    <Copy SourceFiles="@(CopyToStaging)" DestinationFolder="$(StageOutputDir)"></Copy>
-    <Copy SourceFiles="@(CopyToStagingConf)" DestinationFolder="$(StageOutputDir)conf"></Copy>
-    <Copy SourceFiles="$(TargetPath).config" DestinationFolder="$(StageOutputDir)"></Copy>
-    <ILMerge InputAssemblies="@(inputAssemblies)" OutputFile="$(MergeOutputFile)" DebugInfo="true"/>
+    <MakeDir Directories="$(StageOutputDir)" />
+    <Copy SourceFiles="@(CopyToStaging)" DestinationFolder="$(StageOutputDir)">
+    </Copy>
+    <Copy SourceFiles="@(CopyToStagingConf)" DestinationFolder="$(StageOutputDir)conf">
+    </Copy>
+    <Copy SourceFiles="$(TargetPath).config" DestinationFolder="$(StageOutputDir)">
+    </Copy>
+    <ILMerge InputAssemblies="@(inputAssemblies)" OutputFile="$(MergeOutputFile)" DebugInfo="true" />
     <Delete Files="$(StageOutputDir)\$(ProjectName)_v$(Major).$(Minor).rar" />
     <SimpleExec Command="$(ProgramFiles)\WinRar\rar.exe" Args="a -r $(ProjectName)_v$(Major).$(Minor).rar * -x*.pdb -x*vshost* -x*.rar" WorkingDirectory="$(StageOutputDir)" />
     <SimpleExec Command="$(ProgramFiles)\WinRar\rar.exe" Args="c $(ProjectName)_v$(Major).$(Minor).rar" StdIn="README.TXT" WorkingDirectory="$(StageOutputDir)" />
