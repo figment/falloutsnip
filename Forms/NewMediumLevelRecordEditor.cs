@@ -168,9 +168,9 @@ namespace TESVSnip
                         str.Write(elem.Array, elem.Offset, elem.Count);
                     }
                 }
-                byte[] originalData = sr.GetReadonlyData();
                 byte[] newData = str.ToArray();
 #if DEBUG
+                byte[] originalData = sr.GetReadonlyData();
                 if (!ByteArrayCompare(originalData, newData))
                     MessageBox.Show("Data Changed", "Debug", MessageBoxButtons.OK);
 #endif

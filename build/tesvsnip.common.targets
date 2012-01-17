@@ -114,6 +114,7 @@
     </CreateItem>
     <AssemblyInfo CodeLanguage="CS" OutputFile="$(TsAssemblyVersion)" 
         AssemblyCompany="$(CompanyName)" 
+        AssemblyTitle="$(ProductName) - Version $(Major).$(Minor) ($(GitVersionNumber))"
         AssemblyProduct="" AssemblyCopyright="$(Copyright)" 
         AssemblyTrademark="$(Trademark)" 
         CLSCompliant="false" AssemblyDelaySign="false" 
@@ -121,7 +122,7 @@
         AssemblyCulture="" 
         AssemblyVersion="$(Major).$(Minor).$(Build).$(Revision)" 
         AssemblyFileVersion="$(Major).$(Minor).$(Build).$(Revision)" 
-        AssemblyInformationalVersion="$(ProductName) - Version $(Major).$(Minor) ($(GitVersionNumber))" 
+        AssemblyInformationalVersion="$(ProductName) - Version $(Major).$(Minor)" 
         />
   </Target>
   

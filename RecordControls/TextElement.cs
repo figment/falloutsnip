@@ -143,7 +143,7 @@ namespace TESVSnip.RecordControls
 
         private void textBox_Validated(object sender, EventArgs e)
         {
-            SaveText();
+                SaveText();
         }
 
         protected virtual void SaveText()

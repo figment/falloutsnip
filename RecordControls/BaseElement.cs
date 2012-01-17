@@ -40,8 +40,18 @@ namespace TESVSnip.RecordControls
                 if (!EqualsArraySegment<byte>(data, value))
                 {
                     if (data != null && data.Array != null)
+                    {
                         this.Changed = true;
-                    data = value;
+                        // important to clone the data as TypeConverter uses a shared byte array for many operations
+                        byte[] blob = new byte[value.Count];
+                        if (value.Count > 0)
+                            Array.Copy(value.Array, value.Offset, blob, 0, value.Count);
+                        this.data = new ArraySegment<byte>(blob);
+                    }
+                    else
+                    {
+                        data = value;
+                    }                    
                     UpdateAllControls();
                 }
             }

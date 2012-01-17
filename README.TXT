@@ -9,6 +9,9 @@ Requirements:
   .NET 3.5
 
 Change Log:
+v 2.5
+- Bug fix to avoid using shared memory when editing leading to incorrect values being saved
+
 v 2.4
 - Bug fix to so that repeating elements such as KWDA can be added in new control
 - Add config only option to allow old subrecord editor to be used

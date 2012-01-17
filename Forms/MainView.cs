@@ -920,27 +920,31 @@ Do you still want to save?", "Modified Save", MessageBoxButtons.YesNo, MessageBo
                 }
                 if (re != null)
                 {
-                    re.ShowDialog(this);
-                    UpdateMainText(sr);
-                    if (sr.Name == "EDID" && listSubrecord.SelectedIndices[0] == 0)
+                    if (DialogResult.OK == re.ShowDialog(this))
                     {
-                        context.Record.SetDescription(" (" + sr.GetStrData() + ")");
-                        PluginTree.SelectedNode.Text = context.Record.DescriptiveName;
+                        UpdateMainText(sr);
+                        if (sr.Name == "EDID" && listSubrecord.SelectedIndices[0] == 0)
+                        {
+                            context.Record.SetDescription(" (" + sr.GetStrData() + ")");
+                            PluginTree.SelectedNode.Text = context.Record.DescriptiveName;
+                        }
+                        //listSubrecord.SelectedItems[0].SubItems[1].Text = sr.Size.ToString() + " *";
+                        listSubrecord.Refresh();
                     }
-                    //listSubrecord.SelectedItems[0].SubItems[1].Text = sr.Size.ToString() + " *";
-                    listSubrecord.Refresh();
                     return;
                 }
             }
             if (hexModeToolStripMenuItem.Checked)
             {
-                new HexDataEdit(sr.Name, sr.GetData(), LookupFormIDS).ShowDialog(this);
-                if (!HexDataEdit.Canceled)
+                using (var dlg = new HexDataEdit(sr.Name, sr.GetData(), LookupFormIDS))
                 {
-                    sr.SetData(HexDataEdit.result);
-                    sr.Name = HexDataEdit.resultName;
-                    UpdateMainText(sr);
-                    listSubrecord.Refresh();
+                    if (DialogResult.OK == dlg.ShowDialog(this))
+                    {
+                        sr.SetData(HexDataEdit.result);
+                        sr.Name = HexDataEdit.resultName;
+                        UpdateMainText(sr);
+                        listSubrecord.Refresh();
+                    }
                 }
             }
             else
