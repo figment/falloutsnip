@@ -14,8 +14,7 @@ namespace TESVSnip.Forms
         public LoadSettings()
         {
             InitializeComponent();
-            //rtfWarning.Text
-
+            this.Icon = global::TESVSnip.Properties.Resources.tesv_ico;
         }
 
         private void richTextBox1_TextChanged(object sender, EventArgs e)

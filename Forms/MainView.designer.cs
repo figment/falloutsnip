@@ -158,6 +158,7 @@ namespace TESVSnip {
             this.listSubrecord = new TESVSnip.Windows.Controls.ObjectBindingListView();
             this.rtfInfo = new RichTextBoxLinks.RichTextBoxEx();
             this.dockingManagerExtender = new DockingManagerExtender.DockingManagerExtender(this.components);
+            this.compressionSettingsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.menuStrip1.SuspendLayout();
             this.statusStrip1.SuspendLayout();
             this.toolStripRecord.SuspendLayout();
@@ -419,7 +420,8 @@ namespace TESVSnip {
             this.noWindowsSoundsToolStripMenuItem,
             this.disableHyperlinksToolStripMenuItem,
             this.resetDockingWindowsToolStripMenuItem,
-            this.eSMFilterSettingsToolStripMenuItem});
+            this.eSMFilterSettingsToolStripMenuItem,
+            this.compressionSettingsToolStripMenuItem});
             this.optionsToolStripMenuItem.Name = "optionsToolStripMenuItem";
             this.optionsToolStripMenuItem.Size = new System.Drawing.Size(61, 20);
             this.optionsToolStripMenuItem.Text = "Options";
@@ -1436,6 +1438,13 @@ namespace TESVSnip {
             this.dockingManagerExtender.InnerControl = this.rtfInfo;
             this.dockingManagerExtender.OuterControl = this.menuStrip1;
             // 
+            // compressionSettingsToolStripMenuItem
+            // 
+            this.compressionSettingsToolStripMenuItem.Name = "compressionSettingsToolStripMenuItem";
+            this.compressionSettingsToolStripMenuItem.Size = new System.Drawing.Size(208, 22);
+            this.compressionSettingsToolStripMenuItem.Text = "&Compression Settings...";
+            this.compressionSettingsToolStripMenuItem.Click += new System.EventHandler(this.compressionSettingsToolStripMenuItem_Click);
+            // 
             // MainView
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -1618,5 +1627,6 @@ namespace TESVSnip {
         private System.Windows.Forms.Panel subrecordPanel;
         private System.Windows.Forms.ToolStripMenuItem resetDockingWindowsToolStripMenuItem;
         private DockingManagerExtender.DockingManagerExtender dockingManagerExtender;
+        private System.Windows.Forms.ToolStripMenuItem compressionSettingsToolStripMenuItem;
     }
 }

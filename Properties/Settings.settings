@@ -71,5 +71,20 @@
     <Setting Name="UseOldSubRecordEditor" Type="System.Boolean" Scope="User">
       <Value Profile="(Default)">False</Value>
     </Setting>
+    <Setting Name="UseDefaultRecordCompression" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">True</Value>
+    </Setting>
+    <Setting Name="EnableAutoCompress" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">False</Value>
+    </Setting>
+    <Setting Name="AutoCompressRecords" Type="System.String" Scope="User">
+      <Value Profile="(Default)">REGN;NAVI;WRLD;DIAL;CELL;IMAD;WTHR</Value>
+    </Setting>
+    <Setting Name="EnableCompressionLimit" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">False</Value>
+    </Setting>
+    <Setting Name="CompressionLimit" Type="System.UInt32" Scope="User">
+      <Value Profile="(Default)">1024</Value>
+    </Setting>
   </Settings>
 </SettingsFile>

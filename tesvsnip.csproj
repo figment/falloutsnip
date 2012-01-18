@@ -226,6 +226,12 @@
     <Compile Include="Forms\AddMasterForm.designer.cs">
       <DependentUpon>AddMasterForm.cs</DependentUpon>
     </Compile>
+    <Compile Include="Forms\CompressSettings.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\CompressSettings.Designer.cs">
+      <DependentUpon>CompressSettings.cs</DependentUpon>
+    </Compile>
     <Compile Include="Forms\MediumLevelRecordEditor.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -325,6 +331,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\AddMasterForm.resx">
       <DependentUpon>AddMasterForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\CompressSettings.resx">
+      <DependentUpon>CompressSettings.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\MediumLevelRecordEditor.resx">
       <DependentUpon>MediumLevelRecordEditor.cs</DependentUpon>

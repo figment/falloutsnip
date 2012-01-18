@@ -298,5 +298,65 @@ namespace TESVSnip.Properties {
                 this["UseOldSubRecordEditor"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("True")]
+        public bool UseDefaultRecordCompression {
+            get {
+                return ((bool)(this["UseDefaultRecordCompression"]));
+            }
+            set {
+                this["UseDefaultRecordCompression"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool EnableAutoCompress {
+            get {
+                return ((bool)(this["EnableAutoCompress"]));
+            }
+            set {
+                this["EnableAutoCompress"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("REGN;NAVI;WRLD;DIAL;CELL;IMAD;WTHR")]
+        public string AutoCompressRecords {
+            get {
+                return ((string)(this["AutoCompressRecords"]));
+            }
+            set {
+                this["AutoCompressRecords"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool EnableCompressionLimit {
+            get {
+                return ((bool)(this["EnableCompressionLimit"]));
+            }
+            set {
+                this["EnableCompressionLimit"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("1024")]
+        public uint CompressionLimit {
+            get {
+                return ((uint)(this["CompressionLimit"]));
+            }
+            set {
+                this["CompressionLimit"] = value;
+            }
+        }
     }
 }

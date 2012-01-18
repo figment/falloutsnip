@@ -96,22 +96,78 @@ namespace TESVSnip
     }
     #endregion
 
-    #region class BaseRecord
-    [Persistable(Flags = PersistType.DeclaredOnly), Serializable]
-    public abstract class BaseRecord : PersistObject, ICloneable, ISerializable
+    #region class Compressor / Decompressor
+    static class Compressor
     {
-        [Persistable]
-        public virtual string Name { get; set; }
+        private static byte[] buffer;
+        private static MemoryStream ms;
+        private static ICSharpCode.SharpZipLib.Zip.Compression.Deflater def;
+        private static ICSharpCode.SharpZipLib.Zip.Compression.Streams.DeflaterOutputStream defstr;
+        private static string[] autoCompRecList = new string[0];
 
-        public abstract long Size { get; }
-        public abstract long Size2 { get; }
 
+        public static Stream GetSharedStream()
+        {
+            ms.SetLength(0);
+            ms.Position = 0;
+            return ms; 
+        }
+
+        public static BinaryWriter AllocWriter(Stream s)
+        {
+            int compressLevel = 9;
+            def = new ICSharpCode.SharpZipLib.Zip.Compression.Deflater(compressLevel, false);
+            defstr = new ICSharpCode.SharpZipLib.Zip.Compression.Streams.DeflaterOutputStream(ms, def);
+            defstr.IsStreamOwner = false;
+            return new BinaryWriter(defstr);
+        }
+
+        public static void CopyTo(BinaryWriter output, Stream input)
+        {
+            long left = input.Length;
+            while (left > 0)
+            {
+                int nread = input.Read(buffer,0, buffer.Length);
+                if (nread == 0) break;
+                output.Write(buffer, 0, nread);
+            }
+        }
+
+        public static void Init()
+        {
+            ms = new MemoryStream();
+            buffer = new byte[0x4000];
+
+            // bit of a hack to avoid rebuilding this look up index
+            autoCompRecList = TESVSnip.Properties.Settings.Default.AutoCompressRecords != null
+                ? TESVSnip.Properties.Settings.Default.AutoCompressRecords.Trim().Split(new char[] { ';', ',' }, StringSplitOptions.RemoveEmptyEntries)
+                : new string[0];
+            Array.Sort(autoCompRecList);
+        }
+
+        public static bool CompressRecord(string name)
+        {
+            return Array.BinarySearch<string>(autoCompRecList, name) >= 0;
+        }
+
+        public static void Close()
+        {
+            def = null;
+            buffer = null;
+            if (ms != null) ms.Dispose();
+            ms = null;
+        }
+    }
+
+    static class Decompressor
+    {
         private static byte[] input;
         private static byte[] output;
         private static MemoryStream ms;
         private static BinaryReader compReader;
         private static ICSharpCode.SharpZipLib.Zip.Compression.Inflater inf;
-        protected static BinaryReader Decompress(BinaryReader br, int size, int outsize)
+
+        public static BinaryReader Decompress(BinaryReader br, int size, int outsize)
         {
             if (input.Length < size)
             {
@@ -132,7 +188,8 @@ namespace TESVSnip
 
             return compReader;
         }
-        protected static void InitDecompressor()
+        
+        public static void Init()
         {
             inf = new ICSharpCode.SharpZipLib.Zip.Compression.Inflater(false);
             ms = new MemoryStream();
@@ -140,7 +197,7 @@ namespace TESVSnip
             input = new byte[0x1000];
             output = new byte[0x4000];
         }
-        protected static void CloseDecompressor()
+        public static void Close()
         {
             compReader.Close();
             compReader = null;
@@ -149,12 +206,23 @@ namespace TESVSnip
             output = null;
             ms = null;
         }
+    }
+    #endregion 
+
+    #region class BaseRecord
+    [Persistable(Flags = PersistType.DeclaredOnly), Serializable]
+    public abstract class BaseRecord : PersistObject, ICloneable, ISerializable
+    {
+        [Persistable]
+        public virtual string Name { get; set; }
+
+        public abstract long Size { get; }
+        public abstract long Size2 { get; }
 
         public abstract string GetDesc();
         public virtual void GetFormattedHeader(RTFBuilder rb, SelectionContext context) { }
         public virtual void GetFormattedData(RTFBuilder rb, SelectionContext context) { rb.Append(GetDesc()); }
         public virtual void GetFormattedData(StringBuilder sb, SelectionContext context) { sb.Append(GetDesc()); }
-
 
         public abstract bool DeleteRecord(BaseRecord br);
         public abstract void AddRecord(BaseRecord br);
@@ -307,7 +375,7 @@ namespace TESVSnip
 
             this.Filtered = (recFilter != null && recFilter.Length > 0);
 
-            InitDecompressor();
+            Decompressor.Init();
 
             s = ReadRecName(br);
             if (s != "TES4") throw new Exception("File is not a valid TES4 plugin (Missing TES4 record)");
@@ -329,10 +397,14 @@ namespace TESVSnip
             {
                 while (br.PeekChar() != -1)
                 {
+#if DEBUG
+                    long szPos = br.BaseStream.Position;
+#endif
                     s = ReadRecName(br);
                     recsize = br.ReadUInt32();
-
-
+#if DEBUG
+                    System.Diagnostics.Trace.TraceInformation("{0} {1}", s, recsize);
+#endif
                     if (s == "GRUP")
                     {
                         Records.Add(new GroupRecord(recsize, br, IsOblivion, recFilter, false));
@@ -349,10 +421,13 @@ namespace TESVSnip
                         else
                             Records.Add(new Record(s, recsize, br, IsOblivion));
                     }
+#if DEBUG
+                    System.Diagnostics.Debug.Assert((br.BaseStream.Position - szPos) == recsize);
+#endif
                 }
             }
 
-            CloseDecompressor();
+            Decompressor.Close();
         }
 
         public static bool GetIsEsm(string FilePath)
@@ -547,7 +622,9 @@ namespace TESVSnip
 
         internal override void SaveData(BinaryWriter bw)
         {
+            Compressor.Init();
             foreach (Rec r in Records) r.SaveData(bw);
+            Compressor.Close();
         }
 
         internal override List<string> GetIDs(bool lower)
@@ -1023,9 +1100,14 @@ namespace TESVSnip
             uint AmountRead = 0;
             while (AmountRead < Size - (Oblivion ? 20 : 24))
             {
+#if DEBUG
+                long szPos = br.BaseStream.Position;
+#endif
                 string s = Plugin.ReadRecName(br);
                 uint recsize = br.ReadUInt32();
-
+#if DEBUG
+                System.Diagnostics.Trace.TraceInformation("{0} {1}", s, recsize);
+#endif
                 if (s == "GRUP")
                 {
                     bool skip = filterAll || (recFilter != null && Array.IndexOf(recFilter, contentType) >= 0);
@@ -1033,6 +1115,9 @@ namespace TESVSnip
                     AmountRead += recsize;
 
                     if (!filterAll) Records.Add(gr);
+#if DEBUG
+                    System.Diagnostics.Debug.Assert((br.BaseStream.Position - szPos) == recsize);
+#endif
                 }
                 else
                 {
@@ -1050,6 +1135,9 @@ namespace TESVSnip
                         AmountRead += (uint)(recsize + (Oblivion ? 20 : 24));
                         Records.Add(r);
                     }
+#if DEBUG
+                    System.Diagnostics.Debug.Assert((br.BaseStream.Position - szPos) - (Oblivion ? 20 : 24) == recsize);
+#endif
                 }
             }
             if (AmountRead > (Size - (Oblivion ? 20 : 24)))
@@ -1152,13 +1240,25 @@ namespace TESVSnip
 
         internal override void SaveData(BinaryWriter bw)
         {
+            long startpos = bw.BaseStream.Position;
+            uint svSize = (uint)Size;
+            uint svSize2 = (uint)Size2;
             WriteString(bw, "GRUP");
-            bw.Write((uint)Size);
+            bw.Write(svSize);
             bw.Write(data);
             bw.Write(groupType);
             bw.Write(dateStamp);
-            bw.Write(flags);
+            bw.Write(flags); // should this check for oblivion?
             foreach (Rec r in Records) r.SaveData(bw);
+            bw.Flush();
+            long curpos = bw.BaseStream.Position;
+            uint wrSize = (uint)(curpos - startpos);
+            if (wrSize != svSize2) // fix size probably due to compression
+            {
+                bw.BaseStream.Position = startpos + 4;
+                bw.Write(wrSize);
+                bw.BaseStream.Position = curpos;
+            }
         }
 
         internal override List<string> GetIDs(bool lower)
@@ -1298,9 +1398,9 @@ namespace TESVSnip
             if (!Oblivion) Flags3 = br.ReadUInt32();
             if ((Flags1 & 0x00040000) > 0)
             {
-                Flags1 ^= 0x00040000;
+                //Flags1 ^= 0x00040000;
                 uint newSize = br.ReadUInt32();
-                br = Decompress(br, (int)(Size - 4), (int)newSize);
+                br = Decompressor.Decompress(br, (int)(Size - 4), (int)newSize);
                 Size = newSize;
             }
             uint AmountRead = 0;
@@ -1542,12 +1642,41 @@ namespace TESVSnip
         internal override void SaveData(BinaryWriter bw)
         {
             WriteString(bw, Name);
-            bw.Write((uint)Size);
-            bw.Write(Flags1);
-            bw.Write(FormID);
-            bw.Write(Flags2);
-            bw.Write(Flags3);
-            foreach (SubRecord sr in SubRecords) sr.SaveData(bw);
+            uint srSize = (uint)Size;
+
+            bool bCompress = false;
+            if (global::TESVSnip.Properties.Settings.Default.UseDefaultRecordCompression)
+            {
+                bCompress = ((Flags1 & 0x00040000) != 0)
+                    || (global::TESVSnip.Properties.Settings.Default.EnableAutoCompress && Compressor.CompressRecord(Name))
+                    || (global::TESVSnip.Properties.Settings.Default.EnableCompressionLimit &&
+                      (srSize >= global::TESVSnip.Properties.Settings.Default.CompressionLimit));
+            }
+            if (bCompress) // compressed
+            {
+                var stream = Compressor.GetSharedStream();
+                using (var writer = Compressor.AllocWriter(stream))
+                    foreach (SubRecord sr in SubRecords) sr.SaveData(writer);
+
+                bw.Write((uint)stream.Length + 4); // Size of compressed section + length
+                bw.Write((uint)(Flags1 | 0x00040000));
+                bw.Write(FormID);
+                bw.Write(Flags2);
+                bw.Write(Flags3);
+
+                stream.Position = 0;
+                bw.Write(srSize); //ideally use writer bytes written but should be same
+                Compressor.CopyTo(bw, stream);
+            }
+            else
+            {
+                bw.Write(srSize);
+                bw.Write((uint)(Flags1 & ~0x00040000));
+                bw.Write(FormID);
+                bw.Write(Flags2);
+                bw.Write(Flags3);
+                foreach (SubRecord sr in SubRecords) sr.SaveData(bw);
+            }
         }
 
         internal override List<string> GetIDs(bool lower)

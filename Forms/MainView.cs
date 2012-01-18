@@ -9,6 +9,7 @@ using System.Drawing.Drawing2D;
 using Microsoft.Win32;
 using TESVSnip.Windows.Controls;
 using Crownwood.Magic.Docking;
+using TESVSnip.Forms;
 
 namespace TESVSnip
 {
@@ -2453,6 +2454,17 @@ Do you still want to save?", "Modified Save", MessageBoxButtons.YesNo, MessageBo
                 case DialogResult.Yes:
                     this.dockingManagerExtender.ResetAutoPersistent(false);
                     break;
+            }
+        }
+
+        private void compressionSettingsToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            using (var dlg = new CompressSettings())
+            {
+                if (DialogResult.OK == dlg.ShowDialog(this))
+                {
+                    // nothing of interest
+                }
             }
         }
     }
