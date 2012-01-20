@@ -16,6 +16,9 @@ namespace TESVSnip.RecordControls
         dFormIDScanRec formIDScan { get; set; }
         dLStringLookup strIDLookup { get; set; }
         bool Changed { get; set; }
+
+        void CommitChanges();
+        event EventHandler DataChanged;
     }
 
     interface IOuterElementControl : IElementControl

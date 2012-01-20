@@ -9,6 +9,11 @@ Requirements:
   .NET 3.5
 
 Change Log:
+v 2.6
+- Fix issues with the new FormID Editor not saving values
+- Fix issues with the new Repeating Element Editor not saving values
+- Fix issues with the Paste Node feature with Groups causing nodes to not be created as expected
+
 v 2.5
 - Bug fix to avoid using shared memory when editing leading to incorrect values being saved
 

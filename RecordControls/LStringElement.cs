@@ -36,7 +36,7 @@ namespace TESVSnip.RecordControls
             try
             {
                 this.chkUseText.CheckedChanged -= new System.EventHandler(this.chkUseText_CheckedChanged);
-
+                var data = GetCurrentData();
                 switch (this.Element.type)
                 {
                     case ElementValueType.UInt:
@@ -64,6 +64,7 @@ namespace TESVSnip.RecordControls
 
         private void SetTextAsString()
         {
+            var data = GetCurrentData();
             this.TextBox.ReadOnly = false;
             this.txtString.ReadOnly = false;
             this.txtString.Text = TypeConverter.GetString(data);
@@ -75,7 +76,7 @@ namespace TESVSnip.RecordControls
 
         private void SetTextByID()
         {
-            var data = this.Data;
+            var data = GetCurrentData();
             this.txtString.ReadOnly = false;
             uint id = TypeConverter.h2i(data);
             string s = "";
@@ -107,7 +108,7 @@ namespace TESVSnip.RecordControls
         {
             if (chkUseText.Checked)
             {
-                this.data = new ArraySegment<byte>(TypeConverter.str2h(this.txtString.Text));
+                SetCurrentData(new ArraySegment<byte>(TypeConverter.str2h(this.txtString.Text)));
                 this.Error.SetError(TextBox, null);
             }
             else
@@ -120,7 +121,7 @@ namespace TESVSnip.RecordControls
                 else
                 {
                     this.Error.SetError(TextBox, null);
-                    this.data = new ArraySegment<byte>(TypeConverter.i2h(i));
+                    SetCurrentData(new ArraySegment<byte>(TypeConverter.i2h(i)));
                 }
             }
         }

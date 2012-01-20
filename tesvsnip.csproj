@@ -262,6 +262,12 @@
     <Compile Include="Forms\MultilineStringEditor.Designer.cs">
       <DependentUpon>MultilineStringEditor.cs</DependentUpon>
     </Compile>
+    <Compile Include="Forms\RecordEditor.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Forms\RecordEditor.Designer.cs">
+      <DependentUpon>RecordEditor.cs</DependentUpon>
+    </Compile>
     <Compile Include="Forms\StringsEditor.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -305,6 +311,18 @@
     </Compile>
     <Compile Include="Collections\LocalizedString.cs" />
     <Compile Include="Collections\ordereddictionary.cs" />
+    <Compile Include="Forms\SubrecordEditor.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Forms\SubrecordEditor.Designer.cs">
+      <DependentUpon>SubrecordEditor.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\SubrecordListEditor.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Forms\SubrecordListEditor.Designer.cs">
+      <DependentUpon>SubrecordListEditor.cs</DependentUpon>
+    </Compile>
     <Compile Include="Main\Pair.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -340,12 +358,17 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\NewMediumLevelRecordEditor.resx">
       <DependentUpon>NewMediumLevelRecordEditor.cs</DependentUpon>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\LoadSettings.resx">
       <DependentUpon>LoadSettings.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\MultilineStringEditor.resx">
       <DependentUpon>MultilineStringEditor.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\RecordEditor.resx">
+      <DependentUpon>RecordEditor.cs</DependentUpon>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\StringsEditor.resx">
       <DependentUpon>StringsEditor.cs</DependentUpon>
@@ -361,6 +384,12 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\HexDataEdit.resx">
       <DependentUpon>HexDataEdit.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\SubrecordEditor.resx">
+      <DependentUpon>SubrecordEditor.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\SubrecordListEditor.resx">
+      <DependentUpon>SubrecordListEditor.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
@@ -405,9 +434,6 @@
     <None Include="build\tesvsnip.snk" />
     <None Include="Controls\ObjectListView\ObjectListView.FxCop" />
     <None Include="Controls\ObjectListView\ObjectListView.shfb" />
-    <None Include="LICENSE">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
@@ -561,9 +587,6 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="Controls\ObjectListView\CustomDictionary.xml" />
-    <Content Include="README.TXT">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
     <Content Include="Resources\clear-filter.png" />
     <Content Include="Resources\filter-icons3.png" />
     <Content Include="Resources\filter.png" />

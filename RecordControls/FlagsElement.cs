@@ -46,7 +46,7 @@ namespace TESVSnip.RecordControls
             if (value != oldValue)
             {
                 byte[] data = TypeConverter.i2h(value);
-                this.Data = new ArraySegment<byte>(data, 0, data.Length);
+                SetCurrentData(new ArraySegment<byte>(data, 0, data.Length));
                 TextBox.Text = "0x" + value.ToString("X");
                 this.Changed = true;
             }

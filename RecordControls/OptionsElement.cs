@@ -47,6 +47,7 @@ namespace TESVSnip.RecordControls
         protected override void UpdateAllControls()
         {
             base.UpdateAllControls();
+            var data = GetCurrentData();
             if (this.element.options != null)
             {
                 var value = TypeConverter.h2si(data);
@@ -71,6 +72,7 @@ namespace TESVSnip.RecordControls
 
         private void cboOptions_SelectedIndexChanged(object sender, EventArgs e)
         {
+            var data = GetCurrentData();
             int oldIndex = TypeConverter.h2si(data);
             var cbi = this.cboOptions.SelectedItem as comboBoxItem;
             if (cbi != null)
@@ -79,7 +81,7 @@ namespace TESVSnip.RecordControls
                 if (oldIndex != newIndex && newIndex != -1)
                 {
                     oldIndex = newIndex;
-                    this.Data = new ArraySegment<byte>(TypeConverter.si2h(newIndex));
+                    SetCurrentData(new ArraySegment<byte>(TypeConverter.si2h(newIndex)));
                     this.Changed = true;
                     UpdateText();
                 }

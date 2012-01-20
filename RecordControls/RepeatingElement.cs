@@ -15,6 +15,7 @@ namespace TESVSnip.RecordControls
         IElementControl innerControl = null;
         AdvancedList<ArraySegment<byte>> elements = new AdvancedList<ArraySegment<byte>>();
         BindingSource bs = new BindingSource();
+        bool inUpdatePosition = false;
 
         public RepeatingElement()
         {
@@ -47,7 +48,40 @@ namespace TESVSnip.RecordControls
             get { return elements; }
         }
 
+
+        /// <summary>
+        /// Data for overall points at 
+        /// </summary>
+        public override ArraySegment<byte> Data
+        {
+            get { throw new ApplicationException("Data not valid"); }
+            set { throw new ApplicationException("Data not valid"); }
+        }
+
         #endregion
+
+
+        protected override ArraySegment<byte> GetCurrentData()
+        {
+            if (bs.Count > 0 && bs.Position >= 0 && bs.Position < bs.Count)
+                return elements[bs.Position];
+            return default(ArraySegment<byte>);
+        }
+
+        /// <summary>
+        /// set data for currently selected element
+        /// </summary>
+        /// <param name="value"></param>
+        protected override void SetCurrentData(ArraySegment<byte> value)
+        {
+            if (!inUpdatePosition)
+            {
+                if (bs.Count > 0 && bs.Position >= 0 && bs.Position < bs.Count)
+                {
+                    elements[bs.Position] = value;
+                }
+            }
+        }
 
         protected override void UpdateElement()
         {
@@ -65,6 +99,9 @@ namespace TESVSnip.RecordControls
             {
                 if (innerControl != value)
                 {
+                    if (this.innerControl != null)
+                        this.innerControl.DataChanged -= new EventHandler(innerControl_DataChanged);
+
                     innerControl = value;
                     this.controlPanel.Controls.Clear();
                     Control c = innerControl as Control;
@@ -79,8 +116,15 @@ namespace TESVSnip.RecordControls
                         //this.Size = this.MinimumSize;
                     }
                     this.ResumeLayout();
+                    if (this.innerControl != null)
+                        this.innerControl.DataChanged += new EventHandler(innerControl_DataChanged);
                 }
             }
+        }
+
+        void innerControl_DataChanged(object sender, EventArgs e)
+        {
+            SetCurrentData(this.innerControl.Data);
         }
 
         private void RepeatingElement_Resize(object sender, EventArgs e)
@@ -101,7 +145,10 @@ namespace TESVSnip.RecordControls
         }
 
         private void bindingNavigatorAddNewItem2_Click(object sender, EventArgs e)
-        {
+        {   
+            // save current changes prior to adding new elements
+            if (this.innerControl != null)
+                this.innerControl.CommitChanges();
             if ( this.Element != null )
             {
                 byte[] bytes = new byte[0];
@@ -133,7 +180,15 @@ namespace TESVSnip.RecordControls
             {
                 elements.Add( default(ArraySegment<byte>) );
             }
-            bs.MoveLast();
+            try
+            {
+                inUpdatePosition = true;
+                bs.MoveLast();
+            }
+            finally
+            {
+                inUpdatePosition = false;
+            }
         }
     }
 }

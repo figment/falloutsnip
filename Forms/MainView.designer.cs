@@ -61,6 +61,7 @@ namespace TESVSnip {
             this.disableHyperlinksToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.resetDockingWindowsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.eSMFilterSettingsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.compressionSettingsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.languageToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.englishToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -104,7 +105,7 @@ namespace TESVSnip {
             this.toolStripRecordCopy = new System.Windows.Forms.ToolStripButton();
             this.toolStripRecordText = new System.Windows.Forms.ToolStripLabel();
             this.toolStripSubRecord = new System.Windows.Forms.ToolStrip();
-            this.toolStripInsertRecord = new System.Windows.Forms.ToolStripButton();
+            this.toolStripInsertRecord = new System.Windows.Forms.ToolStripDropDownButton();
             this.toolStripDeleteRecord = new System.Windows.Forms.ToolStripButton();
             this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
             this.toolStripMoveRecordUp = new System.Windows.Forms.ToolStripButton();
@@ -158,7 +159,6 @@ namespace TESVSnip {
             this.listSubrecord = new TESVSnip.Windows.Controls.ObjectBindingListView();
             this.rtfInfo = new RichTextBoxLinks.RichTextBoxEx();
             this.dockingManagerExtender = new DockingManagerExtender.DockingManagerExtender(this.components);
-            this.compressionSettingsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.menuStrip1.SuspendLayout();
             this.statusStrip1.SuspendLayout();
             this.toolStripRecord.SuspendLayout();
@@ -491,6 +491,13 @@ namespace TESVSnip {
             this.eSMFilterSettingsToolStripMenuItem.Size = new System.Drawing.Size(208, 22);
             this.eSMFilterSettingsToolStripMenuItem.Text = "ESM &Filter Settings...";
             this.eSMFilterSettingsToolStripMenuItem.Click += new System.EventHandler(this.eSMFilterSettingsToolStripMenuItem_Click);
+            // 
+            // compressionSettingsToolStripMenuItem
+            // 
+            this.compressionSettingsToolStripMenuItem.Name = "compressionSettingsToolStripMenuItem";
+            this.compressionSettingsToolStripMenuItem.Size = new System.Drawing.Size(208, 22);
+            this.compressionSettingsToolStripMenuItem.Text = "&Compression Settings...";
+            this.compressionSettingsToolStripMenuItem.Click += new System.EventHandler(this.compressionSettingsToolStripMenuItem_Click);
             // 
             // toolsToolStripMenuItem
             // 
@@ -878,8 +885,10 @@ namespace TESVSnip {
             this.toolStripInsertRecord.Image = global::TESVSnip.Properties.Resources.insertcell;
             this.toolStripInsertRecord.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.toolStripInsertRecord.Name = "toolStripInsertRecord";
-            this.toolStripInsertRecord.Size = new System.Drawing.Size(23, 22);
+            this.toolStripInsertRecord.Size = new System.Drawing.Size(29, 22);
             this.toolStripInsertRecord.Text = "Insert Record";
+            this.toolStripInsertRecord.DropDownClosed += new System.EventHandler(this.toolStripInsertRecord_DropDownClosed);
+            this.toolStripInsertRecord.DropDownOpening += new System.EventHandler(this.toolStripInsertRecord_DropDownOpening);
             this.toolStripInsertRecord.Click += new System.EventHandler(this.toolStripInsertRecord_Click);
             // 
             // toolStripDeleteRecord
@@ -1438,13 +1447,6 @@ namespace TESVSnip {
             this.dockingManagerExtender.InnerControl = this.rtfInfo;
             this.dockingManagerExtender.OuterControl = this.menuStrip1;
             // 
-            // compressionSettingsToolStripMenuItem
-            // 
-            this.compressionSettingsToolStripMenuItem.Name = "compressionSettingsToolStripMenuItem";
-            this.compressionSettingsToolStripMenuItem.Size = new System.Drawing.Size(208, 22);
-            this.compressionSettingsToolStripMenuItem.Text = "&Compression Settings...";
-            this.compressionSettingsToolStripMenuItem.Click += new System.EventHandler(this.compressionSettingsToolStripMenuItem_Click);
-            // 
             // MainView
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -1534,7 +1536,6 @@ namespace TESVSnip {
         private System.Windows.Forms.ToolStripMenuItem makeEsmToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem martigensToolStripMenuItem;
         private System.Windows.Forms.ToolStrip toolStripSubRecord;
-        private System.Windows.Forms.ToolStripButton toolStripInsertRecord;
         private System.Windows.Forms.ToolStripButton toolStripDeleteRecord;
         private System.Windows.Forms.ToolStripButton toolStripMoveRecordUp;
         private System.Windows.Forms.ToolStripButton toolStripMoveRecordDown;
@@ -1628,5 +1629,6 @@ namespace TESVSnip {
         private System.Windows.Forms.ToolStripMenuItem resetDockingWindowsToolStripMenuItem;
         private DockingManagerExtender.DockingManagerExtender dockingManagerExtender;
         private System.Windows.Forms.ToolStripMenuItem compressionSettingsToolStripMenuItem;
+        private System.Windows.Forms.ToolStripDropDownButton toolStripInsertRecord;
     }
 }

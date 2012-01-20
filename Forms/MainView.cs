@@ -122,6 +122,9 @@ namespace TESVSnip
             InitializeToolStripRecords();
             InitializeLanguage();
 
+            ClipboardChanged += new EventHandler(MainView_ClipboardChanged);
+            
+
             Selection.RecordChanged += delegate(object o, EventArgs a) { UpdateToolStripSelection(); };
             Selection.SubRecordChanged += delegate(object o, EventArgs a) { UpdateToolStripSelection(); };
 
@@ -140,11 +143,14 @@ namespace TESVSnip
             }
         }
 
-
-
-        private bool HasClipboardData()
+        void MainView_ClipboardChanged(object sender, EventArgs e)
         {
-            if (useWindowsClipboardToolStripMenuItem.Checked)
+            UpdateToolStripSelection(); 
+        }
+
+        internal static bool HasClipboardData()
+        {
+            if (global::TESVSnip.Properties.Settings.Default.UseWindowsClipboard)
             {
                 var od = System.Windows.Forms.Clipboard.GetDataObject();
                 return od != null ? od.GetDataPresent("TESVSnip") : false;
@@ -155,9 +161,9 @@ namespace TESVSnip
             }
         }
 
-        private bool HasClipboardData<T>()
+        internal static bool HasClipboardData<T>()
         {
-            if (useWindowsClipboardToolStripMenuItem.Checked)
+            if (global::TESVSnip.Properties.Settings.Default.UseWindowsClipboard)
             {
                 var od = System.Windows.Forms.Clipboard.GetDataObject();
                 return od != null ? od.GetDataPresent(typeof(T).FullName) : false;
@@ -168,7 +174,7 @@ namespace TESVSnip
             }
         }
 
-        private object GetClipboardData()
+        internal static object GetClipboardData()
         {
             if (global::TESVSnip.Properties.Settings.Default.UseWindowsClipboard)
             {
@@ -186,7 +192,7 @@ namespace TESVSnip
             }
         }
 
-        private T GetClipboardData<T>() where T : class
+        internal static T GetClipboardData<T>() where T : class
         {
             if (global::TESVSnip.Properties.Settings.Default.UseWindowsClipboard)
             {
@@ -199,7 +205,7 @@ namespace TESVSnip
                 return s_clipboard as T;
             }
         }
-        private void SetClipboardData(object value)
+        internal static void SetClipboardData(object value)
         {
             if (global::TESVSnip.Properties.Settings.Default.UseWindowsClipboard)
             {
@@ -218,16 +224,22 @@ namespace TESVSnip
                 if (s_clipboard != value)
                 {
                     s_clipboard = value;
-                    UpdateToolStripSelection();
                 }
             }
         }
 
-        public object Clipboard
+        public static object Clipboard
         {
             get { return GetClipboardData(); }
-            set { SetClipboardData(value); }
+            set
+            {
+                SetClipboardData(value);
+                if (ClipboardChanged != null)
+                    ClipboardChanged(null, EventArgs.Empty);
+            }
         }
+
+        public static event EventHandler ClipboardChanged;
 
         public TreeNode ClipboardNode
         {
@@ -633,7 +645,7 @@ Do you still want to save?", "Modified Save", MessageBoxButtons.YesNo, MessageBo
                 MessageBox.Show("The clipboard is empty", "Error");
                 return;
             }
-            var clipboardObject = this.Clipboard;
+            var clipboardObject = Clipboard;
 
             if (recordOnly && !(clipboardObject is Record || clipboardObject is GroupRecord))
                 return;
@@ -651,15 +663,14 @@ Do you still want to save?", "Modified Save", MessageBoxButtons.YesNo, MessageBo
                     var dstNode = PluginTree.SelectedNode;
                     var br = (BaseRecord)((BaseRecord)clipboardObject).Clone();
                     node.AddRecord(br);
-                    if (ClipboardNode != null)
-                    {
-                        var newNode = (TreeNode)ClipboardNode.Clone();
-                        newNode.Tag = br;
-
-                        PluginTree.SelectedNode.Nodes.Add(newNode);
-                        GetPluginFromNode(PluginTree.SelectedNode).InvalidateCache();
-                    }
-                    else
+                    //if (ClipboardNode != null)
+                    //{
+                    //    var newNode = (TreeNode)ClipboardNode.Clone();
+                    //    newNode.Tag = br;
+                    //    PluginTree.SelectedNode.Nodes.Add(newNode);
+                    //    GetPluginFromNode(PluginTree.SelectedNode).InvalidateCache();
+                    //}
+                    //else
                     {
                         string text = (br is Rec) ? ((Rec)br).DescriptiveName : br.Name;
                         var dstRecNode = new SnipTreeNode(text);
@@ -937,7 +948,8 @@ Do you still want to save?", "Modified Save", MessageBoxButtons.YesNo, MessageBo
             }
             if (hexModeToolStripMenuItem.Checked)
             {
-                using (var dlg = new HexDataEdit(sr.Name, sr.GetData(), LookupFormIDS))
+                var p = context.Plugin;
+                using (var dlg = new HexDataEdit(sr.Name, sr.GetData(), p.LookupFormIDS))
                 {
                     if (DialogResult.OK == dlg.ShowDialog(this))
                     {
@@ -1092,6 +1104,7 @@ Do you still want to save?", "Modified Save", MessageBoxButtons.YesNo, MessageBo
             Selection.Plugin = null;
             CloseStringEditor();
             Settings.SetWindowPosition("TESsnip", this);
+            ClipboardChanged -= new EventHandler(MainView_ClipboardChanged);
         }
 
         private void tbInfo_PreviewKeyDown(object sender, PreviewKeyDownEventArgs e)
@@ -1370,32 +1383,38 @@ Do you still want to save?", "Modified Save", MessageBoxButtons.YesNo, MessageBo
         {
             if (!ValidateMakeChange())
                 return;
+
+            var tsMenuItem = sender as ToolStripMenuItem;
             try
             {
                 BaseRecord br = (BaseRecord)PluginTree.SelectedNode.Tag;
-
+                var srs = tsMenuItem != null ? tsMenuItem.Tag as SubrecordStructure : null;
                 if (br is Record)
                 {
                     if (listSubrecord.SelectedIndices.Count == 1)
                     {
                         int idx = listSubrecord.SelectedIndices[0];
                         if (idx < 0 || idx >= (listSubrecord.Items.Count - 1))
-                            return;
-
-                        Record r = (Record)br;
-                        SubRecord p = new SubRecord();
-                        r.InsertRecord(idx, p);
+                        {
+                            SubRecord p = new SubRecord(srs);
+                            br.AddRecord(p);
+                        }
+                        else
+                        {
+                            Record r = (Record)br;
+                            SubRecord p = new SubRecord(srs);
+                            r.InsertRecord(idx, p);
+                        }
                     }
                     else
                     {
-                        SubRecord p = new SubRecord();
+                        SubRecord p = new SubRecord(srs);
                         br.AddRecord(p);
                     }
-
                 }
                 else
                 {
-                    SubRecord p = new SubRecord();
+                    SubRecord p = new SubRecord(srs);
                     br.AddRecord(p);
                 }
                 PluginTree_AfterSelect(null, null);
@@ -1405,6 +1424,102 @@ Do you still want to save?", "Modified Save", MessageBoxButtons.YesNo, MessageBo
                 MessageBox.Show(ex.ToString(), "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
+
+        class CallbackAction<T>
+        {
+            T item;
+            Action<T> callback;
+            public CallbackAction(T item, Action<T> callback)
+            {
+                this.item = item;
+                this.callback = callback;
+            }
+            public void Execute()
+            {
+                this.callback(this.item);
+            }
+            public void ExecuteEvent(object sender, EventArgs e)
+            {
+                Execute();
+            }
+        }
+        private void toolStripInsertRecord_DropDownOpening(object sender, EventArgs e)
+        {
+            // find current subrecord and guess likely candidates
+            // this could be much smarter
+            try
+            {
+                toolStripInsertRecord.DropDownItems.Clear();
+
+                var br = Selection.Record;
+                var sr = Selection.SubRecord;
+                if (br != null)
+                {
+                    RecordStructure rs;
+                    if (RecordStructure.Records.TryGetValue(br.Name, out rs))
+                    {
+                        var usedNames = new System.Collections.Specialized.StringDictionary();
+                        var delayedAddItems = new List<ToolStripMenuItem>();
+                        var srs = (sr != null) ? sr.Structure : null;
+                        bool found = (srs == null);
+
+                        int idx = listSubrecord.GetFocusedItem();
+                        if (idx < 0)
+                        {
+                            var indicies = listSubrecord.GetSelectionIndices();
+                            idx = indicies != null && indicies.Length > 0 ? indicies[0] : -1;
+                        }
+                        foreach ( var s in rs.subrecords )
+                        {
+                            if ( !found && sr.Structure.Equals(s) )
+                                found = true;
+
+                            if ( usedNames.ContainsKey(s.name) )
+                                continue;
+
+                            usedNames.Add(s.name, s.name);
+
+                            ToolStripMenuItem item = new ToolStripMenuItem(s.name, null, 
+                                new CallbackAction<SubrecordStructure>(s,
+                                    delegate(SubrecordStructure subItem)
+                                    {
+                                        if (idx == -1) br.AddRecord(new SubRecord(subItem));
+                                        else br.InsertRecord(idx, new SubRecord(subItem));
+                                        MatchRecordStructureToRecord();
+                                        PluginTree_AfterSelect(null, null);
+                                    } 
+                                    ).ExecuteEvent);
+                            item.Tag = s;
+                            if (found)                                   
+                                toolStripInsertRecord.DropDownItems.Add(item);
+                            else
+                                delayedAddItems.Add(item);
+                        }
+                        if (delayedAddItems.Count > 0)
+                        {
+                            if (toolStripInsertRecord.DropDownItems.Count > 0)
+                                toolStripInsertRecord.DropDownItems.Add("-");
+                            toolStripInsertRecord.DropDownItems.AddRange(delayedAddItems.ToArray());
+                        }
+                    }
+                }
+                else
+                {
+                    toolStripInsertRecord.DropDownItems.Add("NEW_");
+                }
+            }
+            catch (System.Exception ex)
+            {
+                MessageBox.Show(ex.ToString(), "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
+        private void toolStripInsertRecord_DropDownClosed(object sender, EventArgs e)
+        {
+            toolStripInsertRecord.DropDownItems.Clear();
+        }
+
+
 
         private void toolStripDeleteRecord_Click(object sender, EventArgs e)
         {
@@ -2467,5 +2582,7 @@ Do you still want to save?", "Modified Save", MessageBoxButtons.YesNo, MessageBo
                 }
             }
         }
+
+
     }
 }

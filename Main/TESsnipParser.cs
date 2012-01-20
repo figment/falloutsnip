@@ -962,7 +962,7 @@ namespace TESVSnip
                     else if (r is GroupRecord)
                     {
                         var gr = (GroupRecord)r;
-                        if (gr.groupType != 0 || gr.ContentsType == type)
+                        if (gr.groupType != 0 || type == null || gr.ContentsType == type)
                             return true;
                     }
                     else if (r is Plugin)
@@ -1975,6 +1975,55 @@ namespace TESVSnip
         SubRecord(SerializationInfo info, StreamingContext context)
             : base(info, context)
         {
+        }
+
+        /// <summary>
+        /// Create new subrecord using Structure as template
+        /// </summary>
+        /// <param name="srs"></param>
+        internal SubRecord(SubrecordStructure srs)
+            : this()
+        {
+            if (srs != null)
+            {
+                Name = srs.name;
+                int size = 0;
+                if (srs.size > 0)
+                    size = srs.size;
+                else
+                {
+                    foreach (var elem in srs.elements)
+                    {
+                        if (!elem.optional || elem.repeat == 0)
+                        {
+                            switch (elem.type)
+                            {
+                                case ElementValueType.FormID:
+                                case ElementValueType.LString:
+                                case ElementValueType.Int:
+                                case ElementValueType.UInt:
+                                case ElementValueType.Float:
+                                case ElementValueType.Str4:
+                                    size += 4;
+                                    break;
+                                case ElementValueType.BString:
+                                case ElementValueType.Short:
+                                case ElementValueType.UShort:
+                                    size += 2;
+                                    break;
+                                case ElementValueType.String:
+                                case ElementValueType.fstring:
+                                case ElementValueType.Byte:
+                                case ElementValueType.SByte:
+                                    size += 1;
+                                    break;
+                            }
+                        }
+                    }
+                }
+                this.Data = new byte[size];
+                // TODO: populate with defaults if provided...
+            }
         }
 
         internal SubRecord(Record rec, string name, BinaryReader br, uint size)

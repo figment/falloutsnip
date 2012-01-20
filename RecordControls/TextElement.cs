@@ -50,7 +50,8 @@ namespace TESVSnip.RecordControls
 
         protected virtual void UpdateText()
         {
-            if (this.element == null || this.data == null || this.data.Array == null)
+            var data = GetCurrentData();
+            if (this.element == null || data == null || data.Array == null)
             {
                 this.textBox.Text = "<error>";
             }
@@ -146,6 +147,11 @@ namespace TESVSnip.RecordControls
                 SaveText();
         }
 
+        public override void CommitChanges()
+        {
+            SaveText();
+        }
+
         protected virtual void SaveText()
         {
             if (this.element == null)
@@ -175,7 +181,7 @@ namespace TESVSnip.RecordControls
                         else
                         {
                             this.Error.SetError(TextBox, null);
-                            this.Data = new ArraySegment<byte>(TypeConverter.i2h(i));
+                            SetCurrentData(new ArraySegment<byte>(TypeConverter.i2h(i)));
                         }
                     } break;
                 case ElementValueType.Int:
@@ -186,7 +192,7 @@ namespace TESVSnip.RecordControls
                         else
                         {
                             this.Error.SetError(TextBox, null);
-                            this.Data = new ArraySegment<byte>(TypeConverter.si2h(i));
+                            SetCurrentData(new ArraySegment<byte>(TypeConverter.si2h(i)));
                         }
                     } break;
 
@@ -198,7 +204,7 @@ namespace TESVSnip.RecordControls
                         else
                         {
                             this.Error.SetError(TextBox, null);
-                            this.Data = new ArraySegment<byte>(TypeConverter.f2h(i));
+                            SetCurrentData(new ArraySegment<byte>(TypeConverter.f2h(i)));
                         }
                     } break;
                 case ElementValueType.UShort:
@@ -209,7 +215,7 @@ namespace TESVSnip.RecordControls
                         else
                         {
                             this.Error.SetError(TextBox, null);
-                            this.Data = new ArraySegment<byte>(TypeConverter.s2h(i));
+                            SetCurrentData(new ArraySegment<byte>(TypeConverter.s2h(i)));
                         }
                     } break;
                 case ElementValueType.Short:
@@ -220,7 +226,7 @@ namespace TESVSnip.RecordControls
                         else
                         {
                             this.Error.SetError(TextBox, null);
-                            this.Data = new ArraySegment<byte>(TypeConverter.ss2h(i));
+                            SetCurrentData(new ArraySegment<byte>(TypeConverter.ss2h(i)));
                         }
                     } break;
                 case ElementValueType.Byte:
@@ -231,7 +237,7 @@ namespace TESVSnip.RecordControls
                         else
                         {
                             this.Error.SetError(TextBox, null);
-                            this.Data = new ArraySegment<byte>(TypeConverter.b2h(i));
+                            SetCurrentData(new ArraySegment<byte>(TypeConverter.b2h(i)));
                         }
                     } break;
                 case ElementValueType.SByte:
@@ -242,17 +248,17 @@ namespace TESVSnip.RecordControls
                         else
                         {
                             this.Error.SetError(TextBox, null);
-                            this.Data = new ArraySegment<byte>(TypeConverter.sb2h(i));
+                            SetCurrentData(new ArraySegment<byte>(TypeConverter.sb2h(i)));
                         }
                     } break;
                 case ElementValueType.String:
-                    this.Data = new ArraySegment<byte>(TypeConverter.str2h(textBox.Text));
+                    SetCurrentData(new ArraySegment<byte>(TypeConverter.str2h(textBox.Text)));
                     break;
                 case ElementValueType.BString:
-                    this.Data = new ArraySegment<byte>(TypeConverter.bstr2h(textBox.Text));
+                    SetCurrentData(new ArraySegment<byte>(TypeConverter.bstr2h(textBox.Text)));
                     break;
                 case ElementValueType.fstring:
-                    this.Data = new ArraySegment<byte>(TypeConverter.str2h(textBox.Text));
+                    SetCurrentData(new ArraySegment<byte>(TypeConverter.str2h(textBox.Text)));
                     break;
                 case ElementValueType.LString:
                     {
@@ -262,7 +268,7 @@ namespace TESVSnip.RecordControls
                     {
                         byte[] txtbytes = new byte[] { 0x32, 0x32, 0x32, 0x32 };
                         System.Text.Encoding.Default.GetBytes(tbText, 0, Math.Min(4, tbText.Length), txtbytes, 0);
-                        this.data = new ArraySegment<byte>(txtbytes);
+                        SetCurrentData(new ArraySegment<byte>(txtbytes));
                     } break;
             }
         }

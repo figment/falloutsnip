@@ -26,6 +26,9 @@ namespace TESVSnip.RecordControls
             }
         }
 
+        bool inSelChange = false;
+        bool inUpdateText = false;
+
         public FormIDElement()
         {
             InitializeComponent();
@@ -39,8 +42,17 @@ namespace TESVSnip.RecordControls
         }
         protected override void UpdateText()
         {
-            base.UpdateText();
-            UpdateRecordList();
+            if (inUpdateText) return;
+            try
+            {
+                inUpdateText = true;
+                base.UpdateText();
+                UpdateRecordList();
+            }
+            finally
+            {
+                inUpdateText = false;
+            }
         }
         protected override void UpdateElement()
         {
@@ -68,6 +80,7 @@ namespace TESVSnip.RecordControls
         {
             // Enumerate all known records.
             cboFormID.Items.Clear();
+            var data = GetCurrentData();
             if (formIDScan != null)
             {
                 var str = cboRecType.Text;
@@ -103,18 +116,29 @@ namespace TESVSnip.RecordControls
 
         private void cboFormID_SelectedIndexChanged(object sender, EventArgs e)
         {
-            uint oldIndex = TypeConverter.h2i(data);
-            var cbi = this.cboFormID.SelectedItem as comboBoxItem;
-            if (cbi != null)
+            if (inSelChange) return;
+            try
             {
-                uint newIndex = cbi.value;
-                if (oldIndex != newIndex)
+                inSelChange = true;
+
+                var data = GetCurrentData();
+                uint oldIndex = TypeConverter.h2i(data);
+                var cbi = this.cboFormID.SelectedItem as comboBoxItem;
+                if (cbi != null)
                 {
-                    oldIndex = newIndex;
-                    this.Data = new ArraySegment<byte>(TypeConverter.i2h(newIndex));
-                    this.Changed = true;
-                    UpdateText();
+                    uint newIndex = cbi.value;
+                    if (oldIndex != newIndex)
+                    {
+                        oldIndex = newIndex;
+                        SetCurrentData(new ArraySegment<byte>(TypeConverter.i2h(newIndex)));
+                        this.Changed = true;
+                        UpdateText();
+                    }
                 }
+            }
+            finally
+            {
+                inSelChange = false;
             }
         }
 

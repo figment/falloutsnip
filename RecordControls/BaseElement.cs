@@ -11,7 +11,7 @@ namespace TESVSnip.RecordControls
 {
     internal partial class BaseElement : UserControl, IElementControl
     {
-        protected ArraySegment<byte> data;
+        private ArraySegment<byte> data;
         protected ElementStructure element;
 
         public BaseElement()
@@ -34,28 +34,48 @@ namespace TESVSnip.RecordControls
 
         public virtual ArraySegment<byte> Data
         {
-            get { return data; }
-            set
+            get { return GetCurrentData(); }
+            set { SetCurrentData(value); }
+        }
+
+        protected virtual ArraySegment<byte> GetCurrentData()
+        {
+            return data;
+        }
+
+        public virtual void CommitChanges()
+        {
+
+        }
+
+        protected virtual void SetCurrentData(ArraySegment<byte> value)
+        {
+            var data = GetCurrentData();
+            if (!EqualsArraySegment<byte>(data, value))
             {
-                if (!EqualsArraySegment<byte>(data, value))
+                if (data != null && data.Array != null)
                 {
-                    if (data != null && data.Array != null)
-                    {
-                        this.Changed = true;
-                        // important to clone the data as TypeConverter uses a shared byte array for many operations
-                        byte[] blob = new byte[value.Count];
-                        if (value.Count > 0)
-                            Array.Copy(value.Array, value.Offset, blob, 0, value.Count);
-                        this.data = new ArraySegment<byte>(blob);
-                    }
-                    else
-                    {
-                        data = value;
-                    }                    
-                    UpdateAllControls();
+                    this.Changed = true;
+                    // important to clone the data as TypeConverter uses a shared byte array for many operations
+                    byte[] blob = new byte[value.Count];
+                    if (value.Count > 0)
+                        Array.Copy(value.Array, value.Offset, blob, 0, value.Count);
+                    this.data = new ArraySegment<byte>(blob);
+                }
+                else
+                {
+                    this.data = value;
+                }
+                UpdateAllControls();
+                if (DataChanged != null)
+                {
+                    DataChanged(this, EventArgs.Empty);
                 }
             }
         }
+
+        public event EventHandler DataChanged;
+
         private bool EqualsArraySegment<T>(ArraySegment<T> first, ArraySegment<T> second)
         {
             if (first.Count != second.Count) return false;
