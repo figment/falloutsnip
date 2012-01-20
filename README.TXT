@@ -10,9 +10,12 @@ Requirements:
 
 Change Log:
 v 2.6
-- Fix issues with the new FormID Editor not saving values
-- Fix issues with the new Repeating Element Editor not saving values
-- Fix issues with the Paste Node feature with Groups causing nodes to not be created as expected
+- Fix issue with the new FormID Editor not saving values
+- Fix issue with the new Repeating Element Editor not saving values
+- Fix issue with the Paste Node feature with Groups causing nodes to not be created as expected
+- Fix issue with all filter on formid not showing all
+- Sort records on formid editor
+- Add Record Compression option. Disabled by default.
 
 v 2.5
 - Bug fix to avoid using shared memory when editing leading to incorrect values being saved
