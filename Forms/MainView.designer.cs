@@ -1137,7 +1137,7 @@ namespace TESVSnip {
             "Form ID"});
             this.toolStripIncrFindTypeFilter.Name = "toolStripIncrFindTypeFilter";
             this.toolStripIncrFindTypeFilter.Overflow = System.Windows.Forms.ToolStripItemOverflow.Never;
-            this.toolStripIncrFindTypeFilter.Size = new System.Drawing.Size(80, 23);
+            this.toolStripIncrFindTypeFilter.Size = new System.Drawing.Size(80, 25);
             this.toolStripIncrFindTypeFilter.ToolTipText = "Search Type";
             this.toolStripIncrFindTypeFilter.Visible = false;
             this.toolStripIncrFindTypeFilter.SelectedIndexChanged += new System.EventHandler(this.toolStripIncrFindTypeFilter_SelectedIndexChanged);
@@ -1215,7 +1215,7 @@ namespace TESVSnip {
             this.toolStripIncrFindWrapAround.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
             this.toolStripIncrFindWrapAround.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.toolStripIncrFindWrapAround.Name = "toolStripIncrFindWrapAround";
-            this.toolStripIncrFindWrapAround.Size = new System.Drawing.Size(102, 22);
+            this.toolStripIncrFindWrapAround.Size = new System.Drawing.Size(102, 19);
             this.toolStripIncrFindWrapAround.Text = "&Wrap Around";
             this.toolStripIncrFindWrapAround.ToolTipText = "Wrap Around";
             this.toolStripIncrFindWrapAround.CheckStateChanged += new System.EventHandler(this.toolStripCheck_CheckStateChanged);
@@ -1434,7 +1434,7 @@ namespace TESVSnip {
             this.dockingManagerExtender.SetPreferredSize(this.rtfInfo, new System.Drawing.Size(0, 0));
             this.rtfInfo.ReadOnly = true;
             this.rtfInfo.ShortcutsEnabled = false;
-            this.rtfInfo.Size = new System.Drawing.Size(765, 500);
+            this.rtfInfo.Size = new System.Drawing.Size(765, 475);
             this.dockingManagerExtender.SetTabbedMode(this.rtfInfo, true);
             this.rtfInfo.TabIndex = 3;
             this.rtfInfo.Text = "";

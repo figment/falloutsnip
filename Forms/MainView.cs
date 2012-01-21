@@ -2257,7 +2257,7 @@ Do you still want to save?", "Modified Save", MessageBoxButtons.YesNo, MessageBo
         internal bool PreFilterMessage(ref Message m)
         {
             // Intercept the left mouse button down message.
-            if (m.Msg == MainViewMessageFilter.WM_KEYDOWN || m.Msg == MainViewMessageFilter.WM_CHAR || m.Msg == MainViewMessageFilter.WM_KEYUP)
+            if (m.Msg == MainViewMessageFilter.WM_KEYDOWN || m.Msg == MainViewMessageFilter.WM_KEYUP)
             {
                 if (m.WParam == new IntPtr((int)Keys.Delete))
                 {

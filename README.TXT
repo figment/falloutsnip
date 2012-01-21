@@ -9,6 +9,9 @@ Requirements:
   .NET 3.5
 
 Change Log:
+v 2.7
+- Remove check for VK_BACK during WM_CHAR as it is incorrect an interfers with VK_OEM_DOT
+ 
 v 2.6
 - Fix issue with the new FormID Editor not saving values
 - Fix issue with the new Repeating Element Editor not saving values
