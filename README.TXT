@@ -9,7 +9,9 @@ Requirements:
   .NET 3.5
 
 Change Log:
-v 2.7
+v 3.0
+- Major rewrite to use new TreeList control for Record List
+- Manually sort form id list rather than using native sort which lead to inconsistencies
 - Remove check for VK_BACK during WM_CHAR as it is incorrect an interfers with VK_OEM_DOT
  
 v 2.6
