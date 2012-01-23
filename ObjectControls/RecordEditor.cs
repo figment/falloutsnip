@@ -78,7 +78,16 @@ namespace TESVSnip.Forms
             tbName.Text = _record.Name;
             tbFormID.Text = _record.FormID.ToString("X8");
             textBox1.Text = _record.Flags1.ToString("X8");
-            comboBox1.SetState(_record.Flags1);
+
+            try
+            {
+                comboBox1.ItemCheck -= comboBox1_ItemCheck;
+                comboBox1.SetState(_record.Flags1);
+            }
+            finally
+            {
+                comboBox1.ItemCheck += comboBox1_ItemCheck;                
+            }
             tbFlags2.Text = _record.Flags2.ToString("X8");
             tbFlags3.Text = _record.Flags3.ToString("X8");
         }

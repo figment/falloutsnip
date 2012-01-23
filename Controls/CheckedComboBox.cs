@@ -136,7 +136,7 @@ namespace TESVSnip.Windows.Controls
                 this.ccbParent = ccbParent;
                 InitializeComponent();
                 // Add a handler to notify our parent of ItemCheck events.
-                this.cclb.ItemCheck += new System.Windows.Forms.ItemCheckEventHandler(this.cclb_ItemCheck);
+                this.cclb.ItemCheck += this.cclb_ItemCheck;
             }
 
             public void Reject()
@@ -187,6 +187,7 @@ namespace TESVSnip.Windows.Controls
                 this.cclb.Size = new System.Drawing.Size(47, 15);
                 this.cclb.TabIndex = 0;
                 this.cclb.IntegralHeight = false;
+                this.cclb.CheckOnClick = true;
                 // 
                 // Dropdown
                 // 
@@ -250,8 +251,9 @@ namespace TESVSnip.Windows.Controls
             }
 
             private void cclb_ItemCheck(object sender, ItemCheckEventArgs e) {
-                if (ccbParent.ItemCheck != null) {
-                    ccbParent.ItemCheck(sender, e);
+                if (ccbParent.ItemCheck != null)
+                {
+                    this.BeginInvoke(new ItemCheckEventHandler((o, args) => ccbParent.ItemCheck(o, args)), new object[]{sender, e});
                 }
             }
 

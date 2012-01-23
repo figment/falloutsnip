@@ -91,17 +91,18 @@ namespace TESVSnip.Windows.Controls
         {
             for (int i = 0; i < items.Count; ++i)
             {
-                this.SetItemChecked(i, ((value & items[i].Value) == items[i].Value) );
+                this.SetItemChecked(i, ((value & items[i].Value) == items[i].Value));
             }
-
         }
 
         public uint GetState()
         {
             uint value = 0;
+            
             for (int i = 0; i < items.Count; ++i)
             {
-                if (this.GetItemChecked(i))
+                var state = this.GetItemCheckState(i);
+                if (state != CheckState.Unchecked)
                     value |= items[i].Value;
             }
             return value;

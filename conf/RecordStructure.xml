@@ -1035,7 +1035,7 @@
     </Subrecord>
     <Subrecord name="BODT" desc="Body Template" optional="1" >
       <Element name="BodyParts" type="uint" flags="Head;Hair;Chest;Hands;Forearms;Amulet;Ring;Feet;Calves;Shield;Tail;Long Hair;Forehead (Circlet);Ears;Dragon Head;Dragon Left Wing;Dragon Right Wing;Dragon Body;;;Decapitated Head"/>
-      <Element name="Flags" type="uint" hexview="1" Flags=";;;;NonPlayable;;;;"/>
+      <Element name="Flags" type="uint" hexview="1" flags=";;;;NonPlayable;;;;"/>
       <Element name="Armor type?" type="uint" optional="1" options="Light Armor;0;Heavy Armor;1;Clothing;2"/>
     </Subrecord>
     <Subrecord name="ETYP" desc="Equipment Type" optional="1" size="4">
@@ -2165,7 +2165,7 @@
       <Element name="z2" type="short" />
     </Subrecord>
     <Subrecord name="LVLD" desc="Chance None Value" optional="1">
-      <Element name="Chance None in Percent" type="string" />
+      <Element name="Chance None in Percent" type="byte" />
     </Subrecord>
     <Subrecord name="LVLF" desc="List Flags" optional="1" size="1">
       <Element name="Flags" type="byte" />
@@ -2462,7 +2462,7 @@
       <Element name="z2" type="short" />
     </Subrecord>
     <Subrecord name="LVLD" desc="Chance None Value" optional="1">
-      <Element name="Chance None in Percent" type="string" />
+      <Element name="Chance None in Percent" type="byte" />
     </Subrecord>
     <Subrecord name="LVLF" desc="List Flags" optional="1" size="1">
       <Element name="Flags" type="byte" />

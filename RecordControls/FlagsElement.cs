@@ -14,7 +14,6 @@ namespace TESVSnip.RecordControls
         public FlagsElement()
         {
             InitializeComponent();
-            cboFlags.TextChanged += new EventHandler(cboFlags_TextChanged);
         }
 
 
@@ -39,7 +38,7 @@ namespace TESVSnip.RecordControls
             }
         }
 
-        private void cboFlags_TextUpdate(object sender, EventArgs e)
+        private void cboFlags_ItemCheck(object sender, ItemCheckEventArgs e)
         {
             uint value = cboFlags.GetState();
             uint oldValue = TypeConverter.h2i(Data);
@@ -50,10 +49,6 @@ namespace TESVSnip.RecordControls
                 TextBox.Text = "0x" + value.ToString("X");
                 this.Changed = true;
             }
-        }
-
-        void cboFlags_TextChanged(object sender, EventArgs e)
-        {
         }
     }
 }
