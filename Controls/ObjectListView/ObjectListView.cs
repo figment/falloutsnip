@@ -1025,7 +1025,7 @@ namespace BrightIdeasSoftware
         /// Gets Columns for this list. We hide the original so we can associate
         /// a specialised editor with it.
         /// </summary>
-        [Editor("BrightIdeasSoftware.Design.OLVColumnCollectionEditor", "System.Drawing.Design.UITypeEditor")]
+        [Editor(typeof(BrightIdeasSoftware.Design.OLVColumnCollectionEditor), typeof(System.Drawing.Design.UITypeEditor))]
         new public ListView.ColumnHeaderCollection Columns
         {
             get
@@ -2516,7 +2516,7 @@ namespace BrightIdeasSoftware
         {
             get
             {
-                if (this.SelectedIndices.Count == 1)
+                if (this.SelectedIndices.Count >= 1)
                     return this.GetModelObject(this.SelectedIndices[0]);
                 else
                     return null;
@@ -7177,7 +7177,10 @@ namespace BrightIdeasSoftware
         {
             int index = this.IndexOf(modelObject);
             if (index >= 0)
-                this.EnsureVisible(index);
+            {
+                try { this.EnsureVisible(index); }
+                catch { }                
+            }
         }
 
         /// <summary>

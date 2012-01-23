@@ -93,7 +93,7 @@ namespace TESVSnip.RecordControls
                 // dont override text as user could just be toggling checkbox
                 this.Error.SetError(this.txtString, "Could not locate string");
                 this.Error.SetIconAlignment(this.txtString, ErrorIconAlignment.MiddleLeft);
-                this.Error.Icon = global::TESVSnip.Properties.Resources.warning;
+                this.Error.Icon = global::TESVSnip.Properties.Resources.Warning;
             }
             this.txtString.ReadOnly = true;
             this.chkUseText.Checked = false;

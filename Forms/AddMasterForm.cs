@@ -7,7 +7,7 @@ using System.Text;
 using System.Windows.Forms;
 using System.IO;
 
-namespace TESVsnip
+namespace TESVSnip
 {
 	public partial class AddMasterForm : Form
 	{

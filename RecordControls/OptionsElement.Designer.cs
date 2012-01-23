@@ -28,31 +28,37 @@
         /// </summary>
         private void InitializeComponent()
         {
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(OptionsElement));
             this.cboOptions = new System.Windows.Forms.ComboBox();
             ((System.ComponentModel.ISupportInitialize)(this.Error)).BeginInit();
             this.SuspendLayout();
             // 
+            // Error
+            // 
+            resources.ApplyResources(this.Error, "Error");
+            // 
             // cboOptions
             // 
-            this.cboOptions.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
+            resources.ApplyResources(this.cboOptions, "cboOptions");
             this.cboOptions.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.Error.SetError(this.cboOptions, resources.GetString("cboOptions.Error"));
             this.cboOptions.FormattingEnabled = true;
-            this.cboOptions.Location = new System.Drawing.Point(66, 25);
+            this.Error.SetIconAlignment(this.cboOptions, ((System.Windows.Forms.ErrorIconAlignment)(resources.GetObject("cboOptions.IconAlignment"))));
+            this.Error.SetIconPadding(this.cboOptions, ((int)(resources.GetObject("cboOptions.IconPadding"))));
             this.cboOptions.Name = "cboOptions";
-            this.cboOptions.Size = new System.Drawing.Size(331, 21);
-            this.cboOptions.TabIndex = 2;
             this.cboOptions.SelectedIndexChanged += new System.EventHandler(this.cboOptions_SelectedIndexChanged);
             this.cboOptions.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.cboOptions_KeyPress);
             // 
             // OptionsElement
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
+            resources.ApplyResources(this, "$this");
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.Controls.Add(this.cboOptions);
+            this.Error.SetError(this, resources.GetString("$this.Error"));
+            this.Error.SetIconAlignment(this, ((System.Windows.Forms.ErrorIconAlignment)(resources.GetObject("$this.IconAlignment"))));
+            this.Error.SetIconPadding(this, ((int)(resources.GetObject("$this.IconPadding"))));
             this.MinimumSize = new System.Drawing.Size(200, 48);
             this.Name = "OptionsElement";
-            this.Size = new System.Drawing.Size(400, 48);
             this.Controls.SetChildIndex(this.cboOptions, 0);
             ((System.ComponentModel.ISupportInitialize)(this.Error)).EndInit();
             this.ResumeLayout(false);

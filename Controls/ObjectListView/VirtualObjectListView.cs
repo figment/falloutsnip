@@ -856,8 +856,8 @@ namespace BrightIdeasSoftware
             // clearing a virtual list, we make sure the list is scrolled to the top.
             // [6 weeks later] Damn this is a pain! There are cases where this can also throw exceptions!
             try {
-                if (newSize == 0 && this.TopItemIndex > 0)
-                    this.TopItemIndex = 0;
+                if (newSize == 0 /*&& this.TopItemIndex > 0*/)
+                    this.TopItemIndex = -1;
             }
             catch (Exception) {
                 // Ignore any failures

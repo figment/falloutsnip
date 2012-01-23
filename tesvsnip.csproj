@@ -55,6 +55,8 @@
     <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
     <GenerateSerializationAssemblies>On</GenerateSerializationAssemblies>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <NoWarn>
+    </NoWarn>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -262,10 +264,20 @@
     <Compile Include="Forms\MultilineStringEditor.Designer.cs">
       <DependentUpon>MultilineStringEditor.cs</DependentUpon>
     </Compile>
-    <Compile Include="Forms\RecordEditor.cs">
+    <Compile Include="Model\BaseRecord.cs" />
+    <Compile Include="Model\Element.cs" />
+    <Compile Include="Model\GroupRecord.cs" />
+    <Compile Include="Model\IGroupRecord.cs" />
+    <Compile Include="Model\IRecord.cs" />
+    <Compile Include="Model\Plugin.cs" />
+    <Compile Include="Model\PluginList.cs" />
+    <Compile Include="Model\Rec.cs" />
+    <Compile Include="Model\Record.cs" />
+    <Compile Include="Model\SubRecord.cs" />
+    <Compile Include="ObjectControls\RecordEditor.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="Forms\RecordEditor.Designer.cs">
+    <Compile Include="ObjectControls\RecordEditor.Designer.cs">
       <DependentUpon>RecordEditor.cs</DependentUpon>
     </Compile>
     <Compile Include="Forms\StringsEditor.cs">
@@ -311,16 +323,22 @@
     </Compile>
     <Compile Include="Collections\LocalizedString.cs" />
     <Compile Include="Collections\ordereddictionary.cs" />
-    <Compile Include="Forms\SubrecordEditor.cs">
+    <Compile Include="ObjectControls\PluginTreeView.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="Forms\SubrecordEditor.Designer.cs">
+    <Compile Include="ObjectControls\PluginTreeView.Designer.cs">
+      <DependentUpon>PluginTreeView.cs</DependentUpon>
+    </Compile>
+    <Compile Include="ObjectControls\SubrecordEditor.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="ObjectControls\SubrecordEditor.Designer.cs">
       <DependentUpon>SubrecordEditor.cs</DependentUpon>
     </Compile>
-    <Compile Include="Forms\SubrecordListEditor.cs">
+    <Compile Include="ObjectControls\SubrecordListEditor.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="Forms\SubrecordListEditor.Designer.cs">
+    <Compile Include="ObjectControls\SubrecordListEditor.Designer.cs">
       <DependentUpon>SubrecordListEditor.cs</DependentUpon>
     </Compile>
     <Compile Include="Main\Pair.cs" />
@@ -356,6 +374,9 @@
     <EmbeddedResource Include="Forms\MediumLevelRecordEditor.resx">
       <DependentUpon>MediumLevelRecordEditor.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="Forms\NewMediumLevelRecordEditor.en.resx">
+      <DependentUpon>NewMediumLevelRecordEditor.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Forms\NewMediumLevelRecordEditor.resx">
       <DependentUpon>NewMediumLevelRecordEditor.cs</DependentUpon>
       <SubType>Designer</SubType>
@@ -366,7 +387,13 @@
     <EmbeddedResource Include="Forms\MultilineStringEditor.resx">
       <DependentUpon>MultilineStringEditor.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Forms\RecordEditor.resx">
+    <EmbeddedResource Include="Forms\StringsEditor.en.resx">
+      <DependentUpon>StringsEditor.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="ObjectControls\PluginTreeView.en.resx">
+      <DependentUpon>PluginTreeView.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="ObjectControls\RecordEditor.resx">
       <DependentUpon>RecordEditor.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
@@ -385,10 +412,20 @@
     <EmbeddedResource Include="Forms\HexDataEdit.resx">
       <DependentUpon>HexDataEdit.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Forms\SubrecordEditor.resx">
+    <EmbeddedResource Include="ObjectControls\PluginTreeView.resx">
+      <DependentUpon>PluginTreeView.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="ObjectControls\SubrecordEditor.en.resx">
       <DependentUpon>SubrecordEditor.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Forms\SubrecordListEditor.resx">
+    <EmbeddedResource Include="ObjectControls\SubrecordEditor.resx">
+      <DependentUpon>SubrecordEditor.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="ObjectControls\SubrecordListEditor.en.resx">
+      <DependentUpon>SubrecordListEditor.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="ObjectControls\SubrecordListEditor.resx">
       <DependentUpon>SubrecordListEditor.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
@@ -404,8 +441,29 @@
       <DependentUpon>Resources.resx</DependentUpon>
       <DesignTime>True</DesignTime>
     </Compile>
+    <EmbeddedResource Include="RecordControls\BaseElement.en.resx">
+      <DependentUpon>BaseElement.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="RecordControls\BaseElement.resx">
       <DependentUpon>BaseElement.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="RecordControls\FlagsElement.en.resx">
+      <DependentUpon>FlagsElement.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="RecordControls\FormIDElement.en.resx">
+      <DependentUpon>FormIDElement.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="RecordControls\LStringElement.en.resx">
+      <DependentUpon>LStringElement.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="RecordControls\OptionalElement.en.resx">
+      <DependentUpon>OptionalElement.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="RecordControls\OptionsElement.en.resx">
+      <DependentUpon>OptionsElement.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="RecordControls\RepeatingElement.en.resx">
+      <DependentUpon>RepeatingElement.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="RecordControls\RepeatingElement.resx">
       <DependentUpon>RepeatingElement.cs</DependentUpon>
@@ -424,6 +482,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="RecordControls\OptionalElement.resx">
       <DependentUpon>OptionalElement.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="RecordControls\TextElement.en.resx">
+      <DependentUpon>TextElement.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="RecordControls\TextElement.resx">
       <DependentUpon>TextElement.cs</DependentUpon>
@@ -651,7 +712,6 @@
     <MergeOutputFile>$(StageOutputDir)\$(TargetName)$(TargetExt)</MergeOutputFile>
   </PropertyGroup>
   <ItemGroup>
-    <inputAssemblies Include="$(TargetPath)" />
     <inputAssemblies Include="$(TargetDir)\*.dll" />
     <CopyToStaging Include="$(ProjectDir)\LICENSE" />
     <CopyToStaging Include="$(ProjectDir)\README.TXT" />

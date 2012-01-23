@@ -81,10 +81,93 @@ namespace TESVSnip.Properties {
             }
         }
         
+        /// <summary>
+        ///   Looks up a localized string similar to Are you sure?.
+        /// </summary>
+        internal static string AreYouSureInquiry {
+            get {
+                return ResourceManager.GetString("AreYouSureInquiry", resourceCulture);
+            }
+        }
+        
         internal static System.Drawing.Bitmap cancel {
             get {
                 object obj = ResourceManager.GetObject("cancel", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Cannot cut a plugin.
+        /// </summary>
+        internal static string Cannot_cut_a_plugin {
+            get {
+                return ResourceManager.GetString("Cannot_cut_a_plugin", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Cannot copy nodes from different parents.
+        /// </summary>
+        internal static string CannotCopyNodesFromDifferentParents {
+            get {
+                return ResourceManager.GetString("CannotCopyNodesFromDifferentParents", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Cannot copy a plugin.
+        /// </summary>
+        internal static string CannotCopyPlugin {
+            get {
+                return ResourceManager.GetString("CannotCopyPlugin", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Cannot drag nodes with different parents.
+        /// </summary>
+        internal static string CannotDragNodesWithDifferentParents {
+            get {
+                return ResourceManager.GetString("CannotDragNodesWithDifferentParents", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Cannot drop on descendant
+        ///(think of the temporal paradoxes!).
+        /// </summary>
+        internal static string CannotDropOnDescendent {
+            get {
+                return ResourceManager.GetString("CannotDropOnDescendent", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Could not parse RecordStructure.xml. Record-at-once editing will be unavailable.
+        ///.
+        /// </summary>
+        internal static string CannotParseRecordStructure {
+            get {
+                return ResourceManager.GetString("CannotParseRecordStructure", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The subgroup structure of this plugins cell, world or dial records appears to be incorrect, and cannot be fixed automatically.
+        /// </summary>
+        internal static string CannotSanitizeLooseGroups {
+            get {
+                return ResourceManager.GetString("CannotSanitizeLooseGroups", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The plugin contained records which were not recognized, and cannot be fixed automatically.
+        /// </summary>
+        internal static string CannotSanitizeUnknownRecords {
+            get {
+                return ResourceManager.GetString("CannotSanitizeUnknownRecords", resourceCulture);
             }
         }
         
@@ -109,6 +192,16 @@ namespace TESVSnip.Properties {
             }
         }
         
+        /// <summary>
+        ///   Looks up a localized string similar to This will close all open plugins, and you will lose any unsaved changes.
+        ///Are you sure you wish to continue.
+        /// </summary>
+        internal static string CloseAllLoseChangesInquiry {
+            get {
+                return ResourceManager.GetString("CloseAllLoseChangesInquiry", resourceCulture);
+            }
+        }
+        
         internal static System.Drawing.Bitmap ColumnFilterIndicator {
             get {
                 object obj = ResourceManager.GetObject("ColumnFilterIndicator", resourceCulture);
@@ -123,6 +216,15 @@ namespace TESVSnip.Properties {
             }
         }
         
+        /// <summary>
+        ///   Looks up a localized string similar to Copy Record to Clipboard.
+        /// </summary>
+        internal static string Copy_Record_to_Clipboard {
+            get {
+                return ResourceManager.GetString("Copy_Record_to_Clipboard", resourceCulture);
+            }
+        }
+        
         internal static System.Drawing.Bitmap delete {
             get {
                 object obj = ResourceManager.GetObject("delete", resourceCulture);
@@ -134,6 +236,15 @@ namespace TESVSnip.Properties {
             get {
                 object obj = ResourceManager.GetObject("deletecell", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Delete Node.
+        /// </summary>
+        internal static string DeleteNode {
+            get {
+                return ResourceManager.GetString("DeleteNode", resourceCulture);
             }
         }
         
@@ -172,10 +283,38 @@ namespace TESVSnip.Properties {
             }
         }
         
+        /// <summary>
+        ///   Looks up a localized string similar to Error.
+        /// </summary>
+        internal static string ErrorText {
+            get {
+                return ResourceManager.GetString("ErrorText", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The file is large size and takes significant memory to load.
+        ///Would you like to apply the record exclusions?.
+        /// </summary>
+        internal static string ESM_Large_File_Size_Inquiry {
+            get {
+                return ResourceManager.GetString("ESM_Large_File_Size_Inquiry", resourceCulture);
+            }
+        }
+        
         internal static System.Drawing.Bitmap fileexport {
             get {
                 object obj = ResourceManager.GetObject("fileexport", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Filter Options.
+        /// </summary>
+        internal static string Filter_Options_Text {
+            get {
+                return ResourceManager.GetString("Filter_Options_Text", resourceCulture);
             }
         }
         
@@ -190,6 +329,34 @@ namespace TESVSnip.Properties {
             get {
                 object obj = ResourceManager.GetObject("find", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to First Load Options.
+        /// </summary>
+        internal static string FirstLoadOptions {
+            get {
+                return ResourceManager.GetString("FirstLoadOptions", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to If you don&apos;t know what this does, you probably don&apos;t want to click it
+        ///Continue anyway?.
+        /// </summary>
+        internal static string GeneralSpellWarningInquiry {
+            get {
+                return ResourceManager.GetString("GeneralSpellWarningInquiry", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Info.
+        /// </summary>
+        internal static string InfoText {
+            get {
+                return ResourceManager.GetString("InfoText", resourceCulture);
             }
         }
         
@@ -217,6 +384,35 @@ namespace TESVSnip.Properties {
             }
         }
         
+        /// <summary>
+        ///   Looks up a localized string similar to This is the first time &apos;skyrim.esm&apos; has been loaded.
+        ///The file is large size and takes significant memory to load.
+        ///Would you like to configure which Records to exclude?.
+        /// </summary>
+        internal static string MainView_FirstTimeSkyrimLoad_ExcludeInquiry {
+            get {
+                return ResourceManager.GetString("MainView_FirstTimeSkyrimLoad_ExcludeInquiry", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Missing Plugin.
+        /// </summary>
+        internal static string Missing_Plugin {
+            get {
+                return ResourceManager.GetString("Missing_Plugin", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Missing Record.
+        /// </summary>
+        internal static string Missing_Record {
+            get {
+                return ResourceManager.GetString("Missing_Record", resourceCulture);
+            }
+        }
+        
         internal static System.Drawing.Bitmap move_task_down {
             get {
                 object obj = ResourceManager.GetObject("move_task_down", resourceCulture);
@@ -238,6 +434,33 @@ namespace TESVSnip.Properties {
             }
         }
         
+        /// <summary>
+        ///   Looks up a localized string similar to No plugin selected.
+        /// </summary>
+        internal static string NoPluginSelected {
+            get {
+                return ResourceManager.GetString("NoPluginSelected", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to No plugin selected. Cannot continue..
+        /// </summary>
+        internal static string NoPluginSelectedCannotContinue {
+            get {
+                return ResourceManager.GetString("NoPluginSelectedCannotContinue", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to No plugin selected to save.
+        /// </summary>
+        internal static string NoPluginSelectedToSave {
+            get {
+                return ResourceManager.GetString("NoPluginSelectedToSave", resourceCulture);
+            }
+        }
+        
         internal static System.Drawing.Bitmap Paste {
             get {
                 object obj = ResourceManager.GetObject("Paste", resourceCulture);
@@ -245,10 +468,29 @@ namespace TESVSnip.Properties {
             }
         }
         
+        /// <summary>
+        ///   Looks up a localized string similar to Plugin lacks a valid TES4 record. Cannot continue.
+        /// </summary>
+        internal static string PluginLacksAValidTes4RecordCannotContinue {
+            get {
+                return ResourceManager.GetString("PluginLacksAValidTes4RecordCannotContinue", resourceCulture);
+            }
+        }
+        
         internal static System.Drawing.Bitmap quick_restart {
             get {
                 object obj = ResourceManager.GetObject("quick_restart", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to This file has had a filter applied and contents potentially removed.  
+        ///Do you still want to save?.
+        /// </summary>
+        internal static string SavePluginWithFilterAppliedInquiry {
+            get {
+                return ResourceManager.GetString("SavePluginWithFilterAppliedInquiry", resourceCulture);
             }
         }
         
@@ -280,6 +522,15 @@ namespace TESVSnip.Properties {
             }
         }
         
+        /// <summary>
+        ///   Looks up a localized string similar to The clipboard is empty.
+        /// </summary>
+        internal static string TheClipboardIsEmpty {
+            get {
+                return ResourceManager.GetString("TheClipboardIsEmpty", resourceCulture);
+            }
+        }
+        
         internal static System.Drawing.Bitmap up {
             get {
                 object obj = ResourceManager.GetObject("up", resourceCulture);
@@ -287,10 +538,19 @@ namespace TESVSnip.Properties {
             }
         }
         
-        internal static System.Drawing.Icon warning {
+        internal static System.Drawing.Icon Warning {
             get {
-                object obj = ResourceManager.GetObject("warning", resourceCulture);
+                object obj = ResourceManager.GetObject("Warning", resourceCulture);
                 return ((System.Drawing.Icon)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Warning.
+        /// </summary>
+        internal static string WarningText {
+            get {
+                return ResourceManager.GetString("WarningText", resourceCulture);
             }
         }
         

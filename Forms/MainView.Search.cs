@@ -36,6 +36,7 @@ namespace TESVSnip
                 return Value.ToString();
             }
         }
+        #endregion
 
         void InitializeToolStripFind()
         {
@@ -107,128 +108,198 @@ namespace TESVSnip
             }
         }
 
-        private void RecurseFullSearch(List<TreeNode> matches, TreeNode node, string searchString, bool partial)
+        #region class RecursiveRecordIterator
+        class RecursiveRecordIterator : IEnumerator<BaseRecord>
         {
-            Record rec = node.Tag as Record;
-            if (rec != null)
+            Stack<RecordIterator> stack;
+            bool forward;
+            bool needMoveNext = false;
+            public RecursiveRecordIterator(BaseRecord tn, bool forward)
             {
-                foreach (SubRecord sr in rec.SubRecords)
+                this.forward = forward;
+                Push(tn);
+            }
+
+            public BaseRecord Current
+            {
+                get { return stack.Peek().Current; }
+            }
+
+            public void Dispose()
+            {
+                foreach ( var itr in this.stack) itr.Dispose();
+                this.stack.Clear();
+            }
+
+            object System.Collections.IEnumerator.Current
+            {
+                get { return this.Current; }
+            }
+
+            public bool MoveNext()
+            {
+                while (this.stack.Count > 0)
                 {
-                    if (partial)
+                    var itr = stack.Peek();
+                    if (needMoveNext && !itr.MoveNext()) return false;
+                    needMoveNext = false;
+
+                    var r = itr.Current;
+                    if (r == null) return false;
+                    if (r.Records.Count > 0)
                     {
-                        if (sr.GetStrData().ToLowerInvariant().Contains(searchString)) matches.Add(node);
+                        itr = new RecordIterator(itr.Current, -1, forward);
+                        stack.Push(itr);
                     }
-                    else
+                    while(true)
                     {
-                        if (sr.GetStrData().ToLowerInvariant() == searchString) matches.Add(node);
+                        bool ok = itr.MoveNext();
+                        if (ok) return true;
+                        this.stack.Pop();
+                        if (this.stack.Count == 0)
+                            return false;
+                        itr = stack.Peek();                        
                     }
                 }
+                return false;                
             }
-            else
+
+            public void Reset()
             {
-                for (int i = 0; i < node.Nodes.Count; i++)
-                    RecurseFullSearch(matches, node.Nodes[i], searchString, partial);
+                while (this.stack.Count > 1)
+                {
+                    var itr = this.stack.Pop();
+                    itr.Dispose();
+                }
+                if (this.stack.Count == 1)
+                    this.stack.Peek().Reset();
+                needMoveNext = true;
+            }
+
+            public void Push(BaseRecord tn)
+            {
+                var queue = new Stack<RecordIterator>();
+                for (; tn != null && tn.Parent != null; tn = tn.Parent)
+                    queue.Push(new RecordIterator(tn, forward));
+                if (this.stack == null || this.stack.Count == 0)
+                {
+                    this.stack = new Stack<RecordIterator>(queue);
+                }
+                else
+                {
+                    foreach (var itm in queue) this.stack.Push(itm);
+                }                
             }
         }
-
-        internal TreeNode IncrementalSearch(TreeNode tn, bool first, bool forward, bool wrapAround, Predicate<TreeNode> searchFunc)
+        #endregion
+        
+        #region class RecordIterator
+        class RecordIterator : IEnumerator<BaseRecord>
         {
-            try
+            BaseRecord parent;
+            int current;
+            bool forward;
+
+            public RecordIterator(BaseRecord rec, bool forward)
             {
-                if (PluginTree.Nodes.Count == 0)
-                    return null;
-                if (tn == null)
-                    tn = PluginTree.SelectedNode != null ? PluginTree.SelectedNode : PluginTree.Nodes[0];
-                if (tn == null)
-                    return null;
-                TreeNode startNode = null;
+                this.parent = rec.Parent;
+                this.current = parent.Records.IndexOf(rec);
+                this.forward = forward;
+            }
+
+            public RecordIterator(BaseRecord parent, int index, bool forward)
+            {
+                this.parent = parent;
+                this.current = (index != -1) ? index : (forward ? -1 : parent.Records.Count);
+                this.forward = forward;
+            }
+
+            public BaseRecord Current
+            {
+                get 
+                {
+                    if (parent == null || current < 0 || current >= parent.Records.Count)
+                        return null;
+                    return parent.Records[current] as BaseRecord;
+                }
+            }
+
+
+            public void Dispose()
+            {
+                current = -1;
+                this.parent = null;
+            }
+
+            object System.Collections.IEnumerator.Current
+            {
+                get { return this.Current; }
+            }
+
+            public bool MoveNext()
+            {
+                if (forward) ++current;
+                else --current;
+                return !(parent == null || current < 0 || current >= parent.Records.Count);
+            }
+
+            public void Reset()
+            {
+                if (parent != null)
+                {
+                    if (forward) current = -1;
+                    else current = parent.Records.Count;
+                }
+            }
+        }
+        #endregion
+
+        internal BaseRecord IncrementalSearch(BaseRecord tn, bool first, bool forward, bool wrapAround, Predicate<BaseRecord> searchFunc)
+        {
+            using (RecursiveRecordIterator itr = new RecursiveRecordIterator(tn, forward))
+            {
+                BaseRecord startNode = null;
+                System.Diagnostics.Debug.Assert(tn.Equals(itr.Current));
                 bool keep = first;
                 do
                 {
-                    var prevNode = tn;
-                    while (tn != null)
+                    do
                     {
-                        prevNode = tn;
+                        tn = itr.Current;
                         if (keep && searchFunc(tn))
                             return tn;
                         keep = true;
-                        if (startNode == null) // set the start node
+                        if (startNode == null)
                             startNode = tn;
-                        else if (startNode == tn) // if we found the start node again then fail
+                        else if (startNode.Equals(tn))
                             return null;
-                        if (forward)
-                            tn = GetNextNode(tn);
-                        else
-                            tn = GetPreviousNode(tn);
-                    }
-                    if (wrapAround)
-                    {
-                        if (forward)
-                            tn = PluginTree.Nodes[0];
-                        else
-                            tn = GetLastNode(PluginTree.Nodes[PluginTree.Nodes.Count - 1]);
-                    }
-                } while (tn != null);
-            }
-            catch 
-            {
+                    } while (itr.MoveNext());
+
+                    if (!wrapAround)
+                        break;
+                    itr.Push(PluginList.All.Records[0] as BaseRecord);
+                    itr.Reset();
+                } while (itr.MoveNext());
             }
             return null;
         }
 
-        private TreeNode GetNextNode(TreeNode tn)
-        {
-            if (tn.FirstNode != null)
-            {
-                tn = tn.FirstNode;
-            }
-            else
-            {
-                while (tn != null && tn.NextNode == null)
-                    tn = tn.Parent;
-                tn = (tn != null && tn.NextNode != null) ? tn.NextNode : null;
-            }
-            return tn;
-        }
-        private TreeNode GetPreviousNode(TreeNode n)
-        {
-            while (n != null && n.PrevNode == null)
-                n = n.Parent;
-            if (n != null)
-                n = n.PrevNode;
-            if (n != null)
-                n = GetLastNode(n);
-            return n;
-        }
-
-        private static TreeNode GetLastNode(TreeNode n)
-        {
-            // Find last item
-            while (n.FirstNode != null)
-            {
-                n = n.FirstNode;
-                while (n != null && n.NextNode != null)
-                    n = n.NextNode;
-            }
-            return n;
-        }
-
-        class SearchContext
+        class SearchSettings
         {
             public SearchType type;
-            public TreeNode tn;
+            public BaseRecord startNode;
             public string text;
             public string rectype;
             public bool first;
             public bool partial;
             public bool forward;
             public bool wrapAround;
-            public Predicate<TreeNode> updateFunc;
+            public Predicate<BaseRecord> updateFunc;
 
-            public SearchContext()
+            public SearchSettings()
             {
                 this.type = SearchType.EditorID;
-                this.tn = null;
+                this.startNode = null;
                 this.text = null;
                 this.first = true;
                 this.partial = true;
@@ -237,10 +308,10 @@ namespace TESVSnip
                 this.updateFunc = null;
                 this.rectype = null;
             }
-            public SearchContext(SearchType type, TreeNode tn, string text, bool first, bool partial, bool forward, bool wrapAround, Predicate<TreeNode> updateFunc)
+            public SearchSettings(SearchType type, BaseRecord tn, string text, bool first, bool partial, bool forward, bool wrapAround, Predicate<BaseRecord> updateFunc)
             {
                 this.type = type;
-                this.tn = tn;
+                this.startNode = tn;
                 this.text = text;
                 this.first = first;
                 this.partial = partial;
@@ -262,9 +333,9 @@ namespace TESVSnip
         /// <param name="wrapAround">Whether to wrap around when reach top or bottom</param>
         /// <param name="updateFunc">Function to call to update the UI when doing select</param>
         /// <returns></returns>
-        private TreeNode PerformSearch(SearchContext ctx)
+        private BaseRecord PerformSearch(SearchSettings ctx)
         {
-            Predicate<TreeNode> searchFunction = null;
+            Predicate<BaseRecord> searchFunction = null;
 
             if (ctx.type == SearchType.FormID)
             {
@@ -277,9 +348,9 @@ namespace TESVSnip
                     MessageBox.Show("Invalid FormID");
                     return null;
                 }
-                searchFunction = (TreeNode node) =>
+                searchFunction = (BaseRecord node) =>
                 {
-                    var rec = node.Tag as Record;
+                    var rec = node as Record;
                     if (ctx.updateFunc != null && ctx.updateFunc(node)) return true;
                     return (rec != null) ? rec.FormID == searchID : false;
                 };
@@ -292,9 +363,9 @@ namespace TESVSnip
                     return null;
 
                 string searchString = string.IsNullOrEmpty(ctx.text) ? null : ctx.text.ToLowerInvariant();
-                searchFunction = (TreeNode node) =>
+                searchFunction = (BaseRecord node) =>
                 {
-                    var rec = node.Tag as Record;
+                    var rec = node as Record;
                     if (rec != null)
                     {
                         bool typeOk = true;
@@ -331,9 +402,9 @@ namespace TESVSnip
                 if (ctx.type == SearchType.FullSearch && string.IsNullOrEmpty(ctx.text))
                     return null;
                 string searchString = ctx.text.ToLowerInvariant();
-                searchFunction = (TreeNode node) =>
+                searchFunction = (BaseRecord node) =>
                 {
-                    var rec = node.Tag as Record;
+                    var rec = node as Record;
                     if (rec != null)
                     {
                         bool typeOk = true;
@@ -368,9 +439,9 @@ namespace TESVSnip
                     MessageBox.Show("Invalid FormID");
                     return null;
                 }
-                searchFunction = (TreeNode node) =>
+                searchFunction = (BaseRecord node) =>
                 {
-                    var rec = node.Tag as Record;
+                    var rec = node as Record;
                     if (rec != null)
                     {
                         rec.MatchRecordStructureToRecord();
@@ -391,26 +462,10 @@ namespace TESVSnip
                     return false;
                 };
             }
-            return IncrementalSearch(ctx.tn, ctx.first, ctx.forward, ctx.wrapAround, searchFunction);
+            return IncrementalSearch(ctx.startNode, ctx.first, ctx.forward, ctx.wrapAround, searchFunction);
         }
 
         #region Non-Conforming Records
-        private bool findNonConformingRecordInternal(TreeNode tn)
-        {
-            if (tn.Tag is Record)
-            {
-                if (IsNonConformingRecord(tn))
-                {
-                    PluginTree.SelectedNode = tn;
-                    return true;
-                }
-            }
-            else
-            {
-                foreach (TreeNode tn2 in tn.Nodes) if (findNonConformingRecordInternal(tn2)) return true;
-            }
-            return false;
-        }
         private void findNonconformingRecordToolStripMenuItem_Click(object sender, EventArgs e)
         {
             toolStripIncrInvalidRec.Visible = !toolStripIncrInvalidRec.Visible;
@@ -421,9 +476,9 @@ namespace TESVSnip
             }
         }
 
-        private void BackgroundNonConformingRecordIncrementalSearch(TreeNode tn, bool forward, bool wrapAround)
+        private void BackgroundNonConformingRecordIncrementalSearch(BaseRecord tn, bool forward, bool wrapAround)
         {
-            float totalNodes = (int)PluginTree.GetNodeCount(true);
+            float totalNodes = PluginList.All.Enumerate(x => x != null).Count();
             if (totalNodes == 0)
             {
                 toolStripIncrInvalidRecStatus.Text = "No Plugins Loaded";
@@ -432,13 +487,14 @@ namespace TESVSnip
                     System.Media.SystemSounds.Beep.Play();
                 return;
             }
+            tn = PluginTree.SelectedRecord ?? PluginTree.TopRecord ?? null;
+
             int prevCount = 0;
             float currentCount = 0.0f;
-            TreeNode foundNode = null;
+            BaseRecord foundNode = null;
             toolStripIncrInvalidRecStatus.Text = "";
-            if (tn == null) tn = PluginTree.SelectedNode != null ? PluginTree.SelectedNode : PluginTree.Nodes[0];
 
-            Predicate<TreeNode> searchFunc = (TreeNode n) =>
+            Predicate<BaseRecord> searchFunc = (BaseRecord n) =>
             {
                 if (IsNonConformingRecord(n))
                     return true;
@@ -467,7 +523,7 @@ namespace TESVSnip
                         {
                             toolStripIncrInvalidRecStatus.Text = "Invalid Record Found";
                             toolStripIncrInvalidRecStatus.ForeColor = System.Drawing.Color.Black;
-                            PluginTree.SelectedNode = foundNode;
+                            PluginTree.SelectedRecord = foundNode;
                         }
                         else
                         {
@@ -481,57 +537,38 @@ namespace TESVSnip
             );
         }
 
-        internal bool findNonConformingRecordIncremental(TreeNode tn, bool forward, bool wrapAround)
+        internal bool findNonConformingRecordIncremental(BaseRecord tn, bool forward, bool wrapAround)
         {
-            var node = IncrementalSearch(tn, false, forward, wrapAround, new Predicate<TreeNode>(IsNonConformingRecord));
+            var node = IncrementalSearch(tn, false, forward, wrapAround, new Predicate<BaseRecord>(IsNonConformingRecord));
             if (node != null)
-                PluginTree.SelectedNode = node;
+                PluginTree.SelectedRecord = node;
             return node != null;
         }
 
-        private bool IsNonConformingRecord(TreeNode tn)
+        private bool IsNonConformingRecord(BaseRecord tn)
         {
-            if (tn.Tag is Record)
+            if (tn is Record)
             {
-                Record r = tn.Tag as Record;
-
-                if (r != null && !r.MatchRecordStructureToRecord())
-                {
-                    return true;
-                }
+                var r = tn as Record;
+                return (r != null && !r.MatchRecordStructureToRecord());
             }
             return false;
         }
 
         #endregion
 
-        #endregion
-
 
         #region Increment Record Search
 
-        private void toolStripIncrFindMatch_Click(object sender, EventArgs e)
-        {
-
-        }
-
-        private void toolStripTextBox1_KeyDown(object sender, KeyEventArgs e)
-        {
-            if (e.KeyCode == Keys.Enter)
-            {
-
-            }
-        }
-
         private void toolStripIncrFindNext_Click(object sender, EventArgs e)
         {
-            BackgroundIncrementalSearch(PluginTree.SelectedNode, true);
+            BackgroundIncrementalSearch(PluginTree.SelectedRecord, true);
         }
 
 
-        private void BackgroundIncrementalSearch(TreeNode start, bool forward)
+        private void BackgroundIncrementalSearch(BaseRecord start, bool forward)
         {
-            float totalNodes = (int)PluginTree.GetNodeCount(true);
+            float totalNodes = PluginList.All.Enumerate(x => x != null).Count();
             if (totalNodes == 0)
             {
                 toolStripIncrInvalidRecStatus.Text = "No Plugins Loaded";
@@ -542,13 +579,13 @@ namespace TESVSnip
             }
             int prevCount = 0;
             float currentCount = 0.0f;
-            TreeNode foundNode = null;
+            BaseRecord foundNode = null;
             toolStripIncrFindStatus.Text = "";
 
             // Grab selected node before searching as it can only be accessed from UI thread
-            if (start == null) start = PluginTree.SelectedNode != null ? PluginTree.SelectedNode : PluginTree.Nodes[0];
+            if (start == null) start = PluginTree.SelectedRecord != null ? PluginTree.SelectedRecord : PluginTree.TopRecord;
 
-            Predicate<TreeNode> updateFunc = (TreeNode n) =>
+            Predicate<BaseRecord> updateFunc = (BaseRecord n) =>
             {
                 if (IsBackroundProcessCanceled()) // returning true will stop it
                     return true;
@@ -561,10 +598,10 @@ namespace TESVSnip
                 return false;
             };
 
-            var searchContext = new SearchContext();
+            var searchContext = new SearchSettings();
 
             var item = toolStripIncrFindType.SelectedItem as ComboHelper<SearchType, string>;
-            searchContext.tn = start;
+            searchContext.startNode = start;
             searchContext.type = item.Key;
             searchContext.text = toolStripIncrFindText.Text;
             searchContext.partial = !toolStripIncrFindExact.Checked;
@@ -599,7 +636,7 @@ namespace TESVSnip
                         {
                             toolStripIncrFindStatus.Text = "Match Found";
                             toolStripIncrFindStatus.ForeColor = System.Drawing.Color.Black;
-                            PluginTree.SelectedNode = foundNode;
+                            PluginTree.SelectedRecord = foundNode;
                             toolStripIncrFindText.Tag = false;
                         }
                         else
@@ -618,53 +655,16 @@ namespace TESVSnip
                 }
             );
         }
-#if false
-        private void PerformSearch(TreeNode start, bool forward)
-        {
-            BackgroundIncrementalSearch(start, forward);
-        }
-        private void PerformSearch(TreeNode start, bool forward, Predicate<TreeNode> updateFunc)
-        {
-            var item = toolStripIncrFindType.SelectedItem as ComboHelper<SearchType, string>;
-            var text = toolStripIncrFindText.Text;
-            var partial = !toolStripIncrFindExact.Checked;
-            var wrapAround = toolStripIncrFindWrapAround.Checked;
-            var first = toolStripIncrFindText.Tag == null ? true : (bool)toolStripIncrFindText.Tag;
-            if (string.IsNullOrEmpty(text))
-            {
-                if (!TESVSnip.Properties.Settings.Default.NoWindowsSounds)
-                    System.Media.SystemSounds.Beep.Play();
-                toolStripIncrFind.Focus();
-                toolStripIncrFindText.Select();
-                toolStripIncrFindText.Focus();
-                return;
-            }
-            var node = PerformSearch( item.Key, start, text, first, partial, forward, wrapAround, updateFunc);
-            if (node != null)
-            {
-                PluginTree.SelectedNode = node;
-                toolStripIncrFindText.Tag = false;
-            }
-            else
-            {
-                if (!TESVSnip.Properties.Settings.Default.NoWindowsSounds)
-                    System.Media.SystemSounds.Beep.Play();
-                toolStripIncrFind.Focus();
-                toolStripIncrFindText.Select();
-                toolStripIncrFindText.Focus();
-                toolStripIncrFindText.Tag = true;
-            }
-        }
-#endif
+
         private void toolStripIncrFindPrev_Click(object sender, EventArgs e)
         {
-            BackgroundIncrementalSearch(PluginTree.SelectedNode, false);
+            BackgroundIncrementalSearch(PluginTree.SelectedRecord, false);
         }
 
         private void toolStripIncrFindRestart_Click(object sender, EventArgs e)
         {
             ResetSearch();
-            BackgroundIncrementalSearch(PluginTree.Nodes.Count > 0 ? PluginTree.Nodes[0] : null, true);
+            BackgroundIncrementalSearch(PluginTree.TopRecord, true);
         }
 
         private void toolStripIncrFindCancel_Click(object sender, EventArgs e)
@@ -684,7 +684,7 @@ namespace TESVSnip
             {
                 e.SuppressKeyPress = true;
                 e.Handled = true;
-                BackgroundIncrementalSearch(PluginTree.SelectedNode, !e.Shift);
+                BackgroundIncrementalSearch(PluginTree.SelectedRecord, !e.Shift);
             }
         }
 

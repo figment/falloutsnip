@@ -11,7 +11,6 @@ namespace TESVSnip.Forms
 {
     public partial class SubrecordEditor : UserControl
     {
-        private Plugin p;
         private Record r;
         private SubRecord sr;
         private SubrecordStructure ss;
@@ -30,7 +29,6 @@ namespace TESVSnip.Forms
         /// </summary>
         public void ClearControl()
         {
-            p = null;
             r = null;
             sr = null;
             ss = null;
@@ -41,6 +39,16 @@ namespace TESVSnip.Forms
             this.bCancel.Enabled = false;
         }
 
+        private Plugin GetPluginFromNode(BaseRecord node)
+        {
+            BaseRecord tn = node;
+            var pluginFromNode = tn as Plugin;
+            if (pluginFromNode != null) return pluginFromNode;
+            while (!(tn is Plugin) && tn != null) tn = tn.Parent;
+            if (tn != null) return tn as Plugin;
+            return null;
+        }
+
         void SetContext(SelectionContext context)
         {
             if (context == null)
@@ -49,8 +57,8 @@ namespace TESVSnip.Forms
                 return;
             }
 
-            p = context.Plugin;
-            r = context.Record;
+            r = context.Record as Record;
+            var p = GetPluginFromNode(r);
             sr = context.SubRecord;
             ss = context.SubRecord.Structure;
             SuspendLayout();

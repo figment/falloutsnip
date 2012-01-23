@@ -28,45 +28,52 @@
         /// </summary>
         private void InitializeComponent()
         {
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(TextElement));
             this.textBox = new System.Windows.Forms.TextBox();
             this.lblText = new System.Windows.Forms.Label();
             this.lblType = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.Error)).BeginInit();
             this.SuspendLayout();
             // 
+            // Error
+            // 
+            resources.ApplyResources(this.Error, "Error");
+            // 
             // textBox
             // 
-            this.textBox.Location = new System.Drawing.Point(66, 0);
+            resources.ApplyResources(this.textBox, "textBox");
+            this.Error.SetError(this.textBox, resources.GetString("textBox.Error"));
+            this.Error.SetIconAlignment(this.textBox, ((System.Windows.Forms.ErrorIconAlignment)(resources.GetObject("textBox.IconAlignment"))));
+            this.Error.SetIconPadding(this.textBox, ((int)(resources.GetObject("textBox.IconPadding"))));
             this.textBox.Name = "textBox";
-            this.textBox.Size = new System.Drawing.Size(100, 20);
-            this.textBox.TabIndex = 0;
             this.textBox.Validated += new System.EventHandler(this.textBox_Validated);
             // 
             // lblText
             // 
-            this.lblText.AutoSize = true;
-            this.lblText.Location = new System.Drawing.Point(172, 3);
+            resources.ApplyResources(this.lblText, "lblText");
+            this.Error.SetError(this.lblText, resources.GetString("lblText.Error"));
+            this.Error.SetIconAlignment(this.lblText, ((System.Windows.Forms.ErrorIconAlignment)(resources.GetObject("lblText.IconAlignment"))));
+            this.Error.SetIconPadding(this.lblText, ((int)(resources.GetObject("lblText.IconPadding"))));
             this.lblText.Name = "lblText";
-            this.lblText.Size = new System.Drawing.Size(0, 13);
-            this.lblText.TabIndex = 1;
-            this.lblText.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             // 
             // lblType
             // 
-            this.lblType.Location = new System.Drawing.Point(3, 3);
+            resources.ApplyResources(this.lblType, "lblType");
+            this.Error.SetError(this.lblType, resources.GetString("lblType.Error"));
+            this.Error.SetIconAlignment(this.lblType, ((System.Windows.Forms.ErrorIconAlignment)(resources.GetObject("lblType.IconAlignment"))));
+            this.Error.SetIconPadding(this.lblType, ((int)(resources.GetObject("lblType.IconPadding"))));
             this.lblType.Name = "lblType";
-            this.lblType.Size = new System.Drawing.Size(62, 13);
-            this.lblType.TabIndex = 2;
-            this.lblType.Text = "Type";
-            this.lblType.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             // 
             // TextElement
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
+            resources.ApplyResources(this, "$this");
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.Controls.Add(this.lblType);
             this.Controls.Add(this.lblText);
             this.Controls.Add(this.textBox);
+            this.Error.SetError(this, resources.GetString("$this.Error"));
+            this.Error.SetIconAlignment(this, ((System.Windows.Forms.ErrorIconAlignment)(resources.GetObject("$this.IconAlignment"))));
+            this.Error.SetIconPadding(this, ((int)(resources.GetObject("$this.IconPadding"))));
             this.Name = "TextElement";
             this.Load += new System.EventHandler(this.TextElement_Load);
             ((System.ComponentModel.ISupportInitialize)(this.Error)).EndInit();

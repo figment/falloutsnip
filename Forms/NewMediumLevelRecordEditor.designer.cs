@@ -34,63 +34,51 @@ namespace TESVSnip {
             // 
             // bSave
             // 
-            this.bSave.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            resources.ApplyResources(this.bSave, "bSave");
             this.bSave.DialogResult = System.Windows.Forms.DialogResult.OK;
-            this.bSave.Location = new System.Drawing.Point(278, 224);
+            this.Error.SetError(this.bSave, resources.GetString("bSave.Error"));
+            this.Error.SetIconAlignment(this.bSave, ((System.Windows.Forms.ErrorIconAlignment)(resources.GetObject("bSave.IconAlignment"))));
+            this.Error.SetIconPadding(this.bSave, ((int)(resources.GetObject("bSave.IconPadding"))));
             this.bSave.Name = "bSave";
-            this.bSave.Size = new System.Drawing.Size(75, 23);
-            this.bSave.TabIndex = 1;
-            this.bSave.Text = "Save";
             this.bSave.UseVisualStyleBackColor = true;
             this.bSave.Click += new System.EventHandler(this.bSave_Click);
             // 
             // bCancel
             // 
-            this.bCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            resources.ApplyResources(this.bCancel, "bCancel");
             this.bCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-            this.bCancel.Location = new System.Drawing.Point(359, 224);
+            this.Error.SetError(this.bCancel, resources.GetString("bCancel.Error"));
+            this.Error.SetIconAlignment(this.bCancel, ((System.Windows.Forms.ErrorIconAlignment)(resources.GetObject("bCancel.IconAlignment"))));
+            this.Error.SetIconPadding(this.bCancel, ((int)(resources.GetObject("bCancel.IconPadding"))));
             this.bCancel.Name = "bCancel";
-            this.bCancel.Size = new System.Drawing.Size(75, 23);
-            this.bCancel.TabIndex = 2;
-            this.bCancel.Text = "Cancel";
             this.bCancel.UseVisualStyleBackColor = true;
             this.bCancel.Click += new System.EventHandler(this.bCancel_Click);
             // 
             // fpanel1
             // 
-            this.fpanel1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.fpanel1.AutoScroll = true;
-            this.fpanel1.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-            this.fpanel1.FlowDirection = System.Windows.Forms.FlowDirection.TopDown;
-            this.fpanel1.Location = new System.Drawing.Point(3, 4);
+            resources.ApplyResources(this.fpanel1, "fpanel1");
+            this.Error.SetError(this.fpanel1, resources.GetString("fpanel1.Error"));
+            this.Error.SetIconAlignment(this.fpanel1, ((System.Windows.Forms.ErrorIconAlignment)(resources.GetObject("fpanel1.IconAlignment"))));
+            this.Error.SetIconPadding(this.fpanel1, ((int)(resources.GetObject("fpanel1.IconPadding"))));
             this.fpanel1.Name = "fpanel1";
-            this.fpanel1.Size = new System.Drawing.Size(440, 214);
-            this.fpanel1.TabIndex = 0;
-            this.fpanel1.WrapContents = false;
             this.fpanel1.Resize += new System.EventHandler(this.fpanel1_Resize);
             // 
             // Error
             // 
             this.Error.ContainerControl = this;
-            this.Error.Icon = ((System.Drawing.Icon)(resources.GetObject("Error.Icon")));
+            resources.ApplyResources(this.Error, "Error");
             // 
             // NewMediumLevelRecordEditor
             // 
             this.AcceptButton = this.bSave;
-            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
+            resources.ApplyResources(this, "$this");
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.CancelButton = this.bCancel;
-            this.ClientSize = new System.Drawing.Size(446, 259);
             this.Controls.Add(this.fpanel1);
             this.Controls.Add(this.bCancel);
             this.Controls.Add(this.bSave);
-            this.MinimumSize = new System.Drawing.Size(300, 200);
             this.Name = "NewMediumLevelRecordEditor";
             this.ShowInTaskbar = false;
-            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
-            this.Text = "Record editor";
             this.Load += new System.EventHandler(this.NewMediumLevelRecordEditor_Load);
             this.Shown += new System.EventHandler(this.NewMediumLevelRecordEditor_Shown);
             ((System.ComponentModel.ISupportInitialize)(this.Error)).EndInit();

@@ -95,7 +95,7 @@ namespace TESVSnip.RecordControls
                     var value = TypeConverter.h2si(data);
                     this.cboFormID.Items.Clear();
                     int idx = -1;
-                    foreach (var cbVal in options)
+                    foreach (var cbVal in options.OrderBy(x => x.Value.DescriptiveName))
                     {
                         this.cboFormID.Items.Add( new comboBoxItem(cbVal.Value.DescriptiveName, cbVal.Key) );
                         if (cbVal.Key == value)

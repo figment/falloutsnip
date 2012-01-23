@@ -135,6 +135,7 @@ Credits:
 * timeslip - The original author of TESsnip
 * Dave Humphrey - Maintainer of http://www.uesp.net/wiki a source ESM layout
                 - Tes5Lib (http://github.com/uesp/tes5lib)
+* Ails - Icons - http://ails.deviantart.com/art/420-Pixel-Art-Icons-for-RPG-129892453
 
 License:
 * The TESsnip code is licensed under GPL so this is by extension also GPL

@@ -382,23 +382,31 @@ namespace BrightIdeasSoftware
         /// <param name="selected">If not null, this list of objects will be selected after the tree is rebuilt</param>
         /// <param name="expanded">If not null, this collection of objects will be expanded after the tree is rebuilt</param>
         protected virtual void RebuildAll(IList selected, IEnumerable expanded) {
-            // Remember the bits of info we don't want to forget (anyone ever see Memento?)
-            IEnumerable roots = this.Roots;
-            CanExpandGetterDelegate canExpand = this.CanExpandGetter;
-            ChildrenGetterDelegate childrenGetter = this.ChildrenGetter;
+            try
+            {
+                this.BeginUpdate();
+                // Remember the bits of info we don't want to forget (anyone ever see Memento?)
+                IEnumerable roots = this.Roots;
+                CanExpandGetterDelegate canExpand = this.CanExpandGetter;
+                ChildrenGetterDelegate childrenGetter = this.ChildrenGetter;
 
-            // Give ourselves a new data structure
-            this.TreeModel = new Tree(this);
-            this.VirtualListDataSource = this.TreeModel;
+                // Give ourselves a new data structure
+                this.TreeModel = new Tree(this);
+                this.VirtualListDataSource = this.TreeModel;
 
-            // Put back the bits we didn't want to forget
-            this.CanExpandGetter = canExpand;
-            this.ChildrenGetter = childrenGetter;
-            if (expanded != null)
-                this.ExpandedObjects = expanded;
-            this.Roots = roots;
-            if (selected != null)
-                this.SelectedObjects = selected;
+                // Put back the bits we didn't want to forget
+                this.CanExpandGetter = canExpand;
+                this.ChildrenGetter = childrenGetter;
+                if (expanded != null)
+                    this.ExpandedObjects = expanded;
+                this.Roots = roots;
+                if (selected != null)
+                    this.SelectedObjects = selected;
+            }
+            finally
+            {
+                this.EndUpdate();
+            }            
         }
 
         /// <summary>
@@ -1015,6 +1023,17 @@ namespace BrightIdeasSoftware
                 this.RebuildList();
             }
 
+            public virtual void Unsort()
+            {
+                this.lastSortColumn = null;
+                this.lastSortOrder = SortOrder.None;
+                // Sorting is going to change the order of the branches so clear
+                // the "first branch" flag
+                foreach (Branch b in this.trunk.ChildBranches)
+                    b.IsFirstBranch = false;
+                this.RebuildList();
+            }
+
             /// <summary>
             /// 
             /// </summary>
@@ -1229,6 +1248,7 @@ namespace BrightIdeasSoftware
                 }
                 set {
                     this.ChildBranches.Clear();
+                    if (value == null) return;
                     foreach (Object x in value)
                         this.AddChild(x);
                 }
@@ -1548,5 +1568,29 @@ namespace BrightIdeasSoftware
             private IComparer actualComparer;
         }
 
+        //public void BeginUpdate()
+        //{
+        //    SendMessage(this.Handle, WM_SETREDRAW, (IntPtr)0, IntPtr.Zero);
+        //}
+        //public void EndUpdate()
+        //{
+        //    SendMessage(this.Handle, WM_SETREDRAW, (IntPtr)1, IntPtr.Zero);
+        //}
+        //private const int WM_SETREDRAW = 0x0b;
+        //[System.Runtime.InteropServices.DllImport("user32.dll", CharSet = System.Runtime.InteropServices.CharSet.Auto)]
+        //private static extern IntPtr SendMessage(IntPtr hWnd, int msg, IntPtr wParam, IntPtr lParam);
+
+        /// <summary>
+        /// Remove any sorting and revert to the given order of the model objects
+        /// </summary>
+        public override void Unsort()
+        {
+            this.ShowGroups = false;
+            this.PrimarySortColumn = null;
+            this.PrimarySortOrder = SortOrder.None;
+            this.TreeModel.Unsort();
+            this.BuildList();
+            this.ShowSortIndicator(this.LastSortColumn, this.LastSortOrder);
+        }
     }
 }

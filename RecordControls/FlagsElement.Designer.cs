@@ -29,36 +29,42 @@ namespace TESVSnip.RecordControls
         /// </summary>
         private void InitializeComponent()
         {
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FlagsElement));
             this.cboFlags = new TESVSnip.Windows.Controls.FlagComboBox();
             ((System.ComponentModel.ISupportInitialize)(this.Error)).BeginInit();
             this.SuspendLayout();
             // 
+            // Error
+            // 
+            resources.ApplyResources(this.Error, "Error");
+            // 
             // cboFlags
             // 
+            resources.ApplyResources(this.cboFlags, "cboFlags");
             this.cboFlags.AllowResizeDropDown = true;
-            this.cboFlags.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
             this.cboFlags.CheckOnClick = true;
             this.cboFlags.ControlSize = new System.Drawing.Size(47, 16);
             this.cboFlags.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawVariable;
             this.cboFlags.DropDownSizeMode = TESVSnip.Windows.Controls.CustomComboBox.SizeMode.UseDropDownSize;
             this.cboFlags.DropSize = new System.Drawing.Size(121, 106);
+            this.Error.SetError(this.cboFlags, resources.GetString("cboFlags.Error"));
             this.cboFlags.FormattingEnabled = true;
-            this.cboFlags.Location = new System.Drawing.Point(66, 25);
+            this.Error.SetIconAlignment(this.cboFlags, ((System.Windows.Forms.ErrorIconAlignment)(resources.GetObject("cboFlags.IconAlignment"))));
+            this.Error.SetIconPadding(this.cboFlags, ((int)(resources.GetObject("cboFlags.IconPadding"))));
             this.cboFlags.Name = "cboFlags";
-            this.cboFlags.Size = new System.Drawing.Size(331, 21);
-            this.cboFlags.TabIndex = 2;
             this.cboFlags.ValueSeparator = ",";
             this.cboFlags.TextUpdate += new System.EventHandler(this.cboFlags_TextUpdate);
             // 
             // FlagsElement
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
+            resources.ApplyResources(this, "$this");
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.Controls.Add(this.cboFlags);
+            this.Error.SetError(this, resources.GetString("$this.Error"));
+            this.Error.SetIconAlignment(this, ((System.Windows.Forms.ErrorIconAlignment)(resources.GetObject("$this.IconAlignment"))));
+            this.Error.SetIconPadding(this, ((int)(resources.GetObject("$this.IconPadding"))));
             this.MinimumSize = new System.Drawing.Size(200, 48);
             this.Name = "FlagsElement";
-            this.Size = new System.Drawing.Size(400, 48);
             this.Controls.SetChildIndex(this.cboFlags, 0);
             ((System.ComponentModel.ISupportInitialize)(this.Error)).EndInit();
             this.ResumeLayout(false);

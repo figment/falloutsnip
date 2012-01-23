@@ -1,4 +1,4 @@
-﻿namespace TESVsnip
+﻿namespace TESVSnip
 {
 	partial class AddMasterForm
 	{
@@ -28,6 +28,7 @@
 		/// </summary>
 		private void InitializeComponent()
 		{
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(AddMasterForm));
             this.label1 = new System.Windows.Forms.Label();
             this.tbxMaster = new System.Windows.Forms.TextBox();
             this.butChooseMaster = new System.Windows.Forms.Button();
@@ -38,70 +39,47 @@
             // 
             // label1
             // 
-            this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(12, 15);
+            resources.ApplyResources(this.label1, "label1");
             this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(42, 13);
-            this.label1.TabIndex = 0;
-            this.label1.Text = "Master:";
             // 
             // tbxMaster
             // 
-            this.tbxMaster.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.tbxMaster.Location = new System.Drawing.Point(60, 12);
+            resources.ApplyResources(this.tbxMaster, "tbxMaster");
             this.tbxMaster.Name = "tbxMaster";
-            this.tbxMaster.Size = new System.Drawing.Size(255, 20);
-            this.tbxMaster.TabIndex = 1;
             // 
             // butChooseMaster
             // 
-            this.butChooseMaster.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.butChooseMaster.AutoSize = true;
-            this.butChooseMaster.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-            this.butChooseMaster.Location = new System.Drawing.Point(321, 10);
+            resources.ApplyResources(this.butChooseMaster, "butChooseMaster");
             this.butChooseMaster.Name = "butChooseMaster";
-            this.butChooseMaster.Size = new System.Drawing.Size(26, 23);
-            this.butChooseMaster.TabIndex = 2;
-            this.butChooseMaster.Text = "...";
             this.butChooseMaster.UseVisualStyleBackColor = true;
             this.butChooseMaster.Click += new System.EventHandler(this.butChooseMaster_Click);
             // 
             // butOK
             // 
-            this.butOK.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.butOK.Location = new System.Drawing.Point(191, 39);
+            resources.ApplyResources(this.butOK, "butOK");
             this.butOK.Name = "butOK";
-            this.butOK.Size = new System.Drawing.Size(75, 23);
-            this.butOK.TabIndex = 3;
-            this.butOK.Text = "OK";
             this.butOK.UseVisualStyleBackColor = true;
             this.butOK.Click += new System.EventHandler(this.butOK_Click);
             // 
             // butCancel
             // 
-            this.butCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            resources.ApplyResources(this.butCancel, "butCancel");
             this.butCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-            this.butCancel.Location = new System.Drawing.Point(272, 39);
             this.butCancel.Name = "butCancel";
-            this.butCancel.Size = new System.Drawing.Size(75, 23);
-            this.butCancel.TabIndex = 4;
-            this.butCancel.Text = "Cancel";
             this.butCancel.UseVisualStyleBackColor = true;
             // 
             // ofdChooseMaster
             // 
             this.ofdChooseMaster.DefaultExt = "esp";
             this.ofdChooseMaster.FileName = "openFileDialog1";
-            this.ofdChooseMaster.Filter = "Plugin files|*.esp|Master files|*.esm|All files|*.*";
+            resources.ApplyResources(this.ofdChooseMaster, "ofdChooseMaster");
             // 
             // AddMasterForm
             // 
             this.AcceptButton = this.butOK;
-            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
+            resources.ApplyResources(this, "$this");
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.CancelButton = this.butCancel;
-            this.ClientSize = new System.Drawing.Size(355, 73);
             this.Controls.Add(this.butCancel);
             this.Controls.Add(this.butOK);
             this.Controls.Add(this.butChooseMaster);
@@ -111,8 +89,6 @@
             this.MinimizeBox = false;
             this.Name = "AddMasterForm";
             this.ShowInTaskbar = false;
-            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
-            this.Text = "Add Master";
             this.ResumeLayout(false);
             this.PerformLayout();
 

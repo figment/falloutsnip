@@ -29,6 +29,7 @@
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(StringsEditor));
             this.label1 = new System.Windows.Forms.Label();
             this.btnAddString = new System.Windows.Forms.Button();
             this.txtID = new System.Windows.Forms.TextBox();
@@ -52,186 +53,172 @@
             // 
             // label1
             // 
-            this.label1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(27, 327);
+            resources.ApplyResources(this.label1, "label1");
+            this.error.SetError(this.label1, resources.GetString("label1.Error"));
+            this.error.SetIconAlignment(this.label1, ((System.Windows.Forms.ErrorIconAlignment)(resources.GetObject("label1.IconAlignment"))));
+            this.error.SetIconPadding(this.label1, ((int)(resources.GetObject("label1.IconPadding"))));
             this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(21, 13);
-            this.label1.TabIndex = 1;
-            this.label1.Text = "ID:";
-            this.label1.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+            this.tip.SetToolTip(this.label1, resources.GetString("label1.ToolTip"));
             // 
             // btnAddString
             // 
-            this.btnAddString.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            resources.ApplyResources(this.btnAddString, "btnAddString");
+            this.error.SetError(this.btnAddString, resources.GetString("btnAddString.Error"));
+            this.error.SetIconAlignment(this.btnAddString, ((System.Windows.Forms.ErrorIconAlignment)(resources.GetObject("btnAddString.IconAlignment"))));
+            this.error.SetIconPadding(this.btnAddString, ((int)(resources.GetObject("btnAddString.IconPadding"))));
             this.btnAddString.Image = global::TESVSnip.Properties.Resources.edit_add;
-            this.btnAddString.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            this.btnAddString.Location = new System.Drawing.Point(117, 374);
             this.btnAddString.Name = "btnAddString";
-            this.btnAddString.Size = new System.Drawing.Size(56, 23);
-            this.btnAddString.TabIndex = 2;
-            this.btnAddString.Text = "Add";
-            this.btnAddString.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
-            this.tip.SetToolTip(this.btnAddString, "Add String To Plugin");
+            this.tip.SetToolTip(this.btnAddString, resources.GetString("btnAddString.ToolTip"));
             this.btnAddString.UseVisualStyleBackColor = true;
             this.btnAddString.Click += new System.EventHandler(this.btnAddString_Click);
             // 
             // txtID
             // 
-            this.txtID.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.txtID.Location = new System.Drawing.Point(54, 324);
+            resources.ApplyResources(this.txtID, "txtID");
+            this.error.SetError(this.txtID, resources.GetString("txtID.Error"));
+            this.error.SetIconAlignment(this.txtID, ((System.Windows.Forms.ErrorIconAlignment)(resources.GetObject("txtID.IconAlignment"))));
+            this.error.SetIconPadding(this.txtID, ((int)(resources.GetObject("txtID.IconPadding"))));
             this.txtID.Name = "txtID";
-            this.txtID.Size = new System.Drawing.Size(100, 20);
-            this.txtID.TabIndex = 3;
+            this.tip.SetToolTip(this.txtID, resources.GetString("txtID.ToolTip"));
             this.txtID.TextChanged += new System.EventHandler(this.txtID_TextChanged);
             this.txtID.Validating += new System.ComponentModel.CancelEventHandler(this.txtID_Validating);
             // 
             // txtString
             // 
-            this.txtString.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)
-                        | System.Windows.Forms.AnchorStyles.Right)));
-            this.txtString.Location = new System.Drawing.Point(54, 348);
+            resources.ApplyResources(this.txtString, "txtString");
+            this.error.SetError(this.txtString, resources.GetString("txtString.Error"));
+            this.error.SetIconAlignment(this.txtString, ((System.Windows.Forms.ErrorIconAlignment)(resources.GetObject("txtString.IconAlignment"))));
+            this.error.SetIconPadding(this.txtString, ((int)(resources.GetObject("txtString.IconPadding"))));
             this.txtString.Name = "txtString";
-            this.txtString.Size = new System.Drawing.Size(500, 20);
-            this.txtString.TabIndex = 5;
+            this.tip.SetToolTip(this.txtString, resources.GetString("txtString.ToolTip"));
             // 
             // label2
             // 
-            this.label2.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(12, 351);
+            resources.ApplyResources(this.label2, "label2");
+            this.error.SetError(this.label2, resources.GetString("label2.Error"));
+            this.error.SetIconAlignment(this.label2, ((System.Windows.Forms.ErrorIconAlignment)(resources.GetObject("label2.IconAlignment"))));
+            this.error.SetIconPadding(this.label2, ((int)(resources.GetObject("label2.IconPadding"))));
             this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(37, 13);
-            this.label2.TabIndex = 4;
-            this.label2.Text = "String:";
-            this.label2.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+            this.tip.SetToolTip(this.label2, resources.GetString("label2.ToolTip"));
             // 
             // btnEditString
             // 
-            this.btnEditString.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnEditString.Location = new System.Drawing.Point(560, 346);
+            resources.ApplyResources(this.btnEditString, "btnEditString");
+            this.error.SetError(this.btnEditString, resources.GetString("btnEditString.Error"));
+            this.error.SetIconAlignment(this.btnEditString, ((System.Windows.Forms.ErrorIconAlignment)(resources.GetObject("btnEditString.IconAlignment"))));
+            this.error.SetIconPadding(this.btnEditString, ((int)(resources.GetObject("btnEditString.IconPadding"))));
             this.btnEditString.Name = "btnEditString";
-            this.btnEditString.Size = new System.Drawing.Size(26, 23);
-            this.btnEditString.TabIndex = 2;
-            this.btnEditString.Text = "...";
-            this.tip.SetToolTip(this.btnEditString, "Multiline Text Editor");
+            this.tip.SetToolTip(this.btnEditString, resources.GetString("btnEditString.ToolTip"));
             this.btnEditString.UseVisualStyleBackColor = true;
             this.btnEditString.Click += new System.EventHandler(this.btnEditString_Click);
             // 
             // btnLookup
             // 
-            this.btnLookup.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            resources.ApplyResources(this.btnLookup, "btnLookup");
+            this.error.SetError(this.btnLookup, resources.GetString("btnLookup.Error"));
+            this.error.SetIconAlignment(this.btnLookup, ((System.Windows.Forms.ErrorIconAlignment)(resources.GetObject("btnLookup.IconAlignment"))));
+            this.error.SetIconPadding(this.btnLookup, ((int)(resources.GetObject("btnLookup.IconPadding"))));
             this.btnLookup.Image = global::TESVSnip.Properties.Resources.find;
-            this.btnLookup.Location = new System.Drawing.Point(159, 322);
             this.btnLookup.Name = "btnLookup";
-            this.btnLookup.Size = new System.Drawing.Size(26, 23);
-            this.btnLookup.TabIndex = 6;
-            this.tip.SetToolTip(this.btnLookup, "Lookup Text");
+            this.tip.SetToolTip(this.btnLookup, resources.GetString("btnLookup.ToolTip"));
             this.btnLookup.UseVisualStyleBackColor = true;
             this.btnLookup.Click += new System.EventHandler(this.btnLookup_Click);
             // 
             // btnDeleteString
             // 
-            this.btnDeleteString.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            resources.ApplyResources(this.btnDeleteString, "btnDeleteString");
+            this.error.SetError(this.btnDeleteString, resources.GetString("btnDeleteString.Error"));
+            this.error.SetIconAlignment(this.btnDeleteString, ((System.Windows.Forms.ErrorIconAlignment)(resources.GetObject("btnDeleteString.IconAlignment"))));
+            this.error.SetIconPadding(this.btnDeleteString, ((int)(resources.GetObject("btnDeleteString.IconPadding"))));
             this.btnDeleteString.Image = global::TESVSnip.Properties.Resources.edit_remove;
-            this.btnDeleteString.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            this.btnDeleteString.Location = new System.Drawing.Point(179, 374);
             this.btnDeleteString.Name = "btnDeleteString";
-            this.btnDeleteString.Size = new System.Drawing.Size(62, 23);
-            this.btnDeleteString.TabIndex = 2;
-            this.btnDeleteString.Text = "Delete";
-            this.btnDeleteString.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
-            this.tip.SetToolTip(this.btnDeleteString, "Remove String From Plugin");
+            this.tip.SetToolTip(this.btnDeleteString, resources.GetString("btnDeleteString.ToolTip"));
             this.btnDeleteString.UseVisualStyleBackColor = true;
             this.btnDeleteString.Click += new System.EventHandler(this.btnDeleteString_Click);
             // 
             // error
             // 
             this.error.ContainerControl = this;
+            resources.ApplyResources(this.error, "error");
             // 
             // label3
             // 
-            this.label3.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(228, 327);
+            resources.ApplyResources(this.label3, "label3");
+            this.error.SetError(this.label3, resources.GetString("label3.Error"));
+            this.error.SetIconAlignment(this.label3, ((System.Windows.Forms.ErrorIconAlignment)(resources.GetObject("label3.IconAlignment"))));
+            this.error.SetIconPadding(this.label3, ((int)(resources.GetObject("label3.IconPadding"))));
             this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(39, 13);
-            this.label3.TabIndex = 7;
-            this.label3.Text = "Plugin:";
-            this.label3.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+            this.tip.SetToolTip(this.label3, resources.GetString("label3.ToolTip"));
             // 
             // cboPlugins
             // 
-            this.cboPlugins.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            resources.ApplyResources(this.cboPlugins, "cboPlugins");
             this.cboPlugins.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.error.SetError(this.cboPlugins, resources.GetString("cboPlugins.Error"));
             this.cboPlugins.FormattingEnabled = true;
-            this.cboPlugins.Location = new System.Drawing.Point(273, 323);
+            this.error.SetIconAlignment(this.cboPlugins, ((System.Windows.Forms.ErrorIconAlignment)(resources.GetObject("cboPlugins.IconAlignment"))));
+            this.error.SetIconPadding(this.cboPlugins, ((int)(resources.GetObject("cboPlugins.IconPadding"))));
             this.cboPlugins.Name = "cboPlugins";
-            this.cboPlugins.Size = new System.Drawing.Size(121, 21);
-            this.cboPlugins.TabIndex = 8;
+            this.tip.SetToolTip(this.cboPlugins, resources.GetString("cboPlugins.ToolTip"));
             // 
             // btnClose
             // 
-            this.btnClose.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            resources.ApplyResources(this.btnClose, "btnClose");
             this.btnClose.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-            this.btnClose.Location = new System.Drawing.Point(525, 374);
+            this.error.SetError(this.btnClose, resources.GetString("btnClose.Error"));
+            this.error.SetIconAlignment(this.btnClose, ((System.Windows.Forms.ErrorIconAlignment)(resources.GetObject("btnClose.IconAlignment"))));
+            this.error.SetIconPadding(this.btnClose, ((int)(resources.GetObject("btnClose.IconPadding"))));
             this.btnClose.Name = "btnClose";
-            this.btnClose.Size = new System.Drawing.Size(62, 23);
-            this.btnClose.TabIndex = 2;
-            this.btnClose.Text = "Close";
+            this.tip.SetToolTip(this.btnClose, resources.GetString("btnClose.ToolTip"));
             this.btnClose.UseVisualStyleBackColor = true;
             this.btnClose.Click += new System.EventHandler(this.button1_Click);
             // 
             // cboType
             // 
-            this.cboType.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            resources.ApplyResources(this.cboType, "cboType");
             this.cboType.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.error.SetError(this.cboType, resources.GetString("cboType.Error"));
             this.cboType.FormattingEnabled = true;
-            this.cboType.Location = new System.Drawing.Point(465, 323);
+            this.error.SetIconAlignment(this.cboType, ((System.Windows.Forms.ErrorIconAlignment)(resources.GetObject("cboType.IconAlignment"))));
+            this.error.SetIconPadding(this.cboType, ((int)(resources.GetObject("cboType.IconPadding"))));
             this.cboType.Name = "cboType";
-            this.cboType.Size = new System.Drawing.Size(121, 21);
-            this.cboType.TabIndex = 10;
+            this.tip.SetToolTip(this.cboType, resources.GetString("cboType.ToolTip"));
             // 
             // label4
             // 
-            this.label4.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.label4.AutoSize = true;
-            this.label4.Location = new System.Drawing.Point(425, 327);
+            resources.ApplyResources(this.label4, "label4");
+            this.error.SetError(this.label4, resources.GetString("label4.Error"));
+            this.error.SetIconAlignment(this.label4, ((System.Windows.Forms.ErrorIconAlignment)(resources.GetObject("label4.IconAlignment"))));
+            this.error.SetIconPadding(this.label4, ((int)(resources.GetObject("label4.IconPadding"))));
             this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(34, 13);
-            this.label4.TabIndex = 9;
-            this.label4.Text = "Type:";
-            this.label4.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+            this.tip.SetToolTip(this.label4, resources.GetString("label4.ToolTip"));
             // 
             // btnNewItem
             // 
-            this.btnNewItem.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            resources.ApplyResources(this.btnNewItem, "btnNewItem");
+            this.error.SetError(this.btnNewItem, resources.GetString("btnNewItem.Error"));
+            this.error.SetIconAlignment(this.btnNewItem, ((System.Windows.Forms.ErrorIconAlignment)(resources.GetObject("btnNewItem.IconAlignment"))));
+            this.error.SetIconPadding(this.btnNewItem, ((int)(resources.GetObject("btnNewItem.IconPadding"))));
             this.btnNewItem.Image = global::TESVSnip.Properties.Resources.insertcell;
-            this.btnNewItem.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            this.btnNewItem.Location = new System.Drawing.Point(55, 374);
             this.btnNewItem.Name = "btnNewItem";
-            this.btnNewItem.Size = new System.Drawing.Size(56, 23);
-            this.btnNewItem.TabIndex = 2;
-            this.btnNewItem.Text = "New";
-            this.btnNewItem.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+            this.tip.SetToolTip(this.btnNewItem, resources.GetString("btnNewItem.ToolTip"));
             this.btnNewItem.UseVisualStyleBackColor = true;
             this.btnNewItem.Click += new System.EventHandler(this.btnNewItem_Click);
             // 
             // listStrings
             // 
-            this.listStrings.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-                        | System.Windows.Forms.AnchorStyles.Left)
-                        | System.Windows.Forms.AnchorStyles.Right)));
+            resources.ApplyResources(this.listStrings, "listStrings");
             this.listStrings.AutoScroll = false;
             this.listStrings.DataSource = null;
+            this.error.SetError(this.listStrings, resources.GetString("listStrings.Error"));
             this.listStrings.FullRowSelect = true;
             this.listStrings.GridLines = true;
             this.listStrings.HideSelection = false;
+            this.error.SetIconAlignment(this.listStrings, ((System.Windows.Forms.ErrorIconAlignment)(resources.GetObject("listStrings.IconAlignment"))));
+            this.error.SetIconPadding(this.listStrings, ((int)(resources.GetObject("listStrings.IconPadding"))));
             this.listStrings.ItemCount = 0;
-            this.listStrings.Location = new System.Drawing.Point(12, 12);
             this.listStrings.Name = "listStrings";
-            this.listStrings.Size = new System.Drawing.Size(574, 308);
-            this.listStrings.TabIndex = 0;
+            this.tip.SetToolTip(this.listStrings, resources.GetString("listStrings.ToolTip"));
             this.listStrings.UseCompatibleStateImageBehavior = false;
             this.listStrings.View = System.Windows.Forms.View.Details;
             this.listStrings.VirtualMode = true;
@@ -240,23 +227,22 @@
             // 
             // btnApply
             // 
-            this.btnApply.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            resources.ApplyResources(this.btnApply, "btnApply");
             this.btnApply.DialogResult = System.Windows.Forms.DialogResult.OK;
-            this.btnApply.Location = new System.Drawing.Point(457, 374);
+            this.error.SetError(this.btnApply, resources.GetString("btnApply.Error"));
+            this.error.SetIconAlignment(this.btnApply, ((System.Windows.Forms.ErrorIconAlignment)(resources.GetObject("btnApply.IconAlignment"))));
+            this.error.SetIconPadding(this.btnApply, ((int)(resources.GetObject("btnApply.IconPadding"))));
             this.btnApply.Name = "btnApply";
-            this.btnApply.Size = new System.Drawing.Size(62, 23);
-            this.btnApply.TabIndex = 2;
-            this.btnApply.Text = "Apply";
+            this.tip.SetToolTip(this.btnApply, resources.GetString("btnApply.ToolTip"));
             this.btnApply.UseVisualStyleBackColor = true;
             this.btnApply.Click += new System.EventHandler(this.btnApply_Click);
             // 
             // StringsEditor
             // 
             this.AcceptButton = this.btnApply;
-            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
+            resources.ApplyResources(this, "$this");
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.CancelButton = this.btnClose;
-            this.ClientSize = new System.Drawing.Size(598, 409);
             this.Controls.Add(this.cboType);
             this.Controls.Add(this.label4);
             this.Controls.Add(this.cboPlugins);
@@ -277,10 +263,9 @@
             this.MinimizeBox = false;
             this.Name = "StringsEditor";
             this.ShowInTaskbar = false;
-            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
-            this.Text = "Strings Editor";
-            this.Load += new System.EventHandler(this.StringsEditor_Load);
+            this.tip.SetToolTip(this, resources.GetString("$this.ToolTip"));
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.StringsEditor_FormClosing);
+            this.Load += new System.EventHandler(this.StringsEditor_Load);
             this.ResizeEnd += new System.EventHandler(this.StringsEditor_ResizeEnd);
             ((System.ComponentModel.ISupportInitialize)(this.error)).EndInit();
             this.ResumeLayout(false);

@@ -3,6 +3,7 @@ using System.Windows.Forms;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using TESVSnip.Properties;
 
 namespace TESVSnip
 {
@@ -34,111 +35,112 @@ namespace TESVSnip
         }
         private void sanitizeToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            if (PluginTree.SelectedNode == null)
+            if (PluginTree.SelectedRecord == null)
             {
-                MessageBox.Show("No plugin selected", "Error");
+                MessageBox.Show(Resources.NoPluginSelected, Resources.ErrorText);
                 return;
             }
-            TreeNode tn = PluginTree.SelectedNode;
-            while (!(tn.Tag is Plugin)) tn = tn.Parent;
-            Plugin p = (Plugin)tn.Tag;
+            var p = GetPluginFromNode(PluginTree.SelectedRecord);
 
-            Queue<Rec> toParse = new Queue<Rec>(p.Records);
-            if (toParse.Count == 0 || toParse.Peek().Name != "TES4")
+            var hdr = p.Records.OfType<Rec>().FirstOrDefault(x => x.Name == "TES4");
+            if (hdr == null)
             {
-                MessageBox.Show("Plugin lacks a vlid TES4 record. Cannot continue");
+                MessageBox.Show(Resources.PluginLacksAValidTes4RecordCannotContinue);
                 return;
             }
 
-            tn.Nodes.Clear();
-            p.Records.Clear();
-            p.AddRecord(toParse.Dequeue());
-            Dictionary<string, GroupRecord> groups = new Dictionary<string, GroupRecord>();
-
-            GroupRecord gr;
-            Record r2;
-
-            foreach (string s in SanitizeOrder)
+            // performance update to prevent lists from updating currently selected record
+            bool oldHoldUpdates = BaseRecord.HoldUpdates;
+            try
             {
-                gr = new GroupRecord(s);
-                p.Records.Add(gr);
-                groups[s] = gr;
-            }
+                BaseRecord.HoldUpdates = true;
 
-            bool looseGroupsWarning = false;
-            bool unknownRecordsWarning = false;
-            while (toParse.Count > 0)
-            {
-                Rec r = toParse.Dequeue();
-                if (r is GroupRecord)
+                var toParse = new Queue<BaseRecord>(p.Records.OfType<BaseRecord>().Where(x => !x.Equals(hdr)));
+                p.Clear();
+                p.AddRecord(hdr);
+
+                var groups = new Dictionary<string, GroupRecord>();
+
+                foreach (string s in SanitizeOrder)
                 {
-                    gr = (GroupRecord)r;
-                    if (gr.ContentsType == "CELL" || gr.ContentsType == "WRLD" || gr.ContentsType == "DIAL")
-                    {
-                        groups[gr.ContentsType].Records.AddRange(gr.Records);
-                        gr.Records.Clear();
-                    }
-                    else
-                    {
-                        for (int i = 0; i < gr.Records.Count; i++) toParse.Enqueue(gr.Records[i]);
-                        gr.Records.Clear();
-                    }
+                    var gr = new GroupRecord(s);
+                    p.AddRecord(gr);
+                    groups[s] = gr;
                 }
-                else
+
+                bool looseGroupsWarning = false;
+                bool unknownRecordsWarning = false;
+                while (toParse.Count > 0)
                 {
-                    r2 = (Record)r;
-                    if (r2.Name == "CELL" || r2.Name == "WRLD" || r2.Name == "REFR" || r2.Name == "ACRE" || r2.Name == "ACHR" || r2.Name == "NAVM" || r2.Name == "DIAL" || r2.Name == "INFO")
+                    var r = toParse.Dequeue();
+                    if (r is GroupRecord)
                     {
-                        looseGroupsWarning = true;
-                        p.AddRecord(r2);
-                    }
-                    else
-                    {
-                        if (groups.ContainsKey(r2.Name)) groups[r2.Name].AddRecord(r2);
+                        var gr = (GroupRecord) r;
+                        if (gr.ContentsType == "CELL" || gr.ContentsType == "WRLD" || gr.ContentsType == "DIAL")
+                        {
+                            var gr2 = groups[gr.ContentsType];
+                            foreach (BaseRecord r2 in gr.Records) gr2.AddRecord(r2);
+                            gr.Clear();
+                        }
                         else
                         {
-                            unknownRecordsWarning = true;
+                            foreach (BaseRecord r2 in gr.Records) toParse.Enqueue(r2);
+                            gr.Clear();
+                        }
+                    }
+                    else if (r is Record)
+                    {
+                        var r2 = (Record) r;
+                        if (r2.Name == "CELL" || r2.Name == "WRLD" || r2.Name == "REFR" || r2.Name == "ACRE" ||
+                            r2.Name == "ACHR" || r2.Name == "NAVM" || r2.Name == "DIAL" || r2.Name == "INFO")
+                        {
+                            looseGroupsWarning = true;
                             p.AddRecord(r2);
+                        }
+                        else
+                        {
+                            if (groups.ContainsKey(r2.Name)) groups[r2.Name].AddRecord(r2);
+                            else
+                            {
+                                unknownRecordsWarning = true;
+                                p.AddRecord(r2);
+                            }
                         }
                     }
                 }
-            }
 
-            foreach (GroupRecord gr2 in groups.Values)
-            {
-                if (gr2.Records.Count == 0) p.DeleteRecord(gr2);
-            }
-
-
-
-            if (looseGroupsWarning)
-            {
-                MessageBox.Show("The subgroup structure of this plugins cell, world or dial records appears to be incorrect, and cannot be fixed automatically",
-                    "Warning");
-            }
-            if (unknownRecordsWarning)
-            {
-                MessageBox.Show("The plugin contained records which were not recognized, and cannot be fixed automatically",
-                    "Warning");
-            }
-
-            p.InvalidateCache();
-
-
-            CreatePluginTree(p, tn);
-
-            int reccount = -1;
-            foreach (Rec r in p.Records) reccount += sanitizeCountRecords(r);
-            if (p.Records.Count > 0 && p.Records[0].Name == "TES4")
-            {
-                Record tes4 = (Record)p.Records[0];
-                if (tes4.SubRecords.Count > 0 && tes4.SubRecords[0].Name == "HEDR" && tes4.SubRecords[0].Size >= 8)
+                foreach (GroupRecord gr2 in groups.Values)
                 {
-                    byte[] data = tes4.SubRecords[0].GetData();
-                    byte[] reccountbytes = TypeConverter.si2h(reccount);
-                    for (int i = 0; i < 4; i++) data[4 + i] = reccountbytes[i];
-                    tes4.SubRecords[0].SetData(data);
+                    if (gr2.Records.Count == 0) p.DeleteRecord(gr2);
                 }
+
+                if (looseGroupsWarning)
+                {
+                    MessageBox.Show(Resources.CannotSanitizeLooseGroups, Resources.WarningText);
+                }
+                if (unknownRecordsWarning)
+                {
+                    MessageBox.Show(Resources.CannotSanitizeUnknownRecords, Resources.WarningText);
+                }
+                p.InvalidateCache();
+
+                int reccount = -1 + p.Records.Cast<Rec>().Sum(r => sanitizeCountRecords(r));
+                var tes4 = p.Records.OfType<Record>().FirstOrDefault(x => x.Name == "TES4");
+                if (tes4 != null)
+                {
+                    if (tes4.SubRecords.Count > 0 && tes4.SubRecords[0].Name == "HEDR" && tes4.SubRecords[0].Size >= 8)
+                    {
+                        byte[] data = tes4.SubRecords[0].GetData();
+                        byte[] reccountbytes = TypeConverter.si2h(reccount);
+                        for (int i = 0; i < 4; i++) data[4 + i] = reccountbytes[i];
+                        tes4.SubRecords[0].SetData(data);
+                    }
+                }
+            }
+            finally
+            {
+                BaseRecord.HoldUpdates = oldHoldUpdates;
+                PluginTree.RebuildObjects();
             }
         }
 
@@ -160,48 +162,46 @@ namespace TESVSnip
         }
         private void stripEDIDsToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            if (PluginTree.SelectedNode == null)
+            if (PluginTree.SelectedRecord == null)
             {
-                MessageBox.Show("No plugin selected", "Error");
+                MessageBox.Show(Resources.NoPluginSelected, Resources.ErrorText);
                 return;
             }
-            if (MessageBox.Show("If you don't know what this does, you probably don't want to click it\nContinue anyway?",
-                "Warning", MessageBoxButtons.YesNo) != DialogResult.Yes) return;
-            TreeNode tn = PluginTree.SelectedNode;
-            while (!(tn.Tag is Plugin)) tn = tn.Parent;
-            Plugin p = (Plugin)tn.Tag;
+            if (MessageBox.Show(Resources.GeneralSpellWarningInquiry, Resources.WarningText, MessageBoxButtons.YesNo) != DialogResult.Yes) 
+                return;
+            var p = GetPluginFromNode(PluginTree.SelectedRecord);
             foreach (Rec r in p.Records) StripEDIDspublic(r);
+            PluginTree.RebuildObjects();
         }
 
-        private bool findDuplicateFormIDs(TreeNode tn, Dictionary<uint, TreeNode> ids)
+        private bool findDuplicateFormIDs(BaseRecord tn, Dictionary<uint, Record> ids)
         {
-            if (tn.Tag is Record)
+            if (tn is Record)
             {
-                Record r2 = (Record)tn.Tag;
+                Record r2 = (Record)tn;
                 if (ids.ContainsKey(r2.FormID))
                 {
-                    PluginTree.SelectedNode = tn;
-                    MessageBox.Show("Record duplicates " + ((Record)ids[r2.FormID].Tag).DescriptiveName);
+                    PluginTree.SelectedRecord = tn;
+                    MessageBox.Show("Record duplicates " + ((Record)ids[r2.FormID]).DescriptiveName);
                     ids.Clear();
                     return true;
                 }
                 else
                 {
-                    ids.Add(r2.FormID, tn);
+                    ids.Add(r2.FormID, r2);
                 }
             }
             else
             {
-                foreach (TreeNode tn2 in tn.Nodes) findDuplicateFormIDs(tn2, ids);
+                foreach (BaseRecord tn2 in tn.Records) findDuplicateFormIDs(tn2, ids);
             }
             return false;
         }
         private void findDuplicatedFormIDToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            TreeNode tn = PluginTree.SelectedNode;
-            while (tn.Parent != null) tn = tn.Parent;
-            Dictionary<uint, TreeNode> ids = new Dictionary<uint, TreeNode>();
-            foreach (TreeNode tn2 in tn.Nodes)
+            var p = GetPluginFromNode(PluginTree.SelectedRecord);
+            var ids = new Dictionary<uint, Record>();
+            foreach (BaseRecord tn2 in p.Records)
             {
                 if (findDuplicateFormIDs(tn2, ids)) return;
             }
@@ -222,24 +222,24 @@ namespace TESVSnip
         }
         private void dumpEDIDListToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            if (PluginTree.SelectedNode == null) return;
-            if (PluginTree.SelectedNode.Tag is Record)
+            if (PluginTree.SelectedRecord == null) return;
+            if (PluginTree.SelectedRecord is Record)
             {
                 MessageBox.Show("Spell works only on plugins or record groups", "Error");
                 return;
             }
             if (SaveEdidListDialog.ShowDialog() != DialogResult.OK) return;
             System.IO.StreamWriter sw = new System.IO.StreamWriter(SaveEdidListDialog.FileName);
-            if (PluginTree.SelectedNode.Tag is Plugin)
+            if (PluginTree.SelectedRecord is Plugin)
             {
-                foreach (Rec r in ((Plugin)PluginTree.SelectedNode.Tag).Records)
+                foreach (Rec r in ((Plugin)PluginTree.SelectedRecord).Records)
                 {
                     DumpEdidsInternal(r, sw);
                 }
             }
             else
             {
-                DumpEdidsInternal((GroupRecord)PluginTree.SelectedNode.Tag, sw);
+                DumpEdidsInternal((GroupRecord)PluginTree.SelectedRecord, sw);
             }
             sw.Close();
         }
@@ -288,7 +288,7 @@ namespace TESVSnip
                 GroupRecord gr = (GroupRecord)r;
                 for (int i = 0; i < gr.Records.Count; i++)
                 {
-                    if (cleanRecurse2(gr.Records[i], ref count, lookup))
+                    if (cleanRecurse2(gr.Records[i] as Rec, ref count, lookup))
                     {
                         count++;
                         gr.Records.RemoveAt(i--);
@@ -299,14 +299,14 @@ namespace TESVSnip
         }
         private void cleanEspToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            if (PluginTree.SelectedNode == null)
+            if (PluginTree.SelectedRecord == null)
             {
-                MessageBox.Show("No plugin selected", "Error");
+                MessageBox.Show(Resources.NoPluginSelected, "Error");
                 return;
             }
             if (MessageBox.Show("This may delete records from the esp.\nAre you sure you wish to continue?", "Warning", MessageBoxButtons.YesNo) != DialogResult.Yes) return;
             FixMasters();
-            var plugin = GetPluginFromNode(PluginTree.SelectedNode);
+            var plugin = GetPluginFromNode(PluginTree.SelectedRecord);
 
             Dictionary<uint, Record> lookup = new Dictionary<uint, Record>();
             bool missingMasters = false;
@@ -317,13 +317,13 @@ namespace TESVSnip
                     missingMasters = true;
                     continue;
                 }
-                if (plugin.Masters[i].Records.Count < 2 || plugin.Masters[i].Records[0].Name != "TES4") continue;
-                uint match = 0;
-                foreach (SubRecord sr in ((Record)plugin.Masters[i].Records[0]).SubRecords) if (sr.Name == "MAST") match++;
+                var tes4 = plugin.Records.OfType<Record>().FirstOrDefault(x => x.Name == "TES4");
+                if (plugin.Masters[i].Records.Count < 2 || tes4 == null) continue;
+                uint match = (uint)plugin.Masters.Count(x => x.Name == "MAST");
                 match <<= 24;
                 uint mask = (uint)i << 24;
                 for (int j = 1; j < plugin.Masters[i].Records.Count; j++) 
-                    cleanRecurse(plugin.Masters[i].Records[j], match, mask, lookup);
+                    cleanRecurse(plugin.Masters[i].Records[j] as Rec, match, mask, lookup);
             }
 
             if (missingMasters)
@@ -333,27 +333,26 @@ namespace TESVSnip
 
             int count = 0;
             for (int j = 1; j < plugin.Masters[plugin.Masters.Length - 1].Records.Count; j++)
-                cleanRecurse2(plugin.Masters[plugin.Masters.Length - 1].Records[j], ref count, lookup);
+                cleanRecurse2(plugin.Masters[plugin.Masters.Length - 1].Records[j] as Rec, ref count, lookup);
             if (count == 0) MessageBox.Show("No records removed");
             else MessageBox.Show("" + count + " records removed");
 
-            TreeNode tn = PluginTree.SelectedNode;
-            while (tn.Parent != null) tn = tn.Parent;
-            tn.Nodes.Clear();
-            CreatePluginTree(plugin.Masters[plugin.Masters.Length - 1], tn);
+
+            PluginTree.Refresh();
         }
 
 
         private void compileScriptToolStripMenuItem_Click(object sender, EventArgs e)
         {
             FixMasters();
-            var plugin = GetPluginFromNode(PluginTree.SelectedNode);
-            if (plugin == null) return;
+            var r = PluginTree.SelectedRecord as Record;
+            var plugin = GetPluginFromNode(r);
+            if (plugin == null || plugin.Parent == null) return;
+
             string errors;
-            Record r;
             if (Selection.SelectedSubrecord && Selection.Record.Name != "SCPT")
             {
-                var sr = Selection.SubRecord;
+                var sr = subrecordPanel.SubRecord;
                 if (sr == null) return;
                 if (sr.Name != "SCTX")
                 {
@@ -361,27 +360,28 @@ namespace TESVSnip
                     return;
                 }
                 ScriptCompiler.ScriptCompiler.Setup(plugin.Masters);
-                if (!ScriptCompiler.ScriptCompiler.CompileResultScript(sr, out r, out errors))
+                Record r2;
+                if (!ScriptCompiler.ScriptCompiler.CompileResultScript(sr, out r2, out errors))
                 {
                     MessageBox.Show("There were compilation errors:\n" + errors);
                 }
                 else
                 {
-                    int i = listSubrecord.SelectedIndices[0];
-                    var srs = Selection.Record.SubRecords;
-                    while (i > 0 && (srs[i - 1].Name == "SCDA" || srs[i - 1].Name == "SCHR"))
-                        srs.RemoveAt(--i);
-                    while (i < srs.Count && (srs[i].Name == "SCTX" || srs[i].Name == "SLSD" || srs[i].Name == "SCVR" || srs[i].Name == "SCRO" || srs[i].Name == "SCRV"))
-                        srs.RemoveAt(i);
-
-                    srs.InsertRange(i, r.SubRecords);
-
-                    PluginTree_AfterSelect(null, null);
+                    var srs = r.SubRecords;
+                    int i = srs.IndexOf(sr);
+                    if (i >= 0)
+                    {
+                        while (i > 0 && (srs[i - 1].Name == "SCDA" || srs[i - 1].Name == "SCHR"))
+                            srs.RemoveAt(--i);
+                        while (i < srs.Count && (srs[i].Name == "SCTX" || srs[i].Name == "SLSD" || srs[i].Name == "SCVR" || srs[i].Name == "SCRO" || srs[i].Name == "SCRV"))
+                            srs.RemoveAt(i);
+                        srs.InsertRange(i, r2.SubRecords);
+                        RebuildSelection();
+                        PluginTree.RefreshObject(r);
+                    }
                 }
                 return;
             }
-            TreeNode tn = PluginTree.SelectedNode;
-            r = tn.Tag as Record;
             if (r == null || (r.Name != "SCPT"))
             {
                 MessageBox.Show("You need to select a SCPT record or SCTX subrecord to compile", "Error");
@@ -395,7 +395,8 @@ namespace TESVSnip
             }
             else
             {
-                PluginTree_AfterSelect(null, null);
+                RebuildSelection();
+                PluginTree.RebuildObjects();
             }
         }
 
@@ -407,13 +408,11 @@ namespace TESVSnip
             int size;
 
             FixMasters();
-            var plugin = GetPluginFromNode(PluginTree.SelectedNode);
+            var plugin = GetPluginFromNode(PluginTree.SelectedRecord);
             if (plugin == null) return;
 
             ScriptCompiler.ScriptCompiler.Setup(plugin.Masters);
-            TreeNode tn = PluginTree.SelectedNode;
-            while (tn.Parent != null) tn = tn.Parent;
-            foreach (Rec rec in ((Plugin)tn.Tag).Records)
+            foreach (Rec rec in plugin.Records)
             {
                 GroupRecord gr = rec as GroupRecord;
                 if (gr == null) continue;
@@ -461,7 +460,7 @@ namespace TESVSnip
         private void generateLLXmlToolStripMenuItem_Click(object sender, EventArgs e)
         {
             FixMasters();
-            var plugin = GetPluginFromNode(PluginTree.SelectedNode);
+            var plugin = GetPluginFromNode(PluginTree.SelectedRecord);
             if (plugin == null) return;
             var p = plugin;
 
@@ -489,7 +488,7 @@ namespace TESVSnip
             }
 
             uint mask = (uint)(plugin.Masters.Length - 1) << 24;
-            Queue<Rec> recs = new Queue<Rec>(p.Records);
+            Queue<Rec> recs = new Queue<Rec>(p.Records.OfType<Rec>());
 
             System.Text.StringBuilder sb2 = new System.Text.StringBuilder();
             System.Text.StringBuilder sb3 = new System.Text.StringBuilder();
@@ -501,7 +500,7 @@ namespace TESVSnip
                     GroupRecord gr = (GroupRecord)rec;
                     if (gr.ContentsType == "LVLI" || gr.ContentsType == "LVLN" || gr.ContentsType == "LVLC")
                     {
-                        for (int i = 0; i < gr.Records.Count; i++) recs.Enqueue(gr.Records[i]);
+                        for (int i = 0; i < gr.Records.Count; i++) recs.Enqueue(gr.Records[i] as Rec);
                     }
                 }
                 else
@@ -596,131 +595,20 @@ namespace TESVSnip
                 sb1.AppendLine("</Plugin>");
                 System.IO.File.WriteAllText(System.IO.Path.ChangeExtension("data\\" + p.Name, ".xml"), sb1.ToString());
             }
-            else MessageBox.Show("No compatible levelled lists found");
+            else MessageBox.Show("No compatible leveled lists found");
         }
-        /*
-        private struct CellRecord {
-            public int x;
-            public int y;
 
-            public CellRecord(int x, int y) {
-                this.x=x;
-                this.y=y;
-            }
-        }
-        private void dumpWorldspaceHeightmapsToolStripMenuItem_Click(object sender, EventArgs e) {
-            if(PluginTree.SelectedNode==null) return;
-            GroupRecord gr=PluginTree.SelectedNode.Tag as GroupRecord;
-            if(gr==null||gr.groupType!=1) {
-                MessageBox.Show("You need to pick a world group to export");
-                return;
-            }
-            GroupRecord gr2=(GroupRecord)PluginTree.SelectedNode.Parent.Tag;
-            string wsname=((Record)gr2.Records[gr2.Records.IndexOf(gr)-1]).SubRecords[0].GetStrData();
-            List<GroupRecord> lands=new List<GroupRecord>();
-            List<Record> cells=new List<Record>();
-            Queue<Rec> records=new Queue<Rec>(gr.Records);
-            while(records.Count>0) {
-                if(records.Peek() is Record) {
-                    Record r=(Record)records.Dequeue();
-                    if(r.Name=="CELL") cells.Add(r);
-                } else {
-                    gr2=(GroupRecord)records.Dequeue();
-                    if(gr2.groupType==9&&gr2.Records.Count>0) {
-                        foreach(Rec rr in gr2.Records) {
-                            if(rr.Name=="LAND") {
-                                lands.Add(gr2);
-                                break;
-                            }
-                        }
-                    } else if(gr2.groupType!=9) for(int i=0;i<gr2.Records.Count;i++) records.Enqueue(gr2.Records[i]);
-                }
-            }
-
-            Dictionary<uint, CellRecord> cells2=new Dictionary<uint, CellRecord>();
-            int minx=0, maxx=0, miny=0, maxy=0;
-            foreach(Record r in cells) {
-                foreach(SubRecord sr in r.SubRecords) {
-                    if(sr.Name=="XCLC") {
-                        byte[] data=sr.GetReadonlyData();
-                        int x=TypeConverter.h2si(data[0], data[1], data[2], data[3]);
-                        int y=TypeConverter.h2si(data[4], data[5], data[6], data[7]);
-                        minx=Math.Min(x, minx);
-                        maxx=Math.Max(x, maxx);
-                        miny=Math.Min(y, miny);
-                        maxy=Math.Max(y, maxy);
-                        cells2[r.FormID]=new CellRecord(x, y);
-                        break;
-                    }
-                }
-            }
-
-            System.Drawing.Bitmap bmp=new System.Drawing.Bitmap((1+maxx-minx)*32 + 1, (1+maxy-miny)*32 + 1);
-            System.Drawing.Imaging.BitmapData bmpdata=bmp.LockBits(new System.Drawing.Rectangle(0, 0, bmp.Width, bmp.Height),
-                System.Drawing.Imaging.ImageLockMode.WriteOnly, System.Drawing.Imaging.PixelFormat.Format32bppRgb);
-            int[] pixels=new int[bmp.Width*bmp.Height];
-
-            int minh=int.MaxValue;
-            int maxh=int.MinValue;
-            foreach(GroupRecord gr3 in lands) {
-                byte[] data=gr3.GetData();
-                CellRecord cell=cells2[TypeConverter.h2i(data[0], data[1], data[2], data[3])];
-
-                Record land=null;
-                foreach(Record r in gr3.Records) {
-                    if(r.Name=="LAND") {
-                        land=r;
-                        break;
-                    }
-                }
-                if(land==null) continue;
-                foreach(SubRecord sr in land.SubRecords) {
-                    if(sr.Name=="VHGT") {
-                        data=sr.GetReadonlyData();
-                        int offset=4;
-                        int yheight=(int)TypeConverter.h2f(data[0], data[1], data[2], data[3]);
-                        int height;
-                        for(int y=0;y<33;y++) {
-                            height=yheight;
-                            yheight+=((sbyte)data[offset])*6;
-                            for(int x=0;x<33;x++) {
-                                height+=((sbyte)data[offset++])*6;
-                                minh=Math.Min(height, minh);
-                                maxh=Math.Max(height, maxh);
-                                pixels[(cell.x-minx)*32+x + ((cell.y-miny)*32+y)*bmp.Width]=height;
-                            }
-                        }
-                        break;
-                    }
-                }
-            }
-
-            //maxh=(maxh-minh)*255;
-            //for(int i=0;i<pixels.Length;i++) {
-            //    byte b=(byte)((pixels[i]-minh)/maxh);
-            //    pixels[i]=b + (b<<8) + (b<<16) + (b<<24);
-            //}
-
-            System.Runtime.InteropServices.Marshal.Copy(pixels, 0, bmpdata.Scan0, pixels.Length);
-            bmp.UnlockBits(bmpdata);
-            bmp.Save("heightmap.bmp");
-        }
-        */
         private void makeEsmToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            if (PluginTree.SelectedNode == null) return;
+            if (PluginTree.SelectedRecord == null) return;
 
-            TreeNode tn = PluginTree.SelectedNode;
-            while (!(tn.Tag is Plugin)) tn = tn.Parent;
-            Plugin p = (Plugin)tn.Tag;
-
-            if (p.Records.Count == 0 || p.Records[0].Name != "TES4")
+            var p = GetPluginFromNode(PluginTree.SelectedRecord);
+            var tes4 = p.Records.OfType<Record>().FirstOrDefault(x => x.Name == "TES4");
+            if (tes4 != null)
             {
                 MessageBox.Show("Plugin has no TES4 record");
                 return;
             }
-
-            Record tes4 = (Record)p.Records[0];
             if ((tes4.Flags1 & 1) == 1)
             {
                 MessageBox.Show("Plugin is already a master file");
@@ -733,17 +621,13 @@ namespace TESVSnip
             {
                 p.Save(SaveModDialog.FileName);
             }
-            if (p.Name != tn.Text) tn.Text = p.Name;
         }
 
         private void martigensToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            if (PluginTree.SelectedNode == null) return;
+            if (PluginTree.SelectedRecord == null) return;
 
-            TreeNode tn = PluginTree.SelectedNode;
-            while (!(tn.Tag is Plugin)) tn = tn.Parent;
-            Plugin p = (Plugin)tn.Tag;
-
+            var p = GetPluginFromNode(PluginTree.SelectedRecord);
 
             Form f = new Form();
             f.Text = "Replace";
@@ -761,13 +645,13 @@ namespace TESVSnip
             f.ShowDialog();
             string with = tb.Text;
 
-            Queue<Rec> recs = new Queue<Rec>(p.Records);
+            Queue<Rec> recs = new Queue<Rec>(p.Records.OfType<Rec>());
             while (recs.Count > 0)
             {
                 if (recs.Peek() is GroupRecord)
                 {
                     GroupRecord gr = (GroupRecord)recs.Dequeue();
-                    for (int i = 0; i < gr.Records.Count; i++) recs.Enqueue(gr.Records[i]);
+                    for (int i = 0; i < gr.Records.Count; i++) recs.Enqueue(gr.Records[i] as Rec);
                 }
                 else
                 {
@@ -799,10 +683,7 @@ namespace TESVSnip
         // try to reorder subrecords to match the structure file.
         private void reorderSubrecordsToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            if (!ValidateMakeChange())
-                return;
-
-            var rec = Selection.Record;
+            var rec = Selection.Record as Record;
             if (rec == null || RecordStructure.Records == null) return;
             if (!RecordStructure.Records.ContainsKey(rec.Name)) return;
 
@@ -853,9 +734,7 @@ namespace TESVSnip
 
         private void createRecordStructureXmlToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            TreeNode tn = PluginTree.SelectedNode;
-            while (!(tn.Tag is Plugin)) tn = tn.Parent;
-            Plugin p = (Plugin)tn.Tag;
+            var p = GetPluginFromNode(PluginTree.SelectedRecord);
 
             TESVSnip.Data.RecordBuilder builder = new TESVSnip.Data.RecordBuilder();
             builder.FormLookup = new dFormIDLookupR(this.GetRecordByID);

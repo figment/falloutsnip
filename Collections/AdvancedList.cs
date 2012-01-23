@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using System.Runtime.Serialization;
 using TESVSnip.Data;
@@ -15,7 +16,7 @@ namespace TESVSnip.Collections.Generic
     [Persistable(Flags = PersistType.DeclaredOnly), Serializable]
     public class AdvancedList<T> : BindingList<T>, IBindingListView, ISerializable, IPostSerializationCallback
     {
-        bool allowSort = true;
+        bool _allowSort = true;
         public AdvancedList()
         {
 
@@ -25,10 +26,11 @@ namespace TESVSnip.Collections.Generic
         {
         }
 
-        public AdvancedList(IList<T> list) : base(list != null ? list : new T[0])
+        public AdvancedList(IList<T> list) : base(list ?? new T[0])
         {
 
         }
+
 		/// <summary>
 		///	Deserialization constructor
 		/// </summary>
@@ -37,7 +39,7 @@ namespace TESVSnip.Collections.Generic
             var items = info.GetValue("Items", typeof(T[])) as T[];
             if (items != null)
                 this.AddRange(items);
-            TESVSnip.Data.PersistAssist.Deserialize(this, info, context);
+            PersistAssist.Deserialize(this, info, context);
 		}
 
 		#region ISerializable Members
@@ -45,7 +47,7 @@ namespace TESVSnip.Collections.Generic
 		void ISerializable.GetObjectData(SerializationInfo info, StreamingContext context)
 		{
             info.AddValue("Items", this.ToArray());
-            TESVSnip.Data.PersistAssist.Serialize(this, info, context);
+            PersistAssist.Serialize(this, info, context);
 		}
 
         bool IPostSerializationCallback.NeedCallback { get {return true;} }
@@ -57,15 +59,15 @@ namespace TESVSnip.Collections.Generic
         
 		#endregion
 
-        protected override object AddNewCore()
+        public virtual bool RemoveRange(IEnumerable<T> items)
         {
-            return base.AddNewCore();
+            return items.Aggregate(false, (current, item) => current | this.Remove(item));
         }
 
         public virtual bool AllowSorting
         {
-            get { return allowSort; }
-            set { allowSort = value; }
+            get { return _allowSort; }
+            set { _allowSort = value; }
         }
 
         protected override bool IsSortedCore
@@ -80,7 +82,7 @@ namespace TESVSnip.Collections.Generic
 
         protected override bool SupportsSortingCore
         {
-            get { return allowSort; }
+            get { return _allowSort; }
         }
 
         protected override ListSortDirection SortDirectionCore
@@ -98,7 +100,7 @@ namespace TESVSnip.Collections.Generic
 
         protected override void ApplySortCore(PropertyDescriptor prop, ListSortDirection direction)
         {
-            if (allowSort)
+            if (_allowSort)
             {
                 ListSortDescription[] arr = {
                 new ListSortDescription(prop, direction)
@@ -110,7 +112,7 @@ namespace TESVSnip.Collections.Generic
         PropertyComparerCollection<T> sorts;
         public void ApplySort(ListSortDescriptionCollection sortCollection)
         {
-            if (allowSort)
+            if (_allowSort)
             {
                 bool oldRaise = RaiseListChangedEvents;
                 RaiseListChangedEvents = false;

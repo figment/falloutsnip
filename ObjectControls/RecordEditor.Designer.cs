@@ -28,10 +28,12 @@
         /// </summary>
         private void InitializeComponent()
         {
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(RecordEditor));
             this.horizontalSplitContainer = new System.Windows.Forms.SplitContainer();
             this.verticalSplitContainer = new System.Windows.Forms.SplitContainer();
             this.comboBox1 = new TESVSnip.Windows.Controls.FlagComboBox();
             this.tbFlags3 = new System.Windows.Forms.TextBox();
+            this.textBox1 = new System.Windows.Forms.TextBox();
             this.tbFlags2 = new System.Windows.Forms.TextBox();
             this.tbFormID = new System.Windows.Forms.TextBox();
             this.label3 = new System.Windows.Forms.Label();
@@ -41,7 +43,6 @@
             this.tbName = new System.Windows.Forms.TextBox();
             this.subRecordEditor = new TESVSnip.Forms.SubrecordListEditor();
             this.button1 = new TESVSnip.Forms.SubrecordEditor();
-            this.textBox1 = new System.Windows.Forms.TextBox();
             this.horizontalSplitContainer.Panel1.SuspendLayout();
             this.horizontalSplitContainer.Panel2.SuspendLayout();
             this.horizontalSplitContainer.SuspendLayout();
@@ -52,32 +53,28 @@
             // 
             // horizontalSplitContainer
             // 
-            this.horizontalSplitContainer.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.horizontalSplitContainer.Location = new System.Drawing.Point(0, 0);
+            resources.ApplyResources(this.horizontalSplitContainer, "horizontalSplitContainer");
             this.horizontalSplitContainer.Name = "horizontalSplitContainer";
             // 
             // horizontalSplitContainer.Panel1
             // 
+            resources.ApplyResources(this.horizontalSplitContainer.Panel1, "horizontalSplitContainer.Panel1");
             this.horizontalSplitContainer.Panel1.Controls.Add(this.verticalSplitContainer);
             // 
             // horizontalSplitContainer.Panel2
             // 
+            resources.ApplyResources(this.horizontalSplitContainer.Panel2, "horizontalSplitContainer.Panel2");
             this.horizontalSplitContainer.Panel2.Controls.Add(this.button1);
-            this.horizontalSplitContainer.Size = new System.Drawing.Size(626, 351);
-            this.horizontalSplitContainer.SplitterDistance = 222;
-            this.horizontalSplitContainer.TabIndex = 0;
             // 
             // verticalSplitContainer
             // 
-            this.verticalSplitContainer.Dock = System.Windows.Forms.DockStyle.Fill;
+            resources.ApplyResources(this.verticalSplitContainer, "verticalSplitContainer");
             this.verticalSplitContainer.FixedPanel = System.Windows.Forms.FixedPanel.Panel1;
-            this.verticalSplitContainer.IsSplitterFixed = true;
-            this.verticalSplitContainer.Location = new System.Drawing.Point(0, 0);
             this.verticalSplitContainer.Name = "verticalSplitContainer";
-            this.verticalSplitContainer.Orientation = System.Windows.Forms.Orientation.Horizontal;
             // 
             // verticalSplitContainer.Panel1
             // 
+            resources.ApplyResources(this.verticalSplitContainer.Panel1, "verticalSplitContainer.Panel1");
             this.verticalSplitContainer.Panel1.Controls.Add(this.comboBox1);
             this.verticalSplitContainer.Panel1.Controls.Add(this.tbFlags3);
             this.verticalSplitContainer.Panel1.Controls.Add(this.textBox1);
@@ -91,141 +88,86 @@
             // 
             // verticalSplitContainer.Panel2
             // 
+            resources.ApplyResources(this.verticalSplitContainer.Panel2, "verticalSplitContainer.Panel2");
             this.verticalSplitContainer.Panel2.Controls.Add(this.subRecordEditor);
-            this.verticalSplitContainer.Size = new System.Drawing.Size(222, 351);
-            this.verticalSplitContainer.SplitterDistance = 69;
-            this.verticalSplitContainer.TabIndex = 0;
             // 
             // comboBox1
             // 
+            resources.ApplyResources(this.comboBox1, "comboBox1");
             this.comboBox1.AllowResizeDropDown = true;
-            this.comboBox1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
             this.comboBox1.CheckOnClick = true;
             this.comboBox1.ControlSize = new System.Drawing.Size(47, 16);
             this.comboBox1.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawVariable;
             this.comboBox1.DropDownSizeMode = TESVSnip.Windows.Controls.CustomComboBox.SizeMode.UseDropDownSize;
             this.comboBox1.DropSize = new System.Drawing.Size(121, 106);
             this.comboBox1.FormattingEnabled = true;
-            this.comboBox1.Location = new System.Drawing.Point(105, 24);
             this.comboBox1.Name = "comboBox1";
-            this.comboBox1.Size = new System.Drawing.Size(114, 21);
-            this.comboBox1.TabIndex = 50;
             this.comboBox1.ValueSeparator = ",";
             // 
             // tbFlags3
             // 
-            this.tbFlags3.Location = new System.Drawing.Point(150, 46);
-            this.tbFlags3.MaxLength = 8;
+            resources.ApplyResources(this.tbFlags3, "tbFlags3");
             this.tbFlags3.Name = "tbFlags3";
-            this.tbFlags3.Size = new System.Drawing.Size(69, 20);
-            this.tbFlags3.TabIndex = 49;
-            this.tbFlags3.Text = "00000000";
-            // 
-            // tbFlags2
-            // 
-            this.tbFlags2.Location = new System.Drawing.Point(42, 46);
-            this.tbFlags2.MaxLength = 8;
-            this.tbFlags2.Name = "tbFlags2";
-            this.tbFlags2.Size = new System.Drawing.Size(57, 20);
-            this.tbFlags2.TabIndex = 48;
-            this.tbFlags2.Text = "00000000";
-            // 
-            // tbFormID
-            // 
-            this.tbFormID.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.tbFormID.Location = new System.Drawing.Point(150, 3);
-            this.tbFormID.MaxLength = 8;
-            this.tbFormID.Name = "tbFormID";
-            this.tbFormID.Size = new System.Drawing.Size(69, 20);
-            this.tbFormID.TabIndex = 46;
-            this.tbFormID.Text = "00000000";
-            // 
-            // label3
-            // 
-            this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(112, 49);
-            this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(38, 13);
-            this.label3.TabIndex = 45;
-            this.label3.Text = "Flags3";
-            // 
-            // label2
-            // 
-            this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(1, 49);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(38, 13);
-            this.label2.TabIndex = 45;
-            this.label2.Text = "Flags2";
-            // 
-            // label1
-            // 
-            this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(1, 28);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(38, 13);
-            this.label1.TabIndex = 45;
-            this.label1.Text = "Flags1";
-            // 
-            // label4
-            // 
-            this.label4.AutoSize = true;
-            this.label4.Location = new System.Drawing.Point(1, 6);
-            this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(35, 13);
-            this.label4.TabIndex = 45;
-            this.label4.Text = "Name";
-            // 
-            // tbName
-            // 
-            this.tbName.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.tbName.CharacterCasing = System.Windows.Forms.CharacterCasing.Upper;
-            this.tbName.Location = new System.Drawing.Point(42, 3);
-            this.tbName.MaxLength = 4;
-            this.tbName.Name = "tbName";
-            this.tbName.Size = new System.Drawing.Size(108, 20);
-            this.tbName.TabIndex = 44;
-            // 
-            // subRecordEditor
-            // 
-            this.subRecordEditor.AutoSize = true;
-            this.subRecordEditor.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.subRecordEditor.Location = new System.Drawing.Point(0, 0);
-            this.subRecordEditor.Name = "subRecordEditor";
-            this.subRecordEditor.Owner = null;
-            this.subRecordEditor.Plugin = null;
-            this.subRecordEditor.Size = new System.Drawing.Size(222, 278);
-            this.subRecordEditor.SubRecord = null;
-            this.subRecordEditor.TabIndex = 0;
-            // 
-            // button1
-            // 
-            this.button1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.button1.Enabled = false;
-            this.button1.Location = new System.Drawing.Point(0, 0);
-            this.button1.MinimumSize = new System.Drawing.Size(300, 200);
-            this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(400, 351);
-            this.button1.TabIndex = 0;
             // 
             // textBox1
             // 
-            this.textBox1.Location = new System.Drawing.Point(42, 24);
-            this.textBox1.MaxLength = 8;
+            resources.ApplyResources(this.textBox1, "textBox1");
             this.textBox1.Name = "textBox1";
-            this.textBox1.Size = new System.Drawing.Size(57, 20);
-            this.textBox1.TabIndex = 48;
-            this.textBox1.Text = "00000000";
+            // 
+            // tbFlags2
+            // 
+            resources.ApplyResources(this.tbFlags2, "tbFlags2");
+            this.tbFlags2.Name = "tbFlags2";
+            // 
+            // tbFormID
+            // 
+            resources.ApplyResources(this.tbFormID, "tbFormID");
+            this.tbFormID.Name = "tbFormID";
+            // 
+            // label3
+            // 
+            resources.ApplyResources(this.label3, "label3");
+            this.label3.Name = "label3";
+            // 
+            // label2
+            // 
+            resources.ApplyResources(this.label2, "label2");
+            this.label2.Name = "label2";
+            // 
+            // label1
+            // 
+            resources.ApplyResources(this.label1, "label1");
+            this.label1.Name = "label1";
+            // 
+            // label4
+            // 
+            resources.ApplyResources(this.label4, "label4");
+            this.label4.Name = "label4";
+            // 
+            // tbName
+            // 
+            resources.ApplyResources(this.tbName, "tbName");
+            this.tbName.CharacterCasing = System.Windows.Forms.CharacterCasing.Upper;
+            this.tbName.Name = "tbName";
+            // 
+            // subRecordEditor
+            // 
+            resources.ApplyResources(this.subRecordEditor, "subRecordEditor");
+            this.subRecordEditor.MinimumSize = new System.Drawing.Size(200, 120);
+            this.subRecordEditor.Name = "subRecordEditor";
+            // 
+            // button1
+            // 
+            resources.ApplyResources(this.button1, "button1");
+            this.button1.MinimumSize = new System.Drawing.Size(300, 200);
+            this.button1.Name = "button1";
             // 
             // RecordEditor
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
+            resources.ApplyResources(this, "$this");
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.Controls.Add(this.horizontalSplitContainer);
             this.Name = "RecordEditor";
-            this.Size = new System.Drawing.Size(626, 351);
             this.horizontalSplitContainer.Panel1.ResumeLayout(false);
             this.horizontalSplitContainer.Panel2.ResumeLayout(false);
             this.horizontalSplitContainer.ResumeLayout(false);

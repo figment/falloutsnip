@@ -28,40 +28,46 @@
         /// </summary>
         private void InitializeComponent()
         {
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(OptionalElement));
             this.chkUseValue = new System.Windows.Forms.CheckBox();
             this.controlPanel = new System.Windows.Forms.Panel();
+            ((System.ComponentModel.ISupportInitialize)(this.Error)).BeginInit();
             this.SuspendLayout();
+            // 
+            // Error
+            // 
+            resources.ApplyResources(this.Error, "Error");
             // 
             // chkUseValue
             // 
-            this.chkUseValue.AutoSize = true;
-            this.chkUseValue.Location = new System.Drawing.Point(4, 4);
+            resources.ApplyResources(this.chkUseValue, "chkUseValue");
+            this.Error.SetError(this.chkUseValue, resources.GetString("chkUseValue.Error"));
+            this.Error.SetIconAlignment(this.chkUseValue, ((System.Windows.Forms.ErrorIconAlignment)(resources.GetObject("chkUseValue.IconAlignment"))));
+            this.Error.SetIconPadding(this.chkUseValue, ((int)(resources.GetObject("chkUseValue.IconPadding"))));
             this.chkUseValue.Name = "chkUseValue";
-            this.chkUseValue.Size = new System.Drawing.Size(99, 17);
-            this.chkUseValue.TabIndex = 0;
-            this.chkUseValue.Text = "Use this value?";
             this.chkUseValue.UseVisualStyleBackColor = true;
             this.chkUseValue.CheckedChanged += new System.EventHandler(this.chkUseValue_CheckedChanged);
             // 
             // controlPanel
             // 
-            this.controlPanel.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.controlPanel.Location = new System.Drawing.Point(0, 21);
+            resources.ApplyResources(this.controlPanel, "controlPanel");
+            this.Error.SetError(this.controlPanel, resources.GetString("controlPanel.Error"));
+            this.Error.SetIconAlignment(this.controlPanel, ((System.Windows.Forms.ErrorIconAlignment)(resources.GetObject("controlPanel.IconAlignment"))));
+            this.Error.SetIconPadding(this.controlPanel, ((int)(resources.GetObject("controlPanel.IconPadding"))));
             this.controlPanel.Name = "controlPanel";
-            this.controlPanel.Size = new System.Drawing.Size(400, 25);
-            this.controlPanel.TabIndex = 1;
             // 
             // OptionalElement
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
+            resources.ApplyResources(this, "$this");
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.Controls.Add(this.controlPanel);
             this.Controls.Add(this.chkUseValue);
+            this.Error.SetError(this, resources.GetString("$this.Error"));
+            this.Error.SetIconAlignment(this, ((System.Windows.Forms.ErrorIconAlignment)(resources.GetObject("$this.IconAlignment"))));
+            this.Error.SetIconPadding(this, ((int)(resources.GetObject("$this.IconPadding"))));
             this.MinimumSize = new System.Drawing.Size(250, 46);
             this.Name = "OptionalElement";
-            this.Size = new System.Drawing.Size(400, 46);
+            ((System.ComponentModel.ISupportInitialize)(this.Error)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 

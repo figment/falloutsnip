@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Xml;
 using TESVSnip;
+using System.Linq;
 using BinaryWriter=System.IO.BinaryWriter;
 using MemoryStream=System.IO.MemoryStream;
 
@@ -253,13 +254,14 @@ namespace ScriptCompiler {
             List<Pair<uint, Record>> refs=new List<Pair<uint, Record>>();
             Dictionary<uint, uint> RefLookupTable=new Dictionary<uint, uint>();
             for(uint i=0;i<plugins.Length-1;i++) {
-                if(plugins[i]==null) continue;
-                if(plugins[i].Records.Count==0||plugins[i].Records[0].Name!="TES4") continue;
-                mask=0;
-                foreach(SubRecord sr in ((Record)plugins[i].Records[0]).SubRecords) if(sr.Name=="MAST") mask++;
+                var plugin = plugins[i];
+                if(plugin==null) continue;
+                if (plugin.Records.OfType<BaseRecord>().FirstOrDefault(x => x.Name == "TES4") == null) continue;
+
+                mask = (uint)plugin.Masters.Count();
                 mask <<= 24;
                 uint id=i<<24;
-                foreach(Rec r in plugins[i].Records) RecursePlugin(r, mask, id, records, quests, refs);
+                foreach(Rec r in plugin.Records) RecursePlugin(r, mask, id, records, quests, refs);
 
                 foreach(Pair<uint, Record> recs in refs) {
                     if(RefLookupTable.ContainsKey(recs.Key)&&RefLookupTable[recs.Key]!=0) quests.Add(new Pair<uint, Record>(RefLookupTable[recs.Key], recs.Value));

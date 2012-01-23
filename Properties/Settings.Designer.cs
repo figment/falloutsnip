@@ -97,30 +97,6 @@ namespace TESVSnip.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("226")]
-        public int MainHorzSplitterPct {
-            get {
-                return ((int)(this["MainHorzSplitterPct"]));
-            }
-            set {
-                this["MainHorzSplitterPct"] = value;
-            }
-        }
-        
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("222")]
-        public int MainVertSplitterPct {
-            get {
-                return ((int)(this["MainVertSplitterPct"]));
-            }
-            set {
-                this["MainVertSplitterPct"] = value;
-            }
-        }
-        
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("REGN;NAVI;WRLD;DIAL;CELL;IMAD;WTHR")]
         public string FilteredESMRecords {
             get {

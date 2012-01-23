@@ -28,39 +28,45 @@
         /// </summary>
         private void InitializeComponent()
         {
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(LStringElement));
             this.chkUseText = new System.Windows.Forms.CheckBox();
             this.txtString = new System.Windows.Forms.TextBox();
             ((System.ComponentModel.ISupportInitialize)(this.Error)).BeginInit();
             this.SuspendLayout();
             // 
+            // Error
+            // 
+            resources.ApplyResources(this.Error, "Error");
+            // 
             // chkUseText
             // 
-            this.chkUseText.AutoSize = true;
-            this.chkUseText.Location = new System.Drawing.Point(26, 30);
+            resources.ApplyResources(this.chkUseText, "chkUseText");
+            this.Error.SetError(this.chkUseText, resources.GetString("chkUseText.Error"));
+            this.Error.SetIconAlignment(this.chkUseText, ((System.Windows.Forms.ErrorIconAlignment)(resources.GetObject("chkUseText.IconAlignment"))));
+            this.Error.SetIconPadding(this.chkUseText, ((int)(resources.GetObject("chkUseText.IconPadding"))));
             this.chkUseText.Name = "chkUseText";
-            this.chkUseText.Size = new System.Drawing.Size(15, 14);
-            this.chkUseText.TabIndex = 5;
             this.chkUseText.UseVisualStyleBackColor = true;
             // 
             // txtString
             // 
-            this.txtString.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.txtString.Location = new System.Drawing.Point(66, 27);
+            resources.ApplyResources(this.txtString, "txtString");
+            this.Error.SetError(this.txtString, resources.GetString("txtString.Error"));
+            this.Error.SetIconAlignment(this.txtString, ((System.Windows.Forms.ErrorIconAlignment)(resources.GetObject("txtString.IconAlignment"))));
+            this.Error.SetIconPadding(this.txtString, ((int)(resources.GetObject("txtString.IconPadding"))));
             this.txtString.Name = "txtString";
-            this.txtString.Size = new System.Drawing.Size(331, 20);
-            this.txtString.TabIndex = 6;
             this.txtString.Validated += new System.EventHandler(this.txtString_Validated);
             // 
             // LStringElement
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
+            resources.ApplyResources(this, "$this");
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.Controls.Add(this.txtString);
             this.Controls.Add(this.chkUseText);
+            this.Error.SetError(this, resources.GetString("$this.Error"));
+            this.Error.SetIconAlignment(this, ((System.Windows.Forms.ErrorIconAlignment)(resources.GetObject("$this.IconAlignment"))));
+            this.Error.SetIconPadding(this, ((int)(resources.GetObject("$this.IconPadding"))));
             this.MinimumSize = new System.Drawing.Size(200, 48);
             this.Name = "LStringElement";
-            this.Size = new System.Drawing.Size(400, 48);
             this.Controls.SetChildIndex(this.chkUseText, 0);
             this.Controls.SetChildIndex(this.txtString, 0);
             ((System.ComponentModel.ISupportInitialize)(this.Error)).EndInit();
