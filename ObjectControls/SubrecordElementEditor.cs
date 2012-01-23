@@ -35,8 +35,6 @@ namespace TESVSnip.Forms
             controlMap.Clear();
             this.fpanel1.Controls.Clear();
             this.Enabled = false;
-            this.bSave.Enabled = false;
-            this.bCancel.Enabled = false;
         }
 
         private Plugin GetPluginFromNode(BaseRecord node)
@@ -49,132 +47,159 @@ namespace TESVSnip.Forms
             return null;
         }
 
-        void SetContext(SelectionContext context)
+        public void SetContext(Record r, SubRecord sr, bool hexView)
         {
-            if (context == null)
-            {
-                ClearControl();
+            if (this.r == r && this.sr == sr)
                 return;
-            }
 
-            r = context.Record as Record;
+            ClearControl();
+            if (r == null || sr == null)
+                return;
+
+            this.r = r;
+            this.sr = sr;
             var p = GetPluginFromNode(r);
-            sr = context.SubRecord;
-            ss = context.SubRecord.Structure;
+            ss = sr.Structure;
             SuspendLayout();
-
+            fpanel1.SuspendLayout();
+            fpanel1.Width = this.Parent.Width;
             controlMap.Clear();
 
             // walk each element in standard fashion
             int panelOffset = 0;
             try
             {
-                foreach (var elem in ss.elements)
+                // default to blob if no elements
+                if (ss == null || ss.elements == null)
                 {
-                    Control c = null;
-                    if (elem.options != null && elem.options.Length > 1)
-                    {
-                        c = new OptionsElement();
-                    }
-                    else if (elem.flags != null && elem.flags.Length > 1)
-                    {
-                        c = new FlagsElement();
-                    }
-                    else
-                    {
-                        switch (elem.type)
-                        {
-                            case ElementValueType.LString:
-                                c = new LStringElement();
-                                break;
-                            case ElementValueType.FormID:
-                                c = new FormIDElement();
-                                break;
-                            default:
-                                c = new TextElement();
-                                break;
-                        }
-                    }
-                    if (c is IElementControl)
-                    {
-                        var ec = c as IElementControl;
-                        ec.formIDLookup = new dFormIDLookupR(p.GetRecordByID);
-                        ec.formIDScan = new dFormIDScanRec(p.EnumerateRecords);
-                        ec.strIDLookup = new dLStringLookup(p.LookupFormStrings);
-                        ec.Element = elem;
+                    var c = new HexElement();
+                    c.Left = 8;
+                    c.Width = fpanel1.Width - 16;
+                    c.Top = panelOffset;
+                    c.Anchor = c.Anchor | AnchorStyles.Left | AnchorStyles.Right;
 
-                        if (elem.repeat > 0)
-                        {
-                            var ge = new RepeatingElement();
-                            c = ge;
-                            c.Left = 8;
-                            c.Width = fpanel1.Width - 16;
-                            c.Top = panelOffset;
-                            c.Anchor = c.Anchor | AnchorStyles.Left | AnchorStyles.Right;
-
-                            ge.InnerControl = ec;
-                            ge.Element = elem;
-                            ec = ge;
-                        }
-                        else if (elem.optional)
-                        {
-                            var re = new OptionalElement();
-                            c = re;
-                            c.Left = 8;
-                            c.Width = fpanel1.Width - 16;
-                            c.Top = panelOffset;
-                            c.Anchor = c.Anchor | AnchorStyles.Left | AnchorStyles.Right;
-
-                            re.InnerControl = ec;
-                            re.Element = elem;
-                            ec = re;
-                            c = re;
-                        }
-                        else
-                        {
-                            c.Left = 8;
-                            c.Width = fpanel1.Width - 16;
-                            c.Top = panelOffset;
-                            c.Anchor = c.Anchor | AnchorStyles.Left | AnchorStyles.Right;
-                        }
-                        c.MinimumSize = c.Size;
-
-                        controlMap.Add(elem, ec);
+                    var elem = r.EnumerateElements(sr, true).FirstOrDefault();
+                    if (elem != null)
+                    {
+                        controlMap.Add(elem.Structure, c);
                         this.fpanel1.Controls.Add(c);
-                        panelOffset = c.Bottom;
+                        c.Data = elem.Data;
                     }
                 }
-
-                foreach (Element elem in r.EnumerateElements(sr, true))
+                else
                 {
-                    var es = elem.Structure;
-
-                    IElementControl c;
-                    if (controlMap.TryGetValue(es, out c))
+                    foreach (var elem in ss.elements)
                     {
-                        if (c is IGroupedElementControl)
+                        Control c = null;
+                        if (elem.options != null && elem.options.Length > 1)
                         {
-                            var gc = c as IGroupedElementControl;
-                            gc.Elements.Add(elem.Data);
+                            c = new OptionsElement();
+                        }
+                        else if (elem.flags != null && elem.flags.Length > 1)
+                        {
+                            c = new FlagsElement();
                         }
                         else
                         {
-                            c.Data = elem.Data;
+                            switch (elem.type)
+                            {
+                                case ElementValueType.LString:
+                                    c = new LStringElement();
+                                    break;
+                                case ElementValueType.FormID:
+                                    c = new FormIDElement();
+                                    break;
+                                case ElementValueType.Blob:
+                                    c = new HexElement();
+                                    break;
+                                default:
+                                    c = new TextElement();
+                                    break;
+                            }
+                        }
+                        if (c is IElementControl)
+                        {
+                            var ec = c as IElementControl;
+                            ec.formIDLookup = new dFormIDLookupR(p.GetRecordByID);
+                            ec.formIDScan = new dFormIDScanRec(p.EnumerateRecords);
+                            ec.strIDLookup = new dLStringLookup(p.LookupFormStrings);
+                            ec.Element = elem;
+
+                            if (elem.repeat > 0)
+                            {
+                                var ge = new RepeatingElement();
+                                c = ge;
+                                c.Left = 8;
+                                c.Width = fpanel1.Width - 16;
+                                c.Top = panelOffset;
+                                c.Anchor = c.Anchor | AnchorStyles.Left | AnchorStyles.Right;
+
+                                ge.InnerControl = ec;
+                                ge.Element = elem;
+                                ec = ge;
+                            }
+                            else if (elem.optional)
+                            {
+                                var re = new OptionalElement();
+                                c = re;
+                                c.Left = 8;
+                                c.Width = fpanel1.Width - 16;
+                                c.Top = panelOffset;
+                                c.Anchor = c.Anchor | AnchorStyles.Left | AnchorStyles.Right;
+
+                                re.InnerControl = ec;
+                                re.Element = elem;
+                                ec = re;
+                                c = re;
+                            }
+                            else
+                            {
+                                c.Left = 8;
+                                c.Width = fpanel1.Width - 16;
+                                c.Top = panelOffset;
+                                c.Anchor = c.Anchor | AnchorStyles.Left | AnchorStyles.Right;
+                            }
+                            c.MinimumSize = c.Size;
+
+                            controlMap.Add(elem, ec);
+                            this.fpanel1.Controls.Add(c);
+                            panelOffset = c.Bottom;
+                        }
+                    }
+
+                    foreach (Element elem in r.EnumerateElements(sr, true))
+                    {
+                        var es = elem.Structure;
+
+                        IElementControl c;
+                        if (controlMap.TryGetValue(es, out c))
+                        {
+                            if (c is IGroupedElementControl)
+                            {
+                                var gc = c as IGroupedElementControl;
+                                gc.Elements.Add(elem.Data);
+                            }
+                            else
+                            {
+                                c.Data = elem.Data;
+                            }
                         }
                     }
                 }
+                this.Enabled = true;
             }
             catch
             {
                 strWarnOnSave = "The subrecord doesn't appear to conform to the expected structure.\nThe formatted information may be incorrect.";
-                this.Error.SetError(this.bSave, strWarnOnSave);
-                this.Error.SetIconAlignment(this.bSave, ErrorIconAlignment.MiddleLeft);
-                this.UpdateDefaultButton();
             }
-            ResumeLayout();
+            finally
+            {
+                fpanel1.ResumeLayout();
+                ResumeLayout();                
+            }
         }
 
-        private void bSave_Click(object sender, EventArgs e)
+        public void Save()
         {
             // warn user about data corruption.  But this may be case of fixing using tesvsnip to fix corruption so still allow
             if (strWarnOnSave != null)
@@ -194,13 +219,14 @@ namespace TESVSnip.Forms
                     if (c is IGroupedElementControl)
                     {
                         var gc = c as IGroupedElementControl;
-                        foreach (var elem in gc.Elements)
+                        foreach (var elem in gc.Elements.Where(elem => elem.Count> 0))
                             str.Write(elem.Array, elem.Offset, elem.Count);
                     }
                     else
                     {
                         var elem = c.Data;
-                        str.Write(elem.Array, elem.Offset, elem.Count);
+                        if (elem.Count > 0) 
+                            str.Write(elem.Array, elem.Offset, elem.Count);
                     }
                 }
                 byte[] newData = str.ToArray();
@@ -221,11 +247,6 @@ namespace TESVSnip.Forms
             // Validate buffers are the same length.
             // This also ensures that the count does not exceed the length of either buffer.  
             return b1.Length == b2.Length && memcmp(b1, b2, b1.Length) == 0;
-        }
-
-        private void bCancel_Click(object sender, EventArgs e)
-        {
-
         }
 
         private void fpanel1_Resize(object sender, EventArgs e)
@@ -271,12 +292,6 @@ namespace TESVSnip.Forms
                     return true;
             }
             return false;
-        }
-
-        private void NewMediumLevelRecordEditor_Shown(object sender, EventArgs e)
-        {
-            // forward focus to first child control
-            FocusFirstControl(this.fpanel1);
         }
     }
 }

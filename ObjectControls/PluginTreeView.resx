@@ -117,316 +117,307 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="&gt;&gt;toolStripMenuItem5.Type" xml:space="preserve">
-    <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;toolStripMenuItem5.Name" xml:space="preserve">
-    <value>toolStripMenuItem5</value>
-  </data>
+  <metadata name="imageSmallTreeList.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+    <value>316, 17</value>
+  </metadata>
   <assembly alias="System.Drawing" name="System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
-  <data name="toolStripMenuItem6.Size" type="System.Drawing.Size, System.Drawing">
+  <data name="imageSmallTreeList.ImageSize" type="System.Drawing.Size, System.Drawing">
+    <value>16, 16</value>
+  </data>
+  <metadata name="toolStripRecord.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+    <value>17, 17</value>
+  </metadata>
+  <data name="toolStripRecordBack.ImageTransparentColor" type="System.Drawing.Color, System.Drawing">
+    <value>Magenta</value>
+  </data>
+  <data name="toolStripRecordBack.Size" type="System.Drawing.Size, System.Drawing">
+    <value>32, 22</value>
+  </data>
+  <data name="toolStripRecordBack.Text" xml:space="preserve">
+    <value>Back (Alt+Left)</value>
+  </data>
+  <data name="toolStripRecordBack.ToolTipText" xml:space="preserve">
+    <value>Back (Alt+Left)</value>
+  </data>
+  <data name="toolStripRecordNext.ImageTransparentColor" type="System.Drawing.Color, System.Drawing">
+    <value>Magenta</value>
+  </data>
+  <data name="toolStripRecordNext.Size" type="System.Drawing.Size, System.Drawing">
+    <value>32, 22</value>
+  </data>
+  <data name="toolStripRecordNext.Text" xml:space="preserve">
+    <value>Next (Alt+Right)</value>
+  </data>
+  <data name="toolStripRecordNext.ToolTipText" xml:space="preserve">
+    <value>Next (Alt+Right)</value>
+  </data>
+  <data name="toolStripRecordPaste.ImageTransparentColor" type="System.Drawing.Color, System.Drawing">
+    <value>Magenta</value>
+  </data>
+  <data name="toolStripRecordPaste.Size" type="System.Drawing.Size, System.Drawing">
+    <value>23, 22</value>
+  </data>
+  <data name="toolStripRecordPaste.Text" xml:space="preserve">
+    <value>Paste</value>
+  </data>
+  <data name="toolStripRecordCopy.ImageTransparentColor" type="System.Drawing.Color, System.Drawing">
+    <value>Magenta</value>
+  </data>
+  <data name="toolStripRecordCopy.Size" type="System.Drawing.Size, System.Drawing">
+    <value>23, 22</value>
+  </data>
+  <data name="toolStripRecordCopy.Text" xml:space="preserve">
+    <value>Copy</value>
+  </data>
+  <data name="toolStripRecordText.Size" type="System.Drawing.Size, System.Drawing">
+    <value>0, 22</value>
+  </data>
+  <data name="toolStripRecord.Location" type="System.Drawing.Point, System.Drawing">
+    <value>0, 0</value>
+  </data>
+  <data name="toolStripRecord.Size" type="System.Drawing.Size, System.Drawing">
+    <value>292, 25</value>
+  </data>
+  <assembly alias="mscorlib" name="mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
+  <data name="toolStripRecord.TabIndex" type="System.Int32, mscorlib">
+    <value>3</value>
+  </data>
+  <data name="toolStripRecord.Text" xml:space="preserve">
+    <value>Record Tool Strip</value>
+  </data>
+  <data name="&gt;&gt;toolStripRecord.Name" xml:space="preserve">
+    <value>toolStripRecord</value>
+  </data>
+  <data name="&gt;&gt;toolStripRecord.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ToolStrip, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;toolStripRecord.Parent" xml:space="preserve">
+    <value>$this</value>
+  </data>
+  <data name="&gt;&gt;toolStripRecord.ZOrder" xml:space="preserve">
+    <value>2</value>
+  </data>
+  <metadata name="contextMenuRecord.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+    <value>154, 17</value>
+  </metadata>
+  <data name="browseToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
+    <value>121, 22</value>
+  </data>
+  <data name="browseToolStripMenuItem.Text" xml:space="preserve">
+    <value>&amp;Browse...</value>
+  </data>
+  <data name="contextMenuRecordAddMaster.Size" type="System.Drawing.Size, System.Drawing">
+    <value>162, 22</value>
+  </data>
+  <data name="contextMenuRecordAddMaster.Text" xml:space="preserve">
+    <value>Add &amp;Master</value>
+  </data>
+  <data name="contextMenuRecordEdit.Size" type="System.Drawing.Size, System.Drawing">
+    <value>162, 22</value>
+  </data>
+  <data name="contextMenuRecordEdit.Text" xml:space="preserve">
+    <value>Edit...</value>
+  </data>
+  <data name="contextMenuRecordCopy.Size" type="System.Drawing.Size, System.Drawing">
+    <value>162, 22</value>
+  </data>
+  <data name="contextMenuRecordCopy.Text" xml:space="preserve">
+    <value>&amp;Copy</value>
+  </data>
+  <data name="contextMenuRecordCopyTo.Size" type="System.Drawing.Size, System.Drawing">
+    <value>162, 22</value>
+  </data>
+  <data name="contextMenuRecordCopyTo.Text" xml:space="preserve">
+    <value>Copy &amp;To</value>
+  </data>
+  <data name="contextMenuRecordDelete.Size" type="System.Drawing.Size, System.Drawing">
+    <value>162, 22</value>
+  </data>
+  <data name="contextMenuRecordDelete.Text" xml:space="preserve">
+    <value>&amp;Delete</value>
+  </data>
+  <data name="toolStripMenuItem3.Size" type="System.Drawing.Size, System.Drawing">
+    <value>159, 22</value>
+  </data>
+  <data name="toolStripMenuItem3.Text" xml:space="preserve">
+    <value>&amp;Expand All</value>
+  </data>
+  <data name="toolStripMenuItem4.Size" type="System.Drawing.Size, System.Drawing">
+    <value>159, 22</value>
+  </data>
+  <data name="toolStripMenuItem4.Text" xml:space="preserve">
+    <value>&amp;Collapse All</value>
+  </data>
+  <data name="toolStripMenuItem5.Size" type="System.Drawing.Size, System.Drawing">
     <value>159, 22</value>
   </data>
   <data name="toolStripMenuItem5.Text" xml:space="preserve">
     <value>E&amp;xpand Branch</value>
   </data>
-  <data name="toolStripRecordBack.Size" type="System.Drawing.Size, System.Drawing">
-    <value>32, 22</value>
-  </data>
-  <data name="&gt;&gt;toolStripRecordCopy.Type" xml:space="preserve">
-    <value>System.Windows.Forms.ToolStripButton, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="toolStripMenuItem3.Size" type="System.Drawing.Size, System.Drawing">
+  <data name="toolStripMenuItem6.Size" type="System.Drawing.Size, System.Drawing">
     <value>159, 22</value>
-  </data>
-  <data name="toolStripMenuItem2.Text" xml:space="preserve">
-    <value>&amp;Expand/Collapse</value>
-  </data>
-  <data name="&gt;&gt;toolStripMenuItem3.Name" xml:space="preserve">
-    <value>toolStripMenuItem3</value>
-  </data>
-  <assembly alias="mscorlib" name="mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
-  <data name="PluginTree.TabIndex" type="System.Int32, mscorlib">
-    <value>2</value>
-  </data>
-  <data name="&gt;&gt;contextMenuRecordCopy.Name" xml:space="preserve">
-    <value>contextMenuRecordCopy</value>
-  </data>
-  <data name="toolStripRecordBack.Text" xml:space="preserve">
-    <value>Back (Alt+Left)</value>
-  </data>
-  <data name="contextMenuRecordCopyTo.Text" xml:space="preserve">
-    <value>Copy &amp;To</value>
-  </data>
-  <data name="contextMenuRecord.Size" type="System.Drawing.Size, System.Drawing">
-    <value>163, 114</value>
-  </data>
-  <data name="&gt;&gt;$this.Name" xml:space="preserve">
-    <value>PluginTreeView</value>
-  </data>
-  <data name="contextMenuRecordDelete.Text" xml:space="preserve">
-    <value>&amp;Delete</value>
-  </data>
-  <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
-  <data name="resource.Text" type="System.Resources.ResXNullRef, System.Windows.Forms">
-    <value />
-  </data>
-  <data name="toolStripRecord.Size" type="System.Drawing.Size, System.Drawing">
-    <value>292, 25</value>
-  </data>
-  <data name="&gt;&gt;PluginTree.ZOrder" xml:space="preserve">
-    <value>1</value>
-  </data>
-  <data name="toolStripMenuItem4.Size" type="System.Drawing.Size, System.Drawing">
-    <value>159, 22</value>
-  </data>
-  <data name="contextMenuRecordCopy.Text" xml:space="preserve">
-    <value>&amp;Copy</value>
-  </data>
-  <data name="browseToolStripMenuItem.Text" xml:space="preserve">
-    <value>&amp;Browse...</value>
-  </data>
-  <data name="contextMenuRecordCopy.Size" type="System.Drawing.Size, System.Drawing">
-    <value>162, 22</value>
-  </data>
-  <data name="PluginTree.Size" type="System.Drawing.Size, System.Drawing">
-    <value>292, 282</value>
-  </data>
-  <data name="contextMenuRecordAddMaster.Text" xml:space="preserve">
-    <value>Add &amp;Master</value>
-  </data>
-  <data name="&gt;&gt;contextMenuRecord.Type" xml:space="preserve">
-    <value>System.Windows.Forms.ContextMenuStrip, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="toolStripRecordNext.ImageTransparentColor" type="System.Drawing.Color, System.Drawing">
-    <value>Magenta</value>
-  </data>
-  <data name="&gt;&gt;PluginTree.Type" xml:space="preserve">
-    <value>TESVSnip.Controls.CustomTreeView, TESVSnip, Version=2.7.4404.2, Culture=neutral, PublicKeyToken=null</value>
-  </data>
-  <data name="&gt;&gt;_olvColumnName.Name" xml:space="preserve">
-    <value>_olvColumnName</value>
-  </data>
-  <data name="&gt;&gt;toolStripMenuItem6.Name" xml:space="preserve">
-    <value>toolStripMenuItem6</value>
-  </data>
-  <data name="&gt;&gt;toolStripRecord.ZOrder" xml:space="preserve">
-    <value>2</value>
-  </data>
-  <data name="&gt;&gt;toolStripRecord.Name" xml:space="preserve">
-    <value>toolStripRecord</value>
-  </data>
-  <data name="&gt;&gt;toolStripRecordNext.Name" xml:space="preserve">
-    <value>toolStripRecordNext</value>
-  </data>
-  <data name="&gt;&gt;toolStripRecord.Type" xml:space="preserve">
-    <value>System.Windows.Forms.ToolStrip, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="toolStripMenuItem2.Size" type="System.Drawing.Size, System.Drawing">
-    <value>162, 22</value>
-  </data>
-  <data name="&gt;&gt;imageSmallTreeList.Name" xml:space="preserve">
-    <value>imageSmallTreeList</value>
-  </data>
-  <data name="&gt;&gt;contextMenuRecordDelete.Type" xml:space="preserve">
-    <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;toolStripRecordBack.Name" xml:space="preserve">
-    <value>toolStripRecordBack</value>
-  </data>
-  <data name="toolStripRecordPaste.Size" type="System.Drawing.Size, System.Drawing">
-    <value>23, 22</value>
-  </data>
-  <data name="imageSmallTreeList.ImageSize" type="System.Drawing.Size, System.Drawing">
-    <value>16, 16</value>
-  </data>
-  <data name="toolStripRecordBack.ToolTipText" xml:space="preserve">
-    <value>Back (Alt+Left)</value>
-  </data>
-  <data name="&gt;&gt;toolStripRecord.Parent" xml:space="preserve">
-    <value>$this</value>
-  </data>
-  <data name="PluginTree.Location" type="System.Drawing.Point, System.Drawing">
-    <value>0, 25</value>
-  </data>
-  <data name="&gt;&gt;contextMenuRecord.Name" xml:space="preserve">
-    <value>contextMenuRecord</value>
-  </data>
-  <data name="toolStripRecordBack.ImageTransparentColor" type="System.Drawing.Color, System.Drawing">
-    <value>Magenta</value>
-  </data>
-  <data name="toolStripRecordCopy.ImageTransparentColor" type="System.Drawing.Color, System.Drawing">
-    <value>Magenta</value>
-  </data>
-  <data name="toolStripRecordNext.ToolTipText" xml:space="preserve">
-    <value>Next (Alt+Right)</value>
-  </data>
-  <data name="contextMenuRecordAddMaster.Size" type="System.Drawing.Size, System.Drawing">
-    <value>162, 22</value>
-  </data>
-  <data name="olvColumn2.DisplayIndex" type="System.Int32, mscorlib">
-    <value>1</value>
-  </data>
-  <data name="&gt;&gt;contextMenuRecordAddMaster.Name" xml:space="preserve">
-    <value>contextMenuRecordAddMaster</value>
-  </data>
-  <data name="&gt;&gt;toolStripRecordText.Type" xml:space="preserve">
-    <value>System.Windows.Forms.ToolStripLabel, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="toolStripRecord.Location" type="System.Drawing.Point, System.Drawing">
-    <value>0, 0</value>
-  </data>
-  <data name="$this.AutoScaleDimensions" type="System.Drawing.SizeF, System.Drawing">
-    <value>6, 13</value>
-  </data>
-  <data name="&gt;&gt;imageSmallTreeList.Type" xml:space="preserve">
-    <value>System.Windows.Forms.ImageList, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;PluginTree.Name" xml:space="preserve">
-    <value>PluginTree</value>
-  </data>
-  <data name="&gt;&gt;toolStripRecordPaste.Type" xml:space="preserve">
-    <value>System.Windows.Forms.ToolStripButton, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="PluginTree.EmptyListMsg" xml:space="preserve">
-    <value>No Plugins Loaded</value>
-  </data>
-  <data name="&gt;&gt;toolStripMenuItem4.Type" xml:space="preserve">
-    <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="toolStripRecordCopy.Text" xml:space="preserve">
-    <value>Copy</value>
-  </data>
-  <data name="PluginTree.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
-    <value>Fill</value>
-  </data>
-  <data name="olvColumn2.Width" type="System.Int32, mscorlib">
-    <value>10</value>
-  </data>
-  <data name="&gt;&gt;contextMenuRecordCopyTo.Type" xml:space="preserve">
-    <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;_olvColumnName.Type" xml:space="preserve">
-    <value>BrightIdeasSoftware.OLVColumn, TESVSnip, Version=2.6.4401.1, Culture=neutral, PublicKeyToken=null</value>
-  </data>
-  <data name="&gt;&gt;PluginTree.Parent" xml:space="preserve">
-    <value>$this</value>
-  </data>
-  <data name="&gt;&gt;toolStripRecordNext.Type" xml:space="preserve">
-    <value>System.Windows.Forms.ToolStripSplitButton, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;toolStripMenuItem2.Type" xml:space="preserve">
-    <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="toolStripRecordNext.Size" type="System.Drawing.Size, System.Drawing">
-    <value>32, 22</value>
-  </data>
-  <data name="&gt;&gt;olvColumn2.Type" xml:space="preserve">
-    <value>BrightIdeasSoftware.OLVColumn, TESVSnip, Version=2.6.4401.1, Culture=neutral, PublicKeyToken=null</value>
-  </data>
-  <data name="&gt;&gt;contextMenuRecordCopyTo.Name" xml:space="preserve">
-    <value>contextMenuRecordCopyTo</value>
-  </data>
-  <data name="&gt;&gt;toolStripMenuItem6.Type" xml:space="preserve">
-    <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;contextMenuRecordAddMaster.Type" xml:space="preserve">
-    <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="browseToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>121, 22</value>
-  </data>
-  <data name="&gt;&gt;toolStripRecordCopy.Name" xml:space="preserve">
-    <value>toolStripRecordCopy</value>
-  </data>
-  <data name="toolStripRecordCopy.Size" type="System.Drawing.Size, System.Drawing">
-    <value>23, 22</value>
-  </data>
-  <data name="toolStripRecordPaste.ImageTransparentColor" type="System.Drawing.Color, System.Drawing">
-    <value>Magenta</value>
-  </data>
-  <data name="toolStripRecord.TabIndex" type="System.Int32, mscorlib">
-    <value>3</value>
-  </data>
-  <data name="&gt;&gt;contextMenuRecordDelete.Name" xml:space="preserve">
-    <value>contextMenuRecordDelete</value>
-  </data>
-  <data name="&gt;&gt;toolStripMenuItem4.Name" xml:space="preserve">
-    <value>toolStripMenuItem4</value>
-  </data>
-  <data name="$this.Size" type="System.Drawing.Size, System.Drawing">
-    <value>292, 307</value>
-  </data>
-  <data name="toolStripMenuItem4.Text" xml:space="preserve">
-    <value>&amp;Collapse All</value>
-  </data>
-  <data name="&gt;&gt;browseToolStripMenuItem.Name" xml:space="preserve">
-    <value>browseToolStripMenuItem</value>
   </data>
   <data name="toolStripMenuItem6.Text" xml:space="preserve">
     <value>C&amp;ollapse Branch</value>
   </data>
-  <data name="&gt;&gt;toolStripMenuItem3.Type" xml:space="preserve">
-    <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  <data name="toolStripMenuItem2.Size" type="System.Drawing.Size, System.Drawing">
+    <value>162, 22</value>
   </data>
-  <data name="&gt;&gt;olvColumn2.Name" xml:space="preserve">
-    <value>olvColumn2</value>
+  <data name="toolStripMenuItem2.Text" xml:space="preserve">
+    <value>&amp;Expand/Collapse</value>
   </data>
-  <data name="toolStripMenuItem3.Text" xml:space="preserve">
-    <value>&amp;Expand All</value>
+  <data name="contextMenuRecord.Size" type="System.Drawing.Size, System.Drawing">
+    <value>163, 136</value>
   </data>
-  <data name="toolStripRecord.Text" xml:space="preserve">
-    <value>Record Tool Strip</value>
+  <data name="&gt;&gt;contextMenuRecord.Name" xml:space="preserve">
+    <value>contextMenuRecord</value>
   </data>
-  <data name="toolStripRecordNext.Text" xml:space="preserve">
-    <value>Next (Alt+Right)</value>
+  <data name="&gt;&gt;contextMenuRecord.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ContextMenuStrip, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
-  <data name="&gt;&gt;toolStripRecordPaste.Name" xml:space="preserve">
-    <value>toolStripRecordPaste</value>
+  <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
+  <data name="PluginTree.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
+    <value>Fill</value>
   </data>
-  <data name="&gt;&gt;contextMenuRecordCopy.Type" xml:space="preserve">
-    <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  <data name="PluginTree.EmptyListMsg" xml:space="preserve">
+    <value>No Plugins Loaded</value>
+  </data>
+  <data name="PluginTree.Location" type="System.Drawing.Point, System.Drawing">
+    <value>0, 25</value>
+  </data>
+  <data name="PluginTree.Size" type="System.Drawing.Size, System.Drawing">
+    <value>292, 282</value>
+  </data>
+  <data name="PluginTree.TabIndex" type="System.Int32, mscorlib">
+    <value>2</value>
+  </data>
+  <data name="&gt;&gt;PluginTree.Name" xml:space="preserve">
+    <value>PluginTree</value>
+  </data>
+  <data name="&gt;&gt;PluginTree.Type" xml:space="preserve">
+    <value>TESVSnip.Controls.CustomTreeView, TESVSnip, Version=3.0.4404.3, Culture=neutral, PublicKeyToken=null</value>
+  </data>
+  <data name="&gt;&gt;PluginTree.Parent" xml:space="preserve">
+    <value>$this</value>
+  </data>
+  <data name="&gt;&gt;PluginTree.ZOrder" xml:space="preserve">
+    <value>1</value>
+  </data>
+  <metadata name="$this.Localizable" type="System.Boolean, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+    <value>True</value>
+  </metadata>
+  <data name="$this.AutoScaleDimensions" type="System.Drawing.SizeF, System.Drawing">
+    <value>6, 13</value>
+  </data>
+  <data name="$this.Size" type="System.Drawing.Size, System.Drawing">
+    <value>292, 307</value>
+  </data>
+  <data name="&gt;&gt;imageSmallTreeList.Name" xml:space="preserve">
+    <value>imageSmallTreeList</value>
+  </data>
+  <data name="&gt;&gt;imageSmallTreeList.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ImageList, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;toolStripRecordBack.Name" xml:space="preserve">
+    <value>toolStripRecordBack</value>
   </data>
   <data name="&gt;&gt;toolStripRecordBack.Type" xml:space="preserve">
     <value>System.Windows.Forms.ToolStripSplitButton, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
-  <data name="toolStripRecordPaste.Text" xml:space="preserve">
-    <value>Paste</value>
+  <data name="&gt;&gt;toolStripRecordNext.Name" xml:space="preserve">
+    <value>toolStripRecordNext</value>
   </data>
-  <data name="&gt;&gt;browseToolStripMenuItem.Type" xml:space="preserve">
-    <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  <data name="&gt;&gt;toolStripRecordNext.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ToolStripSplitButton, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
-  <data name="toolStripMenuItem5.Size" type="System.Drawing.Size, System.Drawing">
-    <value>159, 22</value>
+  <data name="&gt;&gt;toolStripRecordPaste.Name" xml:space="preserve">
+    <value>toolStripRecordPaste</value>
   </data>
-  <data name="&gt;&gt;$this.Type" xml:space="preserve">
-    <value>System.Windows.Forms.UserControl, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  <data name="&gt;&gt;toolStripRecordPaste.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ToolStripButton, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;toolStripRecordCopy.Name" xml:space="preserve">
+    <value>toolStripRecordCopy</value>
+  </data>
+  <data name="&gt;&gt;toolStripRecordCopy.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ToolStripButton, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="&gt;&gt;toolStripRecordText.Name" xml:space="preserve">
     <value>toolStripRecordText</value>
   </data>
-  <data name="toolStripRecordText.Size" type="System.Drawing.Size, System.Drawing">
-    <value>0, 22</value>
+  <data name="&gt;&gt;toolStripRecordText.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ToolStripLabel, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
-  <data name="contextMenuRecordDelete.Size" type="System.Drawing.Size, System.Drawing">
-    <value>162, 22</value>
+  <data name="&gt;&gt;contextMenuRecordAddMaster.Name" xml:space="preserve">
+    <value>contextMenuRecordAddMaster</value>
   </data>
-  <data name="contextMenuRecordCopyTo.Size" type="System.Drawing.Size, System.Drawing">
-    <value>162, 22</value>
+  <data name="&gt;&gt;contextMenuRecordAddMaster.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;browseToolStripMenuItem.Name" xml:space="preserve">
+    <value>browseToolStripMenuItem</value>
+  </data>
+  <data name="&gt;&gt;browseToolStripMenuItem.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;contextMenuRecordEdit.Name" xml:space="preserve">
+    <value>contextMenuRecordEdit</value>
+  </data>
+  <data name="&gt;&gt;contextMenuRecordEdit.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;contextMenuRecordCopy.Name" xml:space="preserve">
+    <value>contextMenuRecordCopy</value>
+  </data>
+  <data name="&gt;&gt;contextMenuRecordCopy.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;contextMenuRecordCopyTo.Name" xml:space="preserve">
+    <value>contextMenuRecordCopyTo</value>
+  </data>
+  <data name="&gt;&gt;contextMenuRecordCopyTo.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;contextMenuRecordDelete.Name" xml:space="preserve">
+    <value>contextMenuRecordDelete</value>
+  </data>
+  <data name="&gt;&gt;contextMenuRecordDelete.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="&gt;&gt;toolStripMenuItem2.Name" xml:space="preserve">
     <value>toolStripMenuItem2</value>
   </data>
-  <metadata name="contextMenuRecord.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
-    <value>154, 17</value>
-  </metadata>
-  <metadata name="$this.Localizable" type="System.Boolean, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
-    <value>True</value>
-  </metadata>
-  <metadata name="imageSmallTreeList.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
-    <value>316, 17</value>
-  </metadata>
-  <metadata name="toolStripRecord.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
-    <value>17, 17</value>
-  </metadata>
+  <data name="&gt;&gt;toolStripMenuItem2.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;toolStripMenuItem3.Name" xml:space="preserve">
+    <value>toolStripMenuItem3</value>
+  </data>
+  <data name="&gt;&gt;toolStripMenuItem3.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;toolStripMenuItem4.Name" xml:space="preserve">
+    <value>toolStripMenuItem4</value>
+  </data>
+  <data name="&gt;&gt;toolStripMenuItem4.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;toolStripMenuItem5.Name" xml:space="preserve">
+    <value>toolStripMenuItem5</value>
+  </data>
+  <data name="&gt;&gt;toolStripMenuItem5.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;toolStripMenuItem6.Name" xml:space="preserve">
+    <value>toolStripMenuItem6</value>
+  </data>
+  <data name="&gt;&gt;toolStripMenuItem6.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;$this.Name" xml:space="preserve">
+    <value>PluginTreeView</value>
+  </data>
+  <data name="&gt;&gt;$this.Type" xml:space="preserve">
+    <value>System.Windows.Forms.UserControl, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
 </root>

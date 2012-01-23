@@ -202,7 +202,7 @@ namespace TESVSnip
             null,
             "Deleted",
             null,
-            null,
+            "Localized",
             null,
             "Casts shadows",
             "Quest item / Persistent reference",

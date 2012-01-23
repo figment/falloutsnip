@@ -11,8 +11,11 @@ Requirements:
 Change Log:
 v 3.0
 - Major rewrite to use new TreeList control for Record List
+- Include Sort and Drag/Drop on single TreeList to allow reordering
+- Restructure tree controls to support multiple select operations
 - Manually sort form id list rather than using native sort which lead to inconsistencies
 - Remove check for VK_BACK during WM_CHAR as it is incorrect an interfers with VK_OEM_DOT
+- Add modeless record Editor on context menu to allow side by side edits (experimental)
  
 v 2.6
 - Fix issue with the new FormID Editor not saving values

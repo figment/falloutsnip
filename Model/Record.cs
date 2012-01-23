@@ -615,16 +615,20 @@ namespace TESVSnip
         /// <returns></returns>
         public bool MatchRecordStructureToRecord()
         {
+            var subs = this.SubRecords.ToArray();
+            return MatchRecordStructureToRecord(subs);
+        }
+
+        public bool MatchRecordStructureToRecord(SubRecord[] subs)
+        {
             try
             {
                 if (RecordStructure.Records == null) return false;
                 RecordStructure rs;
                 if (!RecordStructure.Records.TryGetValue(this.Name, out rs))
                     return false;
-
                 var subrecords = new List<SubrecordStructure>();
                 var sss = rs.subrecordTree;
-                var subs = this.SubRecords.ToArray();
                 foreach (var sub in subs) sub.DetachStructure();
                 Dictionary<int, Conditional> conditions = new Dictionary<int, Conditional>();
                 var context = new LoopContext(0, sss);
@@ -632,7 +636,9 @@ namespace TESVSnip
                 if (result == LoopContext.LoopEvalResult.Success && context.idx == subs.Length)
                     return true;
             }
-            catch { }
+            catch
+            {
+            }
             return false;
         }
 

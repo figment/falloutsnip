@@ -41,8 +41,10 @@
             this.label1 = new System.Windows.Forms.Label();
             this.label4 = new System.Windows.Forms.Label();
             this.tbName = new System.Windows.Forms.TextBox();
-            this.subRecordEditor = new TESVSnip.Forms.SubrecordListEditor();
-            this.button1 = new TESVSnip.Forms.SubrecordEditor();
+            this.subrecordListEditor = new TESVSnip.Forms.SubrecordListEditor();
+            this.bCancel = new System.Windows.Forms.Button();
+            this.bSave = new System.Windows.Forms.Button();
+            this.elementEditor = new TESVSnip.Forms.SubrecordEditor();
             this.horizontalSplitContainer.Panel1.SuspendLayout();
             this.horizontalSplitContainer.Panel2.SuspendLayout();
             this.horizontalSplitContainer.SuspendLayout();
@@ -54,17 +56,18 @@
             // horizontalSplitContainer
             // 
             resources.ApplyResources(this.horizontalSplitContainer, "horizontalSplitContainer");
+            this.horizontalSplitContainer.FixedPanel = System.Windows.Forms.FixedPanel.Panel1;
             this.horizontalSplitContainer.Name = "horizontalSplitContainer";
             // 
             // horizontalSplitContainer.Panel1
             // 
-            resources.ApplyResources(this.horizontalSplitContainer.Panel1, "horizontalSplitContainer.Panel1");
             this.horizontalSplitContainer.Panel1.Controls.Add(this.verticalSplitContainer);
             // 
             // horizontalSplitContainer.Panel2
             // 
-            resources.ApplyResources(this.horizontalSplitContainer.Panel2, "horizontalSplitContainer.Panel2");
-            this.horizontalSplitContainer.Panel2.Controls.Add(this.button1);
+            this.horizontalSplitContainer.Panel2.Controls.Add(this.bCancel);
+            this.horizontalSplitContainer.Panel2.Controls.Add(this.bSave);
+            this.horizontalSplitContainer.Panel2.Controls.Add(this.elementEditor);
             // 
             // verticalSplitContainer
             // 
@@ -74,7 +77,6 @@
             // 
             // verticalSplitContainer.Panel1
             // 
-            resources.ApplyResources(this.verticalSplitContainer.Panel1, "verticalSplitContainer.Panel1");
             this.verticalSplitContainer.Panel1.Controls.Add(this.comboBox1);
             this.verticalSplitContainer.Panel1.Controls.Add(this.tbFlags3);
             this.verticalSplitContainer.Panel1.Controls.Add(this.textBox1);
@@ -88,13 +90,12 @@
             // 
             // verticalSplitContainer.Panel2
             // 
-            resources.ApplyResources(this.verticalSplitContainer.Panel2, "verticalSplitContainer.Panel2");
-            this.verticalSplitContainer.Panel2.Controls.Add(this.subRecordEditor);
+            this.verticalSplitContainer.Panel2.Controls.Add(this.subrecordListEditor);
             // 
             // comboBox1
             // 
-            resources.ApplyResources(this.comboBox1, "comboBox1");
             this.comboBox1.AllowResizeDropDown = true;
+            resources.ApplyResources(this.comboBox1, "comboBox1");
             this.comboBox1.CheckOnClick = true;
             this.comboBox1.ControlSize = new System.Drawing.Size(47, 16);
             this.comboBox1.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawVariable;
@@ -103,26 +104,32 @@
             this.comboBox1.FormattingEnabled = true;
             this.comboBox1.Name = "comboBox1";
             this.comboBox1.ValueSeparator = ",";
+            this.comboBox1.ItemCheck += new System.Windows.Forms.ItemCheckEventHandler(this.comboBox1_ItemCheck);
+            this.comboBox1.SelectionChangeCommitted += new System.EventHandler(this.comboBox1_SelectionChangeCommitted);
             // 
             // tbFlags3
             // 
             resources.ApplyResources(this.tbFlags3, "tbFlags3");
             this.tbFlags3.Name = "tbFlags3";
+            this.tbFlags3.Validating += new System.ComponentModel.CancelEventHandler(this.tbFlags3_Validating);
             // 
             // textBox1
             // 
             resources.ApplyResources(this.textBox1, "textBox1");
             this.textBox1.Name = "textBox1";
+            this.textBox1.Validating += new System.ComponentModel.CancelEventHandler(this.textBox1_Validating);
             // 
             // tbFlags2
             // 
             resources.ApplyResources(this.tbFlags2, "tbFlags2");
             this.tbFlags2.Name = "tbFlags2";
+            this.tbFlags2.Validating += new System.ComponentModel.CancelEventHandler(this.tbFlags2_Validating);
             // 
             // tbFormID
             // 
             resources.ApplyResources(this.tbFormID, "tbFormID");
             this.tbFormID.Name = "tbFormID";
+            this.tbFormID.Validating += new System.ComponentModel.CancelEventHandler(this.tbFormID_Validating);
             // 
             // label3
             // 
@@ -150,17 +157,33 @@
             this.tbName.CharacterCasing = System.Windows.Forms.CharacterCasing.Upper;
             this.tbName.Name = "tbName";
             // 
-            // subRecordEditor
+            // subrecordListEditor
             // 
-            resources.ApplyResources(this.subRecordEditor, "subRecordEditor");
-            this.subRecordEditor.MinimumSize = new System.Drawing.Size(200, 120);
-            this.subRecordEditor.Name = "subRecordEditor";
+            resources.ApplyResources(this.subrecordListEditor, "subrecordListEditor");
+            this.subrecordListEditor.MinimumSize = new System.Drawing.Size(200, 120);
+            this.subrecordListEditor.Name = "subrecordListEditor";
             // 
-            // button1
+            // bCancel
             // 
-            resources.ApplyResources(this.button1, "button1");
-            this.button1.MinimumSize = new System.Drawing.Size(300, 200);
-            this.button1.Name = "button1";
+            resources.ApplyResources(this.bCancel, "bCancel");
+            this.bCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
+            this.bCancel.Name = "bCancel";
+            this.bCancel.UseVisualStyleBackColor = true;
+            this.bCancel.Click += new System.EventHandler(this.bCancel_Click);
+            // 
+            // bSave
+            // 
+            resources.ApplyResources(this.bSave, "bSave");
+            this.bSave.DialogResult = System.Windows.Forms.DialogResult.OK;
+            this.bSave.Name = "bSave";
+            this.bSave.UseVisualStyleBackColor = true;
+            this.bSave.Click += new System.EventHandler(this.bSave_Click);
+            // 
+            // elementEditor
+            // 
+            resources.ApplyResources(this.elementEditor, "elementEditor");
+            this.elementEditor.MinimumSize = new System.Drawing.Size(300, 200);
+            this.elementEditor.Name = "elementEditor";
             // 
             // RecordEditor
             // 
@@ -184,8 +207,8 @@
 
         private System.Windows.Forms.SplitContainer horizontalSplitContainer;
         private System.Windows.Forms.SplitContainer verticalSplitContainer;
-        private SubrecordListEditor subRecordEditor;
-        private SubrecordEditor button1;
+        private SubrecordListEditor subrecordListEditor;
+        private SubrecordEditor elementEditor;
         private System.Windows.Forms.Label label4;
         private System.Windows.Forms.TextBox tbName;
         private System.Windows.Forms.TextBox tbFormID;
@@ -196,6 +219,8 @@
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.TextBox textBox1;
+        private System.Windows.Forms.Button bCancel;
+        private System.Windows.Forms.Button bSave;
 
     }
 }

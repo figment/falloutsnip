@@ -162,6 +162,23 @@ namespace TESVSnip {
         public readonly bool hexview;
         public readonly string[] flags;
 
+        public ElementStructure()
+        {
+            this.name = "DATA";
+            this.desc = "Data";
+            this.group = 0;
+            this.hexview = true;
+            this.notininfo = true;
+            this.optional = false;
+            this.options = null;
+            this.flags = null;
+            this.repeat = 0;
+            this.CondID = 0;
+            this.FormIDType = null;
+            this.multiline = false;
+            this.type = ElementValueType.Blob;
+        }
+
         public ElementStructure(TESVSnip.Data.SubrecordElement node)
         {
             this.name = node.name;

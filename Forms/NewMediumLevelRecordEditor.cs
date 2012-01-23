@@ -53,6 +53,9 @@ namespace TESVSnip
                             case ElementValueType.FormID:
                                 c = new FormIDElement();
                                 break;
+                            case ElementValueType.Blob:
+                                c = new HexElement();
+                                break;
                             default:
                                 c = new TextElement();
                                 break;

@@ -1263,7 +1263,11 @@ namespace TESVSnip
         /// <returns></returns>
         internal IEnumerable<Element> EnumerateElements(bool rawData)
         {
-            if (this.Structure != null)
+            if (this.Structure == null)
+            {
+                yield return new Element(new ElementStructure(), new ArraySegment<byte>(this.GetData()));
+            }
+            else
             {
                 byte[] data = this.GetReadonlyData();
                 var ss = this.Structure;

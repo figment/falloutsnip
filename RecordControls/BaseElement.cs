@@ -57,7 +57,7 @@ namespace TESVSnip.RecordControls
                 {
                     this.Changed = true;
                     // important to clone the data as TypeConverter uses a shared byte array for many operations
-                    byte[] blob = new byte[value.Count];
+                    var blob = new byte[value.Count];
                     if (value.Count > 0)
                         Array.Copy(value.Array, value.Offset, blob, 0, value.Count);
                     this.data = new ArraySegment<byte>(blob);

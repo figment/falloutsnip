@@ -234,6 +234,12 @@
     <Compile Include="Forms\CompressSettings.Designer.cs">
       <DependentUpon>CompressSettings.cs</DependentUpon>
     </Compile>
+    <Compile Include="Forms\FullRecordEditor.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\FullRecordEditor.Designer.cs">
+      <DependentUpon>FullRecordEditor.cs</DependentUpon>
+    </Compile>
     <Compile Include="Forms\MediumLevelRecordEditor.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -329,11 +335,11 @@
     <Compile Include="ObjectControls\PluginTreeView.Designer.cs">
       <DependentUpon>PluginTreeView.cs</DependentUpon>
     </Compile>
-    <Compile Include="ObjectControls\SubrecordEditor.cs">
+    <Compile Include="ObjectControls\SubrecordElementEditor.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="ObjectControls\SubrecordEditor.Designer.cs">
-      <DependentUpon>SubrecordEditor.cs</DependentUpon>
+    <Compile Include="ObjectControls\SubrecordElementEditor.Designer.cs">
+      <DependentUpon>SubrecordElementEditor.cs</DependentUpon>
     </Compile>
     <Compile Include="ObjectControls\SubrecordListEditor.cs">
       <SubType>UserControl</SubType>
@@ -344,6 +350,12 @@
     <Compile Include="Main\Pair.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="RecordControls\HexElement.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="RecordControls\HexElement.Designer.cs">
+      <DependentUpon>HexElement.cs</DependentUpon>
+    </Compile>
     <Compile Include="Views\RichTextView.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -370,6 +382,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\CompressSettings.resx">
       <DependentUpon>CompressSettings.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\FullRecordEditor.resx">
+      <DependentUpon>FullRecordEditor.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\MediumLevelRecordEditor.resx">
       <DependentUpon>MediumLevelRecordEditor.cs</DependentUpon>
@@ -411,16 +426,17 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\HexDataEdit.resx">
       <DependentUpon>HexDataEdit.cs</DependentUpon>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="ObjectControls\PluginTreeView.resx">
       <DependentUpon>PluginTreeView.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="ObjectControls\SubrecordEditor.en.resx">
-      <DependentUpon>SubrecordEditor.cs</DependentUpon>
+    <EmbeddedResource Include="ObjectControls\SubrecordElementEditor.en.resx">
+      <DependentUpon>SubrecordElementEditor.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="ObjectControls\SubrecordEditor.resx">
-      <DependentUpon>SubrecordEditor.cs</DependentUpon>
+    <EmbeddedResource Include="ObjectControls\SubrecordElementEditor.resx">
+      <DependentUpon>SubrecordElementEditor.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="ObjectControls\SubrecordListEditor.en.resx">
       <DependentUpon>SubrecordListEditor.cs</DependentUpon>
@@ -452,6 +468,10 @@
     </EmbeddedResource>
     <EmbeddedResource Include="RecordControls\FormIDElement.en.resx">
       <DependentUpon>FormIDElement.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="RecordControls\HexElement.resx">
+      <DependentUpon>HexElement.cs</DependentUpon>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="RecordControls\LStringElement.en.resx">
       <DependentUpon>LStringElement.cs</DependentUpon>
@@ -712,6 +732,7 @@
     <MergeOutputFile>$(StageOutputDir)\$(TargetName)$(TargetExt)</MergeOutputFile>
   </PropertyGroup>
   <ItemGroup>
+    <inputAssemblies Include="$(TargetPath)" />
     <inputAssemblies Include="$(TargetDir)\*.dll" />
     <CopyToStaging Include="$(ProjectDir)\LICENSE" />
     <CopyToStaging Include="$(ProjectDir)\README.TXT" />

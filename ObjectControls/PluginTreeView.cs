@@ -290,6 +290,7 @@ namespace TESVSnip.ObjectControls
             bool anyPlugins = records.Any(x => x is Plugin);
             if (nparents > 1)
             {
+                contextMenuRecordEdit.Visible = false;
                 contextMenuRecordCopy.Enabled = false;
                 contextMenuRecordCopy.ToolTipText = Resources.CannotCopyNodesFromDifferentParents;
                 contextMenuRecordCopyTo.Enabled = false;
@@ -297,6 +298,7 @@ namespace TESVSnip.ObjectControls
             }
             else if (anyPlugins)
             {
+                contextMenuRecordEdit.Visible = false;
                 contextMenuRecordCopy.Enabled = false;
                 contextMenuRecordCopy.ToolTipText = Resources.CannotCopyPlugin;
                 contextMenuRecordCopyTo.Enabled = false;
@@ -304,6 +306,7 @@ namespace TESVSnip.ObjectControls
             }
             else
             {
+                contextMenuRecordEdit.Visible = (nrecords == 1);
                 contextMenuRecordCopy.Enabled = true;
                 contextMenuRecordCopy.ToolTipText = Resources.Copy_Record_to_Clipboard;
                 contextMenuRecordCopyTo.Enabled = (PluginTree.SelectedObjects.Count > 0);
@@ -730,6 +733,27 @@ namespace TESVSnip.ObjectControls
             PluginTree.Expand(item);
             foreach (var child in PluginTree.GetChildren(item))
                 InternalExpand(child);
+        }
+
+        private void editToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            var selRecord = PluginTree.SelectedRecord;
+            if (selRecord is GroupRecord)
+            {
+                var gr = selRecord as GroupRecord;
+                if (DialogResult.OK == GroupEditor.Display(gr))
+                {
+                    GetPluginFromNode(PluginTree.SelectedRecord).InvalidateCache();
+                    FireSelectionUpdated();
+                }
+            }
+            else if (selRecord is Record)
+            {
+                var r = selRecord as Record;
+                var form = new TESVSnip.Forms.FullRecordEditor(r);
+                form.StartPosition = FormStartPosition.CenterScreen;
+                form.Show(this);
+            }
         }
     }
 }
