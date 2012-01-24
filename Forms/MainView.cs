@@ -42,7 +42,9 @@ namespace TESVSnip
                     MessageBox.Show(Resources.CannotParseRecordStructure + ex.Message, Resources.WarningText);
                 }
             }
+
             InitializeComponent();
+
             this.dockingManagerExtender.AutomaticStatePersistence = global::TESVSnip.Properties.Settings.Default.AutoSaveDockingState;
             this.dockingManagerExtender.DockingManager.ContentHiding += delegate(Content c, System.ComponentModel.CancelEventArgs cea) { cea.Cancel = true; };
             this.dockingManagerExtender.DockingManager.ContextMenu += delegate(Crownwood.Magic.Menus.PopupMenu pm, System.ComponentModel.CancelEventArgs cea)
@@ -53,8 +55,15 @@ namespace TESVSnip
             };
 
             // Register message filter.
-            msgFilter = new MainViewMessageFilter(this);
-            Application.AddMessageFilter(msgFilter);
+            try
+            {
+                msgFilter = new MainViewMessageFilter(this);
+                Application.AddMessageFilter(msgFilter);
+            }
+            catch
+            {
+                
+            }
 
             InitializeToolStripFind();
 
@@ -81,17 +90,21 @@ namespace TESVSnip
 
 
             this.Icon = Properties.Resources.tesv_ico;
+            try
+            {
+                if (!global::TESVSnip.Properties.Settings.Default.IsFirstTimeOpening)
+                {
+                    Settings.GetWindowPosition("TESsnip", this);
+                }
+                else
+                {
+                    Settings.SetWindowPosition("TESsnip", this);
+                    global::TESVSnip.Properties.Settings.Default.IsFirstTimeOpening = false;
+                    global::TESVSnip.Properties.Settings.Default.Save();
+                }
+            }
+            catch{}
 
-            if (!global::TESVSnip.Properties.Settings.Default.IsFirstTimeOpening)
-            {
-                Settings.GetWindowPosition("TESsnip", this);
-            }
-            else
-            {
-                Settings.SetWindowPosition("TESsnip", this);
-                global::TESVSnip.Properties.Settings.Default.IsFirstTimeOpening = false;
-                global::TESVSnip.Properties.Settings.Default.Save();
-            }
             useWindowsClipboardToolStripMenuItem.Checked = global::TESVSnip.Properties.Settings.Default.UseWindowsClipboard;
             noWindowsSoundsToolStripMenuItem.Checked = global::TESVSnip.Properties.Settings.Default.NoWindowsSounds;
             disableHyperlinksToolStripMenuItem.Checked = global::TESVSnip.Properties.Settings.Default.DisableHyperlinks;
@@ -99,9 +112,9 @@ namespace TESVSnip
             saveStringsFilesToolStripMenuItem.Checked = global::TESVSnip.Properties.Settings.Default.SaveStringsFiles;
 
             Selection = new SelectionContext();
-            Selection.formIDLookup = new dFormIDLookupI(LookupFormIDI);
-            Selection.strLookup = new dLStringLookup(LookupFormStrings);
-            Selection.formIDLookupR = new dFormIDLookupR(GetRecordByID);
+            Selection.formIDLookup = LookupFormIDI;
+            Selection.strLookup = LookupFormStrings;
+            Selection.formIDLookupR = GetRecordByID;
 
             this.subrecordPanel.SetContext(Selection);
             InitializeLanguage();
@@ -110,8 +123,29 @@ namespace TESVSnip
             Selection.RecordChanged += (o, a) => RebuildSelection();
             Selection.SubRecordChanged += (o, a) => RebuildSelection();
 
-            PluginTree.SelectionChanged += new EventHandler(PluginTree_SelectionChanged);
-            subrecordPanel.SelectionChanged += new EventHandler(subrecordPanel_SelectionChanged);
+            PluginTree.OnSelectionUpdated += PluginTree_OnSelectionUpdated;
+            
+            PluginTree.SelectionChanged += PluginTree_SelectionChanged;
+            subrecordPanel.SelectionChanged += subrecordPanel_SelectionChanged;
+            subrecordPanel.OnSubrecordChanged += subrecordPanel_OnSubrecordChanged;
+        }
+
+        void subrecordPanel_OnSubrecordChanged(object sender, RecordChangeEventArgs e)
+        {
+            if ( e.Record is SubRecord )
+            {
+                this.subrecordPanel.Refresh();
+                if ( e.Record.Parent is Record)
+                    this.PluginTree.RefreshObject(e.Record.Parent);
+            }
+            
+        }
+
+        void PluginTree_OnSelectionUpdated(object sender, EventArgs e)
+        {
+            // fix EDID if relevant
+            UpdateMainText(PluginTree.SelectedRecord);
+            this.PluginTree.RefreshObject(PluginTree.SelectedRecord);
         }
 
         void subrecordPanel_SelectionChanged(object sender, EventArgs e)
@@ -400,18 +434,11 @@ namespace TESVSnip
 
         private void deleteToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            if (this.PluginTree.ContainsFocus)
+            if (PluginTree.ContainsFocus)
             {
-                GetPluginFromNode(PluginTree.SelectedRecord).InvalidateCache();
-                if (PluginTree.SelectedRecord.Parent != null)
-                {
-                    var parent = (BaseRecord)PluginTree.SelectedRecord.Parent;
-                    var node = (BaseRecord)PluginTree.SelectedRecord;
-                    parent.DeleteRecord(node);
-                    PluginTree.RefreshObject(parent);
-                }
+                PluginTree.DeleteSelection();
             }
-            else if (this.subrecordPanel.ContainsFocus)
+            else if (subrecordPanel.ContainsFocus)
             {
                 subrecordPanel.DeleteSelection();
             }
@@ -1272,6 +1299,7 @@ namespace TESVSnip
             languageToolBarItems.Add("Italian", italianToolStripMenuItem);
             languageToolBarItems.Add("Spanish", spanishToolStripMenuItem);
             languageToolBarItems.Add("Russian", russianToolStripMenuItem);
+            languageToolBarItems.Add("Polish", polishToolStripMenuItem);
         }
 
         void ReloadLanguageFiles()
@@ -1502,6 +1530,35 @@ namespace TESVSnip
                     if (attr != null) Text = attr.InformationalVersion;
                 }
                 catch{ }
+            }
+        }
+
+        private void polishToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void editSelectedToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if (this.PluginTree.ContainsFocus)
+            {
+                this.PluginTree.EditSelectedRecord();
+            }
+            else if ( this.subrecordPanel.ContainsFocus)
+            {
+                this.subrecordPanel.EditSelectedSubrecord();
+            }
+        }
+
+        private void editHeaderToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if (this.PluginTree.ContainsFocus)
+            {
+                this.PluginTree.EditSelectedHeader();
+            }
+            else if (this.subrecordPanel.ContainsFocus)
+            {
+                this.subrecordPanel.EditSelectedSubrecordHex();
             }
         }
     }

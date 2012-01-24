@@ -58,7 +58,7 @@ namespace TESVSnip.Forms
 
         void context_SubRecordChanged(object sender, EventArgs e)
         {
-            OnSubrecordChanged();
+            HandleSubrecordChanged();
         }
 
         void OnRecordChanged()
@@ -69,7 +69,7 @@ namespace TESVSnip.Forms
             this.listSubrecord.DataSource = _subrecords;
         }
 
-        void OnSubrecordChanged()
+        void HandleSubrecordChanged()
         {
             var selection = GetSelectedSubrecord();
             if (selection != null)
@@ -394,9 +394,9 @@ namespace TESVSnip.Forms
 
         public delegate void EditSubrecordHandler(SubRecord sr, bool hexView);
         public event EditSubrecordHandler OnEditSubrecord;
-        
 
-        void EditSelectedSubrecordHex()
+
+        internal void EditSelectedSubrecordHex()
         {
             try
             {
@@ -422,14 +422,19 @@ namespace TESVSnip.Forms
                         sr.SetData(HexDataEdit.result);
                         sr.Name = HexDataEdit.resultName;
                         rec.MatchRecordStructureToRecord(this.SubRecords.ToArray());
+
+                        if (sr.Name == "EDID" && sr.Parent is Record)
+                            sr.Parent.UpdateShortDescription();                        
+
                         listSubrecord.Refresh();
+                        FireSubrecordChanged(sr);
                         FireDataChanged();
                     }
                 }
             }
             catch
             {
-
+                
             }
         }
         #endregion
@@ -476,7 +481,7 @@ namespace TESVSnip.Forms
             return ret.ToArray();
         }
 
-        void EditSelectedSubrecord()
+        public void EditSelectedSubrecord()
         {
             var context = Selection;
             var rec = Selection.Record as Record;
@@ -522,23 +527,19 @@ namespace TESVSnip.Forms
                 {
                     if (DialogResult.OK == re.ShowDialog(this))
                     {
+                        if (sr.Name == "EDID" && sr.Parent is Record)
+                            sr.Parent.UpdateShortDescription();                        
                         listSubrecord.Refresh();
+                        FireSubrecordChanged(sr);
                         FireDataChanged();
                     }
                     return;
                 }
             }
-            using (var dlg = new HexDataEdit(sr.Name, sr.GetData(), p.LookupFormIDS))
+            else
             {
-                if (DialogResult.OK == dlg.ShowDialog(this))
-                {
-                    sr.SetData(HexDataEdit.result);
-                    sr.Name = HexDataEdit.resultName;
-                    listSubrecord.Refresh();
-                    FireDataChanged();
-                }
+                EditSelectedSubrecordHex();                
             }
-            rec.MatchRecordStructureToRecord(this.SubRecords.ToArray());
         }
         private void CopySelectedSubRecord()
         {
@@ -635,7 +636,7 @@ namespace TESVSnip.Forms
             }
             catch (System.Exception ex)
             {
-                MessageBox.Show(ex.ToString(), "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show(ex.ToString(), Resources.ErrorText, MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
 
@@ -740,6 +741,16 @@ namespace TESVSnip.Forms
             {
                 totalWidth -= descColumn.Width;
                 descColumn.Width = this.Width - totalWidth - SystemInformation.VerticalScrollBarWidth - SystemInformation.FrameBorderSize.Width;
+            }
+        }
+
+        internal event EventHandler<RecordChangeEventArgs> OnSubrecordChanged;
+
+        void FireSubrecordChanged(SubRecord sr)
+        {
+            if (OnSubrecordChanged != null)
+            {
+                OnSubrecordChanged(this, new RecordChangeEventArgs(sr));
             }
         }
     }

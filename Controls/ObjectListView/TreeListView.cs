@@ -1568,18 +1568,6 @@ namespace BrightIdeasSoftware
             private IComparer actualComparer;
         }
 
-        //public void BeginUpdate()
-        //{
-        //    SendMessage(this.Handle, WM_SETREDRAW, (IntPtr)0, IntPtr.Zero);
-        //}
-        //public void EndUpdate()
-        //{
-        //    SendMessage(this.Handle, WM_SETREDRAW, (IntPtr)1, IntPtr.Zero);
-        //}
-        //private const int WM_SETREDRAW = 0x0b;
-        //[System.Runtime.InteropServices.DllImport("user32.dll", CharSet = System.Runtime.InteropServices.CharSet.Auto)]
-        //private static extern IntPtr SendMessage(IntPtr hWnd, int msg, IntPtr wParam, IntPtr lParam);
-
         /// <summary>
         /// Remove any sorting and revert to the given order of the model objects
         /// </summary>

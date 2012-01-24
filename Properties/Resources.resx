@@ -312,4 +312,7 @@ Continue anyway?</value>
     <value xml:space="preserve">Could not parse RecordStructure.xml. Record-at-once editing will be unavailable.
 </value>
   </data>
+  <data name="FullRecordEditorTitle">
+    <value xml:space="preserve">Full Record Editor</value>
+  </data>
 </root>

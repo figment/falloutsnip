@@ -6,6 +6,7 @@ using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Windows.Forms;
+using TESVSnip.Properties;
 
 namespace TESVSnip.Forms
 {
@@ -25,7 +26,16 @@ namespace TESVSnip.Forms
         public Record Record
         {
             get { return this.panelRecordEditor.Record; }
-            set { this.panelRecordEditor.Record = value; }
+            set
+            {
+                this.panelRecordEditor.Record = value;
+                if (value != null)
+                {
+                    this.Text = string.Format("{0} - [{1:X8}] {2}", Resources.FullRecordEditorTitle, value.FormID,
+                                              value.DescriptiveName);
+                }
+                
+            }
         }
     }
 

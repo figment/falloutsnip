@@ -52,23 +52,29 @@ namespace TESVSnip.Forms
             if (this.r == r && this.sr == sr)
                 return;
 
-            ClearControl();
             if (r == null || sr == null)
+            {
+                ClearControl();
                 return;
-
-            this.r = r;
-            this.sr = sr;
-            var p = GetPluginFromNode(r);
-            ss = sr.Structure;
-            SuspendLayout();
-            fpanel1.SuspendLayout();
-            fpanel1.Width = this.Parent.Width;
-            controlMap.Clear();
+            }
 
             // walk each element in standard fashion
             int panelOffset = 0;
             try
             {
+                BeginUpdate();
+
+                ClearControl();
+                SuspendLayout();
+                fpanel1.SuspendLayout();
+                fpanel1.Width = this.Parent.Width;
+                controlMap.Clear();
+
+                this.r = r;
+                this.sr = sr;
+                var p = GetPluginFromNode(r);
+                ss = sr.Structure;
+
                 // default to blob if no elements
                 if (ss == null || ss.elements == null)
                 {
@@ -195,12 +201,16 @@ namespace TESVSnip.Forms
             finally
             {
                 fpanel1.ResumeLayout();
-                ResumeLayout();                
+                ResumeLayout();
+                this.EndUpdate();
+                this.Refresh();
             }
         }
 
         public void Save()
         {
+            if (controlMap.Count <= 0) return;
+
             // warn user about data corruption.  But this may be case of fixing using tesvsnip to fix corruption so still allow
             if (strWarnOnSave != null)
             {
@@ -213,19 +223,19 @@ namespace TESVSnip.Forms
 
             using (var str = new System.IO.MemoryStream())
             {
-                foreach ( KeyValuePair<ElementStructure, IElementControl> kvp in controlMap )
+                foreach (KeyValuePair<ElementStructure, IElementControl> kvp in controlMap)
                 {
                     var c = kvp.Value;
                     if (c is IGroupedElementControl)
                     {
                         var gc = c as IGroupedElementControl;
-                        foreach (var elem in gc.Elements.Where(elem => elem.Count> 0))
+                        foreach (var elem in gc.Elements.Where(elem => elem.Count > 0))
                             str.Write(elem.Array, elem.Offset, elem.Count);
                     }
                     else
                     {
                         var elem = c.Data;
-                        if (elem.Count > 0) 
+                        if (elem.Count > 0)
                             str.Write(elem.Array, elem.Offset, elem.Count);
                     }
                 }
@@ -293,5 +303,18 @@ namespace TESVSnip.Forms
             }
             return false;
         }
+
+        public void BeginUpdate()
+        {
+            SendMessage(this.Handle, WM_SETREDRAW, (IntPtr)0, IntPtr.Zero);
+        }
+        public void EndUpdate()
+        {
+            SendMessage(this.Handle, WM_SETREDRAW, (IntPtr)1, IntPtr.Zero);
+        }
+        private const int WM_SETREDRAW = 0x0b;
+        [System.Runtime.InteropServices.DllImport("user32.dll", CharSet = System.Runtime.InteropServices.CharSet.Auto)]
+        private static extern IntPtr SendMessage(IntPtr hWnd, int msg, IntPtr wParam, IntPtr lParam);
+
     }
 }

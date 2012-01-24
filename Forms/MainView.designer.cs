@@ -45,6 +45,8 @@ namespace TESVSnip {
             this.deleteToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.insertRecordToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.insertSubrecordToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.editSelectedToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.editHeaderToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.addMasterToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.expandCollapseToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.expandAllToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -71,6 +73,7 @@ namespace TESVSnip {
             this.italianToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.spanishToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.russianToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.polishToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.editStringsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.saveStringsFilesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.stringLocalizerToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -227,6 +230,8 @@ namespace TESVSnip {
             this.deleteToolStripMenuItem,
             this.insertRecordToolStripMenuItem,
             this.insertSubrecordToolStripMenuItem,
+            this.editSelectedToolStripMenuItem,
+            this.editHeaderToolStripMenuItem,
             this.addMasterToolStripMenuItem,
             this.expandCollapseToolStripMenuItem,
             this.findToolStripMenuItem});
@@ -269,6 +274,18 @@ namespace TESVSnip {
             resources.ApplyResources(this.insertSubrecordToolStripMenuItem, "insertSubrecordToolStripMenuItem");
             this.insertSubrecordToolStripMenuItem.Name = "insertSubrecordToolStripMenuItem";
             this.insertSubrecordToolStripMenuItem.Click += new System.EventHandler(this.insertSubrecordToolStripMenuItem_Click);
+            // 
+            // editSelectedToolStripMenuItem
+            // 
+            this.editSelectedToolStripMenuItem.Name = "editSelectedToolStripMenuItem";
+            resources.ApplyResources(this.editSelectedToolStripMenuItem, "editSelectedToolStripMenuItem");
+            this.editSelectedToolStripMenuItem.Click += new System.EventHandler(this.editSelectedToolStripMenuItem_Click);
+            // 
+            // editHeaderToolStripMenuItem
+            // 
+            this.editHeaderToolStripMenuItem.Name = "editHeaderToolStripMenuItem";
+            resources.ApplyResources(this.editHeaderToolStripMenuItem, "editHeaderToolStripMenuItem");
+            this.editHeaderToolStripMenuItem.Click += new System.EventHandler(this.editHeaderToolStripMenuItem_Click);
             // 
             // addMasterToolStripMenuItem
             // 
@@ -413,7 +430,8 @@ namespace TESVSnip {
             this.germanToolStripMenuItem,
             this.italianToolStripMenuItem,
             this.spanishToolStripMenuItem,
-            this.russianToolStripMenuItem});
+            this.russianToolStripMenuItem,
+            this.polishToolStripMenuItem});
             this.languageToolStripMenuItem.Name = "languageToolStripMenuItem";
             resources.ApplyResources(this.languageToolStripMenuItem, "languageToolStripMenuItem");
             this.languageToolStripMenuItem.DropDownOpening += new System.EventHandler(this.languageToolStripMenuItem_DropDownOpening);
@@ -453,6 +471,12 @@ namespace TESVSnip {
             // 
             this.russianToolStripMenuItem.Name = "russianToolStripMenuItem";
             resources.ApplyResources(this.russianToolStripMenuItem, "russianToolStripMenuItem");
+            // 
+            // polishToolStripMenuItem
+            // 
+            this.polishToolStripMenuItem.Name = "polishToolStripMenuItem";
+            resources.ApplyResources(this.polishToolStripMenuItem, "polishToolStripMenuItem");
+            this.polishToolStripMenuItem.Click += new System.EventHandler(this.polishToolStripMenuItem_Click);
             // 
             // editStringsToolStripMenuItem
             // 
@@ -907,6 +931,7 @@ namespace TESVSnip {
             this.subrecordPanel.MinimumSize = new System.Drawing.Size(200, 120);
             this.subrecordPanel.Name = "subrecordPanel";
             this.dockingManagerExtender.SetPreferredSize(this.subrecordPanel, new System.Drawing.Size(200, 100));
+            this.subrecordPanel.SubRecords = null;
             this.dockingManagerExtender.SetTabbedMode(this.subrecordPanel, true);
             this.dockingManagerExtender.SetTitle(this.subrecordPanel, "Subrecord Panel");
             this.dockingManagerExtender.SetZoneIndex(this.subrecordPanel, 1);
@@ -1048,5 +1073,8 @@ namespace TESVSnip {
         private System.Windows.Forms.ToolStripMenuItem compressionSettingsToolStripMenuItem;
         private PluginTreeView PluginTree;
         private SubrecordListEditor subrecordPanel;
+        private System.Windows.Forms.ToolStripMenuItem polishToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem editSelectedToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem editHeaderToolStripMenuItem;
     }
 }

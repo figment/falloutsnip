@@ -368,6 +368,9 @@
     <EmbeddedResource Include="Controls\bindinglistview.resx">
       <DependentUpon>bindinglistview.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="Controls\CustomComboBox.resx">
+      <DependentUpon>CustomComboBox.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Controls\objectbindinglistview.resx">
       <DependentUpon>objectbindinglistview.cs</DependentUpon>
     </EmbeddedResource>

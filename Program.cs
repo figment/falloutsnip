@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Windows.Forms;
+using TESVSnip.Properties;
 
 namespace TESVSnip
 {
@@ -19,10 +20,9 @@ namespace TESVSnip
         [STAThread]
         static void Main(string[] args)
         {
-            settingsDir = System.Environment.CurrentDirectory;
-            exeDir = System.Environment.CurrentDirectory;
-            gameDir = System.Environment.CurrentDirectory;
-            gameDataDir = System.Environment.CurrentDirectory;
+            var plugins = new List<string>();
+            settingsDir = Environment.CurrentDirectory;
+            exeDir = Environment.CurrentDirectory;
             try
             {
                 System.Reflection.Assembly asm = System.Reflection.Assembly.GetExecutingAssembly();
@@ -41,46 +41,82 @@ namespace TESVSnip
             {
             	
             }
-            List<string> plugins = new List<string>();
-            for (int i=0;i<args.Length;++i)
+            try
             {
-                string arg = args[i];
-                if (string.IsNullOrEmpty(arg))
-                    continue;
-                if (arg[0] == '-' || arg[0] == '/')
+                for (int i = 0; i < args.Length; ++i)
                 {
-                    if (arg.Length == 1)
+                    string arg = args[i];
+                    if (string.IsNullOrEmpty(arg))
                         continue;
-                    switch (char.ToLower(arg[1]))
+                    if (arg[0] == '-' || arg[0] == '/')
                     {
-                        case 'c':
-                            settingsDir = (arg.Length > 2 && arg[2] == ':') ? arg.Substring(3) : args[++i];
-                            break;
+                        if (arg.Length == 1)
+                            continue;
+                        switch (char.ToLower(arg[1]))
+                        {
+                            case 'c':
+                                settingsDir = (arg.Length > 2 && arg[2] == ':') ? arg.Substring(3) : args[++i];
+                                break;
+                        }
                     }
+                    else
+                    {
+                        plugins.Add(arg);
+                    }
+
                 }
-                else
+
+                if (string.IsNullOrEmpty(gameDir))
+                    gameDir = Environment.CurrentDirectory;
+                if (string.IsNullOrEmpty(gameDataDir))
+                    gameDataDir = Environment.CurrentDirectory;
+                if (System.IO.Directory.Exists(gameDataDir))
+                    System.Environment.CurrentDirectory = gameDataDir;
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Error initializing main view: \n" + ex.Message, Resources.ErrorText);
+            }
+
+            try
+            {
+                AppDomain.CurrentDomain.UnhandledException += (sender, eventArgs) =>
                 {
-                    plugins.Add(arg);
+                    if (eventArgs.IsTerminating)
+                    {
+                        MessageBox.Show("Fatal Unhandled Exception:\n" + eventArgs.ExceptionObject.ToString(), Resources.ErrorText, MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    }
+                    else
+                    {
+                        MessageBox.Show("Unhandled Exception:\n" + eventArgs.ExceptionObject.ToString(), Resources.ErrorText, MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    }
+                };
+
+                Properties.Settings.Default.Reload();
+                Application.EnableVisualStyles();
+                Application.SetCompatibleTextRenderingDefault(false);
+
+                var main = new MainView();
+                foreach (string arg in plugins)
+                {
+                    main.LoadPlugin(arg);
+                }
+
+                try
+                {
+                    Application.Run(main);
+                    Properties.Settings.Default.Save();
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show("Error running main window: \n" + ex.ToString(), Resources.ErrorText);
                 }
 
             }
-
-            if (System.IO.Directory.Exists(gameDataDir))
+            catch (Exception ex)
             {
-                System.Environment.CurrentDirectory = gameDataDir;
+                MessageBox.Show("Error initializing main view: \n" + ex.ToString(), Resources.ErrorText);
             }
-
-            Properties.Settings.Default.Reload();
-            Application.EnableVisualStyles();
-            Application.SetCompatibleTextRenderingDefault(false);
-
-            MainView main = new MainView();
-            foreach (string arg in plugins)
-            {
-                main.LoadPlugin(arg);
-            }
-            Application.Run(main);
-            Properties.Settings.Default.Save();
         }
     }
 
@@ -112,6 +148,7 @@ namespace TESVSnip
             defLangMap.Add("Italian", new FontLangInfo(1252, 1040, 0));
             defLangMap.Add("Spanish", new FontLangInfo(1252, 1034, 0));
             defLangMap.Add("Russian", new FontLangInfo(1251, 1049, 204));
+            defLangMap.Add("Polish", new FontLangInfo(1250, 1045, 0));
         }
 
         internal static System.Text.Encoding CP1252

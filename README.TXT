@@ -9,6 +9,12 @@ Requirements:
   .NET 3.5
 
 Change Log:
+v 3.1
+- Extra error handling to try and track down errors
+- Handle issue with use of Flag Dropdown combobox while control is still being initialized
+- Fix with multiselect delete from key binding
+- Allow Down key to open Flags Dropdown combo
+
 v 3.0
 - Major rewrite to use new TreeList control for Record List
 - Include Sort and Drag/Drop on single TreeList to allow reordering

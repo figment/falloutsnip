@@ -253,7 +253,12 @@ namespace TESVSnip.Windows.Controls
             private void cclb_ItemCheck(object sender, ItemCheckEventArgs e) {
                 if (ccbParent.ItemCheck != null)
                 {
-                    this.BeginInvoke(new ItemCheckEventHandler((o, args) => ccbParent.ItemCheck(o, args)), new object[]{sender, e});
+                    try
+                    {
+                        if (this.IsHandleCreated)
+                            BeginInvoke(new ItemCheckEventHandler((o, args) => ccbParent.ItemCheck(o, args)), new[] { sender, e });
+                    }
+                    catch {}
                 }
             }
 
@@ -365,8 +370,9 @@ namespace TESVSnip.Windows.Controls
                 // Signal that the dropdown is "down". This is required so that the behaviour of the dropdown is the same
                 // when it is a result of user pressing the Down_Arrow (which we handle and the framework wouldn't know that
                 // the list portion is down unless we tell it so).
-                // NOTE: all that so the DropDownClosed event fires correctly!                
-                HideDropDown();
+                // NOTE: all that so the DropDownClosed event fires correctly!
+                if (!this.IsDroppedDown)
+                    ShowDropDown();
             }
             // Make sure that certain keys or combinations are not blocked.
             e.Handled = !e.Alt && !(e.KeyCode == Keys.Tab) &&

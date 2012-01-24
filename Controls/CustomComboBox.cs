@@ -275,6 +275,7 @@ namespace TESVSnip.Windows.Controls
             base.WndProc(ref m);
         }
 
+
         #endregion
 
         #region Enumerations
@@ -488,6 +489,26 @@ namespace TESVSnip.Windows.Controls
         bool m_bIsResizable = true;
 
         #endregion
+
+        private void InitializeComponent()
+        {
+            this.SuspendLayout();
+            // 
+            // CustomComboBox
+            // 
+            this.KeyDown += new System.Windows.Forms.KeyEventHandler(this.CustomComboBox_KeyDown);
+            this.ResumeLayout(false);
+
+        }
+
+        private void CustomComboBox_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.KeyCode == Keys.Down)
+            {
+                if (!this.IsDroppedDown)
+                    ShowDropDown();
+            }
+        }
     }
 
     //internal class CustomComboBoxDesigner : ParentControlDesigner

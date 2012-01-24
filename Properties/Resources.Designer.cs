@@ -342,6 +342,15 @@ namespace TESVSnip.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Full Record Editor.
+        /// </summary>
+        internal static string FullRecordEditorTitle {
+            get {
+                return ResourceManager.GetString("FullRecordEditorTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to If you don&apos;t know what this does, you probably don&apos;t want to click it
         ///Continue anyway?.
         /// </summary>

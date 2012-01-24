@@ -89,10 +89,15 @@ namespace TESVSnip.ObjectControls
 
         private void PluginTree_MouseDoubleClick(object sender, MouseEventArgs e)
         {
+            EditSelectedHeader();
+        }
+
+        public void EditSelectedHeader()
+        {
             if (PluginTree.SelectedRecord == null) return;
             if (PluginTree.SelectedRecord is Record)
             {
-                var r = (Record)PluginTree.SelectedRecord;
+                var r = (Record) PluginTree.SelectedRecord;
                 if (DialogResult.OK == HeaderEditor.Display(r))
                 {
                     GetPluginFromNode(PluginTree.SelectedRecord).InvalidateCache();
@@ -101,7 +106,7 @@ namespace TESVSnip.ObjectControls
             }
             else if (PluginTree.SelectedRecord is GroupRecord)
             {
-                GroupRecord gr = (GroupRecord)PluginTree.SelectedRecord;
+                GroupRecord gr = (GroupRecord) PluginTree.SelectedRecord;
                 if (DialogResult.OK == GroupEditor.Display(gr))
                 {
                     GetPluginFromNode(PluginTree.SelectedRecord).InvalidateCache();
@@ -109,7 +114,6 @@ namespace TESVSnip.ObjectControls
                 }
             }
         }
-
 
 
         private void PluginTree_Enter(object sender, EventArgs e)
@@ -438,14 +442,19 @@ namespace TESVSnip.ObjectControls
         {
             if (DialogResult.Yes == MessageBox.Show(Resources.AreYouSureInquiry, Resources.DeleteNode, MessageBoxButtons.YesNo, MessageBoxIcon.Question, MessageBoxDefaultButton.Button2))
             {
-                foreach (var node in PluginTree.SelectedRecords)
+                DeleteSelection();
+            }
+        }
+
+        public void DeleteSelection()
+        {
+            foreach (var node in PluginTree.SelectedRecords)
+            {
+                GetPluginFromNode(node).InvalidateCache();
+                if (node.Parent != null)
                 {
-                    GetPluginFromNode(node).InvalidateCache();
-                    if (node.Parent != null)
-                    {
-                        var parent = (BaseRecord)node.Parent;
-                        parent.DeleteRecord(node);
-                    }
+                    var parent = (BaseRecord) node.Parent;
+                    parent.DeleteRecord(node);
                 }
             }
         }
@@ -624,11 +633,13 @@ namespace TESVSnip.ObjectControls
                 if (rec == null) return;
                 var group = rec.Parent as IGroupRecord;
                 if (group == null) return;
-                int idx = group.IndexOf(rec as BaseRecord);
-                idx += offset;
+                int idx = group.IndexOf(rec as BaseRecord) + offset;
                 var refreshObjects = new List<BaseRecord>();
                 var selObjects = new List<BaseRecord>();
-                foreach (IRecord record in e.SourceModels)
+                IEnumerable<IRecord> itr = e.SourceModels.OfType<IRecord>();
+                if (e.DropTargetLocation == DropTargetLocation.BelowItem)
+                    itr = itr.Reverse();
+                foreach (IRecord record in itr)
                 {
                     if (e.Effect == DragDropEffects.Copy)
                     {
@@ -736,6 +747,11 @@ namespace TESVSnip.ObjectControls
         }
 
         private void editToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            EditSelectedRecord();
+        }
+
+        public void EditSelectedRecord()
         {
             var selRecord = PluginTree.SelectedRecord;
             if (selRecord is GroupRecord)

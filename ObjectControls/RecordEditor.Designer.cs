@@ -162,6 +162,7 @@
             resources.ApplyResources(this.subrecordListEditor, "subrecordListEditor");
             this.subrecordListEditor.MinimumSize = new System.Drawing.Size(200, 120);
             this.subrecordListEditor.Name = "subrecordListEditor";
+            this.subrecordListEditor.SubRecords = null;
             // 
             // bCancel
             // 
