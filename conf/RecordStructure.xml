@@ -391,20 +391,20 @@
     </Subrecord>
     <Group id="KEYWORDS" optional="1"/>
     <Group>
-      <Subrecord name="DATA" desc="DATA" size="128">
+      <Subrecord name="DATA" desc="Actor Values" size="128">
         <Element name="Unknown" type="int" />
         <Element name="Unknown 1" type="int" />
         <Element name="Unknown 2" type="int" />
         <Element name="Unknown 3" type="int" />
-        <Element name="Unknown 4" type="float" />
-        <Element name="Unknown 5" type="float" />
+        <Element name="Scale, Male" type="float" />
+        <Element name="Scale, Female" type="float" />
         <Element name="Unknown 6" type="float" />
         <Element name="Unknown 7" type="float" />
-        <Element name="Unknown 8" type="int" />
-        <Element name="Unknown 9" type="float" />
-        <Element name="Unknown 10" type="float" />
-        <Element name="Unknown 11" type="float" />
-        <Element name="Unknown 12" type="float" />
+        <Element name="Player Flag" type="int" desc="Seems to set if a race is playable or not, also has values to designate as a vampire evolution of another race"/>
+        <Element name="Base Health" type="float" desc="Seems to be half of the game value"/>
+        <Element name="Base Magika" type="float" desc="Seems to be half of the game value"/>
+        <Element name="Base Stamina" type="float" desc="Seems to be half of the game value"/>
+        <Element name="Base Carry Weight" type="float" />
         <Element name="Unknown 13" type="float" />
         <Element name="Unknown 14" type="float" />
         <Element name="Unknown 15" type="float" />
@@ -413,9 +413,9 @@
         <Element name="Unknown 18" type="int" />
         <Element name="Unknown 19" type="float" />
         <Element name="Unknown 20" type="int" />
-        <Element name="Unknown 21" type="float" />
-        <Element name="Unknown 22" type="float" />
-        <Element name="Unknown 23" type="float" />
+        <Element name="Base Heal Rate" type="float" />
+        <Element name="Base Magika Rate" type="float" />
+        <Element name="Base Stamina Rate" type="float" />
         <Element name="Unknown 24" type="float" />
         <Element name="Unknown 25" type="float" />
         <Element name="Unknown 26" type="int" />
