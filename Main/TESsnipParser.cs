@@ -1,19 +1,20 @@
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.IO;
-using System.Runtime.Serialization;
-using System.Linq;
-using System.Drawing;
-using System.Text;
-using RTF;
-using TESVSnip.Data;
+using ICSharpCode.SharpZipLib.Zip.Compression;
+using ICSharpCode.SharpZipLib.Zip.Compression.Streams;
 
 namespace TESVSnip
 {
-    public class TESParserException : Exception { public TESParserException(string msg) : base(msg) { } }
+    public class TESParserException : Exception
+    {
+        public TESParserException(string msg) : base(msg)
+        {
+        }
+    }
 
     #region class SelectionContext
+
     /// <summary>
     /// External state for holding single selection for use with evaluating descriptions and intelligent editors
     /// </summary>
@@ -24,45 +25,47 @@ namespace TESVSnip
 
         public Rec Record
         {
-            get { return this.record; }
+            get { return record; }
             set
             {
-                if (this.record != value)
+                if (record != value)
                 {
-                    this.record = value;
-                    this.SubRecord = null;
-                    this.Conditions.Clear();
-                    if (this.RecordChanged != null)
-                        this.RecordChanged(this, EventArgs.Empty);
+                    record = value;
+                    SubRecord = null;
+                    Conditions.Clear();
+                    if (RecordChanged != null)
+                        RecordChanged(this, EventArgs.Empty);
                 }
             }
         }
+
         public SubRecord SubRecord
         {
-            get { return this.subRecord; }
+            get { return subRecord; }
             set
             {
-                if (this.subRecord != value)
+                if (subRecord != value)
                 {
-                    this.subRecord = value;
-                    if (this.SubRecordChanged != null)
-                        this.SubRecordChanged(this, EventArgs.Empty);
+                    subRecord = value;
+                    if (SubRecordChanged != null)
+                        SubRecordChanged(this, EventArgs.Empty);
                 }
             }
         }
+
         internal Dictionary<int, Conditional> Conditions = new Dictionary<int, Conditional>();
-        internal dFormIDLookupI formIDLookup = null;
-        internal dLStringLookup strLookup = null;
-        internal dFormIDLookupR formIDLookupR = null;
+        internal dFormIDLookupI formIDLookup;
+        internal dLStringLookup strLookup;
+        internal dFormIDLookupR formIDLookupR;
 
         public bool SelectedSubrecord
         {
-            get { return this.SubRecord != null; }
+            get { return SubRecord != null; }
         }
 
         public void Reset()
         {
-            this.Record = null;
+            Record = null;
         }
 
         public event EventHandler RecordChanged;
@@ -70,21 +73,23 @@ namespace TESVSnip
 
         public SelectionContext Clone()
         {
-            var result = (SelectionContext)this.MemberwiseClone();
+            var result = (SelectionContext) MemberwiseClone();
             result.RecordChanged = null;
             result.SubRecordChanged = null;
             return result;
         }
     }
+
     #endregion
 
     #region class Compressor / Decompressor
-    static class Compressor
+
+    internal static class Compressor
     {
         private static byte[] buffer;
         private static MemoryStream ms;
-        private static ICSharpCode.SharpZipLib.Zip.Compression.Deflater def;
-        private static ICSharpCode.SharpZipLib.Zip.Compression.Streams.DeflaterOutputStream defstr;
+        private static Deflater def;
+        private static DeflaterOutputStream defstr;
         private static string[] autoCompRecList = new string[0];
 
 
@@ -92,14 +97,14 @@ namespace TESVSnip
         {
             ms.SetLength(0);
             ms.Position = 0;
-            return ms; 
+            return ms;
         }
 
         public static BinaryWriter AllocWriter(Stream s)
         {
             int compressLevel = 9;
-            def = new ICSharpCode.SharpZipLib.Zip.Compression.Deflater(compressLevel, false);
-            defstr = new ICSharpCode.SharpZipLib.Zip.Compression.Streams.DeflaterOutputStream(ms, def);
+            def = new Deflater(compressLevel, false);
+            defstr = new DeflaterOutputStream(ms, def);
             defstr.IsStreamOwner = false;
             return new BinaryWriter(defstr);
         }
@@ -109,7 +114,7 @@ namespace TESVSnip
             long left = input.Length;
             while (left > 0)
             {
-                int nread = input.Read(buffer,0, buffer.Length);
+                int nread = input.Read(buffer, 0, buffer.Length);
                 if (nread == 0) break;
                 output.Write(buffer, 0, nread);
             }
@@ -121,15 +126,17 @@ namespace TESVSnip
             buffer = new byte[0x4000];
 
             // bit of a hack to avoid rebuilding this look up index
-            autoCompRecList = TESVSnip.Properties.Settings.Default.AutoCompressRecords != null
-                ? TESVSnip.Properties.Settings.Default.AutoCompressRecords.Trim().Split(new char[] { ';', ',' }, StringSplitOptions.RemoveEmptyEntries)
-                : new string[0];
+            autoCompRecList = Properties.Settings.Default.AutoCompressRecords != null
+                                  ? Properties.Settings.Default.AutoCompressRecords.Trim().Split(new[] {';', ','},
+                                                                                                 StringSplitOptions.
+                                                                                                     RemoveEmptyEntries)
+                                  : new string[0];
             Array.Sort(autoCompRecList);
         }
 
         public static bool CompressRecord(string name)
         {
-            return Array.BinarySearch<string>(autoCompRecList, name) >= 0;
+            return Array.BinarySearch(autoCompRecList, name) >= 0;
         }
 
         public static void Close()
@@ -141,13 +148,13 @@ namespace TESVSnip
         }
     }
 
-    static class Decompressor
+    internal static class Decompressor
     {
         private static byte[] input;
         private static byte[] output;
         private static MemoryStream ms;
         private static BinaryReader compReader;
-        private static ICSharpCode.SharpZipLib.Zip.Compression.Inflater inf;
+        private static Inflater inf;
 
         public static BinaryReader Decompress(BinaryReader br, int size, int outsize)
         {
@@ -170,15 +177,16 @@ namespace TESVSnip
 
             return compReader;
         }
-        
+
         public static void Init()
         {
-            inf = new ICSharpCode.SharpZipLib.Zip.Compression.Inflater(false);
+            inf = new Inflater(false);
             ms = new MemoryStream();
             compReader = new BinaryReader(ms);
             input = new byte[0x1000];
             output = new byte[0x4000];
         }
+
         public static void Close()
         {
             compReader.Close();
@@ -189,45 +197,47 @@ namespace TESVSnip
             ms = null;
         }
     }
-    #endregion 
+
+    #endregion
 
     #region Misc Flag Defs
+
     internal static class FlagDefs
     {
         public static readonly string[] RecFlags1 = {
-            "ESM file",
-            null,
-            null,
-            null,
-            null,
-            "Deleted",
-            null,
-            "Localized",
-            null,
-            "Casts shadows",
-            "Quest item / Persistent reference",
-            "Initially disabled",
-            "Ignored",
-            null,
-            null,
-            "Visible when distant",
-            null,
-            "Dangerous / Off limits (Interior cell)",
-            "Data is compressed",
-            "Can't wait",
-            null,
-            null,
-            null,
-            null,
-            null,
-            null,
-            null,
-            null,
-            null,
-            null,
-            null,
-            null,
-        };
+                                                        "ESM file",
+                                                        null,
+                                                        null,
+                                                        null,
+                                                        null,
+                                                        "Deleted",
+                                                        null,
+                                                        "Localized",
+                                                        null,
+                                                        "Casts shadows",
+                                                        "Quest item / Persistent reference",
+                                                        "Initially disabled",
+                                                        "Ignored",
+                                                        null,
+                                                        null,
+                                                        "Visible when distant",
+                                                        null,
+                                                        "Dangerous / Off limits (Interior cell)",
+                                                        "Data is compressed",
+                                                        "Can't wait",
+                                                        null,
+                                                        null,
+                                                        null,
+                                                        null,
+                                                        null,
+                                                        null,
+                                                        null,
+                                                        null,
+                                                        null,
+                                                        null,
+                                                        null,
+                                                        null,
+                                                    };
 
         public static string GetRecFlags1Desc(uint flags)
         {
@@ -235,15 +245,16 @@ namespace TESVSnip
             bool b = false;
             for (int i = 0; i < 32; i++)
             {
-                if ((flags & (uint)(1 << i)) > 0)
+                if ((flags & (uint) (1 << i)) > 0)
                 {
                     if (b) desc += ", ";
                     b = true;
-                    desc += (RecFlags1[i] == null ? "Unknown (" + ((uint)(1 << i)).ToString("x") + ")" : RecFlags1[i]);
+                    desc += (RecFlags1[i] == null ? "Unknown (" + ((uint) (1 << i)).ToString("x") + ")" : RecFlags1[i]);
                 }
             }
             return desc;
         }
     }
+
     #endregion
 }

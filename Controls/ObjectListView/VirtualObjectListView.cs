@@ -60,8 +60,9 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Windows.Forms;
+using System.Diagnostics;
 using System.Runtime.InteropServices;
+using System.Windows.Forms;
 
 namespace BrightIdeasSoftware
 {
@@ -96,17 +97,17 @@ namespace BrightIdeasSoftware
         /// Create a VirtualObjectListView
         /// </summary>
         public VirtualObjectListView()
-            : base() {
-            this.VirtualMode = true; // Virtual lists have to be virtual -- no prizes for guessing that :)
+        {
+            VirtualMode = true; // Virtual lists have to be virtual -- no prizes for guessing that :)
 
-            this.CacheVirtualItems += new CacheVirtualItemsEventHandler(this.HandleCacheVirtualItems);
-            this.RetrieveVirtualItem += new RetrieveVirtualItemEventHandler(this.HandleRetrieveVirtualItem);
-            this.SearchForVirtualItem += new SearchForVirtualItemEventHandler(this.HandleSearchForVirtualItem);
+            CacheVirtualItems += HandleCacheVirtualItems;
+            RetrieveVirtualItem += HandleRetrieveVirtualItem;
+            SearchForVirtualItem += HandleSearchForVirtualItem;
 
             // At the moment, we don't need to handle this event. But we'll keep this comment to remind us about it.
             //this.VirtualItemsSelectionRangeChanged += new ListViewVirtualItemsSelectionRangeChangedEventHandler(VirtualObjectListView_VirtualItemsSelectionRangeChanged);
 
-            this.VirtualListDataSource = new VirtualListVersion1DataSource(this);
+            VirtualListDataSource = new VirtualListVersion1DataSource(this);
         }
 
         #region Public Properties
@@ -115,10 +116,12 @@ namespace BrightIdeasSoftware
         /// Gets whether or not this listview is capabale of showing groups
         /// </summary>
         [Browsable(false)]
-        public override bool CanShowGroups {
-            get {
+        public override bool CanShowGroups
+        {
+            get
+            {
                 // Virtual lists need Vista and a grouping strategy to show groups
-                return (ObjectListView.IsVistaOrLater && this.GroupingStrategy != null);
+                return (IsVistaOrLater && GroupingStrategy != null);
             }
         }
 
@@ -131,19 +134,23 @@ namespace BrightIdeasSoftware
         [Category("Appearance"),
          Description("Should the list view show checkboxes?"),
          DefaultValue(true)]
-        new public bool CheckBoxes {
-            get { return base.CheckBoxes;  }
-            set {
-                try {
+        public new bool CheckBoxes
+        {
+            get { return base.CheckBoxes; }
+            set
+            {
+                try
+                {
                     base.CheckBoxes = value;
                 }
-                catch (InvalidOperationException) {
-                    this.StateImageList = null;
-                    this.VirtualMode = false;
+                catch (InvalidOperationException)
+                {
+                    StateImageList = null;
+                    VirtualMode = false;
                     base.CheckBoxes = value;
-                    this.VirtualMode = true;
-                    this.ShowGroups = this.ShowGroups;
-                    this.BuildList(true);
+                    VirtualMode = true;
+                    ShowGroups = ShowGroups;
+                    BuildList(true);
                 }
             }
         }
@@ -172,51 +179,57 @@ namespace BrightIdeasSoftware
         /// </remarks>
         [Browsable(false),
          DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
-        public override IList CheckedObjects {
-            get {
-                ArrayList objects = new ArrayList();
+        public override IList CheckedObjects
+        {
+            get
+            {
+                var objects = new ArrayList();
 
-                if (!this.CheckBoxes)
+                if (!CheckBoxes)
                     return objects;
 
                 // If a custom check state getter is install, we can't use our check state management
                 // We have to use the (slower) base version.
-                if (this.CheckStateGetter != null)
+                if (CheckStateGetter != null)
                     return base.CheckedObjects;
 
                 // If the data source has somehow vanished, we can't do anything
-                if (this.VirtualListDataSource == null)
+                if (VirtualListDataSource == null)
                     return objects;
 
                 // Collect items that are checked AND that still exist in the list.
-                foreach (KeyValuePair<Object, CheckState> kvp in this.checkStateMap) {
-                    if (kvp.Value == CheckState.Checked && this.VirtualListDataSource.GetObjectIndex(kvp.Key) >= 0)
+                foreach (KeyValuePair<Object, CheckState> kvp in checkStateMap)
+                {
+                    if (kvp.Value == CheckState.Checked && VirtualListDataSource.GetObjectIndex(kvp.Key) >= 0)
                         objects.Add(kvp.Key);
                 }
                 return objects;
             }
-            set {
-                if (!this.CheckBoxes)
+            set
+            {
+                if (!CheckBoxes)
                     return;
 
                 // Set up an efficient way of testing for the presence of a particular model
-                Hashtable table = new Hashtable(this.GetItemCount());
-                if (value != null) {
+                var table = new Hashtable(GetItemCount());
+                if (value != null)
+                {
                     foreach (object x in value)
                         table[x] = true;
                 }
 
                 // Uncheck anything that is no longer checked
-                Object[] keys = new Object[this.checkStateMap.Count];
-                this.checkStateMap.Keys.CopyTo(keys, 0);
-                foreach (Object key in keys) {
+                var keys = new Object[checkStateMap.Count];
+                checkStateMap.Keys.CopyTo(keys, 0);
+                foreach (Object key in keys)
+                {
                     if (!table.Contains(key))
-                        this.SetObjectCheckedness(key, CheckState.Unchecked);
+                        SetObjectCheckedness(key, CheckState.Unchecked);
                 }
 
                 // Check all the new checked objects
                 foreach (Object x in table.Keys)
-                    this.SetObjectCheckedness(x, CheckState.Checked);
+                    SetObjectCheckedness(x, CheckState.Checked);
             }
         }
 
@@ -225,10 +238,12 @@ namespace BrightIdeasSoftware
         /// </summary>
         [Browsable(false),
          DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
-        public override IEnumerable FilteredObjects {
-            get {
-                for (int i = 0; i < this.GetItemCount(); i++)
-                    yield return this.GetModelObject(i);
+        public override IEnumerable FilteredObjects
+        {
+            get
+            {
+                for (int i = 0; i < GetItemCount(); i++)
+                    yield return GetModelObject(i);
             }
         }
 
@@ -238,13 +253,8 @@ namespace BrightIdeasSoftware
         /// <remarks>
         /// This must be provided for a virtual list to show groups.
         /// </remarks>
-        [Browsable(false),
-        DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
-        public IVirtualGroups GroupingStrategy {
-            get { return this.groupingStrategy; }
-            set { this.groupingStrategy = value; }
-        }
-        private IVirtualGroups groupingStrategy;
+        [Browsable(false), DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+        public IVirtualGroups GroupingStrategy { get; set; }
 
         /// <summary>
         /// Gets whether or not the current list is filtering its contents
@@ -252,10 +262,9 @@ namespace BrightIdeasSoftware
         /// <remarks>
         /// This is only possible if our underlying data source supports filtering.
         /// </remarks>
-        public override bool IsFiltering {
-            get {
-                return base.IsFiltering && (this.VirtualListDataSource is IFilterableDataSource);
-            }
+        public override bool IsFiltering
+        {
+            get { return base.IsFiltering && (VirtualListDataSource is IFilterableDataSource); }
         }
 
         /// <summary>
@@ -274,17 +283,22 @@ namespace BrightIdeasSoftware
         /// </remarks>
         [Browsable(false),
          DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
-        public override IEnumerable Objects {
-            get {
-                try {
+        public override IEnumerable Objects
+        {
+            get
+            {
+                try
+                {
                     // If we are filtering, we have to temporarily disable filtering so we get
                     // the whole collection
-                    if (this.IsFiltering)
-                        ((IFilterableDataSource)this.VirtualListDataSource).ApplyFilters(null, null);
-                    return this.FilteredObjects;
-                } finally {
-                    if (this.IsFiltering)
-                        ((IFilterableDataSource)this.VirtualListDataSource).ApplyFilters(this.ModelFilter, this.ListFilter);
+                    if (IsFiltering)
+                        ((IFilterableDataSource) VirtualListDataSource).ApplyFilters(null, null);
+                    return FilteredObjects;
+                }
+                finally
+                {
+                    if (IsFiltering)
+                        ((IFilterableDataSource) VirtualListDataSource).ApplyFilters(ModelFilter, ListFilter);
                 }
             }
             set { base.Objects = value; }
@@ -296,9 +310,10 @@ namespace BrightIdeasSoftware
         /// <remarks>Only use this property if you are not using a VirtualListDataSource.</remarks>
         [Browsable(false),
          DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
-        public virtual RowGetterDelegate RowGetter {
-            get { return ((VirtualListVersion1DataSource)this.virtualListDataSource).RowGetter; }
-            set { ((VirtualListVersion1DataSource)this.virtualListDataSource).RowGetter = value; }
+        public virtual RowGetterDelegate RowGetter
+        {
+            get { return ((VirtualListVersion1DataSource) virtualListDataSource).RowGetter; }
+            set { ((VirtualListVersion1DataSource) virtualListDataSource).RowGetter = value; }
         }
 
         /// <summary>
@@ -307,22 +322,27 @@ namespace BrightIdeasSoftware
         [Category("Appearance"),
          Description("Should the list view show items in groups?"),
          DefaultValue(true)]
-        override public bool ShowGroups {
-            get {
+        public override bool ShowGroups
+        {
+            get
+            {
                 // Pre-Vista, virtual lists cannot show groups
-                if (ObjectListView.IsVistaOrLater)
+                if (IsVistaOrLater)
                     return showGroups;
                 else
                     return false;
             }
-            set {
-                this.showGroups = value;
-                if (this.Created) {
+            set
+            {
+                showGroups = value;
+                if (Created)
+                {
                     if (!value)
-                        this.DisableVirtualGroups();
+                        DisableVirtualGroups();
                 }
             }
         }
+
         private bool showGroups;
 
 
@@ -332,20 +352,22 @@ namespace BrightIdeasSoftware
         /// <remarks>Setting this will cause the list to redraw.</remarks>
         [Browsable(false),
          DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
-        public virtual IVirtualListDataSource VirtualListDataSource {
-            get {
-                return this.virtualListDataSource;
-            }
-            set {
-                this.virtualListDataSource = value;
-                this.CustomSorter = delegate(OLVColumn column, SortOrder sortOrder) {
-                    this.ClearCachedInfo();
-                    this.virtualListDataSource.Sort(column, sortOrder);
-                };
-                this.UpdateVirtualListSize();
-                this.Invalidate();
+        public virtual IVirtualListDataSource VirtualListDataSource
+        {
+            get { return virtualListDataSource; }
+            set
+            {
+                virtualListDataSource = value;
+                CustomSorter = delegate(OLVColumn column, SortOrder sortOrder)
+                                   {
+                                       ClearCachedInfo();
+                                       virtualListDataSource.Sort(column, sortOrder);
+                                   };
+                UpdateVirtualListSize();
+                Invalidate();
             }
         }
+
         private IVirtualListDataSource virtualListDataSource;
 
         #endregion
@@ -356,8 +378,9 @@ namespace BrightIdeasSoftware
         /// Return the number of items in the list
         /// </summary>
         /// <returns>the number of items in the list</returns>
-        public override int GetItemCount() {
-            return this.VirtualListSize;
+        public override int GetItemCount()
+        {
+            return VirtualListSize;
         }
 
         /// <summary>
@@ -365,9 +388,10 @@ namespace BrightIdeasSoftware
         /// </summary>
         /// <param name="index">Index of the model object to be returned</param>
         /// <returns>A model object</returns>
-        public override object GetModelObject(int index) {
-            if (this.VirtualListDataSource != null && index >= 0 && index < this.GetItemCount())
-                return this.VirtualListDataSource.GetNthObject(index);
+        public override object GetModelObject(int index)
+        {
+            if (VirtualListDataSource != null && index >= 0 && index < GetItemCount())
+                return VirtualListDataSource.GetNthObject(index);
             else
                 return null;
         }
@@ -377,11 +401,12 @@ namespace BrightIdeasSoftware
         /// </summary>
         /// <param name="modelObject">The model object to be found</param>
         /// <returns>The index of the object. -1 means the object was not present</returns>
-        public override int IndexOf(Object modelObject) {
-            if (this.VirtualListDataSource == null || modelObject == null)
+        public override int IndexOf(Object modelObject)
+        {
+            if (VirtualListDataSource == null || modelObject == null)
                 return -1;
 
-            return this.VirtualListDataSource.GetObjectIndex(modelObject);
+            return VirtualListDataSource.GetObjectIndex(modelObject);
         }
 
         /// <summary>
@@ -390,13 +415,14 @@ namespace BrightIdeasSoftware
         /// <param name="modelObject">The modelObject whose item is to be found</param>
         /// <returns>The OLVListItem that displays the model, or null</returns>
         /// <remarks>This method has O(n) performance.</remarks>
-        public override OLVListItem ModelToItem(object modelObject) {
-            if (this.VirtualListDataSource == null || modelObject == null)
+        public override OLVListItem ModelToItem(object modelObject)
+        {
+            if (VirtualListDataSource == null || modelObject == null)
                 return null;
 
-            int index = this.VirtualListDataSource.GetObjectIndex(modelObject);
+            int index = VirtualListDataSource.GetObjectIndex(modelObject);
             if (index >= 0)
-                return this.GetItem(index);
+                return GetItem(index);
             else
                 return null;
         }
@@ -415,32 +441,35 @@ namespace BrightIdeasSoftware
         /// <para>No check is performed to see if any of the objects are already in the ListView.</para>
         /// <para>Null objects are silently ignored.</para>
         /// </remarks>
-        public override void AddObjects(ICollection modelObjects) {
-            if (this.VirtualListDataSource == null)
+        public override void AddObjects(ICollection modelObjects)
+        {
+            if (VirtualListDataSource == null)
                 return;
 
             // Give the world a chance to cancel or change the added objects
-            ItemsAddingEventArgs args = new ItemsAddingEventArgs(modelObjects);
-            this.OnItemsAdding(args);
+            var args = new ItemsAddingEventArgs(modelObjects);
+            OnItemsAdding(args);
             if (args.Canceled)
                 return;
 
-            this.ClearCachedInfo();
-            this.VirtualListDataSource.AddObjects(args.ObjectsToAdd);
-            this.Sort();
-            this.UpdateVirtualListSize();
+            ClearCachedInfo();
+            VirtualListDataSource.AddObjects(args.ObjectsToAdd);
+            Sort();
+            UpdateVirtualListSize();
         }
 
         /// <summary>
         /// Remove all items from this list
         /// </summary>
         /// <remark>This method can safely be called from background threads.</remark>
-        public override void ClearObjects() {
-            if (this.InvokeRequired)
-                this.Invoke(new MethodInvoker(this.ClearObjects));
-            else {
-                this.checkStateMap.Clear();
-                this.SetObjects(new ArrayList());
+        public override void ClearObjects()
+        {
+            if (InvokeRequired)
+                Invoke(new MethodInvoker(ClearObjects));
+            else
+            {
+                checkStateMap.Clear();
+                SetObjects(new ArrayList());
             }
         }
 
@@ -448,21 +477,24 @@ namespace BrightIdeasSoftware
         /// Update the rows that are showing the given objects
         /// </summary>
         /// <remarks>This method does not resort the items.</remarks>
-        public override void RefreshObjects(IList modelObjects) {
-            if (this.InvokeRequired) {
-                this.Invoke((MethodInvoker)delegate { this.RefreshObjects(modelObjects); });
+        public override void RefreshObjects(IList modelObjects)
+        {
+            if (InvokeRequired)
+            {
+                Invoke((MethodInvoker) delegate { RefreshObjects(modelObjects); });
                 return;
             }
 
             // Without a data source, we can't do this.
-            if (this.VirtualListDataSource == null)
+            if (VirtualListDataSource == null)
                 return;
 
-            this.ClearCachedInfo();
-            foreach (object modelObject in modelObjects) {
-                int index = this.VirtualListDataSource.GetObjectIndex(modelObject);
+            ClearCachedInfo();
+            foreach (object modelObject in modelObjects)
+            {
+                int index = VirtualListDataSource.GetObjectIndex(modelObject);
                 if (index >= 0)
-                    this.RedrawItems(index, index, true);
+                    RedrawItems(index, index, true);
             }
         }
 
@@ -470,9 +502,10 @@ namespace BrightIdeasSoftware
         /// Update the rows that are selected
         /// </summary>
         /// <remarks>This method does not resort or regroup the view.</remarks>
-        public override void RefreshSelectedObjects() {
-            foreach (int index in this.SelectedIndices)
-                this.RedrawItems(index, index, true);
+        public override void RefreshSelectedObjects()
+        {
+            foreach (int index in SelectedIndices)
+                RedrawItems(index, index, true);
         }
 
         /// <summary>
@@ -487,19 +520,20 @@ namespace BrightIdeasSoftware
         /// the vertical scroll bar will become confused and the control will draw one or more
         /// blank lines at the top of the list. </para>
         /// </remarks>
-        public override void RemoveObjects(ICollection modelObjects) {
-            if (this.VirtualListDataSource == null)
+        public override void RemoveObjects(ICollection modelObjects)
+        {
+            if (VirtualListDataSource == null)
                 return;
 
             // Give the world a chance to cancel or change the removed objects
-            ItemsRemovingEventArgs args = new ItemsRemovingEventArgs(modelObjects);
-            this.OnItemsRemoving(args);
+            var args = new ItemsRemovingEventArgs(modelObjects);
+            OnItemsRemoving(args);
             if (args.Canceled)
                 return;
 
-            this.ClearCachedInfo();
-            this.VirtualListDataSource.RemoveObjects(args.ObjectsToRemove);
-            this.UpdateVirtualListSize();
+            ClearCachedInfo();
+            VirtualListDataSource.RemoveObjects(args.ObjectsToRemove);
+            UpdateVirtualListSize();
         }
 
         /// <summary>
@@ -507,25 +541,26 @@ namespace BrightIdeasSoftware
         /// </summary>
         /// <param name="modelObject">Model object to select</param>
         /// <param name="setFocus">Should the object be focused as well?</param>
-        public override void SelectObject(object modelObject, bool setFocus) {
+        public override void SelectObject(object modelObject, bool setFocus)
+        {
             // Without a data source, we can't do this.
-            if (this.VirtualListDataSource == null)
+            if (VirtualListDataSource == null)
                 return;
 
             // Check that the object is in the list (plus not all data sources can locate objects)
-            int index = this.VirtualListDataSource.GetObjectIndex(modelObject);
-            if (index < 0 || index >= this.VirtualListSize)
+            int index = VirtualListDataSource.GetObjectIndex(modelObject);
+            if (index < 0 || index >= VirtualListSize)
                 return;
 
             // If the given model is already selected, don't do anything else (prevents an flicker)
-            if (this.SelectedIndices.Count == 1 && this.SelectedIndices[0] == index)
+            if (SelectedIndices.Count == 1 && SelectedIndices[0] == index)
                 return;
 
             // Finally, select the row
-            this.SelectedIndices.Clear();
-            this.SelectedIndices.Add(index);
+            SelectedIndices.Clear();
+            SelectedIndices.Add(index);
             if (setFocus)
-                this.SelectedItem.Focused = true;
+                SelectedItem.Focused = true;
         }
 
         /// <summary>
@@ -534,20 +569,22 @@ namespace BrightIdeasSoftware
         /// <param name="modelObjects">A collection of model objects</param>
         /// <remarks>This method has O(n) performance where n is the number of model objects passed.
         /// Do not use this to select all the rows in the list -- use SelectAll() for that.</remarks>
-        public override void SelectObjects(IList modelObjects) {
+        public override void SelectObjects(IList modelObjects)
+        {
             // Without a data source, we can't do this.
-            if (this.VirtualListDataSource == null)
+            if (VirtualListDataSource == null)
                 return;
 
-            this.SelectedIndices.Clear();
+            SelectedIndices.Clear();
 
             if (modelObjects == null)
                 return;
 
-            foreach (object modelObject in modelObjects) {
-                int index = this.VirtualListDataSource.GetObjectIndex(modelObject);
-                if (index >= 0 && index < this.VirtualListSize)
-                    this.SelectedIndices.Add(index);
+            foreach (object modelObject in modelObjects)
+            {
+                int index = VirtualListDataSource.GetObjectIndex(modelObject);
+                if (index >= 0 && index < VirtualListSize)
+                    SelectedIndices.Add(index);
             }
         }
 
@@ -556,29 +593,33 @@ namespace BrightIdeasSoftware
         /// </summary>
         /// <param name="collection"></param>
         /// <remark>This method can safely be called from background threads.</remark>
-        public override void SetObjects(IEnumerable collection) {
-            if (this.InvokeRequired) {
-                this.Invoke((MethodInvoker)delegate { this.SetObjects(collection); });
+        public override void SetObjects(IEnumerable collection)
+        {
+            if (InvokeRequired)
+            {
+                Invoke((MethodInvoker) delegate { SetObjects(collection); });
                 return;
             }
 
-            if (this.VirtualListDataSource == null)
+            if (VirtualListDataSource == null)
                 return;
 
-            this.BeginUpdate();
-            try {
+            BeginUpdate();
+            try
+            {
                 // Give the world a chance to cancel or change the assigned collection
-                ItemsChangingEventArgs args = new ItemsChangingEventArgs(null, collection);
-                this.OnItemsChanging(args);
+                var args = new ItemsChangingEventArgs(null, collection);
+                OnItemsChanging(args);
                 if (args.Canceled)
                     return;
 
-                this.VirtualListDataSource.SetObjects(args.NewObjects);
-                this.UpdateVirtualListSize();
-                this.Sort();
+                VirtualListDataSource.SetObjects(args.NewObjects);
+                UpdateVirtualListSize();
+                Sort();
             }
-            finally {
-                this.EndUpdate();
+            finally
+            {
+                EndUpdate();
             }
         }
 
@@ -592,39 +633,43 @@ namespace BrightIdeasSoftware
         /// <remarks>
         /// Invalidate any cached information when we rebuild the list.
         /// </remarks>
-        public override void BuildList(bool shouldPreserveSelection) {
-            this.UpdateVirtualListSize();
-            this.ClearCachedInfo();
-            if (this.ShowGroups)
-                this.BuildGroups();
+        public override void BuildList(bool shouldPreserveSelection)
+        {
+            UpdateVirtualListSize();
+            ClearCachedInfo();
+            if (ShowGroups)
+                BuildGroups();
             else
-                this.Sort();
-            this.Invalidate();
+                Sort();
+            Invalidate();
         }
 
         /// <summary>
         /// Clear any cached info this list may have been using
         /// </summary>
-        public virtual void ClearCachedInfo() {
-            this.lastRetrieveVirtualItemIndex = -1;
+        public virtual void ClearCachedInfo()
+        {
+            lastRetrieveVirtualItemIndex = -1;
         }
 
         /// <summary>
         /// Do the work of creating groups for this control
         /// </summary>
         /// <param name="groups"></param>
-        protected override void CreateGroups(IList<OLVGroup> groups) {
-
+        protected override void CreateGroups(IList<OLVGroup> groups)
+        {
             // A virtual list we cannot touch the Groups property since it often throws exceptions
             // when used with a virtual list
 
             NativeMethods.ClearGroups(this);
 
-            this.EnableVirtualGroups();
+            EnableVirtualGroups();
 
-            foreach (OLVGroup group in groups) {
-                System.Diagnostics.Debug.Assert(group.Items.Count == 0, "Groups in virtual lists cannot set Items. Use VirtualItemCount instead.");
-                System.Diagnostics.Debug.Assert(group.VirtualItemCount > 0, "VirtualItemCount must be greater than 0.");
+            foreach (OLVGroup group in groups)
+            {
+                Debug.Assert(group.Items.Count == 0,
+                             "Groups in virtual lists cannot set Items. Use VirtualItemCount instead.");
+                Debug.Assert(group.VirtualItemCount > 0, "VirtualItemCount must be greater than 0.");
 
                 group.InsertGroupNewStyle(this);
             }
@@ -633,40 +678,42 @@ namespace BrightIdeasSoftware
         /// <summary>
         /// Do the plumbing to disable groups on a virtual list
         /// </summary>
-        protected void DisableVirtualGroups() {
+        protected void DisableVirtualGroups()
+        {
             IntPtr x;
 
             int err = NativeMethods.ClearGroups(this);
             //System.Diagnostics.Debug.WriteLine(err);
 
             const int LVM_ENABLEGROUPVIEW = 0x1000 + 157;
-            x = NativeMethods.SendMessage(this.Handle, LVM_ENABLEGROUPVIEW, 0, 0);
+            x = NativeMethods.SendMessage(Handle, LVM_ENABLEGROUPVIEW, 0, 0);
             //System.Diagnostics.Debug.WriteLine(x);
 
             const int LVM_SETOWNERDATACALLBACK = 0x10BB;
-            x = NativeMethods.SendMessage(this.Handle, LVM_SETOWNERDATACALLBACK, 0, 0);
+            x = NativeMethods.SendMessage(Handle, LVM_SETOWNERDATACALLBACK, 0, 0);
             //System.Diagnostics.Debug.WriteLine(x);
         }
 
         /// <summary>
         /// Do the plumbing to enable groups on a virtual list
         /// </summary>
-        protected void EnableVirtualGroups() {
-
+        protected void EnableVirtualGroups()
+        {
             // We need to implement the IOwnerDataCallback interface
-            if (this.ownerDataCallbackImpl == null)
-                this.ownerDataCallbackImpl = new OwnerDataCallbackImpl(this);
+            if (ownerDataCallbackImpl == null)
+                ownerDataCallbackImpl = new OwnerDataCallbackImpl(this);
 
             const int LVM_SETOWNERDATACALLBACK = 0x10BB;
-            IntPtr ptr = Marshal.GetComInterfaceForObject(ownerDataCallbackImpl, typeof(IOwnerDataCallback));
-            IntPtr x = NativeMethods.SendMessage(this.Handle, LVM_SETOWNERDATACALLBACK, ptr, 0);
+            IntPtr ptr = Marshal.GetComInterfaceForObject(ownerDataCallbackImpl, typeof (IOwnerDataCallback));
+            IntPtr x = NativeMethods.SendMessage(Handle, LVM_SETOWNERDATACALLBACK, ptr, 0);
             //System.Diagnostics.Debug.WriteLine(x);
             Marshal.Release(ptr);
 
             const int LVM_ENABLEGROUPVIEW = 0x1000 + 157;
-            x = NativeMethods.SendMessage(this.Handle, LVM_ENABLEGROUPVIEW, 1, 0);
+            x = NativeMethods.SendMessage(Handle, LVM_ENABLEGROUPVIEW, 1, 0);
             //System.Diagnostics.Debug.WriteLine(x);
         }
+
         private OwnerDataCallbackImpl ownerDataCallbackImpl;
 
         /// <summary>
@@ -675,13 +722,14 @@ namespace BrightIdeasSoftware
         /// </summary>
         /// <param name="modelObject"></param>
         /// <returns></returns>
-        protected override CheckState? GetCheckState(object modelObject) {
-            if (this.CheckStateGetter != null)
+        protected override CheckState? GetCheckState(object modelObject)
+        {
+            if (CheckStateGetter != null)
                 return base.GetCheckState(modelObject);
 
             CheckState state = CheckState.Unchecked;
             if (modelObject != null)
-                this.checkStateMap.TryGetValue(modelObject, out state);
+                checkStateMap.TryGetValue(modelObject, out state);
             return state;
         }
 
@@ -692,15 +740,16 @@ namespace BrightIdeasSoftware
         /// </summary>
         /// <param name="itemIndex"></param>
         /// <returns></returns>
-        public virtual int GetItemIndexInDisplayOrder(int itemIndex) {
-            if (!this.ShowGroups)
+        public virtual int GetItemIndexInDisplayOrder(int itemIndex)
+        {
+            if (!ShowGroups)
                 return itemIndex;
 
-            int groupIndex = this.GroupingStrategy.GetGroup(itemIndex);
+            int groupIndex = GroupingStrategy.GetGroup(itemIndex);
             int displayIndex = 0;
             for (int i = 0; i < groupIndex - 1; i++)
-                displayIndex += this.OLVGroups[i].VirtualItemCount;
-            displayIndex += this.GroupingStrategy.GetIndexWithinGroup(this.OLVGroups[groupIndex], itemIndex);
+                displayIndex += OLVGroups[i].VirtualItemCount;
+            displayIndex += GroupingStrategy.GetIndexWithinGroup(OLVGroups[groupIndex], itemIndex);
 
             return displayIndex;
         }
@@ -712,31 +761,33 @@ namespace BrightIdeasSoftware
         /// </summary>
         /// <param name="itemToFind">The item that is before the item that is returned, or null</param>
         /// <returns>A OLVListItem</returns>
-        public override OLVListItem GetNextItem(OLVListItem itemToFind) {
-            if (!this.ShowGroups) 
+        public override OLVListItem GetNextItem(OLVListItem itemToFind)
+        {
+            if (!ShowGroups)
                 return base.GetNextItem(itemToFind);
 
             // Sanity
-            if (this.OLVGroups == null || this.OLVGroups.Count == 0)
+            if (OLVGroups == null || OLVGroups.Count == 0)
                 return null;
 
             // If the given item is null, return the first member of the first group
-            if (itemToFind == null) {
-                return this.GetItem(this.GroupingStrategy.GetGroupMember(this.OLVGroups[0], 0));
+            if (itemToFind == null)
+            {
+                return GetItem(GroupingStrategy.GetGroupMember(OLVGroups[0], 0));
             }
 
             // Find where this item occurs (which group and where in that group)
-            int groupIndex = this.GroupingStrategy.GetGroup(itemToFind.Index);
-            int indexWithinGroup = this.GroupingStrategy.GetIndexWithinGroup(this.OLVGroups[groupIndex], itemToFind.Index);
+            int groupIndex = GroupingStrategy.GetGroup(itemToFind.Index);
+            int indexWithinGroup = GroupingStrategy.GetIndexWithinGroup(OLVGroups[groupIndex], itemToFind.Index);
 
             // If it's not the last member, just return the next member
-            if (indexWithinGroup < this.OLVGroups[groupIndex].VirtualItemCount - 1)
-                return this.GetItem(this.GroupingStrategy.GetGroupMember(this.OLVGroups[groupIndex], indexWithinGroup + 1));
-            
+            if (indexWithinGroup < OLVGroups[groupIndex].VirtualItemCount - 1)
+                return GetItem(GroupingStrategy.GetGroupMember(OLVGroups[groupIndex], indexWithinGroup + 1));
+
             // The item is the last member of its group. Return the first member of the next group
             // (unless there isn't a next group)
-            if (groupIndex < this.OLVGroups.Count - 1)
-                return this.GetItem(this.GroupingStrategy.GetGroupMember(this.OLVGroups[groupIndex + 1], 0));
+            if (groupIndex < OLVGroups.Count - 1)
+                return GetItem(GroupingStrategy.GetGroupMember(OLVGroups[groupIndex + 1], 0));
 
             return null;
         }
@@ -748,33 +799,36 @@ namespace BrightIdeasSoftware
         /// </summary>
         /// <param name="itemToFind">The item that is before the item that is returned</param>
         /// <returns>A ListViewItem</returns>
-        public override OLVListItem GetPreviousItem(OLVListItem itemToFind) {
-            if (!this.ShowGroups) 
+        public override OLVListItem GetPreviousItem(OLVListItem itemToFind)
+        {
+            if (!ShowGroups)
                 return base.GetPreviousItem(itemToFind);
 
             // Sanity
-            if (this.OLVGroups == null || this.OLVGroups.Count == 0)
+            if (OLVGroups == null || OLVGroups.Count == 0)
                 return null;
 
             // If the given items is null, return the last member of the last group
-            if (itemToFind == null) {
-                OLVGroup lastGroup = this.OLVGroups[this.OLVGroups.Count - 1];
-                return this.GetItem(this.GroupingStrategy.GetGroupMember(lastGroup, lastGroup.VirtualItemCount - 1));
+            if (itemToFind == null)
+            {
+                OLVGroup lastGroup = OLVGroups[OLVGroups.Count - 1];
+                return GetItem(GroupingStrategy.GetGroupMember(lastGroup, lastGroup.VirtualItemCount - 1));
             }
 
             // Find where this item occurs (which group and where in that group)
-            int groupIndex = this.GroupingStrategy.GetGroup(itemToFind.Index);
-            int indexWithinGroup = this.GroupingStrategy.GetIndexWithinGroup(this.OLVGroups[groupIndex], itemToFind.Index);
+            int groupIndex = GroupingStrategy.GetGroup(itemToFind.Index);
+            int indexWithinGroup = GroupingStrategy.GetIndexWithinGroup(OLVGroups[groupIndex], itemToFind.Index);
 
             // If it's not the first member of the group, just return the previous member
             if (indexWithinGroup > 0)
-                return this.GetItem(this.GroupingStrategy.GetGroupMember(this.OLVGroups[groupIndex], indexWithinGroup - 1));
+                return GetItem(GroupingStrategy.GetGroupMember(OLVGroups[groupIndex], indexWithinGroup - 1));
 
             // The item is the first member of its group. Return the last member of the previous group
             // (if there is one)
-            if (groupIndex > 0) {
-                OLVGroup previousGroup = this.OLVGroups[groupIndex - 1];
-                return this.GetItem(this.GroupingStrategy.GetGroupMember(previousGroup, previousGroup.VirtualItemCount - 1));
+            if (groupIndex > 0)
+            {
+                OLVGroup previousGroup = OLVGroups[groupIndex - 1];
+                return GetItem(GroupingStrategy.GetGroupMember(previousGroup, previousGroup.VirtualItemCount - 1));
             }
 
             return null;
@@ -785,11 +839,12 @@ namespace BrightIdeasSoftware
         /// </summary>
         /// <param name="parms"></param>
         /// <returns></returns>
-        protected override IList<OLVGroup> MakeGroups(GroupingParameters parms) {
-            if (this.GroupingStrategy == null)
+        protected override IList<OLVGroup> MakeGroups(GroupingParameters parms)
+        {
+            if (GroupingStrategy == null)
                 return new List<OLVGroup>();
             else
-                return this.GroupingStrategy.GetGroups(parms);
+                return GroupingStrategy.GetGroups(parms);
         }
 
         /// <summary>
@@ -797,14 +852,15 @@ namespace BrightIdeasSoftware
         /// </summary>
         /// <param name="itemIndex">The index of the row that is needed</param>
         /// <returns>An OLVListItem</returns>
-        public virtual OLVListItem MakeListViewItem(int itemIndex) {
-            OLVListItem olvi = new OLVListItem(this.GetModelObject(itemIndex));
-            this.FillInValues(olvi, olvi.RowObject);
+        public virtual OLVListItem MakeListViewItem(int itemIndex)
+        {
+            var olvi = new OLVListItem(GetModelObject(itemIndex));
+            FillInValues(olvi, olvi.RowObject);
 
-            this.PostProcessOneRow(itemIndex, this.GetItemIndexInDisplayOrder(itemIndex), olvi);
+            PostProcessOneRow(itemIndex, GetItemIndexInDisplayOrder(itemIndex), olvi);
 
-            if (this.HotRowIndex == itemIndex)
-                this.UpdateHotRow(olvi);
+            if (HotRowIndex == itemIndex)
+                UpdateHotRow(olvi);
 
             return olvi;
         }
@@ -812,7 +868,8 @@ namespace BrightIdeasSoftware
         /// <summary>
         /// On virtual lists, this cannot work.
         /// </summary>
-        protected override void PostProcessRows() {
+        protected override void PostProcessRows()
+        {
         }
 
         /// <summary>
@@ -823,9 +880,10 @@ namespace BrightIdeasSoftware
         /// <param name="state"></param>
         /// <returns>The check state that was recorded and that should be used to update
         /// the control.</returns>
-        protected override CheckState PutCheckState(object modelObject, CheckState state) {
+        protected override CheckState PutCheckState(object modelObject, CheckState state)
+        {
             state = base.PutCheckState(modelObject, state);
-            this.checkStateMap[modelObject] = state;
+            checkStateMap[modelObject] = state;
             return state;
         }
 
@@ -833,49 +891,56 @@ namespace BrightIdeasSoftware
         /// Refresh the given item in the list
         /// </summary>
         /// <param name="olvi">The item to refresh</param>
-        public override void RefreshItem(OLVListItem olvi) {
-            this.ClearCachedInfo();
-            this.RedrawItems(olvi.Index, olvi.Index, false);
+        public override void RefreshItem(OLVListItem olvi)
+        {
+            ClearCachedInfo();
+            RedrawItems(olvi.Index, olvi.Index, false);
         }
 
         /// <summary>
         /// Change the size of the list
         /// </summary>
         /// <param name="newSize"></param>
-        protected virtual void SetVirtualListSize(int newSize) {
-            if (newSize < 0 || this.VirtualListSize == newSize)
+        protected virtual void SetVirtualListSize(int newSize)
+        {
+            if (newSize < 0 || VirtualListSize == newSize)
                 return;
 
-            int oldSize = this.VirtualListSize;
+            int oldSize = VirtualListSize;
 
-            this.ClearCachedInfo();
+            ClearCachedInfo();
 
             // There is a bug in .NET when a virtual ListView is cleared
             // (i.e. VirtuaListSize set to 0) AND it is scrolled vertically: the scroll position 
             // is wrong when the list is next populated. To avoid this, before 
             // clearing a virtual list, we make sure the list is scrolled to the top.
             // [6 weeks later] Damn this is a pain! There are cases where this can also throw exceptions!
-            try {
+            try
+            {
                 if (newSize == 0 /*&& this.TopItemIndex > 0*/)
-                    this.TopItemIndex = -1;
+                    TopItemIndex = -1;
             }
-            catch (Exception) {
+            catch (Exception)
+            {
                 // Ignore any failures
             }
 
             // In strange cases, this can throw the exceptions too. The best we can do is ignore them :(
-            try {
-                this.VirtualListSize = newSize;
+            try
+            {
+                VirtualListSize = newSize;
             }
-            catch (ArgumentOutOfRangeException) {
+            catch (ArgumentOutOfRangeException)
+            {
                 // pass
             }
-            catch (NullReferenceException) {
+            catch (NullReferenceException)
+            {
                 // pass
             }
 
             // Tell the world that the size of the list has changed
-            this.OnItemsChanged(new ItemsChangedEventArgs(oldSize, this.VirtualListSize));
+            OnItemsChanged(new ItemsChangedEventArgs(oldSize, VirtualListSize));
         }
 
         /// <summary>
@@ -891,38 +956,43 @@ namespace BrightIdeasSoftware
         /// VirtualObjectListViews always own their collections, so this is a no-op.
         /// </para>
         /// </remarks>
-        protected override void TakeOwnershipOfObjects() {
+        protected override void TakeOwnershipOfObjects()
+        {
         }
 
         /// <summary>
         /// Change the state of the control to reflect changes in filtering
         /// </summary>
-        protected override void UpdateFiltering() {
-            IFilterableDataSource filterable = this.VirtualListDataSource as IFilterableDataSource;
+        protected override void UpdateFiltering()
+        {
+            var filterable = VirtualListDataSource as IFilterableDataSource;
             if (filterable == null)
                 return;
 
-            this.BeginUpdate();
-            try {
-                int originalSize = this.VirtualListSize;
-                filterable.ApplyFilters(this.ModelFilter, this.ListFilter);
-                this.UpdateVirtualListSize();
+            BeginUpdate();
+            try
+            {
+                int originalSize = VirtualListSize;
+                filterable.ApplyFilters(ModelFilter, ListFilter);
+                UpdateVirtualListSize();
 
                 // If the filtering actually did something, rebuild the groups if they are being shown
-                if (originalSize != this.VirtualListSize && this.ShowGroups)
-                    this.BuildGroups();
+                if (originalSize != VirtualListSize && ShowGroups)
+                    BuildGroups();
             }
-            finally {
-                this.EndUpdate();
+            finally
+            {
+                EndUpdate();
             }
         }
 
         /// <summary>
         /// Change the size of the virtual list so that it matches its data source
         /// </summary>
-        public virtual void UpdateVirtualListSize() {
-            if (this.VirtualListDataSource != null)
-                this.SetVirtualListSize(this.VirtualListDataSource.GetObjectCount());
+        public virtual void UpdateVirtualListSize()
+        {
+            if (VirtualListDataSource != null)
+                SetVirtualListSize(VirtualListDataSource.GetObjectCount());
         }
 
         #endregion
@@ -934,9 +1004,10 @@ namespace BrightIdeasSoftware
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        protected virtual void HandleCacheVirtualItems(object sender, CacheVirtualItemsEventArgs e) {
-            if (this.VirtualListDataSource != null)
-                this.VirtualListDataSource.PrepareCache(e.StartIndex, e.EndIndex);
+        protected virtual void HandleCacheVirtualItems(object sender, CacheVirtualItemsEventArgs e)
+        {
+            if (VirtualListDataSource != null)
+                VirtualListDataSource.PrepareCache(e.StartIndex, e.EndIndex);
         }
 
         /// <summary>
@@ -944,17 +1015,19 @@ namespace BrightIdeasSoftware
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        protected virtual void HandleRetrieveVirtualItem(object sender, RetrieveVirtualItemEventArgs e) {
+        protected virtual void HandleRetrieveVirtualItem(object sender, RetrieveVirtualItemEventArgs e)
+        {
             // .NET 2.0 seems to generate a lot of these events. Before drawing *each* sub-item,
             // this event is triggered 4-8 times for the same index. So we save lots of CPU time
             // by caching the last result.
             //System.Diagnostics.Debug.WriteLine(String.Format("HandleRetrieveVirtualItem({0})", e.ItemIndex));
 
-            if (this.lastRetrieveVirtualItemIndex != e.ItemIndex) {
-                this.lastRetrieveVirtualItemIndex = e.ItemIndex;
-                this.lastRetrieveVirtualItem = this.MakeListViewItem(e.ItemIndex);
+            if (lastRetrieveVirtualItemIndex != e.ItemIndex)
+            {
+                lastRetrieveVirtualItemIndex = e.ItemIndex;
+                lastRetrieveVirtualItem = MakeListViewItem(e.ItemIndex);
             }
-            e.Item = this.lastRetrieveVirtualItem;
+            e.Item = lastRetrieveVirtualItem;
         }
 
         /// <summary>
@@ -962,30 +1035,31 @@ namespace BrightIdeasSoftware
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        protected virtual void HandleSearchForVirtualItem(object sender, SearchForVirtualItemEventArgs e) {
+        protected virtual void HandleSearchForVirtualItem(object sender, SearchForVirtualItemEventArgs e)
+        {
             // The event has e.IsPrefixSearch, but as far as I can tell, this is always false (maybe that's different under Vista)
             // So we ignore IsPrefixSearch and IsTextSearch and always to a case insensitve prefix match.
 
             // We can't do anything if we don't have a data source
-            if (this.VirtualListDataSource == null)
+            if (VirtualListDataSource == null)
                 return;
 
             // Where should we start searching? If the last row is focused, the SearchForVirtualItemEvent starts searching
             // from the next row, which is actually an invalidate index -- so we make sure we never go past the last object.
-            int start = Math.Min(e.StartIndex, this.VirtualListDataSource.GetObjectCount() - 1);
+            int start = Math.Min(e.StartIndex, VirtualListDataSource.GetObjectCount() - 1);
 
             // Give the world a chance to fiddle with or completely avoid the searching process
-            BeforeSearchingEventArgs args = new BeforeSearchingEventArgs(e.Text, start);
-            this.OnBeforeSearching(args);
+            var args = new BeforeSearchingEventArgs(e.Text, start);
+            OnBeforeSearching(args);
             if (args.Canceled)
                 return;
 
             // Do the search
-            int i = this.FindMatchingRow(args.StringToFind, args.StartSearchFrom, e.Direction);
+            int i = FindMatchingRow(args.StringToFind, args.StartSearchFrom, e.Direction);
 
             // Tell the world that a search has occurred
-            AfterSearchingEventArgs args2 = new AfterSearchingEventArgs(args.StringToFind, i);
-            this.OnAfterSearching(args2);
+            var args2 = new AfterSearchingEventArgs(args.StringToFind, i);
+            OnAfterSearching(args2);
 
             // If we found a match, tell the event
             if (i != -1)
@@ -1000,15 +1074,16 @@ namespace BrightIdeasSoftware
         /// <param name="last"></param>
         /// <param name="column"></param>
         /// <returns>The index of the matched row, or -1</returns>
-        protected override int FindMatchInRange(string text, int first, int last, OLVColumn column) {
-            return this.VirtualListDataSource.SearchText(text, first, last, column);
+        protected override int FindMatchInRange(string text, int first, int last, OLVColumn column)
+        {
+            return VirtualListDataSource.SearchText(text, first, last, column);
         }
 
         #endregion
 
         #region Variable declaractions
 
-        private Dictionary<Object, CheckState> checkStateMap = new Dictionary<object, CheckState>();
+        private readonly Dictionary<Object, CheckState> checkStateMap = new Dictionary<object, CheckState>();
         private OLVListItem lastRetrieveVirtualItem;
         private int lastRetrieveVirtualItemIndex = -1;
 

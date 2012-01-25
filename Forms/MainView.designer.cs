@@ -355,6 +355,7 @@ namespace TESVSnip {
             this.hexModeToolStripMenuItem.CheckState = System.Windows.Forms.CheckState.Checked;
             this.hexModeToolStripMenuItem.Name = "hexModeToolStripMenuItem";
             resources.ApplyResources(this.hexModeToolStripMenuItem, "hexModeToolStripMenuItem");
+            this.hexModeToolStripMenuItem.Click += new System.EventHandler(this.hexModeToolStripMenuItem_Click);
             // 
             // useNewSubrecordEditorToolStripMenuItem
             // 
@@ -363,6 +364,7 @@ namespace TESVSnip {
             this.useNewSubrecordEditorToolStripMenuItem.CheckState = System.Windows.Forms.CheckState.Checked;
             this.useNewSubrecordEditorToolStripMenuItem.Name = "useNewSubrecordEditorToolStripMenuItem";
             resources.ApplyResources(this.useNewSubrecordEditorToolStripMenuItem, "useNewSubrecordEditorToolStripMenuItem");
+            this.useNewSubrecordEditorToolStripMenuItem.Click += new System.EventHandler(this.useNewSubrecordEditorToolStripMenuItem_Click);
             // 
             // lookupFormidsToolStripMenuItem
             // 
@@ -476,7 +478,6 @@ namespace TESVSnip {
             // 
             this.polishToolStripMenuItem.Name = "polishToolStripMenuItem";
             resources.ApplyResources(this.polishToolStripMenuItem, "polishToolStripMenuItem");
-            this.polishToolStripMenuItem.Click += new System.EventHandler(this.polishToolStripMenuItem_Click);
             // 
             // editStringsToolStripMenuItem
             // 
@@ -695,7 +696,6 @@ namespace TESVSnip {
             this.dockingManagerExtender.SetPreferredSize(this.toolStripIncrFind, new System.Drawing.Size(0, 0));
             this.dockingManagerExtender.SetTabbedMode(this.toolStripIncrFind, true);
             this.toolStripIncrFind.VisibleChanged += new System.EventHandler(this.toolStripIncrFind_VisibleChanged);
-            this.toolStripIncrFind.KeyDown += new System.Windows.Forms.KeyEventHandler(this.toolStripIncrFind_KeyDown);
             // 
             // toolStripIncrFindCancel
             // 

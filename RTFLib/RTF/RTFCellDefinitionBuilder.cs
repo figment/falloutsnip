@@ -1,13 +1,7 @@
-﻿
-
-
- 
+﻿using System.Text;
 
 namespace RTF
 {
-    using System.Text;
-    using System.Windows.Forms;
-
     public partial class RTFBuilder
     {
         #region Nested type: RTFCellDefinitionBuilder
@@ -39,15 +33,16 @@ namespace RTF
 
             #region Constructor
 
-            internal RTFCellDefinitionBuilder(RTFBuilder builder, StringBuilder definitionBuilder, RTFCellDefinition cellDefinition)
+            internal RTFCellDefinitionBuilder(RTFBuilder builder, StringBuilder definitionBuilder,
+                                              RTFCellDefinition cellDefinition)
             {
-                this._builder = builder;
+                _builder = builder;
 
-                this._definitionBuilder = definitionBuilder;
-                this._cellDefinition = cellDefinition;
+                _definitionBuilder = definitionBuilder;
+                _cellDefinition = cellDefinition;
 
 
-                this.AppendDefinition();
+                AppendDefinition();
             }
 
             #endregion
@@ -56,7 +51,7 @@ namespace RTF
 
             public RTFCellDefinition CellDefinition
             {
-                get { return this._cellDefinition; }
+                get { return _cellDefinition; }
             }
 
             #endregion
@@ -65,23 +60,24 @@ namespace RTF
 
             private void AppendDefinition()
             {
-                this.CellAlignment();
-                this.TableCellBorderSide();
+                CellAlignment();
+                TableCellBorderSide();
                 //Pad();
 
 
-                this._definitionBuilder.AppendFormat(@"\clFitText\clftsWidth1\cellx{0}", (int)(this._cellDefinition.CellWidthRaw * TWIPSA4) + this._cellDefinition.X);
+                _definitionBuilder.AppendFormat(@"\clFitText\clftsWidth1\cellx{0}",
+                                                (int) (_cellDefinition.CellWidthRaw*TWIPSA4) + _cellDefinition.X);
                 //_definitionBuilder.AppendFormat("\\clwWidth{0}", _cellDefinition.CellWidth);
                 //_definitionBuilder.Append("\\cltxlrtb\\clFitText");
-                this._definitionBuilder.AppendLine();
+                _definitionBuilder.AppendLine();
 
                 //Cell text flow
             }
 
             private string BorderDef()
             {
-                StringBuilder sb = new StringBuilder();
-                RTFBorderSide _rTFBorderSide = this._cellDefinition.RTFBorderSide;
+                var sb = new StringBuilder();
+                RTFBorderSide _rTFBorderSide = _cellDefinition.RTFBorderSide;
                 if ((_rTFBorderSide & RTFBorderSide.DoubleThickness) == RTFBorderSide.DoubleThickness)
                 {
                     sb.Append("\\brdrth");
@@ -95,56 +91,44 @@ namespace RTF
                     sb.Append("\\brdrdb");
                 }
                 sb.Append("\\brdrw");
-                sb.Append(this._cellDefinition.BorderWidth);
+                sb.Append(_cellDefinition.BorderWidth);
 
                 sb.Append("\\brdrcf");
-                sb.Append(this._builder.IndexOf(this._cellDefinition.BorderColor));
+                sb.Append(_builder.IndexOf(_cellDefinition.BorderColor));
 
                 return sb.ToString();
             }
 
             private void CellAlignment()
             {
-                switch (this._cellDefinition.Alignment)
+                switch (_cellDefinition.Alignment)
                 {
                     case RTFAlignment.BottomCenter:
                     case RTFAlignment.BottomLeft:
                     case RTFAlignment.BottomRight:
-                        this._definitionBuilder.Append("\\clvertalb"); //\\qr
+                        _definitionBuilder.Append("\\clvertalb"); //\\qr
                         break;
                     case RTFAlignment.MiddleCenter:
                     case RTFAlignment.MiddleLeft:
                     case RTFAlignment.MiddleRight:
-                        this._definitionBuilder.Append("\\clvertalc"); //\\qr
+                        _definitionBuilder.Append("\\clvertalc"); //\\qr
                         break;
                     case RTFAlignment.TopCenter:
                     case RTFAlignment.TopLeft:
                     case RTFAlignment.TopRight:
-                        this._definitionBuilder.Append("\\clvertalt"); //\\qr
+                        _definitionBuilder.Append("\\clvertalt"); //\\qr
                         break;
-                }
-            }
-
-            private void Pad()
-            {
-                if (this._cellDefinition.Padding != Padding.Empty)
-                {
-                    StringBuilder sb = this._definitionBuilder;
-                    sb.AppendFormat("\\clpadfl3\\clpadl{0}", this._cellDefinition.Padding.Left);
-                    sb.AppendFormat("\\clpadlr3\\clpadr{0}", this._cellDefinition.Padding.Right);
-                    sb.AppendFormat("\\clpadlt3\\clpadt{0}", this._cellDefinition.Padding.Top);
-                    sb.AppendFormat("\\clpadlb3\\clpadb{0}", this._cellDefinition.Padding.Bottom);
                 }
             }
 
             private void TableCellBorderSide()
             {
-                RTFBorderSide _rTFBorderSide = this._cellDefinition.RTFBorderSide;
+                RTFBorderSide _rTFBorderSide = _cellDefinition.RTFBorderSide;
 
                 if (_rTFBorderSide != RTFBorderSide.None)
                 {
-                    StringBuilder sb = this._definitionBuilder;
-                    string bd = this.BorderDef();
+                    StringBuilder sb = _definitionBuilder;
+                    string bd = BorderDef();
                     if (_rTFBorderSide == RTFBorderSide.None)
                     {
                         sb.Append("\\brdrnil");
@@ -177,5 +161,3 @@ namespace RTF
         #endregion
     }
 }
-
-

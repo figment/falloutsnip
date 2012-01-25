@@ -1,17 +1,13 @@
-﻿
+﻿//using CurrentPatient.Properties;
 
 
- //using CurrentPatient.Properties;
-
+using System;
+using System.Collections.Generic;
+using System.Drawing;
+using System.Text;
 
 namespace RTF
 {
-    using System;
-    using System.Collections.Generic;
-    using System.Drawing;
-    using System.Text;
-
-
     // ----------------------------------------------------------------------------------------
     //    _                ___        _..-._   Date: 12/11/08    23:34
     //    \`.|\..----...-'`   `-._.-'' _.-..'     
@@ -33,50 +29,52 @@ namespace RTF
 
         private static readonly char[] toHex = "0123456789ABCDEF".ToCharArray();
         private static readonly char[][] charEscape;
-        private static System.Text.Encoding CP1252 ;
+        private static Encoding CP1252;
         private readonly StringBuilder _sb;
+
         #endregion
 
         #region Constructor
+
         static RTFBuilder()
         {
             charEscape = new char[256][];
-            for (int i = 0x00; i < 0x20; ++i) charEscape[i] = new char[] {'\\', '\'', toHex[i>>4], toHex[(i&0xF)]};
-            for (int i = 0x20; i < 0x80; ++i) charEscape[i] = new char[] {(char)i};
-            for (int i = 0x80; i < 0x100; ++i) charEscape[i] = new char[] {'\\', '\'', toHex[i>>4], toHex[(i&0xF)]};
-            charEscape[0x5C] = new char[] {'\\', '\'', toHex[0x5], toHex[0xC]};
-            charEscape[0x7B] = new char[] {'\\', '\'', toHex[0x7], toHex[0xB]};
-            charEscape[0x7D] = new char[] {'\\', '\'', toHex[0x7], toHex[0xD]};
+            for (int i = 0x00; i < 0x20; ++i) charEscape[i] = new[] {'\\', '\'', toHex[i >> 4], toHex[(i & 0xF)]};
+            for (int i = 0x20; i < 0x80; ++i) charEscape[i] = new[] {(char) i};
+            for (int i = 0x80; i < 0x100; ++i) charEscape[i] = new[] {'\\', '\'', toHex[i >> 4], toHex[(i & 0xF)]};
+            charEscape[0x5C] = new[] {'\\', '\'', toHex[0x5], toHex[0xC]};
+            charEscape[0x7B] = new[] {'\\', '\'', toHex[0x7], toHex[0xB]};
+            charEscape[0x7D] = new[] {'\\', '\'', toHex[0x7], toHex[0xD]};
             charEscape['\n'] = @"\line ".ToCharArray();
             charEscape['\r'] = new char[0];
-            CP1252 = System.Text.Encoding.GetEncoding(1252);
+            CP1252 = Encoding.GetEncoding(1252);
         }
 
         public RTFBuilder()
-            : base(RTFFont.Arial , 20F)
+            : base(RTFFont.Arial, 20F)
         {
-            this._sb = new StringBuilder();
+            _sb = new StringBuilder();
         }
 
         public RTFBuilder(RTFFont defaultFont) : base(defaultFont, 20F)
         {
-            this._sb = new StringBuilder();
+            _sb = new StringBuilder();
         }
 
         public RTFBuilder(float defaultFontSize) : base(RTFFont.Arial, defaultFontSize)
         {
-            this._sb = new StringBuilder();
+            _sb = new StringBuilder();
         }
 
         public RTFBuilder(RTFFont defaultFont, float defaultFontSize) : base(defaultFont, defaultFontSize)
         {
-            this._sb = new StringBuilder();
+            _sb = new StringBuilder();
         }
 
         public RTFBuilder(RTFFont defaultFont, float defaultFontSize, ushort codepage, byte charset)
             : base(defaultFont, defaultFontSize, codepage, charset)
         {
-            this._sb = new StringBuilder();
+            _sb = new StringBuilder();
         }
 
         #endregion
@@ -91,10 +89,10 @@ namespace RTF
                 {
                     foreach (char c in value)
                     {
-                        if (c > 0xFF) 
-                            _sb.Append("\\u").Append((int)c).Append("?");
+                        if (c > 0xFF)
+                            _sb.Append("\\u").Append((int) c).Append("?");
                         else
-                            _sb.Append( charEscape[(int)c] );
+                            _sb.Append(charEscape[c]);
                     }
                 }
             }
@@ -102,7 +100,7 @@ namespace RTF
 
         protected override void AppendLevelInternal(int level)
         {
-            this._sb.AppendFormat("\\level{0} ", level);
+            _sb.AppendFormat("\\level{0} ", level);
         }
 
         protected override void AppendLineInternal(string value)
@@ -110,20 +108,20 @@ namespace RTF
             using (new RTFParaWrap(this))
             {
                 Append(value);
-                this._sb.AppendLine("\\line");
+                _sb.AppendLine("\\line");
             }
         }
 
         protected override void AppendLineInternal()
         {
-            this._sb.AppendLine("\\line");
+            _sb.AppendLine("\\line");
         }
 
         protected override void AppendPageInternal()
         {
             using (new RTFParaWrap(this))
             {
-                this._sb.AppendLine("\\page");
+                _sb.AppendLine("\\page");
             }
         }
 
@@ -131,7 +129,7 @@ namespace RTF
         {
             using (new RTFParaWrap(this))
             {
-                this._sb.AppendLine("\\par ");
+                _sb.AppendLine("\\par ");
             }
         }
 
@@ -139,15 +137,17 @@ namespace RTF
         {
             if (!string.IsNullOrEmpty(rtf))
             {
-                this._sb.Append(rtf);
+                _sb.Append(rtf);
             }
         }
 
-        protected override IEnumerable<RTFBuilderbase> EnumerateCellsInternal(RTFRowDefinition rowDefinition, IEnumerable<RTFCellDefinition> cellDefinitions)
+        protected override IEnumerable<RTFBuilderbase> EnumerateCellsInternal(RTFRowDefinition rowDefinition,
+                                                                              IEnumerable<RTFCellDefinition>
+                                                                                  cellDefinitions)
         {
-            using (IRTFRow ie = this.CreateRow(rowDefinition, cellDefinitions))
+            using (IRTFRow ie = CreateRow(rowDefinition, cellDefinitions))
             {
-                IEnumerator <IBuilderContent> ie2 = ie.GetEnumerator();
+                IEnumerator<IBuilderContent> ie2 = ie.GetEnumerator();
                 while (ie2.MoveNext())
                 {
                     using (IBuilderContent item = ie2.Current)
@@ -167,12 +167,12 @@ namespace RTF
         {
             try
             {
-                RTFImage rti = new RTFImage(this);
+                var rti = new RTFImage(this);
                 rti.InsertImage(image);
             }
             catch
             {
-                this._sb.AppendLine("[Insert image error]");
+                _sb.AppendLine("[Insert image error]");
             }
         }
 
@@ -183,12 +183,12 @@ namespace RTF
 
         protected override void ResetInternal()
         {
-            this._sb.AppendLine("\\pard");
+            _sb.AppendLine("\\pard");
         }
 
         public override string ToString()
         {
-            StringBuilder sb = new StringBuilder();
+            var sb = new StringBuilder();
             sb.Append("{\\rtf1\\ansi\\ansicpg1252\\deff0\\deflang").Append(DefLang);
             sb.Append("{\\fonttbl");
 
@@ -198,12 +198,10 @@ namespace RTF
                 {
                     sb.Append(string.Format(_rawFonts[i], i));
                 }
-                catch (Exception ex )
+                catch (Exception ex)
                 {
-
-                    Console.WriteLine(ex.Message );
+                    Console.WriteLine(ex.Message);
                 }
-
             }
 
             sb.AppendLine("}");
@@ -223,7 +221,7 @@ namespace RTF
             sb.AppendFormat("\\fs{0} ", DefaultFontSize);
             sb.AppendLine();
 
-            sb.Append(this._sb.ToString());
+            sb.Append(_sb.ToString());
             sb.Append("}");
 
 
@@ -242,4 +240,3 @@ namespace RTF
         #endregion
     }
 }
-

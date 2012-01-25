@@ -1,10 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Drawing;
-using System.Data;
-using System.Linq;
-using System.Text;
 using System.Windows.Forms;
 
 namespace TESVSnip.RecordControls
@@ -20,6 +14,7 @@ namespace TESVSnip.RecordControls
         }
 
         #region IElementControl Members
+
         public dFormIDLookupR formIDLookup { get; set; }
         public dFormIDScanRec formIDScan { get; set; }
         public dLStringLookup strIDLookup { get; set; }
@@ -28,8 +23,12 @@ namespace TESVSnip.RecordControls
 
         public ElementStructure Element
         {
-            get { return this.element; }
-            set { this.element = value; UpdateElement(); }
+            get { return element; }
+            set
+            {
+                element = value;
+                UpdateElement();
+            }
         }
 
         public virtual ArraySegment<byte> Data
@@ -45,17 +44,16 @@ namespace TESVSnip.RecordControls
 
         public virtual void CommitChanges()
         {
-
         }
 
         protected virtual void SetCurrentData(ArraySegment<byte> value)
         {
             var data = GetCurrentData();
-            if (!EqualsArraySegment<byte>(data, value))
+            if (!EqualsArraySegment(data, value))
             {
                 if (data != null && data.Array != null)
                 {
-                    this.Changed = true;
+                    Changed = true;
                     // important to clone the data as TypeConverter uses a shared byte array for many operations
                     var blob = new byte[value.Count];
                     if (value.Count > 0)
@@ -92,12 +90,13 @@ namespace TESVSnip.RecordControls
         protected virtual void UpdateAllControls()
         {
         }
+
         #endregion
 
         private void BaseElement_Enter(object sender, EventArgs e)
         {
             // forward focus to first child control
-            foreach (Control c in this.Controls)
+            foreach (Control c in Controls)
             {
                 if (c.CanFocus)
                     c.Focus();

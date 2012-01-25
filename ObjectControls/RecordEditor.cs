@@ -1,11 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.ComponentModel;
-using System.Drawing;
-using System.Data;
 using System.Globalization;
 using System.Linq;
-using System.Text;
 using System.Windows.Forms;
 using TESVSnip.Collections.Generic;
 
@@ -13,39 +9,39 @@ namespace TESVSnip.Forms
 {
     public partial class RecordEditor : UserControl
     {
-        private SelectionContext context = new SelectionContext();
+        private readonly SelectionContext context = new SelectionContext();
         private Record _record;
         private uint Flags1;
         private uint Flags2;
         private uint Flags3;
         private uint FormID;
-        private TESVSnip.Collections.Generic.AdvancedList<SubRecord> subRecords = new AdvancedList<SubRecord>();
+        private readonly AdvancedList<SubRecord> subRecords = new AdvancedList<SubRecord>();
 
         public RecordEditor()
         {
             InitializeComponent();
-            this.comboBox1.SetItems(FlagDefs.RecFlags1);
+            comboBox1.SetItems(FlagDefs.RecFlags1);
 
-            this.subrecordListEditor.SetContext(context);
-            this.subrecordListEditor.OnEditSubrecord += subrecordListEditor_OnEditSubrecord;
-            this.subrecordListEditor.SelectionChanged += subrecordListEditor_SelectionChanged;
+            subrecordListEditor.SetContext(context);
+            subrecordListEditor.OnEditSubrecord += subrecordListEditor_OnEditSubrecord;
+            subrecordListEditor.SelectionChanged += subrecordListEditor_SelectionChanged;
         }
 
         public RecordEditor(Record rec) : this()
         {
-            this.Record = rec;
+            Record = rec;
         }
 
-        void subrecordListEditor_OnEditSubrecord(SubRecord sr, bool hexView)
+        private void subrecordListEditor_OnEditSubrecord(SubRecord sr, bool hexView)
         {
-            elementEditor.SetContext(this.Record, sr, hexView);
+            elementEditor.SetContext(Record, sr, hexView);
         }
 
-        void subrecordListEditor_SelectionChanged(object sender, EventArgs e)
+        private void subrecordListEditor_SelectionChanged(object sender, EventArgs e)
         {
             var sr = subrecordListEditor.SubRecord;
             bool hexview = (sr == null || sr.Structure == null);
-            elementEditor.SetContext(this.Record, subrecordListEditor.SubRecord, hexview);
+            elementEditor.SetContext(Record, subrecordListEditor.SubRecord, hexview);
         }
 
         public Record Record
@@ -59,7 +55,7 @@ namespace TESVSnip.Forms
                     context.Record = _record;
                     if (_record != null)
                         ResetValues();
-                }                
+                }
             }
         }
 
@@ -86,7 +82,7 @@ namespace TESVSnip.Forms
             }
             finally
             {
-                comboBox1.ItemCheck += comboBox1_ItemCheck;                
+                comboBox1.ItemCheck += comboBox1_ItemCheck;
             }
             tbFlags2.Text = _record.Flags2.ToString("X8");
             tbFlags3.Text = _record.Flags3.ToString("X8");
@@ -138,8 +134,8 @@ namespace TESVSnip.Forms
 
         private void comboBox1_SelectionChangeCommitted(object sender, EventArgs e)
         {
-            this.Flags1 = this.comboBox1.GetState();
-            this.textBox1.Text = this.Flags1.ToString("X8");
+            Flags1 = comboBox1.GetState();
+            textBox1.Text = Flags1.ToString("X8");
         }
 
         private void bSave_Click(object sender, EventArgs e)
@@ -152,7 +148,7 @@ namespace TESVSnip.Forms
             ResetValues();
         }
 
-        void Apply()
+        private void Apply()
         {
             _record.Name = tbName.Text;
             _record.Flags1 = Flags1;
@@ -161,14 +157,14 @@ namespace TESVSnip.Forms
             _record.FormID = FormID;
             _record.UpdateShortDescription();
             _record.SubRecords.Clear();
-            this.elementEditor.Save();
-            _record.SubRecords.AddRange( subrecordListEditor.SubRecords );
+            elementEditor.Save();
+            _record.SubRecords.AddRange(subrecordListEditor.SubRecords);
         }
 
         private void comboBox1_ItemCheck(object sender, ItemCheckEventArgs e)
         {
-            this.Flags1 = this.comboBox1.GetState();
-            this.textBox1.Text = this.Flags1.ToString("X8");
+            Flags1 = comboBox1.GetState();
+            textBox1.Text = Flags1.ToString("X8");
         }
     }
 }

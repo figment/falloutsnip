@@ -1,27 +1,29 @@
 using System;
-using System.Windows.Forms;
 using System.Collections.Generic;
+using System.Drawing;
+using System.Globalization;
+using System.Windows.Forms;
+using TESVSnip.Properties;
 using TESVSnip.Windows.Controls;
-using System.Linq;
 
 namespace TESVSnip
 {
     internal partial class MediumLevelRecordEditor : Form
     {
-        private SubRecord sr;
-        private SubrecordStructure ss;
-        private List<TextBox> boxes;
-        private List<ElementValueType> valueTypes;
-        private List<Panel> elements;
-        private dFormIDLookupS formIDLookup;
-        private dFormIDScan formIDScan;
-        private dLStringLookup strIDLookup;
+        private readonly SubRecord sr;
+        private readonly SubrecordStructure ss;
+        private readonly List<TextBox> boxes;
+        private readonly List<ElementValueType> valueTypes;
+        private readonly List<Panel> elements;
+        private readonly dFormIDLookupS formIDLookup;
+        private readonly dFormIDScan formIDScan;
+        private readonly dLStringLookup strIDLookup;
 
-        private Dictionary<int, string> removedStrings = new Dictionary<int, string>();
+        private readonly Dictionary<int, string> removedStrings = new Dictionary<int, string>();
 
-        private int repeatcount;
+        private readonly int repeatcount;
 
-        private Dictionary<string, string[]> cachedFormIDs = new Dictionary<string, string[]>();
+        private readonly Dictionary<string, string[]> cachedFormIDs = new Dictionary<string, string[]>();
 
         private class cbTag
         {
@@ -42,19 +44,20 @@ namespace TESVSnip
 
             public bTag(TextBox form, TextBox edid)
             {
-                this.formID = form;
+                formID = form;
                 this.edid = edid;
             }
         }
+
         private class lTag
         {
-            public TextBox id;
+            public readonly TextBox id;
             public TextBox str;
             public CheckBox cb;
             public byte[] data;
             public int offset;
-            public string disp;
-            public bool isString;
+            public readonly string disp;
+            public readonly bool isString;
 
             public lTag(TextBox id, string disp, byte[] data, int offset, bool isString)
             {
@@ -62,8 +65,8 @@ namespace TESVSnip
                 this.data = data;
                 this.offset = offset;
                 this.disp = disp;
-                this.str = null;
-                this.cb = null;
+                str = null;
+                cb = null;
                 this.isString = isString;
             }
         }
@@ -102,9 +105,11 @@ namespace TESVSnip
             int a = -1, b = 0, c = 0;
             AddElement(es, ref a, null, ref b, ref c);
         }
-        private void AddElement(ElementStructure es, ref int offset, byte[] data, ref int groupOffset, ref int CurrentGroup)
+
+        private void AddElement(ElementStructure es, ref int offset, byte[] data, ref int groupOffset,
+                                ref int CurrentGroup)
         {
-            Panel panel1 = new Panel();
+            var panel1 = new Panel();
             panel1.AutoSize = true;
             panel1.Width = fpanel1.Width - 10;
             panel1.Height = 1;
@@ -113,26 +118,26 @@ namespace TESVSnip
             uint flagValue = 0; // value if flags is set
             bool hasFlags = (es.options.Length == 0 && es.flags.Length > 1);
 
-            TextBox tb = new TextBox();
+            var tb = new TextBox();
             boxes.Add(tb);
             if (es.group != 0)
             {
-                CheckBox cb = new CheckBox();
+                var cb = new CheckBox();
                 cb.Text = "Use this value?";
                 panel1.Controls.Add(cb);
-                cb.Location = new System.Drawing.Point(10, ypos);
+                cb.Location = new Point(10, ypos);
                 ypos += 24;
                 cb.Tag = new cbTag(es.group, tb);
                 if (CurrentGroup != es.group) cb.Checked = true;
                 else tb.Enabled = false;
-                cb.CheckedChanged += new EventHandler(CheckBox_CheckedChanged);
+                cb.CheckedChanged += CheckBox_CheckedChanged;
             }
             if (es.optional || es.repeat > 0 && repeatcount > 0)
             {
-                CheckBox cb = new CheckBox();
+                var cb = new CheckBox();
                 cb.Text = "Use this value?";
                 panel1.Controls.Add(cb);
-                cb.Location = new System.Drawing.Point(10, ypos);
+                cb.Location = new Point(10, ypos);
                 ypos += 24;
                 cb.Tag = new repeatCbTag(tb, elements.Count);
                 if (data == null)
@@ -143,7 +148,7 @@ namespace TESVSnip
                 {
                     cb.Checked = true;
                 }
-                cb.CheckedChanged += new EventHandler(RepeatCheckBox_CheckedChanged);
+                cb.CheckedChanged += RepeatCheckBox_CheckedChanged;
             }
             if ((CurrentGroup == 0 && es.group != 0) || (CurrentGroup != 0 && es.group != 0 && CurrentGroup != es.group))
             {
@@ -167,71 +172,82 @@ namespace TESVSnip
                     case ElementValueType.UInt:
                         {
                             var v = TypeConverter.h2i(data[offset], data[offset + 1], data[offset + 2], data[offset + 3]);
-                            flagValue = (uint)v;
+                            flagValue = v;
                             tb.Text = hasFlags || es.hexview ? "0x" + v.ToString("X8") : v.ToString();
                             offset += 4;
                         }
                         break;
                     case ElementValueType.Int:
                         {
-                            var v = TypeConverter.h2si(data[offset], data[offset + 1], data[offset + 2], data[offset + 3]);
-                            flagValue = (uint)v;
+                            var v = TypeConverter.h2si(data[offset], data[offset + 1], data[offset + 2],
+                                                       data[offset + 3]);
+                            flagValue = (uint) v;
                             tb.Text = hasFlags || es.hexview ? "0x" + v.ToString("X8") : v.ToString();
                             offset += 4;
                         }
                         break;
                     case ElementValueType.FormID:
-                        tb.Text = TypeConverter.h2i(data[offset], data[offset + 1], data[offset + 2], data[offset + 3]).ToString("X8");
+                        tb.Text =
+                            TypeConverter.h2i(data[offset], data[offset + 1], data[offset + 2], data[offset + 3]).
+                                ToString("X8");
                         offset += 4;
                         break;
                     case ElementValueType.Float:
-                        tb.Text = TypeConverter.h2f(data[offset], data[offset + 1], data[offset + 2], data[offset + 3]).ToString();
+                        tb.Text =
+                            TypeConverter.h2f(data[offset], data[offset + 1], data[offset + 2], data[offset + 3]).
+                                ToString();
                         offset += 4;
                         break;
                     case ElementValueType.UShort:
                         {
                             var v = TypeConverter.h2s(data[offset], data[offset + 1]);
-                            flagValue = (uint)v;
+                            flagValue = v;
                             tb.Text = hasFlags || es.hexview ? "0x" + v.ToString("X4") : v.ToString();
                             offset += 2;
-                        } break;
+                        }
+                        break;
                     case ElementValueType.Short:
                         {
                             var v = TypeConverter.h2ss(data[offset], data[offset + 1]);
-                            flagValue = (uint)v;
+                            flagValue = (uint) v;
                             tb.Text = hasFlags || es.hexview ? "0x" + v.ToString("X4") : v.ToString();
                             offset += 2;
-                        } break;
+                        }
+                        break;
                     case ElementValueType.Byte:
                         {
                             var v = data[offset];
-                            flagValue = (uint)v;
+                            flagValue = v;
                             tb.Text = hasFlags || es.hexview ? "0x" + v.ToString("X2") : v.ToString();
                             offset++;
-                        } break;
+                        }
+                        break;
                     case ElementValueType.SByte:
                         {
-                            var v = (sbyte)data[offset];
-                            flagValue = (uint)v;
+                            var v = (sbyte) data[offset];
+                            flagValue = (uint) v;
                             tb.Text = hasFlags || es.hexview ? "0x" + v.ToString("X2") : v.ToString();
                             offset++;
-                        } break;
+                        }
+                        break;
                     case ElementValueType.String:
                         {
                             string s = "";
-                            while (data[offset] != 0) s += (char)data[offset++];
+                            while (data[offset] != 0) s += (char) data[offset++];
                             offset++;
                             tb.Text = s;
                             tb.Width += 200;
-                        } break;
+                        }
+                        break;
                     case ElementValueType.BString:
                         {
                             int len = TypeConverter.h2s(data[offset], data[offset + 1]);
-                            string s = TESVSnip.Encoding.CP1252.GetString(data, offset + 2, len);
+                            string s = Encoding.CP1252.GetString(data, offset + 2, len);
                             offset = offset + (2 + len);
                             tb.Text = s;
                             tb.Width += 200;
-                        } break;
+                        }
+                        break;
                     case ElementValueType.fstring:
                         tb.Text = sr.GetStrData();
                         tb.Width += 200;
@@ -239,7 +255,10 @@ namespace TESVSnip
                     case ElementValueType.LString:
                         {
                             int left = data.Length - offset;
-                            uint id = (left < 4) ? 0 : TypeConverter.h2i(data[offset], data[offset + 1], data[offset + 2], data[offset + 3]);
+                            uint id = (left < 4)
+                                          ? 0
+                                          : TypeConverter.h2i(data[offset], data[offset + 1], data[offset + 2],
+                                                              data[offset + 3]);
                             bool isString = TypeConverter.IsLikelyString(new ArraySegment<byte>(data, offset, left));
                             int strOffset = offset;
                             string s = null;
@@ -248,7 +267,6 @@ namespace TESVSnip
                                 s = TypeConverter.GetString(new ArraySegment<byte>(data, offset, data.Length - offset));
                                 tb.Text = 0.ToString("X8");
                                 offset += s.Length;
-
                             }
                             else
                             {
@@ -258,14 +276,16 @@ namespace TESVSnip
                                     s = strIDLookup(id);
                             }
                             tb.Tag = new lTag(tb, s, data, strOffset, isString);
-                        } break;
+                        }
+                        break;
                     case ElementValueType.Str4:
                         {
-                            string s = TESVSnip.Encoding.CP1252.GetString(data, offset, 4);
+                            string s = Encoding.CP1252.GetString(data, offset, 4);
                             offset += 4;
                             tb.MaxLength = 4;
                             tb.Text = s;
-                        } break;
+                        }
+                        break;
                     default:
                         throw new ApplicationException();
                 }
@@ -277,34 +297,34 @@ namespace TESVSnip
                     tb.Width += 200;
                 if (removedStrings.ContainsKey(boxes.Count - 1)) tb.Text = removedStrings[boxes.Count - 1];
             }
-            Label l = new Label();
+            var l = new Label();
             l.AutoSize = true;
             string tmp = es.type.ToString();
             l.Text = tmp + ": " + es.name + (!string.IsNullOrEmpty(es.desc) ? (" (" + es.desc + ")") : "");
             panel1.Controls.Add(tb);
-            tb.Location = new System.Drawing.Point(10, ypos);
+            tb.Location = new Point(10, ypos);
             if (es.multiline)
             {
                 tb.Multiline = true;
-                ypos += tb.Height * 5;
+                ypos += tb.Height*5;
                 tb.Height *= 6;
             }
             panel1.Controls.Add(l);
-            l.Location = new System.Drawing.Point(tb.Right + 10, ypos + 3);
+            l.Location = new Point(tb.Right + 10, ypos + 3);
             string[] options = null;
             if (es.type == ElementValueType.FormID)
             {
                 ypos += 28;
-                Button b = new Button();
+                var b = new Button();
                 b.Text = "FormID lookup";
-                b.Click += new EventHandler(LookupFormID_Click);
+                b.Click += LookupFormID_Click;
                 panel1.Controls.Add(b);
-                b.Location = new System.Drawing.Point(20, ypos);
-                TextBox tb2 = new TextBox();
+                b.Location = new Point(20, ypos);
+                var tb2 = new TextBox();
                 tb2.Width += 200;
                 tb2.ReadOnly = true;
                 panel1.Controls.Add(tb2);
-                tb2.Location = new System.Drawing.Point(b.Right + 10, ypos);
+                tb2.Location = new Point(b.Right + 10, ypos);
                 b.Tag = new bTag(tb, tb2);
                 if (es.FormIDType != null)
                 {
@@ -322,23 +342,22 @@ namespace TESVSnip
             else if (es.type == ElementValueType.LString)
             {
                 ypos += 24;
-                lTag ltag = tb.Tag as lTag;
+                var ltag = tb.Tag as lTag;
 
                 ltag.cb = new CheckBox();
                 ltag.cb.Width = ltag.cb.Height;
                 ltag.cb.Checked = ltag.isString;
                 panel1.Controls.Add(ltag.cb);
-                ltag.cb.Location = new System.Drawing.Point(8, ypos);
+                ltag.cb.Location = new Point(8, ypos);
 
                 ltag.str = new TextBox();
                 //ltag.str.Font = this.baseFont;
                 ltag.str.Width += (200 - ltag.cb.Width + 8);
                 panel1.Controls.Add(ltag.str);
-                ltag.str.Location = new System.Drawing.Point(ltag.cb.Location.X + ltag.cb.Width + 8, ypos);
+                ltag.str.Location = new Point(ltag.cb.Location.X + ltag.cb.Width + 8, ypos);
                 ltag.str.Text = string.IsNullOrEmpty(ltag.disp) ? "" : ltag.disp;
 
                 ypos += 24;
-
             }
             else if (es.options != null)
             {
@@ -347,33 +366,33 @@ namespace TESVSnip
             if (options != null && options.Length > 0)
             {
                 ypos += 28;
-                ComboBox cmb = new ComboBox();
+                var cmb = new ComboBox();
                 cmb.Tag = tb;
                 cmb.Width += 200;
                 for (int j = 0; j < options.Length; j += 2)
                 {
                     cmb.Items.Add(new comboBoxItem(options[j], options[j + 1]));
                 }
-                cmb.KeyPress += new KeyPressEventHandler(cb_KeyPress);
+                cmb.KeyPress += cb_KeyPress;
                 cmb.ContextMenu = new ContextMenu();
-                cmb.SelectedIndexChanged += new EventHandler(cb_SelectedIndexChanged);
+                cmb.SelectedIndexChanged += cb_SelectedIndexChanged;
                 panel1.Controls.Add(cmb);
-                cmb.Location = new System.Drawing.Point(20, ypos);
+                cmb.Location = new Point(20, ypos);
             }
             if (hasFlags) // add flags combo box to the side
             {
-                FlagComboBox ccb = new FlagComboBox();
+                var ccb = new FlagComboBox();
                 ccb.Tag = tb;
                 ccb.SetItems(es.flags);
                 ccb.SetState(flagValue);
-                ccb.TextChanged += delegate(object sender, EventArgs e)
-                {
-                    uint value = ccb.GetState();
-                    TextBox text = ccb.Tag as TextBox;
-                    text.Text = "0x" + value.ToString("X");
-                };
-                ccb.Location = new System.Drawing.Point(l.Location.X + l.Width + 10, tb.Top);
-                ccb.Width = Math.Max(ccb.Width, this.Width - 50 - (ccb.Location.X));
+                ccb.TextChanged += delegate
+                                       {
+                                           uint value = ccb.GetState();
+                                           var text = ccb.Tag as TextBox;
+                                           text.Text = "0x" + value.ToString("X");
+                                       };
+                ccb.Location = new Point(l.Location.X + l.Width + 10, tb.Top);
+                ccb.Width = Math.Max(ccb.Width, Width - 50 - (ccb.Location.X));
                 ccb.Anchor = AnchorStyles.Left | AnchorStyles.Top | AnchorStyles.Right;
                 panel1.Controls.Add(ccb);
             }
@@ -381,10 +400,11 @@ namespace TESVSnip
             elements.Add(panel1);
         }
 
-        public MediumLevelRecordEditor(SubRecord sr, SubrecordStructure ss, dFormIDLookupS formIDLookup, dFormIDScan formIDScan, dLStringLookup strIDLookup)
+        public MediumLevelRecordEditor(SubRecord sr, SubrecordStructure ss, dFormIDLookupS formIDLookup,
+                                       dFormIDScan formIDScan, dLStringLookup strIDLookup)
         {
             InitializeComponent();
-            this.Icon = Properties.Resources.tesv_ico;
+            Icon = Resources.tesv_ico;
             SuspendLayout();
             this.sr = sr;
             this.ss = ss;
@@ -425,30 +445,31 @@ namespace TESVSnip
             catch
             {
                 MessageBox.Show("The subrecord doesn't appear to conform to the expected structure.\n" +
-                    "Saving is disabled, and the formatted information may be incorrect", "Warning");
+                                "Saving is disabled, and the formatted information may be incorrect", "Warning");
                 bSave.Enabled = false;
             }
             ResumeLayout();
         }
 
-        void cb_SelectedIndexChanged(object sender, EventArgs e)
+        private void cb_SelectedIndexChanged(object sender, EventArgs e)
         {
-            ComboBox cmb = (ComboBox)sender;
-            comboBoxItem cbi = (comboBoxItem)cmb.SelectedItem;
-            ((TextBox)cmb.Tag).Text = cbi.value;
+            var cmb = (ComboBox) sender;
+            var cbi = (comboBoxItem) cmb.SelectedItem;
+            ((TextBox) cmb.Tag).Text = cbi.value;
         }
 
-        void cb_KeyPress(object sender, KeyPressEventArgs e)
+        private void cb_KeyPress(object sender, KeyPressEventArgs e)
         {
             e.Handled = true;
         }
 
         private bool CheckingChange;
         private bool IgnoreChange;
-        void CheckBox_CheckedChanged(object sender, EventArgs e)
+
+        private void CheckBox_CheckedChanged(object sender, EventArgs e)
         {
             if (IgnoreChange) return;
-            CheckBox changed = (CheckBox)sender;
+            var changed = (CheckBox) sender;
             if (changed.Checked == false)
             {
                 if (!CheckingChange)
@@ -460,10 +481,10 @@ namespace TESVSnip
                 }
                 else
                 {
-                    TextBox toDisable = ((cbTag)changed.Tag).textBox;
+                    TextBox toDisable = ((cbTag) changed.Tag).textBox;
                     foreach (Control c in fpanel1.Controls)
                     {
-                        TextBox tb = c as TextBox;
+                        var tb = c as TextBox;
                         if (tb == toDisable)
                         {
                             toDisable.Enabled = false;
@@ -473,19 +494,19 @@ namespace TESVSnip
                     throw new ApplicationException();
                 }
             }
-            int Group = ((cbTag)changed.Tag).group;
-            TextBox toEnable = ((cbTag)changed.Tag).textBox;
+            int Group = ((cbTag) changed.Tag).group;
+            TextBox toEnable = ((cbTag) changed.Tag).textBox;
             CheckingChange = true;
             foreach (Panel p in fpanel1.Controls)
             {
                 foreach (Control c in p.Controls)
                 {
-                    CheckBox cb = c as CheckBox;
+                    var cb = c as CheckBox;
                     if (cb != null && cb != changed)
                     {
-                        if (((cbTag)changed.Tag).group == Group) cb.Checked = false;
+                        if (((cbTag) changed.Tag).group == Group) cb.Checked = false;
                     }
-                    TextBox tb = c as TextBox;
+                    var tb = c as TextBox;
                     if (tb == toEnable)
                     {
                         toEnable.Enabled = true;
@@ -495,10 +516,10 @@ namespace TESVSnip
             CheckingChange = false;
         }
 
-        void RepeatCheckBox_CheckedChanged(object sender, EventArgs e)
+        private void RepeatCheckBox_CheckedChanged(object sender, EventArgs e)
         {
-            CheckBox cb = (CheckBox)sender;
-            repeatCbTag tag = (repeatCbTag)cb.Tag;
+            var cb = (CheckBox) sender;
+            var tag = (repeatCbTag) cb.Tag;
             tag.tb.Enabled = cb.Checked;
             if (cb.Checked)
             {
@@ -518,22 +539,22 @@ namespace TESVSnip
             }
         }
 
-        void bCancel_Click(object sender, EventArgs e)
+        private void bCancel_Click(object sender, EventArgs e)
         {
             Close();
         }
 
-        void bSave_Click(object sender, EventArgs e)
+        private void bSave_Click(object sender, EventArgs e)
         {
-            System.Collections.Generic.List<byte> bytes = new System.Collections.Generic.List<byte>();
+            var bytes = new List<byte>();
             for (int j = 0; j < boxes.Count; j++)
             {
                 var vt = valueTypes[j];
                 string tbText = boxes[j].Text;
-                System.Globalization.NumberStyles numStyle = System.Globalization.NumberStyles.Any;
+                NumberStyles numStyle = NumberStyles.Any;
                 if (tbText.StartsWith("0x"))
                 {
-                    numStyle = System.Globalization.NumberStyles.HexNumber;
+                    numStyle = NumberStyles.HexNumber;
                     tbText = tbText.Substring(2);
                 }
                 if (!boxes[j].Enabled) continue;
@@ -615,7 +636,7 @@ namespace TESVSnip
                     case ElementValueType.FormID:
                         {
                             uint i;
-                            if (!uint.TryParse(tbText, System.Globalization.NumberStyles.AllowHexSpecifier, null, out i))
+                            if (!uint.TryParse(tbText, NumberStyles.AllowHexSpecifier, null, out i))
                             {
                                 MessageBox.Show("Invalid formID: " + tbText, "Error");
                                 return;
@@ -633,7 +654,7 @@ namespace TESVSnip
                         }
                     case ElementValueType.BString:
                         {
-                            bytes.AddRange(TypeConverter.s2h((ushort)tbText.Length));
+                            bytes.AddRange(TypeConverter.s2h((ushort) tbText.Length));
                             bytes.AddRange(System.Text.Encoding.Default.GetBytes(tbText));
                             break;
                         }
@@ -646,12 +667,12 @@ namespace TESVSnip
                     case ElementValueType.LString:
                         {
                             uint i;
-                            lTag ltag = boxes[j].Tag as lTag;
+                            var ltag = boxes[j].Tag as lTag;
                             if (ltag != null)
                             {
                                 if (!ltag.cb.Checked)
                                 {
-                                    if (!uint.TryParse(ltag.id.Text, System.Globalization.NumberStyles.AllowHexSpecifier, null, out i))
+                                    if (!uint.TryParse(ltag.id.Text, NumberStyles.AllowHexSpecifier, null, out i))
                                     {
                                         MessageBox.Show("Invalid string id: " + ltag.id.Text, "Error");
                                         return;
@@ -670,10 +691,11 @@ namespace TESVSnip
                         }
                     case ElementValueType.Str4:
                         {
-                            byte[] txtbytes = new byte[] { 0x32, 0x32, 0x32, 0x32 };
+                            var txtbytes = new byte[] {0x32, 0x32, 0x32, 0x32};
                             System.Text.Encoding.Default.GetBytes(tbText, 0, Math.Min(4, tbText.Length), txtbytes, 0);
                             bytes.AddRange(txtbytes);
-                        } break;
+                        }
+                        break;
                     default:
                         throw new ApplicationException();
                 }
@@ -682,9 +704,9 @@ namespace TESVSnip
             Close();
         }
 
-        void LookupFormID_Click(object sender, EventArgs e)
+        private void LookupFormID_Click(object sender, EventArgs e)
         {
-            bTag tag = (bTag)((Button)sender).Tag;
+            var tag = (bTag) ((Button) sender).Tag;
             tag.edid.Text = formIDLookup(tag.formID.Text);
         }
     }

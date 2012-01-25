@@ -1,10 +1,9 @@
-﻿using System;
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
 
 namespace TESVSnip
 {
-    interface IGroupRecord : IRecord
+    internal interface IGroupRecord : IRecord
     {
         void AddRecord(BaseRecord br);
         bool DeleteRecord(BaseRecord br);

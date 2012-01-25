@@ -10,19 +10,9 @@ namespace TESVSnip.Windows.Controls
             NewValue = newValue;
         }
 
-        public T OldValue
-        {
-            get { return this.m_oldValue; }
-            protected set { this.m_oldValue = value; }
-        }
-        public T NewValue
-        {
-            get { return this.m_newValue; }
-            protected set { this.m_newValue = value; }
-        }
+        public T OldValue { get; protected set; }
 
-        T m_oldValue = default(T);
-        T m_newValue = default(T);
+        public T NewValue { get; protected set; }
     }
 
     public delegate void OldNewEventHandler<T>(object sender, OldNewEventArgs<T> e);

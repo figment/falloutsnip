@@ -1,12 +1,7 @@
-﻿
-
-
- 
+﻿using System;
 
 namespace RTF
 {
-    using System;
-
     [Flags]
     public enum RTFBorderSide
     {
@@ -20,5 +15,3 @@ namespace RTF
         DoubleBorder = 0x20
     }
 }
-
-

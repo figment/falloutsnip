@@ -1,31 +1,25 @@
 using System;
+using System.Runtime.InteropServices;
+using System.Text;
 
-namespace TESVSnip {
-    [System.Runtime.InteropServices.StructLayout(System.Runtime.InteropServices.LayoutKind.Explicit)]
-    struct TypeConverter {
-        [System.Runtime.InteropServices.FieldOffset(0)]
-        private uint i;
-        [System.Runtime.InteropServices.FieldOffset(0)]
-        private int si;
-        [System.Runtime.InteropServices.FieldOffset(0)]
-        private ushort s;
-        [System.Runtime.InteropServices.FieldOffset(0)]
-        private short ss;
-        [System.Runtime.InteropServices.FieldOffset(0)]
-        private float f;
-        [System.Runtime.InteropServices.FieldOffset(0)]
-        private byte b1;
-        [System.Runtime.InteropServices.FieldOffset(1)]
-        private byte b2;
-        [System.Runtime.InteropServices.FieldOffset(2)]
-        private byte b3;
-        [System.Runtime.InteropServices.FieldOffset(3)]
-        private byte b4;
-        [System.Runtime.InteropServices.FieldOffset(0)]
-        private sbyte sb1;
+namespace TESVSnip
+{
+    [StructLayout(LayoutKind.Explicit)]
+    internal struct TypeConverter
+    {
+        [FieldOffset(0)] private uint i;
+        [FieldOffset(0)] private int si;
+        [FieldOffset(0)] private ushort s;
+        [FieldOffset(0)] private short ss;
+        [FieldOffset(0)] private float f;
+        [FieldOffset(0)] private byte b1;
+        [FieldOffset(1)] private byte b2;
+        [FieldOffset(2)] private byte b3;
+        [FieldOffset(3)] private byte b4;
+        [FieldOffset(0)] private readonly sbyte sb1;
 
         private static TypeConverter tc;
-        private static readonly byte[] bytes=new byte[4];
+        private static readonly byte[] bytes = new byte[4];
 
         /*public static float i2f(uint i) {
             tc.i=i;
@@ -36,11 +30,12 @@ namespace TESVSnip {
             return tc.i;
         }*/
 
-        public static float h2f(byte b1, byte b2, byte b3, byte b4) {
-            tc.b1=b1;
-            tc.b2=b2;
-            tc.b3=b3;
-            tc.b4=b4;
+        public static float h2f(byte b1, byte b2, byte b3, byte b4)
+        {
+            tc.b1 = b1;
+            tc.b2 = b2;
+            tc.b3 = b3;
+            tc.b4 = b4;
             return tc.f;
         }
 
@@ -53,6 +48,7 @@ namespace TESVSnip {
                 return h2si(data, offset);
             return default(T);
         }
+
         public static bool TryGetObject<T>(byte[] data, int offset, out object result)
         {
             result = default(T);
@@ -60,20 +56,21 @@ namespace TESVSnip {
             {
                 result = h2f(data, offset);
                 return true;
-            }            
+            }
             return false;
         }
 
         public static float h2f(byte[] data, int offset)
         {
-            if (offset + sizeof(float) > data.Length)
+            if (offset + sizeof (float) > data.Length)
                 return default(float);
-            tc.b1 = data[offset+0];
+            tc.b1 = data[offset + 0];
             tc.b2 = data[offset + 1];
             tc.b3 = data[offset + 2];
             tc.b4 = data[offset + 3];
             return tc.f;
         }
+
         public static float h2f(ArraySegment<byte> data)
         {
             if (data.Count >= 4)
@@ -87,13 +84,15 @@ namespace TESVSnip {
             return default(float);
         }
 
-        public static uint h2i(byte b1, byte b2, byte b3, byte b4) {
-            tc.b1=b1;
-            tc.b2=b2;
-            tc.b3=b3;
-            tc.b4=b4;
+        public static uint h2i(byte b1, byte b2, byte b3, byte b4)
+        {
+            tc.b1 = b1;
+            tc.b2 = b2;
+            tc.b3 = b3;
+            tc.b4 = b4;
             return tc.i;
         }
+
         public static uint h2i(ArraySegment<byte> data)
         {
             if (data.Count >= 4)
@@ -104,16 +103,18 @@ namespace TESVSnip {
                 tc.b4 = data.Array[data.Offset + 3];
                 return tc.i;
             }
-            return 0;            
+            return 0;
         }
+
         public static int h2si(byte b1, byte b2, byte b3, byte b4)
         {
-            tc.b1=b1;
-            tc.b2=b2;
-            tc.b3=b3;
-            tc.b4=b4;
+            tc.b1 = b1;
+            tc.b2 = b2;
+            tc.b3 = b3;
+            tc.b4 = b4;
             return tc.si;
         }
+
         public static int h2si(byte[] data, int offset)
         {
             if (data.Length >= 4)
@@ -124,8 +125,9 @@ namespace TESVSnip {
                 tc.b4 = data[offset + 3];
                 return tc.si;
             }
-            return 0;            
+            return 0;
         }
+
         public static int h2si(ArraySegment<byte> data)
         {
             if (data.Count >= 4)
@@ -141,10 +143,11 @@ namespace TESVSnip {
 
         public static ushort h2s(byte b1, byte b2)
         {
-            tc.b1=b1;
-            tc.b2=b2;
+            tc.b1 = b1;
+            tc.b2 = b2;
             return tc.s;
         }
+
         public static ushort h2s(ArraySegment<byte> data)
         {
             if (data.Count >= 2)
@@ -155,12 +158,14 @@ namespace TESVSnip {
             }
             return default(ushort);
         }
+
         public static short h2ss(byte b1, byte b2)
         {
-            tc.b1=b1;
-            tc.b2=b2;
+            tc.b1 = b1;
+            tc.b2 = b2;
             return tc.ss;
         }
+
         public static short h2ss(ArraySegment<byte> data)
         {
             if (data.Count >= 2)
@@ -180,6 +185,7 @@ namespace TESVSnip {
             }
             return default(byte);
         }
+
         public static sbyte h2sb(ArraySegment<byte> data)
         {
             if (data.Count >= 1)
@@ -190,33 +196,43 @@ namespace TESVSnip {
             return default(sbyte);
         }
 
-        private static byte[] UpdateBytes() {
-            bytes[0]=tc.b1;
-            bytes[1]=tc.b2;
-            bytes[2]=tc.b3;
-            bytes[3]=tc.b4;
+        private static byte[] UpdateBytes()
+        {
+            bytes[0] = tc.b1;
+            bytes[1] = tc.b2;
+            bytes[2] = tc.b3;
+            bytes[3] = tc.b4;
             return bytes;
         }
-        public static byte[] f2h(float f) {
-            tc.f=f;
+
+        public static byte[] f2h(float f)
+        {
+            tc.f = f;
             return UpdateBytes();
         }
-        public static byte[] i2h(uint i) {
-            tc.i=i;
+
+        public static byte[] i2h(uint i)
+        {
+            tc.i = i;
             return UpdateBytes();
         }
-        public static byte[] si2h(int si) {
-            tc.si=si;
+
+        public static byte[] si2h(int si)
+        {
+            tc.si = si;
             return UpdateBytes();
         }
-        public static byte[] ss2h(short ss) {
-            tc.ss=ss;
-            return new byte[] { tc.b1, tc.b2 };
+
+        public static byte[] ss2h(short ss)
+        {
+            tc.ss = ss;
+            return new[] {tc.b1, tc.b2};
         }
+
         public static byte[] s2h(ushort ss)
         {
             tc.s = ss;
-            return new byte[] { tc.b1, tc.b2 };
+            return new[] {tc.b1, tc.b2};
         }
 
         /*public static void f2h(float f, byte[] data, int offset) {
@@ -226,37 +242,45 @@ namespace TESVSnip {
             data[offset+2]=tc.b3;
             data[offset+3]=tc.b4;
         }*/
-        public static void i2h(uint i, byte[] data, int offset) {
-            tc.i=i;
-            data[offset+0]=tc.b1;
-            data[offset+1]=tc.b2;
-            data[offset+2]=tc.b3;
-            data[offset+3]=tc.b4;
+
+        public static void i2h(uint i, byte[] data, int offset)
+        {
+            tc.i = i;
+            data[offset + 0] = tc.b1;
+            data[offset + 1] = tc.b2;
+            data[offset + 2] = tc.b3;
+            data[offset + 3] = tc.b4;
         }
-        public static void si2h(int si, byte[] data, int offset) {
-            tc.si=si;
-            data[offset+0]=tc.b1;
-            data[offset+1]=tc.b2;
-            data[offset+2]=tc.b3;
-            data[offset+3]=tc.b4;
+
+        public static void si2h(int si, byte[] data, int offset)
+        {
+            tc.si = si;
+            data[offset + 0] = tc.b1;
+            data[offset + 1] = tc.b2;
+            data[offset + 2] = tc.b3;
+            data[offset + 3] = tc.b4;
         }
-        public static void ss2h(short ss, byte[] data, int offset) {
-            tc.ss=ss;
-            data[offset+0]=tc.b1;
-            data[offset+1]=tc.b2;
+
+        public static void ss2h(short ss, byte[] data, int offset)
+        {
+            tc.ss = ss;
+            data[offset + 0] = tc.b1;
+            data[offset + 1] = tc.b2;
         }
+
         public static void s2h(ushort ss, byte[] data, int offset)
         {
             tc.s = ss;
             data[offset + 0] = tc.b1;
             data[offset + 1] = tc.b2;
         }
+
         public static bool IsLikelyString(ArraySegment<byte> data)
         {
             bool isAscii = true;
             for (int i = 0; i < data.Count - 1 && isAscii; ++i)
             {
-                char c = (char)data.Array[data.Offset + i];
+                var c = (char) data.Array[data.Offset + i];
                 //if (c == 0) return (i > 0);
                 isAscii = !Char.IsControl(c);
             }
@@ -265,10 +289,10 @@ namespace TESVSnip {
 
         public static string GetZString(ArraySegment<byte> data)
         {
-            var sb = new System.Text.StringBuilder();
+            var sb = new StringBuilder();
             for (int i = 0; i < data.Count; ++i)
             {
-                char c = (char)data.Array[data.Offset + i];
+                var c = (char) data.Array[data.Offset + i];
                 if (c == 0) return sb.ToString();
                 sb.Append(c);
             }
@@ -279,7 +303,7 @@ namespace TESVSnip {
         {
             ushort len = h2s(data);
             if (len > 0 && len <= data.Count + 2)
-                return TESVSnip.Encoding.CP1252.GetString(data.Array, data.Offset + 2, len);
+                return Encoding.CP1252.GetString(data.Array, data.Offset + 2, len);
             return "";
         }
 
@@ -287,16 +311,17 @@ namespace TESVSnip {
         {
             // remove the tailing null
             int len = data.Count > 0 && data.Array[data.Count - 1] == 0 ? data.Count - 1 : data.Count;
-            return TESVSnip.Encoding.CP1252.GetString(data.Array, data.Offset, len);
+            return Encoding.CP1252.GetString(data.Array, data.Offset, len);
         }
 
         public static string GetHexData(byte[] data, int offset, int count)
         {
-            System.Text.StringBuilder sb = new System.Text.StringBuilder();
+            var sb = new StringBuilder();
             for (int i = 0; i < count && (offset + i) < data.Length; ++i)
-                sb.Append( data[offset + i].ToString("X2") ).Append( " " );            
+                sb.Append(data[offset + i].ToString("X2")).Append(" ");
             return sb.ToString();
         }
+
         public static string GetHexData(ArraySegment<byte> data)
         {
             return GetHexData(data.Array, data.Offset, data.Count);
@@ -309,9 +334,9 @@ namespace TESVSnip {
         /// <returns></returns>
         public static byte[] str2h(string str)
         {
-            int len = TESVSnip.Encoding.CP1252.GetByteCount(str);
-            byte[] data = new byte[len + 1];
-            TESVSnip.Encoding.CP1252.GetBytes(str,0,len,data,0);
+            int len = Encoding.CP1252.GetByteCount(str);
+            var data = new byte[len + 1];
+            Encoding.CP1252.GetBytes(str, 0, len, data, 0);
             data[len] = 0;
             return data;
         }
@@ -323,22 +348,21 @@ namespace TESVSnip {
         /// <returns></returns>
         public static byte[] bstr2h(string str)
         {
-            int len = TESVSnip.Encoding.CP1252.GetByteCount(str);
-            byte[] data = new byte[2 + len];
-            Array.Copy(TypeConverter.s2h((ushort)len), 0, data, 0, 2);
-            Array.Copy(TESVSnip.Encoding.CP1252.GetBytes(str), 0, data, 2, len);
+            int len = Encoding.CP1252.GetByteCount(str);
+            var data = new byte[2 + len];
+            Array.Copy(s2h((ushort) len), 0, data, 0, 2);
+            Array.Copy(Encoding.CP1252.GetBytes(str), 0, data, 2, len);
             return data;
         }
 
         public static byte[] b2h(byte i)
         {
-            return new byte[] { i };
+            return new[] {i};
         }
 
         public static byte[] sb2h(sbyte i)
         {
-            return new byte[] { (byte)i };
+            return new[] {(byte) i};
         }
-
     }
 }

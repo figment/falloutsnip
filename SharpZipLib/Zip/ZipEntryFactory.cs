@@ -37,194 +37,207 @@
 
 using System;
 using System.IO;
-using System.Text;
-
 using ICSharpCode.SharpZipLib.Core;
 
 namespace ICSharpCode.SharpZipLib.Zip
 {
-	/// <summary>
-	/// Basic implementation of <see cref="IEntryFactory"></see>
-	/// </summary>
-	class ZipEntryFactory : IEntryFactory
-	{
-		#region Enumerations
-		/// <summary>
-		/// Defines the possible values to be used for the <see cref="ZipEntry.DateTime"/>.
-		/// </summary>
-		enum TimeSetting
-		{
-			/// <summary>
-			/// Use the recorded LastWriteTime value for the file.
-			/// </summary>
-			LastWriteTime,
-			/// <summary>
-			/// Use the recorded LastWriteTimeUtc value for the file
-			/// </summary>
-			LastWriteTimeUtc,
-			/// <summary>
-			/// Use the recorded CreateTime value for the file.
-			/// </summary>
-			CreateTime,
-			/// <summary>
-			/// Use the recorded CreateTimeUtc value for the file.
-			/// </summary>
-			CreateTimeUtc,
-			/// <summary>
-			/// Use the recorded LastAccessTime value for the file.
-			/// </summary>
-			LastAccessTime,
-			/// <summary>
-			/// Use the recorded LastAccessTimeUtc value for the file.
-			/// </summary>
-			LastAccessTimeUtc,
-			/// <summary>
-			/// Use a fixed value.
-			/// </summary>
-			/// <remarks>The actual <see cref="DateTime"/> value used can be
-			/// specified via the <see cref="ZipEntryFactory(DateTime)"/> constructor or 
-			/// using the <see cref="ZipEntryFactory(TimeSetting)"/> with the setting set
-			/// to <see cref="TimeSetting.Fixed"/> which will use the <see cref="DateTime"/> when this class was constructed.
-			/// The <see cref="FixedDateTime"/> property can also be used to set this value.</remarks>
-			Fixed,
-		}
-		#endregion
+    /// <summary>
+    /// Basic implementation of <see cref="IEntryFactory"></see>
+    /// </summary>
+    internal class ZipEntryFactory : IEntryFactory
+    {
+        #region Enumerations
 
-		#region Constructors
-		/// <summary>
-		/// Initialise a new instance of the <see cref="ZipEntryFactory"/> class.
-		/// </summary>
-		/// <remarks>A default <see cref="INameTransform"/>, and the LastWriteTime for files is used.</remarks>
-		public ZipEntryFactory()
-		{
-			nameTransform_ = new ZipNameTransform();
-		}
+        /// <summary>
+        /// Defines the possible values to be used for the <see cref="ZipEntry.DateTime"/>.
+        /// </summary>
+        private enum TimeSetting
+        {
+            /// <summary>
+            /// Use the recorded LastWriteTime value for the file.
+            /// </summary>
+            LastWriteTime,
 
-		#endregion
+            /// <summary>
+            /// Use the recorded LastWriteTimeUtc value for the file
+            /// </summary>
+            LastWriteTimeUtc,
 
-		#region Properties
-		/// <summary>
-		/// Get / set the <see cref="INameTransform"/> to be used when creating new <see cref="ZipEntry"/> values.
-		/// </summary>
-		/// <remarks>
-		/// Setting this property to null will cause a default <see cref="ZipNameTransform">name transform</see> to be used.
-		/// </remarks>
-		public INameTransform NameTransform
-		{
-			get { return nameTransform_; }
-			set 
-			{
-				if (value == null) {
-					nameTransform_ = new ZipNameTransform();
-				}
-				else {
-					nameTransform_ = value;
-				}
-			}
-		}
+            /// <summary>
+            /// Use the recorded CreateTime value for the file.
+            /// </summary>
+            CreateTime,
 
-		#endregion
+            /// <summary>
+            /// Use the recorded CreateTimeUtc value for the file.
+            /// </summary>
+            CreateTimeUtc,
 
-		#region IEntryFactory Members
+            /// <summary>
+            /// Use the recorded LastAccessTime value for the file.
+            /// </summary>
+            LastAccessTime,
 
-		/// <summary>
-		/// Make a new <see cref="ZipEntry"/> for a file.
-		/// </summary>
-		/// <param name="fileName">The name of the file to create a new entry for.</param>
-		/// <returns>Returns a new <see cref="ZipEntry"/> based on the <paramref name="fileName"/>.</returns>
-		public ZipEntry MakeFileEntry(string fileName)
-		{
-			return MakeFileEntry(fileName, true);
-		}
+            /// <summary>
+            /// Use the recorded LastAccessTimeUtc value for the file.
+            /// </summary>
+            LastAccessTimeUtc,
 
-		/// <summary>
-		/// Make a new <see cref="ZipEntry"/> from a name.
-		/// </summary>
-		/// <param name="fileName">The name of the file to create a new entry for.</param>
-		/// <param name="useFileSystem">If true entry detail is retrieved from the file system if the file exists.</param>
-		/// <returns>Returns a new <see cref="ZipEntry"/> based on the <paramref name="fileName"/>.</returns>
-		public ZipEntry MakeFileEntry(string fileName, bool useFileSystem)
-		{
-			ZipEntry result = new ZipEntry(nameTransform_.TransformFile(fileName));
-			result.IsUnicodeText = true;
+            /// <summary>
+            /// Use a fixed value.
+            /// </summary>
+            /// <remarks>The actual <see cref="DateTime"/> value used can be
+            /// specified via the <see cref="ZipEntryFactory(DateTime)"/> constructor or 
+            /// using the <see cref="ZipEntryFactory(TimeSetting)"/> with the setting set
+            /// to <see cref="TimeSetting.Fixed"/> which will use the <see cref="DateTime"/> when this class was constructed.
+            /// The <see cref="FixedDateTime"/> property can also be used to set this value.</remarks>
+            Fixed,
+        }
 
-			int externalAttributes = 0;
-			bool useAttributes = false;
+        #endregion
 
-			FileInfo fi = null;
-			if (useFileSystem)
-			{
-				fi = new FileInfo(fileName);
-			}
+        #region Constructors
 
-            if((fi != null) && fi.Exists) {
+        /// <summary>
+        /// Initialise a new instance of the <see cref="ZipEntryFactory"/> class.
+        /// </summary>
+        /// <remarks>A default <see cref="INameTransform"/>, and the LastWriteTime for files is used.</remarks>
+        public ZipEntryFactory()
+        {
+            nameTransform_ = new ZipNameTransform();
+        }
+
+        #endregion
+
+        #region Properties
+
+        /// <summary>
+        /// Get / set the <see cref="INameTransform"/> to be used when creating new <see cref="ZipEntry"/> values.
+        /// </summary>
+        /// <remarks>
+        /// Setting this property to null will cause a default <see cref="ZipNameTransform">name transform</see> to be used.
+        /// </remarks>
+        public INameTransform NameTransform
+        {
+            get { return nameTransform_; }
+            set
+            {
+                if (value == null)
+                {
+                    nameTransform_ = new ZipNameTransform();
+                }
+                else
+                {
+                    nameTransform_ = value;
+                }
+            }
+        }
+
+        #endregion
+
+        #region IEntryFactory Members
+
+        /// <summary>
+        /// Make a new <see cref="ZipEntry"/> for a file.
+        /// </summary>
+        /// <param name="fileName">The name of the file to create a new entry for.</param>
+        /// <returns>Returns a new <see cref="ZipEntry"/> based on the <paramref name="fileName"/>.</returns>
+        public ZipEntry MakeFileEntry(string fileName)
+        {
+            return MakeFileEntry(fileName, true);
+        }
+
+        /// <summary>
+        /// Make a new <see cref="ZipEntry"/> from a name.
+        /// </summary>
+        /// <param name="fileName">The name of the file to create a new entry for.</param>
+        /// <param name="useFileSystem">If true entry detail is retrieved from the file system if the file exists.</param>
+        /// <returns>Returns a new <see cref="ZipEntry"/> based on the <paramref name="fileName"/>.</returns>
+        public ZipEntry MakeFileEntry(string fileName, bool useFileSystem)
+        {
+            var result = new ZipEntry(nameTransform_.TransformFile(fileName));
+            result.IsUnicodeText = true;
+
+            int externalAttributes = 0;
+            bool useAttributes = false;
+
+            FileInfo fi = null;
+            if (useFileSystem)
+            {
+                fi = new FileInfo(fileName);
+            }
+
+            if ((fi != null) && fi.Exists)
+            {
                 result.DateTime = fi.LastWriteTime;
 
                 result.Size = fi.Length;
 
                 useAttributes = true;
-                externalAttributes = ((int)fi.Attributes & getAttributes_);
+                externalAttributes = ((int) fi.Attributes & getAttributes_);
             }
 
-			if (useAttributes)
-			{
-				result.ExternalFileAttributes = externalAttributes;
-			}
-			
-			return result;
-		}
+            if (useAttributes)
+            {
+                result.ExternalFileAttributes = externalAttributes;
+            }
 
-		/// <summary>
-		/// Make a new <see cref="ZipEntry"></see> for a directory.
-		/// </summary>
-		/// <param name="directoryName">The raw untransformed name for the new directory</param>
-		/// <returns>Returns a new <see cref="ZipEntry"></see> representing a directory.</returns>
-		public ZipEntry MakeDirectoryEntry(string directoryName)
-		{
-			return MakeDirectoryEntry(directoryName, true);
-		}
+            return result;
+        }
 
-		/// <summary>
-		/// Make a new <see cref="ZipEntry"></see> for a directory.
-		/// </summary>
-		/// <param name="directoryName">The raw untransformed name for the new directory</param>
-		/// <param name="useFileSystem">If true entry detail is retrieved from the file system if the file exists.</param>
-		/// <returns>Returns a new <see cref="ZipEntry"></see> representing a directory.</returns>
-		public ZipEntry MakeDirectoryEntry(string directoryName, bool useFileSystem)
-		{
-			
-			ZipEntry result = new ZipEntry(nameTransform_.TransformDirectory(directoryName));
-			result.Size=0;
-			
-			int externalAttributes = 0;
+        /// <summary>
+        /// Make a new <see cref="ZipEntry"></see> for a directory.
+        /// </summary>
+        /// <param name="directoryName">The raw untransformed name for the new directory</param>
+        /// <returns>Returns a new <see cref="ZipEntry"></see> representing a directory.</returns>
+        public ZipEntry MakeDirectoryEntry(string directoryName)
+        {
+            return MakeDirectoryEntry(directoryName, true);
+        }
 
-			DirectoryInfo di = null;
+        /// <summary>
+        /// Make a new <see cref="ZipEntry"></see> for a directory.
+        /// </summary>
+        /// <param name="directoryName">The raw untransformed name for the new directory</param>
+        /// <param name="useFileSystem">If true entry detail is retrieved from the file system if the file exists.</param>
+        /// <returns>Returns a new <see cref="ZipEntry"></see> representing a directory.</returns>
+        public ZipEntry MakeDirectoryEntry(string directoryName, bool useFileSystem)
+        {
+            var result = new ZipEntry(nameTransform_.TransformDirectory(directoryName));
+            result.Size = 0;
 
-			if (useFileSystem)
-			{
-				di = new DirectoryInfo(directoryName);
-			}
+            int externalAttributes = 0;
+
+            DirectoryInfo di = null;
+
+            if (useFileSystem)
+            {
+                di = new DirectoryInfo(directoryName);
+            }
 
 
-            if((di != null) && di.Exists) {
+            if ((di != null) && di.Exists)
+            {
                 result.DateTime = di.LastWriteTime;
 
-                externalAttributes = ((int)di.Attributes & getAttributes_);
+                externalAttributes = ((int) di.Attributes & getAttributes_);
             }
 
-			// Always set directory attribute on.
-			externalAttributes |= 16;
-			result.ExternalFileAttributes = externalAttributes;
+            // Always set directory attribute on.
+            externalAttributes |= 16;
+            result.ExternalFileAttributes = externalAttributes;
 
-			return result;
-		}
-		
-		#endregion
+            return result;
+        }
 
-		#region Instance Fields
-		INameTransform nameTransform_;
+        #endregion
 
-		int getAttributes_ = -1;
-		#endregion
-	}
+        #region Instance Fields
+
+        private INameTransform nameTransform_;
+
+        private int getAttributes_ = -1;
+
+        #endregion
+    }
 }

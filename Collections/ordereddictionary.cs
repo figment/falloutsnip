@@ -1,22 +1,20 @@
+using System;
+using System.Collections;
+using System.Collections.Generic;
+using System.Diagnostics;
+
 namespace TESVSnip.Collections.Generic
 {
-    using System;
-    using System.Collections.Generic;
-    using System.Collections;
-    using System.Collections.ObjectModel;
-    using System.Diagnostics;
-    using System.Reflection;
-    using System.Runtime.InteropServices;
-    using System.Threading;
-
     // Summary:
     //     Represents a strongly typed list of objects that can be accessed by index.
     //     Provides methods to search, sort, and manipulate lists.
     [DebuggerDisplay("Count = {Count}")]
-    public class OrderedDictionary<TKey, TItem> : IDictionary<TKey, TItem>, IDictionary, ICollection<KeyValuePair<TKey, TItem>>, IEnumerable<KeyValuePair<TKey, TItem>>
+    public class OrderedDictionary<TKey, TItem> : IDictionary<TKey, TItem>, IDictionary,
+                                                  ICollection<KeyValuePair<TKey, TItem>>,
+                                                  IEnumerable<KeyValuePair<TKey, TItem>>
     {
-        List<KeyValuePair<TKey, TItem>> _kvp;
-        Dictionary<TKey, KeyValuePair<TKey, TItem>> _hash;
+        private readonly List<KeyValuePair<TKey, TItem>> _kvp;
+        private readonly Dictionary<TKey, KeyValuePair<TKey, TItem>> _hash;
 
         #region TKey Helper Routines
 
@@ -44,36 +42,18 @@ namespace TESVSnip.Collections.Generic
         {
             if (_hash.TryGetValue(key, out kvp))
                 return true;
-            //for (int idx = 0; idx < _kvp.Count; ++idx)
-            //{
-            //    if (0 == _TKeyComparer.Compare(_kvp[idx].Key, key))
-            //    {
-            //        kvp = _kvp[idx];
-            //        return true;
-            //    }
-            //}
             kvp = default(KeyValuePair<TKey, TItem>);
             return false;
         }
 
-        private TKey GetKey(TItem value)
-        {
-            foreach (KeyValuePair<TKey, TItem> kvp in _kvp)
-            {
-                if (kvp.Value.Equals(value))
-                    return kvp.Key;
-            }
-            return default(TKey);
-        }
         #endregion
 
-        IEqualityComparer<TKey> _TKeyComparer;
+        private readonly IEqualityComparer<TKey> _TKeyComparer;
 
         // Summary:
         //     Initializes a new instance of the System.Collections.Generic.List<T> class
         //     that is empty and has the default initial capacity.
         public OrderedDictionary()
-            : base()
         {
             _kvp = new List<KeyValuePair<TKey, TItem>>();
             _TKeyComparer = EqualityComparer<TKey>.Default;
@@ -81,7 +61,6 @@ namespace TESVSnip.Collections.Generic
         }
 
         public OrderedDictionary(IEqualityComparer<TKey> KeyComparer)
-            : base()
         {
             _kvp = new List<KeyValuePair<TKey, TItem>>();
             _TKeyComparer = KeyComparer;
@@ -89,7 +68,6 @@ namespace TESVSnip.Collections.Generic
         }
 
         public OrderedDictionary(OrderedDictionary<TKey, TItem> other)
-            : base()
         {
             _kvp = new List<KeyValuePair<TKey, TItem>>(other._kvp);
             _TKeyComparer = other._TKeyComparer;
@@ -184,11 +162,9 @@ namespace TESVSnip.Collections.Generic
                 if (FindKVP(key, out kvp)) return kvp.Value;
                 throw new KeyNotFoundException(key.ToString());
             }
-            set
-            {
-                this.Add(key, value);
-            }
+            set { Add(key, value); }
         }
+
         //public TItem this[int index]
         //{
         //    get
@@ -228,7 +204,7 @@ namespace TESVSnip.Collections.Generic
 
         public TKey GetKey(int index)
         {
-            return this._kvp[index].Key;
+            return _kvp[index].Key;
         }
 
         public bool TryGetValue(TKey key, out TItem value)
@@ -304,21 +280,20 @@ namespace TESVSnip.Collections.Generic
             get { return new OrderedValueCollection(this); }
         }
 
-
         #endregion
 
         #region ICollection<KeyValuePair<TKey,T>> Members
 
         void ICollection<KeyValuePair<TKey, TItem>>.Add(KeyValuePair<TKey, TItem> item)
         {
-            if (this.ContainsKey(item.Key))
+            if (ContainsKey(item.Key))
                 throw new ArgumentException();
-            this.Add(item.Key, item.Value);
+            Add(item.Key, item.Value);
         }
 
         void ICollection<KeyValuePair<TKey, TItem>>.Clear()
         {
-            this.Clear();
+            Clear();
         }
 
         bool ICollection<KeyValuePair<TKey, TItem>>.Contains(KeyValuePair<TKey, TItem> item)
@@ -348,7 +323,7 @@ namespace TESVSnip.Collections.Generic
 
         bool ICollection<KeyValuePair<TKey, TItem>>.Remove(KeyValuePair<TKey, TItem> item)
         {
-            return this.Remove(item.Key);
+            return Remove(item.Key);
         }
 
         #endregion
@@ -377,44 +352,47 @@ namespace TESVSnip.Collections.Generic
         }
 
         // Nested Types
-        public struct Enumerator : IDictionaryEnumerator, IEnumerator<KeyValuePair<TKey, TItem>>, IEnumerator, IDisposable
+        public struct Enumerator : IDictionaryEnumerator, IEnumerator<KeyValuePair<TKey, TItem>>, IEnumerator,
+                                   IDisposable
         {
-            private OrderedDictionary<TKey, TItem> list;
+            private readonly OrderedDictionary<TKey, TItem> list;
             private int index;
             private KeyValuePair<TKey, TItem> current;
+
             internal Enumerator(OrderedDictionary<TKey, TItem> list)
             {
                 this.list = list;
-                this.index = 0;
-                this.current = default(KeyValuePair<TKey, TItem>);
+                index = 0;
+                current = default(KeyValuePair<TKey, TItem>);
             }
+
             public bool MoveNext()
             {
-                if (this.index < this.list.Count)
+                if (index < list.Count)
                 {
-                    this.current = this.list._kvp[this.index];
-                    this.index++;
+                    current = list._kvp[index];
+                    index++;
                     return true;
                 }
-                this.index = this.list._kvp.Count + 1;
-                this.current = default(KeyValuePair<TKey, TItem>);
+                index = list._kvp.Count + 1;
+                current = default(KeyValuePair<TKey, TItem>);
                 return false;
             }
+
             public KeyValuePair<TKey, TItem> Current
             {
-                get
-                {
-                    return this.current;
-                }
+                get { return current; }
             }
+
             object IEnumerator.Current
             {
-                get { return this.Current; }
+                get { return Current; }
             }
+
             void IEnumerator.Reset()
             {
-                this.index = 0;
-                this.current = default(KeyValuePair<TKey, TItem>);
+                index = 0;
+                current = default(KeyValuePair<TKey, TItem>);
             }
 
             #region IDisposable Members
@@ -429,27 +407,26 @@ namespace TESVSnip.Collections.Generic
 
             DictionaryEntry IDictionaryEnumerator.Entry
             {
-                get { return new DictionaryEntry(this.current.Key, this.current.Value); }
+                get { return new DictionaryEntry(current.Key, current.Value); }
             }
 
             object IDictionaryEnumerator.Key
             {
-                get { return this.current.Key; }
+                get { return current.Key; }
             }
 
             object IDictionaryEnumerator.Value
             {
-                get { return this.current.Value; }
+                get { return current.Value; }
             }
 
             #endregion
 
             #region IEnumerator Members
 
-
             bool IEnumerator.MoveNext()
             {
-                return this.MoveNext();
+                return MoveNext();
             }
 
             #endregion
@@ -459,32 +436,32 @@ namespace TESVSnip.Collections.Generic
 
         void IDictionary<TKey, TItem>.Add(TKey key, TItem value)
         {
-            this.Add(key, value);
+            Add(key, value);
         }
 
         bool IDictionary<TKey, TItem>.ContainsKey(TKey key)
         {
-            return this.ContainsKey(key);
+            return ContainsKey(key);
         }
 
         ICollection<TKey> IDictionary<TKey, TItem>.Keys
         {
-            get { return this.Keys; }
+            get { return Keys; }
         }
 
         bool IDictionary<TKey, TItem>.Remove(TKey key)
         {
-            return this.Remove(key);
+            return Remove(key);
         }
 
         bool IDictionary<TKey, TItem>.TryGetValue(TKey key, out TItem value)
         {
-            return this.TryGetValue(key, out value);
+            return TryGetValue(key, out value);
         }
 
         ICollection<TItem> IDictionary<TKey, TItem>.Values
         {
-            get { return this.Values; }
+            get { return Values; }
         }
 
         TItem IDictionary<TKey, TItem>.this[TKey key]
@@ -496,9 +473,11 @@ namespace TESVSnip.Collections.Generic
         #endregion
 
         #region class OrderedKeyCollection
+
         private class OrderedKeyCollection : ICollection<TKey>, ICollection
         {
-            OrderedDictionary<TKey, TItem> _list;
+            private readonly OrderedDictionary<TKey, TItem> _list;
+
             internal OrderedKeyCollection(OrderedDictionary<TKey, TItem> list)
             {
                 _list = list;
@@ -547,7 +526,7 @@ namespace TESVSnip.Collections.Generic
 
             public IEnumerator<TKey> GetEnumerator()
             {
-                return new Enumerator(this._list);
+                return new Enumerator(_list);
             }
 
             #endregion
@@ -556,49 +535,51 @@ namespace TESVSnip.Collections.Generic
 
             IEnumerator IEnumerable.GetEnumerator()
             {
-                return new Enumerator(this._list);
+                return new Enumerator(_list);
             }
 
             #endregion
 
             public struct Enumerator : IEnumerator<TKey>, IEnumerator, IDisposable
             {
-                private OrderedDictionary<TKey, TItem> list;
+                private readonly OrderedDictionary<TKey, TItem> list;
                 private int index;
                 private TKey current;
+
                 internal Enumerator(OrderedDictionary<TKey, TItem> list)
                 {
                     this.list = list;
-                    this.index = 0;
-                    this.current = default(TKey);
+                    index = 0;
+                    current = default(TKey);
                 }
+
                 public bool MoveNext()
                 {
-                    if (this.index < this.list.Count)
+                    if (index < list.Count)
                     {
-                        this.current = this.list._kvp[this.index].Key;
-                        this.index++;
+                        current = list._kvp[index].Key;
+                        index++;
                         return true;
                     }
-                    this.index = this.list._kvp.Count + 1;
-                    this.current = default(TKey);
+                    index = list._kvp.Count + 1;
+                    current = default(TKey);
                     return false;
                 }
+
                 public TKey Current
                 {
-                    get
-                    {
-                        return this.current;
-                    }
+                    get { return current; }
                 }
+
                 object IEnumerator.Current
                 {
-                    get { return this.Current; }
+                    get { return Current; }
                 }
+
                 void IEnumerator.Reset()
                 {
-                    this.index = 0;
-                    this.current = default(TKey);
+                    index = 0;
+                    current = default(TKey);
                 }
 
                 #region IDisposable Members
@@ -614,15 +595,12 @@ namespace TESVSnip.Collections.Generic
 
             void ICollection.CopyTo(Array array, int index)
             {
-                ((ICollection<TKey>)this).CopyTo((TKey[])array, index);
+                (this).CopyTo((TKey[]) array, index);
             }
 
             int ICollection.Count
             {
-                get
-                {
-                    return ((ICollection<TKey>)this).Count;
-                }
+                get { return (this).Count; }
             }
 
             bool ICollection.IsSynchronized
@@ -637,12 +615,15 @@ namespace TESVSnip.Collections.Generic
 
             #endregion
         }
+
         #endregion
 
         #region class OrderedValueCollection
+
         private class OrderedValueCollection : ICollection<TItem>, ICollection
         {
-            OrderedDictionary<TKey, TItem> _list;
+            private readonly OrderedDictionary<TKey, TItem> _list;
+
             internal OrderedValueCollection(OrderedDictionary<TKey, TItem> list)
             {
                 _list = list;
@@ -691,7 +672,7 @@ namespace TESVSnip.Collections.Generic
 
             public IEnumerator<TItem> GetEnumerator()
             {
-                return new Enumerator(this._list);
+                return new Enumerator(_list);
             }
 
             #endregion
@@ -700,7 +681,7 @@ namespace TESVSnip.Collections.Generic
 
             IEnumerator IEnumerable.GetEnumerator()
             {
-                return new Enumerator(this._list);
+                return new Enumerator(_list);
             }
 
             #endregion
@@ -709,15 +690,12 @@ namespace TESVSnip.Collections.Generic
 
             void ICollection.CopyTo(Array array, int index)
             {
-                ((ICollection<TItem>)this).CopyTo((TItem[])array, index);
+                (this).CopyTo((TItem[]) array, index);
             }
 
             int ICollection.Count
             {
-                get
-                {
-                    return ((ICollection<TItem>)this).Count;
-                }
+                get { return (this).Count; }
             }
 
             bool ICollection.IsSynchronized
@@ -734,42 +712,44 @@ namespace TESVSnip.Collections.Generic
 
             public struct Enumerator : IEnumerator<TItem>, IEnumerator, IDisposable
             {
-                private OrderedDictionary<TKey, TItem> list;
+                private readonly OrderedDictionary<TKey, TItem> list;
                 private int index;
                 private TItem current;
+
                 internal Enumerator(OrderedDictionary<TKey, TItem> list)
                 {
                     this.list = list;
-                    this.index = 0;
-                    this.current = default(TItem);
+                    index = 0;
+                    current = default(TItem);
                 }
+
                 public bool MoveNext()
                 {
-                    if (this.index < this.list.Count)
+                    if (index < list.Count)
                     {
-                        this.current = this.list._kvp[this.index].Value;
-                        this.index++;
+                        current = list._kvp[index].Value;
+                        index++;
                         return true;
                     }
-                    this.index = this.list._kvp.Count + 1;
-                    this.current = default(TItem);
+                    index = list._kvp.Count + 1;
+                    current = default(TItem);
                     return false;
                 }
+
                 public TItem Current
                 {
-                    get
-                    {
-                        return this.current;
-                    }
+                    get { return current; }
                 }
+
                 object IEnumerator.Current
                 {
-                    get { return this.Current; }
+                    get { return Current; }
                 }
+
                 void IEnumerator.Reset()
                 {
-                    this.index = 0;
-                    this.current = default(TItem);
+                    index = 0;
+                    current = default(TItem);
                 }
 
                 #region IDisposable Members
@@ -781,24 +761,24 @@ namespace TESVSnip.Collections.Generic
                 #endregion
             }
         }
-        #endregion
 
+        #endregion
 
         #region IDictionary Members
 
         void IDictionary.Add(object key, object value)
         {
-            this.Add((TKey)key, (TItem)value);
+            Add((TKey) key, (TItem) value);
         }
 
         void IDictionary.Clear()
         {
-            this.Clear();
+            Clear();
         }
 
         bool IDictionary.Contains(object key)
         {
-            return this.ContainsKey((TKey)key);
+            return ContainsKey((TKey) key);
         }
 
         IDictionaryEnumerator IDictionary.GetEnumerator()
@@ -818,23 +798,23 @@ namespace TESVSnip.Collections.Generic
 
         ICollection IDictionary.Keys
         {
-            get { return (ICollection)this.Keys; }
+            get { return (ICollection) Keys; }
         }
 
         void IDictionary.Remove(object key)
         {
-            this.Remove((TKey)key);
+            Remove((TKey) key);
         }
 
         ICollection IDictionary.Values
         {
-            get { return (ICollection)this.Values; }
+            get { return (ICollection) Values; }
         }
 
         object IDictionary.this[object key]
         {
-            get { return this[(TKey)key]; }
-            set { this[(TKey)key] = (TItem)value; }
+            get { return this[(TKey) key]; }
+            set { this[(TKey) key] = (TItem) value; }
         }
 
         #endregion
@@ -843,12 +823,12 @@ namespace TESVSnip.Collections.Generic
 
         void ICollection.CopyTo(Array array, int index)
         {
-            this._kvp.CopyTo((KeyValuePair<TKey, TItem>[])array, index);
+            _kvp.CopyTo((KeyValuePair<TKey, TItem>[]) array, index);
         }
 
         int ICollection.Count
         {
-            get { return this.Count; }
+            get { return Count; }
         }
 
         bool ICollection.IsSynchronized

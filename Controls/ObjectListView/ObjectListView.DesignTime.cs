@@ -29,15 +29,12 @@
  */
 
 using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.Design;
-using System.Drawing.Design;
-using System.Collections;
-using System.Collections.Generic;
+using System.Diagnostics;
+using System.Globalization;
 using System.Windows.Forms;
-using System.Windows.Forms.Design;
-
-using BrightIdeasSoftware;
 
 namespace BrightIdeasSoftware.Design
 {
@@ -87,26 +84,29 @@ namespace BrightIdeasSoftware.Design
         }
     }
     */
+
     /// <summary>
     /// This class works in conjunction with the OLVColumns property to allow OLVColumns
     /// to be added to the ObjectListView.
     /// </summary>
-    public class OLVColumnCollectionEditor : System.ComponentModel.Design.CollectionEditor
+    public class OLVColumnCollectionEditor : CollectionEditor
     {
         /// <summary>
         /// Create a OLVColumnCollectionEditor
         /// </summary>
         /// <param name="t"></param>
         public OLVColumnCollectionEditor(Type t)
-            : base(t) {
+            : base(t)
+        {
         }
 
         /// <summary>
         /// What type of object does this editor create?
         /// </summary>
         /// <returns></returns>
-        protected override Type CreateCollectionItemType() {
-            return typeof(OLVColumn);
+        protected override Type CreateCollectionItemType()
+        {
+            return typeof (OLVColumn);
         }
 
         /// <summary>
@@ -116,25 +116,29 @@ namespace BrightIdeasSoftware.Design
         /// <param name="provider"></param>
         /// <param name="value"></param>
         /// <returns></returns>
-        public override object EditValue(ITypeDescriptorContext context, IServiceProvider provider, object value) {
+        public override object EditValue(ITypeDescriptorContext context, IServiceProvider provider, object value)
+        {
             // Figure out which ObjectListView we are working on. This should be the Instance of the context.
             ObjectListView olv = null;
             if (context != null)
                 olv = context.Instance as ObjectListView;
 
-            if (olv == null) {
+            if (olv == null)
+            {
                 //THINK: Can this ever happen?
-                System.Diagnostics.Debug.WriteLine("context.Instance was NOT an ObjectListView");
+                Debug.WriteLine("context.Instance was NOT an ObjectListView");
 
                 // Hack to figure out which ObjectListView we are working on
-                ListView.ColumnHeaderCollection cols = (ListView.ColumnHeaderCollection)value;
-                if (cols.Count == 0) {
+                var cols = (ListView.ColumnHeaderCollection) value;
+                if (cols.Count == 0)
+                {
                     cols.Add(new OLVColumn());
-                    olv = (ObjectListView)cols[0].ListView;
+                    olv = (ObjectListView) cols[0].ListView;
                     cols.Clear();
                     olv.AllColumns.Clear();
-                } else
-                    olv = (ObjectListView)cols[0].ListView;
+                }
+                else
+                    olv = (ObjectListView) cols[0].ListView;
             }
 
             // Edit all the columns, not just the ones that are visible
@@ -153,8 +157,9 @@ namespace BrightIdeasSoftware.Design
         /// </summary>
         /// <param name="value"></param>
         /// <returns></returns>
-        protected override string GetDisplayText(object value) {
-            OLVColumn col = value as OLVColumn;
+        protected override string GetDisplayText(object value)
+        {
+            var col = value as OLVColumn;
             if (col == null || String.IsNullOrEmpty(col.AspectName))
                 return base.GetDisplayText(value);
 
@@ -168,24 +173,30 @@ namespace BrightIdeasSoftware.Design
     /// </summary>
     internal class OverlayConverter : ExpandableObjectConverter
     {
-        public override bool CanConvertTo(ITypeDescriptorContext context, Type destinationType) {
-            if (destinationType == typeof(string))
+        public override bool CanConvertTo(ITypeDescriptorContext context, Type destinationType)
+        {
+            if (destinationType == typeof (string))
                 return true;
             else
                 return base.CanConvertTo(context, destinationType);
         }
 
-        public override object ConvertTo(ITypeDescriptorContext context, System.Globalization.CultureInfo culture, object value, Type destinationType) {
-            if (destinationType == typeof(string)) {
-                ImageOverlay imageOverlay = value as ImageOverlay;
-                if (imageOverlay != null) {
+        public override object ConvertTo(ITypeDescriptorContext context, CultureInfo culture, object value,
+                                         Type destinationType)
+        {
+            if (destinationType == typeof (string))
+            {
+                var imageOverlay = value as ImageOverlay;
+                if (imageOverlay != null)
+                {
                     if (imageOverlay.Image == null)
                         return "(none)";
                     else
                         return "(set)";
                 }
-                TextOverlay textOverlay = value as TextOverlay;
-                if (textOverlay != null) {
+                var textOverlay = value as TextOverlay;
+                if (textOverlay != null)
+                {
                     if (String.IsNullOrEmpty(textOverlay.Text))
                         return "(none)";
                     else
@@ -196,6 +207,7 @@ namespace BrightIdeasSoftware.Design
             return base.ConvertTo(context, culture, value, destinationType);
         }
     }
+
     /*
     // Everything from this point to the end of the file is a hack to get around
     // the fact that .NET's ListViewDesigner is internal. Being internal means that we cannot

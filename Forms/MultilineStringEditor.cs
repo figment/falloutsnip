@@ -1,9 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Text;
 using System.Windows.Forms;
 
 namespace TESVSnip.Forms
@@ -14,9 +9,10 @@ namespace TESVSnip.Forms
         {
             InitializeComponent();
         }
+
         public MultilineStringEditor(string text)
         {
-            this.Text = text;
+            Text = text;
             InitializeComponent();
         }
 
@@ -24,21 +20,20 @@ namespace TESVSnip.Forms
 
         private void btnOK_Click(object sender, EventArgs e)
         {
-            this.Text = this.textBox1.Text;
-            this.DialogResult = DialogResult.OK;
-            this.Close();
+            Text = textBox1.Text;
+            DialogResult = DialogResult.OK;
+            Close();
         }
 
         private void btnClose_Click(object sender, EventArgs e)
         {
-            this.DialogResult = DialogResult.Cancel;
-            this.Close();
+            DialogResult = DialogResult.Cancel;
+            Close();
         }
 
         private void MultilineStringEditor_Load(object sender, EventArgs e)
         {
-            this.textBox1.Text = this.Text;
+            textBox1.Text = Text;
         }
-
     }
 }

@@ -33,11 +33,8 @@
  * If you wish to use this code in a closed source application, please contact phillip_piper@bigfoot.com.
  */
 
-using System;
-using System.ComponentModel;
 using System.Drawing;
 using System.Drawing.Drawing2D;
-using System.Drawing.Imaging;
 using System.Windows.Forms;
 
 namespace BrightIdeasSoftware
@@ -69,20 +66,12 @@ namespace BrightIdeasSoftware
         /// <summary>
         /// Gets or sets the row that is to be decorated
         /// </summary>
-        public OLVListItem ListItem {
-            get { return listItem; }
-            set { listItem = value; }
-        }
-        private OLVListItem listItem;
+        public OLVListItem ListItem { get; set; }
 
         /// <summary>
         /// Gets or sets the subitem that is to be decorated
         /// </summary>
-        public OLVListSubItem SubItem {
-            get { return subItem; }
-            set { subItem = value; }
-        }
-        private OLVListSubItem subItem;
+        public OLVListSubItem SubItem { get; set; }
 
         #endregion
 
@@ -91,24 +80,28 @@ namespace BrightIdeasSoftware
         /// <summary>
         /// Gets the bounds of the decorations row
         /// </summary>
-        public Rectangle RowBounds {
-            get {
-                if (this.ListItem == null)
+        public Rectangle RowBounds
+        {
+            get
+            {
+                if (ListItem == null)
                     return Rectangle.Empty;
                 else
-                    return this.ListItem.Bounds;
+                    return ListItem.Bounds;
             }
         }
 
         /// <summary>
         /// Get the bounds of the decorations cell
         /// </summary>
-        public Rectangle CellBounds {
-            get {
-                if (this.ListItem == null || this.SubItem == null)
+        public Rectangle CellBounds
+        {
+            get
+            {
+                if (ListItem == null || SubItem == null)
                     return Rectangle.Empty;
                 else
-                    return this.ListItem.GetSubItemBounds(this.ListItem.SubItems.IndexOf(this.SubItem));
+                    return ListItem.GetSubItemBounds(ListItem.SubItems.IndexOf(SubItem));
             }
         }
 
@@ -122,7 +115,8 @@ namespace BrightIdeasSoftware
         /// <param name="olv"></param>
         /// <param name="g"></param>
         /// <param name="r"></param>
-        public virtual void Draw(ObjectListView olv, Graphics g, Rectangle r) {
+        public virtual void Draw(ObjectListView olv, Graphics g, Rectangle r)
+        {
         }
 
         #endregion
@@ -141,8 +135,9 @@ namespace BrightIdeasSoftware
         /// <summary>
         /// Create a TintedColumnDecoration
         /// </summary>
-        public TintedColumnDecoration() {
-            this.Tint = Color.FromArgb(15, Color.Blue);
+        public TintedColumnDecoration()
+        {
+            Tint = Color.FromArgb(15, Color.Blue);
         }
 
         /// <summary>
@@ -150,8 +145,9 @@ namespace BrightIdeasSoftware
         /// </summary>
         /// <param name="column"></param>
         public TintedColumnDecoration(OLVColumn column)
-            : this() {
-            this.ColumnToTint = column;
+            : this()
+        {
+            ColumnToTint = column;
         }
 
         #endregion
@@ -161,30 +157,30 @@ namespace BrightIdeasSoftware
         /// <summary>
         /// Gets or sets the column that will be tinted
         /// </summary>
-        public OLVColumn ColumnToTint {
-            get { return this.columnToTint; }
-            set { this.columnToTint = value; }
-        }
-        private OLVColumn columnToTint;
+        public OLVColumn ColumnToTint { get; set; }
 
         /// <summary>
         /// Gets or sets the color that will be 'tinted' over the selected column
         /// </summary>
-        public Color Tint {
-            get { return this.tint; }
-            set {
-                if (this.tint == value)
+        public Color Tint
+        {
+            get { return tint; }
+            set
+            {
+                if (tint == value)
                     return;
 
-                if (this.tintBrush != null) {
-                    this.tintBrush.Dispose();
-                    this.tintBrush = null;
+                if (tintBrush != null)
+                {
+                    tintBrush.Dispose();
+                    tintBrush = null;
                 }
 
-                this.tint = value;
-                this.tintBrush = new SolidBrush(this.tint);
+                tint = value;
+                tintBrush = new SolidBrush(tint);
             }
         }
+
         private Color tint;
         private SolidBrush tintBrush;
 
@@ -204,15 +200,15 @@ namespace BrightIdeasSoftware
         /// <param name="olv"></param>
         /// <param name="g"></param>
         /// <param name="r"></param>
-        public override void Draw(ObjectListView olv, Graphics g, Rectangle r) {
-
-            if (olv.View != System.Windows.Forms.View.Details)
+        public override void Draw(ObjectListView olv, Graphics g, Rectangle r)
+        {
+            if (olv.View != View.Details)
                 return;
 
             if (olv.GetItemCount() == 0)
                 return;
 
-            OLVColumn column = this.ColumnToTint ?? olv.SelectedColumn;
+            OLVColumn column = ColumnToTint ?? olv.SelectedColumn;
             if (column == null)
                 return;
 
@@ -220,16 +216,17 @@ namespace BrightIdeasSoftware
             if (sides.X == -1)
                 return;
 
-            Rectangle columnBounds = new Rectangle(sides.X, r.Top, sides.Y - sides.X, r.Bottom);
+            var columnBounds = new Rectangle(sides.X, r.Top, sides.Y - sides.X, r.Bottom);
 
             // Find the bottom of the last item. The tinting should extend only to there.
             OLVListItem lastItem = olv.GetLastItemInDisplayOrder();
-            if (lastItem != null) {
+            if (lastItem != null)
+            {
                 Rectangle lastItemBounds = lastItem.Bounds;
                 if (!lastItemBounds.IsEmpty && lastItemBounds.Bottom < columnBounds.Bottom)
                     columnBounds.Height = lastItemBounds.Bottom - columnBounds.Top;
             }
-            g.FillRectangle(this.tintBrush, columnBounds);
+            g.FillRectangle(tintBrush, columnBounds);
         }
 
         #endregion
@@ -247,15 +244,17 @@ namespace BrightIdeasSoftware
         /// Create a BorderDecoration
         /// </summary>
         public BorderDecoration()
-            : this(new Pen(Color.FromArgb(64, Color.Blue), 1)) {
+            : this(new Pen(Color.FromArgb(64, Color.Blue), 1))
+        {
         }
 
         /// <summary>
         /// Create a BorderDecoration
         /// </summary>
         /// <param name="borderPen">The pen used to draw the border</param>
-        public BorderDecoration(Pen borderPen) {
-            this.BorderPen = borderPen;
+        public BorderDecoration(Pen borderPen)
+        {
+            BorderPen = borderPen;
         }
 
         /// <summary>
@@ -263,9 +262,10 @@ namespace BrightIdeasSoftware
         /// </summary>
         /// <param name="borderPen">The pen used to draw the border</param>
         /// <param name="fill">The brush used to fill the rectangle</param>
-        public BorderDecoration(Pen borderPen, Brush fill) {
-            this.BorderPen = borderPen;
-            this.FillBrush = fill;
+        public BorderDecoration(Pen borderPen, Brush fill)
+        {
+            BorderPen = borderPen;
+            FillBrush = fill;
         }
 
         #endregion
@@ -275,69 +275,65 @@ namespace BrightIdeasSoftware
         /// <summary>
         /// Gets or sets the pen that will be used to draw the border
         /// </summary>
-        public Pen BorderPen {
-            get { return this.borderPen; }
-            set { this.borderPen = value; }
-        }
-        private Pen borderPen;
+        public Pen BorderPen { get; set; }
 
         /// <summary>
         /// Gets or sets the padding that will be added to the bounds of the item
         /// before drawing the border and fill.
         /// </summary>
-        public Size BoundsPadding {
-            get { return this.boundsPadding; }
-            set { this.boundsPadding = value; }
+        public Size BoundsPadding
+        {
+            get { return boundsPadding; }
+            set { boundsPadding = value; }
         }
+
         private Size boundsPadding = new Size(-1, 2);
 
         /// <summary>
         /// How rounded should the corners of the border be? 0 means no rounding.
         /// </summary>
         /// <remarks>If this value is too large, the edges of the border will appear odd.</remarks>
-        public float CornerRounding {
-            get { return this.cornerRounding; }
-            set { this.cornerRounding = value; }
+        public float CornerRounding
+        {
+            get { return cornerRounding; }
+            set { cornerRounding = value; }
         }
+
         private float cornerRounding = 16.0f;
 
         /// <summary>
         /// Gets or sets the brush that will be used to fill the border
         /// </summary>
         /// <remarks>This value is ignored when using gradient brush</remarks>
-        public Brush FillBrush {
-            get { return this.fillBrush; }
-            set { this.fillBrush = value; }
+        public Brush FillBrush
+        {
+            get { return fillBrush; }
+            set { fillBrush = value; }
         }
+
         private Brush fillBrush = new SolidBrush(Color.FromArgb(64, Color.Blue));
 
         /// <summary>
         /// Gets or sets the color that will be used as the start of a gradient fill.
         /// </summary>
         /// <remarks>This and FillGradientTo must be given value to show a gradient</remarks>
-        public Color? FillGradientFrom {
-            get { return this.fillGradientFrom; }
-            set { this.fillGradientFrom = value; }
-        }
-        private Color? fillGradientFrom;
+        public Color? FillGradientFrom { get; set; }
 
         /// <summary>
         /// Gets or sets the color that will be used as the end of a gradient fill.
         /// </summary>
         /// <remarks>This and FillGradientFrom must be given value to show a gradient</remarks>
-        public Color? FillGradientTo {
-            get { return this.fillGradientTo; }
-            set { this.fillGradientTo = value; }
-        }
-        private Color? fillGradientTo;
+        public Color? FillGradientTo { get; set; }
 
         /// <summary>
         /// Gets or sets the fill mode that will be used for the gradient.
         /// </summary>
-        public LinearGradientMode FillGradientMode {
-            get { return this.fillGradientMode; }
-            set { this.fillGradientMode = value; }
+        public LinearGradientMode FillGradientMode
+        {
+            get { return fillGradientMode; }
+            set { fillGradientMode = value; }
         }
+
         private LinearGradientMode fillGradientMode = LinearGradientMode.Vertical;
 
         #endregion
@@ -350,12 +346,13 @@ namespace BrightIdeasSoftware
         /// <param name="olv"></param>
         /// <param name="g"></param>
         /// <param name="r"></param>
-        public override void Draw(ObjectListView olv, Graphics g, Rectangle r) {
-            Rectangle bounds = this.CalculateBounds();
+        public override void Draw(ObjectListView olv, Graphics g, Rectangle r)
+        {
+            Rectangle bounds = CalculateBounds();
             if (!bounds.IsEmpty)
-                this.DrawFilledBorder(g, bounds);
+                DrawFilledBorder(g, bounds);
         }
-        
+
         #endregion
 
         #region Subclass responsibility
@@ -364,7 +361,8 @@ namespace BrightIdeasSoftware
         /// Subclasses should override this to say where the border should be drawn
         /// </summary>
         /// <returns></returns>
-        protected virtual Rectangle CalculateBounds() {
+        protected virtual Rectangle CalculateBounds()
+        {
             return Rectangle.Empty;
         }
 
@@ -377,18 +375,21 @@ namespace BrightIdeasSoftware
         /// </summary>
         /// <param name="g"></param>
         /// <param name="bounds"></param>
-        protected void DrawFilledBorder(Graphics g, Rectangle bounds) {
-            bounds.Inflate(this.BoundsPadding);
-            GraphicsPath path = this.GetRoundedRect(bounds, this.CornerRounding);
-            if (this.FillGradientFrom != null && this.FillGradientTo != null) {
-                if (this.FillBrush != null)
-                    this.FillBrush.Dispose();
-                this.FillBrush = new LinearGradientBrush(bounds, this.FillGradientFrom.Value, this.FillGradientTo.Value, this.FillGradientMode);
+        protected void DrawFilledBorder(Graphics g, Rectangle bounds)
+        {
+            bounds.Inflate(BoundsPadding);
+            GraphicsPath path = GetRoundedRect(bounds, CornerRounding);
+            if (FillGradientFrom != null && FillGradientTo != null)
+            {
+                if (FillBrush != null)
+                    FillBrush.Dispose();
+                FillBrush = new LinearGradientBrush(bounds, FillGradientFrom.Value, FillGradientTo.Value,
+                                                    FillGradientMode);
             }
-            if (this.FillBrush != null)
-                g.FillPath(this.FillBrush, path);
-            if (this.BorderPen != null)
-                g.DrawPath(this.BorderPen, path);
+            if (FillBrush != null)
+                g.FillPath(FillBrush, path);
+            if (BorderPen != null)
+                g.DrawPath(BorderPen, path);
         }
 
         /// <summary>
@@ -397,13 +398,17 @@ namespace BrightIdeasSoftware
         /// <param name="rect"></param>
         /// <param name="diameter">If this is 0 or less, the rectangle will not be rounded.</param>
         /// <returns></returns>
-        protected GraphicsPath GetRoundedRect(RectangleF rect, float diameter) {
-            GraphicsPath path = new GraphicsPath();
+        protected GraphicsPath GetRoundedRect(RectangleF rect, float diameter)
+        {
+            var path = new GraphicsPath();
 
-            if (diameter <= 0.0f) {
+            if (diameter <= 0.0f)
+            {
                 path.AddRectangle(rect);
-            } else {
-                RectangleF arc = new RectangleF(rect.X, rect.Y, diameter, diameter);
+            }
+            else
+            {
+                var arc = new RectangleF(rect.X, rect.Y, diameter, diameter);
                 path.AddArc(arc, 180, 90);
                 arc.X = rect.Right - diameter;
                 path.AddArc(arc, 270, 90);
@@ -428,41 +433,50 @@ namespace BrightIdeasSoftware
         /// <summary>
         /// Gets or sets the index of the left most column to be used for the border
         /// </summary>
-        public int LeftColumn {
+        public int LeftColumn
+        {
             get { return leftColumn; }
             set { leftColumn = value; }
         }
+
         private int leftColumn = -1;
 
         /// <summary>
         /// Gets or sets the index of the right most column to be used for the border
         /// </summary>
-        public int RightColumn {
+        public int RightColumn
+        {
             get { return rightColumn; }
             set { rightColumn = value; }
         }
+
         private int rightColumn = -1;
 
         /// <summary>
         /// Calculate the boundaries of the border
         /// </summary>
         /// <returns></returns>
-        protected override Rectangle CalculateBounds() {
-            Rectangle bounds = this.RowBounds;
-            if (this.ListItem == null)
+        protected override Rectangle CalculateBounds()
+        {
+            Rectangle bounds = RowBounds;
+            if (ListItem == null)
                 return bounds;
 
-            if (this.LeftColumn >= 0) {
-                Rectangle leftCellBounds = this.ListItem.GetSubItemBounds(this.LeftColumn);
-                if (!leftCellBounds.IsEmpty) {
+            if (LeftColumn >= 0)
+            {
+                Rectangle leftCellBounds = ListItem.GetSubItemBounds(LeftColumn);
+                if (!leftCellBounds.IsEmpty)
+                {
                     bounds.Width = bounds.Right - leftCellBounds.Left;
                     bounds.X = leftCellBounds.Left;
                 }
             }
 
-            if (this.RightColumn >= 0) {
-                Rectangle rightCellBounds = this.ListItem.GetSubItemBounds(this.RightColumn);
-                if (!rightCellBounds.IsEmpty) {
+            if (RightColumn >= 0)
+            {
+                Rectangle rightCellBounds = ListItem.GetSubItemBounds(RightColumn);
+                if (!rightCellBounds.IsEmpty)
+                {
                     bounds.Width = rightCellBounds.Right - bounds.Left;
                 }
             }
@@ -480,8 +494,9 @@ namespace BrightIdeasSoftware
         /// Calculate the boundaries of the border
         /// </summary>
         /// <returns></returns>
-        protected override Rectangle CalculateBounds() {
-            return this.CellBounds;
+        protected override Rectangle CalculateBounds()
+        {
+            return CellBounds;
         }
     }
 
@@ -496,12 +511,12 @@ namespace BrightIdeasSoftware
         /// <summary>
         /// Create a EditingCellBorderDecoration
         /// </summary>
-        public EditingCellBorderDecoration() {
-            this.FillBrush = null;
-            this.BorderPen = new Pen(Color.DarkBlue, 2);
-            this.CornerRounding = 8;
-            this.BoundsPadding = new Size(10, 8);
-
+        public EditingCellBorderDecoration()
+        {
+            FillBrush = null;
+            BorderPen = new Pen(Color.DarkBlue, 2);
+            CornerRounding = 8;
+            BoundsPadding = new Size(10, 8);
         }
 
         /// <summary>
@@ -510,10 +525,10 @@ namespace BrightIdeasSoftware
         /// <param name="useLightBox">Should the decoration use a lighbox display style?</param>
         public EditingCellBorderDecoration(bool useLightBox) : this()
         {
-            this.UseLightbox = useLightbox;
+            UseLightbox = useLightbox;
         }
 
-        #endregion 
+        #endregion
 
         #region Configuration properties
 
@@ -523,18 +538,22 @@ namespace BrightIdeasSoftware
         /// </summary>
         /// <remarks>If this is true, FillBrush is used to overpaint
         /// the control.</remarks>
-        public bool UseLightbox {
-            get { return this.useLightbox; }
-            set {
-                if (this.useLightbox == value)
+        public bool UseLightbox
+        {
+            get { return useLightbox; }
+            set
+            {
+                if (useLightbox == value)
                     return;
-                this.useLightbox = value;
-                if (this.useLightbox) {
-                    if (this.FillBrush == null)
-                        this.FillBrush = new SolidBrush(Color.FromArgb(64, Color.Black));
+                useLightbox = value;
+                if (useLightbox)
+                {
+                    if (FillBrush == null)
+                        FillBrush = new SolidBrush(Color.FromArgb(64, Color.Black));
                 }
             }
         }
+
         private bool useLightbox;
 
         #endregion
@@ -547,31 +566,37 @@ namespace BrightIdeasSoftware
         /// <param name="olv"></param>
         /// <param name="g"></param>
         /// <param name="r"></param>
-        public override void Draw(ObjectListView olv, Graphics g, Rectangle r) {
-            if (!olv.IsCellEditing) 
+        public override void Draw(ObjectListView olv, Graphics g, Rectangle r)
+        {
+            if (!olv.IsCellEditing)
                 return;
 
             Rectangle bounds = olv.CellEditor.Bounds;
             if (bounds.IsEmpty)
                 return;
 
-            bounds.Inflate(this.BoundsPadding);
-            GraphicsPath path = this.GetRoundedRect(bounds, this.CornerRounding);
-            if (this.FillBrush != null) {
-                if (this.UseLightbox) {
-                    using (Region newClip = new Region(r)) {
+            bounds.Inflate(BoundsPadding);
+            GraphicsPath path = GetRoundedRect(bounds, CornerRounding);
+            if (FillBrush != null)
+            {
+                if (UseLightbox)
+                {
+                    using (var newClip = new Region(r))
+                    {
                         newClip.Exclude(path);
                         Region originalClip = g.Clip;
                         g.Clip = newClip;
-                        g.FillRectangle(this.FillBrush, r);
+                        g.FillRectangle(FillBrush, r);
                         g.Clip = originalClip;
                     }
-                } else {
-                    g.FillPath(this.FillBrush, path);
+                }
+                else
+                {
+                    g.FillPath(FillBrush, path);
                 }
             }
-            if (this.BorderPen != null)
-                g.DrawPath(this.BorderPen, path);
+            if (BorderPen != null)
+                g.DrawPath(BorderPen, path);
         }
 
         #endregion
@@ -588,10 +613,11 @@ namespace BrightIdeasSoftware
         /// <summary>
         /// Create a LightBoxDecoration
         /// </summary>
-        public LightBoxDecoration() {
-            this.BoundsPadding = new Size(-1, 4);
-            this.CornerRounding = 8.0f;
-            this.FillBrush = new SolidBrush(Color.FromArgb(72, Color.Black));
+        public LightBoxDecoration()
+        {
+            BoundsPadding = new Size(-1, 4);
+            CornerRounding = 8.0f;
+            FillBrush = new SolidBrush(Color.FromArgb(72, Color.Black));
         }
 
         /// <summary>
@@ -601,23 +627,26 @@ namespace BrightIdeasSoftware
         /// <param name="olv"></param>
         /// <param name="g"></param>
         /// <param name="r"></param>
-        public override void Draw(ObjectListView olv, Graphics g, Rectangle r) {
+        public override void Draw(ObjectListView olv, Graphics g, Rectangle r)
+        {
             if (!r.Contains(olv.PointToClient(Cursor.Position)))
                 return;
 
-            Rectangle bounds = this.RowBounds;
-            if (bounds.IsEmpty) {
+            Rectangle bounds = RowBounds;
+            if (bounds.IsEmpty)
+            {
                 if (olv.View == View.Tile)
-                    g.FillRectangle(this.FillBrush, r);
+                    g.FillRectangle(FillBrush, r);
                 return;
             }
 
-            using (Region newClip = new Region(r)) {
-                bounds.Inflate(this.BoundsPadding);
-                newClip.Exclude(this.GetRoundedRect(bounds, this.CornerRounding));
+            using (var newClip = new Region(r))
+            {
+                bounds.Inflate(BoundsPadding);
+                newClip.Exclude(GetRoundedRect(bounds, CornerRounding));
                 Region originalClip = g.Clip;
                 g.Clip = newClip;
-                g.FillRectangle(this.FillBrush, r);
+                g.FillRectangle(FillBrush, r);
                 g.Clip = originalClip;
             }
         }
@@ -633,8 +662,9 @@ namespace BrightIdeasSoftware
         /// <summary>
         /// Create an image decoration
         /// </summary>
-        public ImageDecoration() {
-            this.Alignment = ContentAlignment.MiddleRight;
+        public ImageDecoration()
+        {
+            Alignment = ContentAlignment.MiddleRight;
         }
 
         /// <summary>
@@ -642,8 +672,9 @@ namespace BrightIdeasSoftware
         /// </summary>
         /// <param name="image"></param>
         public ImageDecoration(Image image)
-            : this() {
-            this.Image = image;
+            : this()
+        {
+            Image = image;
         }
 
         /// <summary>
@@ -652,9 +683,10 @@ namespace BrightIdeasSoftware
         /// <param name="image"></param>
         /// <param name="transparency"></param>
         public ImageDecoration(Image image, int transparency)
-            : this() {
-            this.Image = image;
-            this.Transparency = transparency;
+            : this()
+        {
+            Image = image;
+            Transparency = transparency;
         }
 
         /// <summary>
@@ -663,9 +695,10 @@ namespace BrightIdeasSoftware
         /// <param name="image"></param>
         /// <param name="alignment"></param>
         public ImageDecoration(Image image, ContentAlignment alignment)
-            : this() {
-            this.Image = image;
-            this.Alignment = alignment;
+            : this()
+        {
+            Image = image;
+            Alignment = alignment;
         }
 
         /// <summary>
@@ -675,10 +708,11 @@ namespace BrightIdeasSoftware
         /// <param name="transparency"></param>
         /// <param name="alignment"></param>
         public ImageDecoration(Image image, int transparency, ContentAlignment alignment)
-            : this() {
-            this.Image = image;
-            this.Transparency = transparency;
-            this.Alignment = alignment;
+            : this()
+        {
+            Image = image;
+            Transparency = transparency;
+            Alignment = alignment;
         }
 
         #endregion
@@ -688,20 +722,12 @@ namespace BrightIdeasSoftware
         /// <summary>
         /// Gets or sets the item being decorated
         /// </summary>
-        public OLVListItem ListItem {
-            get { return listItem; }
-            set { listItem = value; }
-        }
-        private OLVListItem listItem;
+        public OLVListItem ListItem { get; set; }
 
         /// <summary>
         /// Gets or sets the sub item being decorated
         /// </summary>
-        public OLVListSubItem SubItem {
-            get { return subItem; }
-            set { subItem = value; }
-        }
-        private OLVListSubItem subItem;
+        public OLVListSubItem SubItem { get; set; }
 
         #endregion
 
@@ -713,8 +739,9 @@ namespace BrightIdeasSoftware
         /// <param name="olv">The ObjectListView being decorated</param>
         /// <param name="g">The Graphics used for drawing</param>
         /// <param name="r">The bounds of the rendering</param>
-        public virtual void Draw(ObjectListView olv, Graphics g, Rectangle r) {
-            this.DrawImage(g, this.CalculateItemBounds(this.ListItem, this.SubItem));
+        public virtual void Draw(ObjectListView olv, Graphics g, Rectangle r)
+        {
+            DrawImage(g, CalculateItemBounds(ListItem, SubItem));
         }
 
         #endregion
@@ -730,8 +757,9 @@ namespace BrightIdeasSoftware
         /// <summary>
         /// Create a TextDecoration
         /// </summary>
-        public TextDecoration() {
-            this.Alignment = ContentAlignment.MiddleRight;
+        public TextDecoration()
+        {
+            Alignment = ContentAlignment.MiddleRight;
         }
 
         /// <summary>
@@ -739,19 +767,21 @@ namespace BrightIdeasSoftware
         /// </summary>
         /// <param name="text"></param>
         public TextDecoration(string text)
-            : this() {
-            this.Text = text;
+            : this()
+        {
+            Text = text;
         }
-        
+
         /// <summary>
         /// Create a TextDecoration
         /// </summary>
         /// <param name="text"></param>
         /// <param name="transparency"></param>
         public TextDecoration(string text, int transparency)
-            : this() {
-            this.Text = text;
-            this.Transparency = transparency;
+            : this()
+        {
+            Text = text;
+            Transparency = transparency;
         }
 
         /// <summary>
@@ -760,9 +790,10 @@ namespace BrightIdeasSoftware
         /// <param name="text"></param>
         /// <param name="alignment"></param>
         public TextDecoration(string text, ContentAlignment alignment)
-            : this() {
-            this.Text = text;
-            this.Alignment = alignment;
+            : this()
+        {
+            Text = text;
+            Alignment = alignment;
         }
 
         /// <summary>
@@ -772,10 +803,11 @@ namespace BrightIdeasSoftware
         /// <param name="transparency"></param>
         /// <param name="alignment"></param>
         public TextDecoration(string text, int transparency, ContentAlignment alignment)
-            : this() {
-            this.Text = text;
-            this.Transparency = transparency;
-            this.Alignment = alignment;
+            : this()
+        {
+            Text = text;
+            Transparency = transparency;
+            Alignment = alignment;
         }
 
         #endregion
@@ -785,21 +817,12 @@ namespace BrightIdeasSoftware
         /// <summary>
         /// Gets or sets the item being decorated
         /// </summary>
-        public OLVListItem ListItem {
-            get { return listItem; }
-            set { listItem = value; }
-        }
-        private OLVListItem listItem;
+        public OLVListItem ListItem { get; set; }
 
         /// <summary>
         /// Gets or sets the sub item being decorated
         /// </summary>
-        public OLVListSubItem SubItem {
-            get { return subItem; }
-            set { subItem = value; }
-        }
-        private OLVListSubItem subItem;
-
+        public OLVListSubItem SubItem { get; set; }
 
         #endregion
 
@@ -811,8 +834,9 @@ namespace BrightIdeasSoftware
         /// <param name="olv">The ObjectListView being decorated</param>
         /// <param name="g">The Graphics used for drawing</param>
         /// <param name="r">The bounds of the rendering</param>
-        public virtual void Draw(ObjectListView olv, Graphics g, Rectangle r) {
-            this.DrawText(g, this.CalculateItemBounds(this.ListItem, this.SubItem));
+        public virtual void Draw(ObjectListView olv, Graphics g, Rectangle r)
+        {
+            DrawText(g, CalculateItemBounds(ListItem, SubItem));
         }
 
         #endregion

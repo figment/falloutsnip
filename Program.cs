@@ -1,45 +1,48 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
+using System.Reflection;
 using System.Windows.Forms;
+using Microsoft.Win32;
 using TESVSnip.Properties;
 
 namespace TESVSnip
 {
-
-    static class Program
+    internal static class Program
     {
         public static string settingsDir { get; set; }
         public static string exeDir { get; set; }
         public static string gameDir { get; set; }
         public static string gameDataDir { get; set; }
-        
+
 
         /// <summary>
         /// The main entry point for the application.
         /// </summary>
         [STAThread]
-        static void Main(string[] args)
+        private static void Main(string[] args)
         {
             var plugins = new List<string>();
             settingsDir = Environment.CurrentDirectory;
             exeDir = Environment.CurrentDirectory;
             try
             {
-                System.Reflection.Assembly asm = System.Reflection.Assembly.GetExecutingAssembly();
-                exeDir = System.IO.Path.GetDirectoryName(asm.Location);
-                settingsDir = System.IO.Path.Combine(exeDir, "conf");
+                Assembly asm = Assembly.GetExecutingAssembly();
+                exeDir = Path.GetDirectoryName(asm.Location);
+                settingsDir = Path.Combine(exeDir, "conf");
 
-                using (Microsoft.Win32.RegistryKey key = Microsoft.Win32.Registry.LocalMachine.OpenSubKey(@"SOFTWARE\Wow6432Node\Bethesda Softworks\Skyrim"))
+                using (
+                    RegistryKey key = Registry.LocalMachine.OpenSubKey(@"SOFTWARE\Wow6432Node\Bethesda Softworks\Skyrim")
+                    )
                 {
-                    gameDir = key.GetValue("Installed Path", gameDir, Microsoft.Win32.RegistryValueOptions.None) as string;
-                    gameDataDir = System.IO.Path.Combine(gameDir, "Data");
+                    gameDir = key.GetValue("Installed Path", gameDir, RegistryValueOptions.None) as string;
+                    gameDataDir = Path.Combine(gameDir, "Data");
                 }
 
                 object[] asmAttributes = asm.GetCustomAttributes(true);
             }
             catch
             {
-            	
             }
             try
             {
@@ -63,15 +66,14 @@ namespace TESVSnip
                     {
                         plugins.Add(arg);
                     }
-
                 }
 
                 if (string.IsNullOrEmpty(gameDir))
                     gameDir = Environment.CurrentDirectory;
                 if (string.IsNullOrEmpty(gameDataDir))
                     gameDataDir = Environment.CurrentDirectory;
-                if (System.IO.Directory.Exists(gameDataDir))
-                    System.Environment.CurrentDirectory = gameDataDir;
+                if (Directory.Exists(gameDataDir))
+                    Environment.CurrentDirectory = gameDataDir;
             }
             catch (Exception ex)
             {
@@ -81,16 +83,24 @@ namespace TESVSnip
             try
             {
                 AppDomain.CurrentDomain.UnhandledException += (sender, eventArgs) =>
-                {
-                    if (eventArgs.IsTerminating)
-                    {
-                        MessageBox.Show("Fatal Unhandled Exception:\n" + eventArgs.ExceptionObject.ToString(), Resources.ErrorText, MessageBoxButtons.OK, MessageBoxIcon.Error);
-                    }
-                    else
-                    {
-                        MessageBox.Show("Unhandled Exception:\n" + eventArgs.ExceptionObject.ToString(), Resources.ErrorText, MessageBoxButtons.OK, MessageBoxIcon.Error);
-                    }
-                };
+                                                                  {
+                                                                      if (eventArgs.IsTerminating)
+                                                                      {
+                                                                          MessageBox.Show(
+                                                                              "Fatal Unhandled Exception:\n" +
+                                                                              eventArgs.ExceptionObject.ToString(),
+                                                                              Resources.ErrorText, MessageBoxButtons.OK,
+                                                                              MessageBoxIcon.Error);
+                                                                      }
+                                                                      else
+                                                                      {
+                                                                          MessageBox.Show(
+                                                                              "Unhandled Exception:\n" +
+                                                                              eventArgs.ExceptionObject.ToString(),
+                                                                              Resources.ErrorText, MessageBoxButtons.OK,
+                                                                              MessageBoxIcon.Error);
+                                                                      }
+                                                                  };
 
                 Properties.Settings.Default.Reload();
                 Application.EnableVisualStyles();
@@ -109,13 +119,12 @@ namespace TESVSnip
                 }
                 catch (Exception ex)
                 {
-                    MessageBox.Show("Error running main window: \n" + ex.ToString(), Resources.ErrorText);
+                    MessageBox.Show("Error running main window: \n" + ex, Resources.ErrorText);
                 }
-
             }
             catch (Exception ex)
             {
-                MessageBox.Show("Error initializing main view: \n" + ex.ToString(), Resources.ErrorText);
+                MessageBox.Show("Error initializing main view: \n" + ex, Resources.ErrorText);
             }
         }
     }
@@ -126,6 +135,7 @@ namespace TESVSnip
         public readonly ushort CodePage;
         public readonly ushort lcid;
         public readonly byte charset;
+
         public FontLangInfo(ushort CodePage, ushort lcid, byte charset)
         {
             this.CodePage = CodePage;
@@ -136,8 +146,10 @@ namespace TESVSnip
 
     internal static class Encoding
     {
-        static readonly System.Text.Encoding s_CP1252Encoding = System.Text.Encoding.GetEncoding(1252);
-        static readonly Dictionary<string, FontLangInfo> defLangMap = new Dictionary<string, FontLangInfo>(StringComparer.InvariantCultureIgnoreCase);
+        private static readonly System.Text.Encoding s_CP1252Encoding = System.Text.Encoding.GetEncoding(1252);
+
+        private static readonly Dictionary<string, FontLangInfo> defLangMap =
+            new Dictionary<string, FontLangInfo>(StringComparer.InvariantCultureIgnoreCase);
 
         static Encoding()
         {
@@ -161,6 +173,5 @@ namespace TESVSnip
         {
             return defLangMap.TryGetValue(name, out langInfo);
         }
-
     }
 }

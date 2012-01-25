@@ -80,5 +80,8 @@
     <Setting Name="CompressionLimit" Type="System.UInt32" Scope="User">
       <Value Profile="(Default)">1024</Value>
     </Setting>
+    <Setting Name="UseHexSubRecordEditor" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">False</Value>
+    </Setting>
   </Settings>
 </SettingsFile>

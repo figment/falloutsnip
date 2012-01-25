@@ -189,9 +189,9 @@ namespace TESVSnip.Windows.Controls
         }
 
         #endregion
-        
+
         #region Methods
-        
+
         public new void Show(int x, int y)
         {
             Show(x, y, -1, -1);
@@ -275,7 +275,7 @@ namespace TESVSnip.Windows.Controls
                 return;
 
             m_lockedThisSize = true;
-            
+
             // Update size of hosted control.
             Control hostedControl = GetHostedControl();
             if (hostedControl != null)
@@ -297,7 +297,7 @@ namespace TESVSnip.Windows.Controls
                 if (bounds.Location != hostedControl.Location)
                     hostedControl.Location = bounds.Location;
             }
-            
+
             m_lockedThisSize = false;
         }
 
@@ -305,7 +305,7 @@ namespace TESVSnip.Windows.Controls
         {
             if (Items.Count > 0)
             {
-                ToolStripControlHost host = Items[0] as ToolStripControlHost;
+                var host = Items[0] as ToolStripControlHost;
                 if (host != null)
                     return host.Control;
             }
@@ -385,17 +385,20 @@ namespace TESVSnip.Windows.Controls
         {
             return (n >> 16) & 0xffff;
         }
+
         protected static int HIWORD(IntPtr n)
         {
-            return HIWORD(unchecked((int)(long)n));
+            return HIWORD(unchecked((int) (long) n));
         }
+
         protected static int LOWORD(int n)
         {
             return n & 0xffff;
         }
+
         protected static int LOWORD(IntPtr n)
         {
-            return LOWORD(unchecked((int)(long)n));
+            return LOWORD(unchecked((int) (long) n));
         }
 
         #endregion
@@ -441,7 +444,7 @@ namespace TESVSnip.Windows.Controls
             Control hostedControl = GetHostedControl();
             if (hostedControl != null)
             {
-                MINMAXINFO minmax = (MINMAXINFO)Marshal.PtrToStructure(m.LParam, typeof(MINMAXINFO));
+                var minmax = (MINMAXINFO) Marshal.PtrToStructure(m.LParam, typeof (MINMAXINFO));
 
                 // Maximum size.
                 if (hostedControl.MaximumSize.Width != 0)
@@ -464,53 +467,55 @@ namespace TESVSnip.Windows.Controls
         private bool OnNcHitTest(ref Message m, bool contentControl)
         {
             Point location = PointToClient(new Point(LOWORD(m.LParam), HIWORD(m.LParam)));
-            IntPtr transparent = new IntPtr(HTTRANSPARENT);
+            var transparent = new IntPtr(HTTRANSPARENT);
 
             // Check for simple gripper dragging.
             if (GripBounds.Contains(location))
             {
                 if (CompareResizeMode(PopupResizeMode.BottomLeft))
                 {
-                    m.Result = contentControl ? transparent : (IntPtr)HTBOTTOMLEFT;
+                    m.Result = contentControl ? transparent : (IntPtr) HTBOTTOMLEFT;
                     return true;
                 }
                 else if (CompareResizeMode(PopupResizeMode.BottomRight))
                 {
-                    m.Result = contentControl ? transparent : (IntPtr)HTBOTTOMRIGHT;
+                    m.Result = contentControl ? transparent : (IntPtr) HTBOTTOMRIGHT;
                     return true;
                 }
                 else if (CompareResizeMode(PopupResizeMode.TopLeft))
                 {
-                    m.Result = contentControl ? transparent : (IntPtr)HTTOPLEFT;
+                    m.Result = contentControl ? transparent : (IntPtr) HTTOPLEFT;
                     return true;
                 }
                 else if (CompareResizeMode(PopupResizeMode.TopRight))
                 {
-                    m.Result = contentControl ? transparent : (IntPtr)HTTOPRIGHT;
+                    m.Result = contentControl ? transparent : (IntPtr) HTTOPRIGHT;
                     return true;
                 }
             }
-            else   // Check for edge based dragging.
+            else // Check for edge based dragging.
             {
                 Rectangle rectClient = ClientRectangle;
-                if (location.X > rectClient.Right - 3 && location.X <= rectClient.Right && CompareResizeMode(PopupResizeMode.Right))
+                if (location.X > rectClient.Right - 3 && location.X <= rectClient.Right &&
+                    CompareResizeMode(PopupResizeMode.Right))
                 {
-                    m.Result = contentControl ? transparent : (IntPtr)HTRIGHT;
+                    m.Result = contentControl ? transparent : (IntPtr) HTRIGHT;
                     return true;
                 }
-                else if (location.Y > rectClient.Bottom - 3 && location.Y <= rectClient.Bottom && CompareResizeMode(PopupResizeMode.Bottom))
+                else if (location.Y > rectClient.Bottom - 3 && location.Y <= rectClient.Bottom &&
+                         CompareResizeMode(PopupResizeMode.Bottom))
                 {
-                    m.Result = contentControl ? transparent : (IntPtr)HTBOTTOM;
+                    m.Result = contentControl ? transparent : (IntPtr) HTBOTTOM;
                     return true;
                 }
                 else if (location.X > -1 && location.X < 3 && CompareResizeMode(PopupResizeMode.Left))
                 {
-                    m.Result = contentControl ? transparent : (IntPtr)HTLEFT;
+                    m.Result = contentControl ? transparent : (IntPtr) HTLEFT;
                     return true;
                 }
                 else if (location.Y > -1 && location.Y < 3 && CompareResizeMode(PopupResizeMode.Top))
                 {
-                    m.Result = contentControl ? transparent : (IntPtr)HTTOP;
+                    m.Result = contentControl ? transparent : (IntPtr) HTTOP;
                     return true;
                 }
             }
@@ -542,8 +547,8 @@ namespace TESVSnip.Windows.Controls
         /// </summary>
         protected Rectangle GripBounds
         {
-            get { return this.m_gripBounds; }
-            set { this.m_gripBounds = value; }
+            get { return m_gripBounds; }
+            set { m_gripBounds = value; }
         }
 
         /// <summary>
@@ -565,9 +570,9 @@ namespace TESVSnip.Windows.Controls
         private PopupResizeMode m_resizeMode = PopupResizeMode.None;
         private Rectangle m_gripBounds = Rectangle.Empty;
 
-        private bool m_lockedHostedControlSize = false;
-        private bool m_lockedThisSize = false;
-        private bool m_refreshSize = false;
+        private bool m_lockedHostedControlSize;
+        private bool m_lockedThisSize;
+        private bool m_refreshSize;
 
         #endregion
     }
@@ -579,7 +584,7 @@ namespace TESVSnip.Windows.Controls
         ItemClicked,
         Keyboard,
         CloseCalled
-    } 
+    }
 
 
     public interface IPopupControlHost
@@ -617,7 +622,7 @@ namespace TESVSnip.Windows.Controls
             if (AutoResetWhenClosed)
                 DisposeHost();
 
-            HideCloseReason reason = (HideCloseReason)(int)e.CloseReason;
+            var reason = (HideCloseReason) (int) e.CloseReason;
             // Hide drop down within popup control.
             if (PopupControlHost != null)
                 PopupControlHost.HideDropDown(reason);
@@ -629,14 +634,8 @@ namespace TESVSnip.Windows.Controls
 
         public event ToolStripDropDownClosingEventHandler Closing
         {
-            add
-            {
-                m_dropDown.Closing += value;
-            }
-            remove
-            {
-                m_dropDown.Closing -= value;
-            }
+            add { m_dropDown.Closing += value; }
+            remove { m_dropDown.Closing -= value; }
         }
 
         #endregion
@@ -714,7 +713,7 @@ namespace TESVSnip.Windows.Controls
                 m_host.Padding = Padding;
                 m_host.Margin = Margin;
             }
-            
+
             // Add control to drop-down.
             m_dropDown.Items.Clear();
             m_dropDown.Padding = m_dropDown.Margin = Padding.Empty;
@@ -727,7 +726,7 @@ namespace TESVSnip.Windows.Controls
             if (m_dropDown == null)
             {
                 m_dropDown = new PopupDropDown(false);
-                m_dropDown.Closed += new ToolStripDropDownClosedEventHandler(m_dropDown_Closed);
+                m_dropDown.Closed += m_dropDown_Closed;
             }
         }
 
@@ -737,31 +736,27 @@ namespace TESVSnip.Windows.Controls
 
         public bool Visible
         {
-            get { return (this.m_dropDown != null && this.m_dropDown.Visible) ? true : false; }
+            get { return (m_dropDown != null && m_dropDown.Visible) ? true : false; }
         }
 
         public Control Control
         {
-            get { return (this.m_host != null) ? this.m_host.Control : null; }
+            get { return (m_host != null) ? m_host.Control : null; }
         }
 
         public Padding Padding
         {
-            get { return this.m_padding; }
-            set { this.m_padding = value; }
+            get { return m_padding; }
+            set { m_padding = value; }
         }
 
         public Padding Margin
         {
-            get { return this.m_margin; }
-            set { this.m_margin = value; }
+            get { return m_margin; }
+            set { m_margin = value; }
         }
 
-        public bool AutoResetWhenClosed
-        {
-            get { return this.m_autoReset; }
-            set { this.m_autoReset = value; }
-        }
+        public bool AutoResetWhenClosed { get; set; }
 
         /// <summary>
         /// Gets or sets the popup control host, this is used to hide/show popup.
@@ -777,8 +772,6 @@ namespace TESVSnip.Windows.Controls
 
         private Padding m_padding = Padding.Empty;
         private Padding m_margin = new Padding(1, 1, 1, 1);
-
-        private bool m_autoReset = false;
 
         #endregion
     }

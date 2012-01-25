@@ -77,16 +77,9 @@
     <Reference Include="System.Core">
       <RequiredTargetFramework>3.5</RequiredTargetFramework>
     </Reference>
-    <Reference Include="System.Data.Linq">
-      <RequiredTargetFramework>3.5</RequiredTargetFramework>
-    </Reference>
     <Reference Include="System.Design" />
     <Reference Include="System.Drawing.Design" />
-    <Reference Include="System.Data.DataSetExtensions">
-      <RequiredTargetFramework>3.5</RequiredTargetFramework>
-    </Reference>
     <Reference Include="System.Data" />
-    <Reference Include="System.Deployment" />
     <Reference Include="System.Drawing" />
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml" />
@@ -356,12 +349,6 @@
     <Compile Include="RecordControls\HexElement.Designer.cs">
       <DependentUpon>HexElement.cs</DependentUpon>
     </Compile>
-    <Compile Include="Views\RichTextView.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Views\RichTextView.Designer.cs">
-      <DependentUpon>RichTextView.cs</DependentUpon>
-    </Compile>
     <EmbeddedResource Include="Controls\ballontooltip.resx">
       <DependentUpon>ballontooltip.cs</DependentUpon>
     </EmbeddedResource>
@@ -472,9 +459,6 @@
     </EmbeddedResource>
     <EmbeddedResource Include="RecordControls\TextElement.resx">
       <DependentUpon>TextElement.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Views\RichTextView.resx">
-      <DependentUpon>RichTextView.cs</DependentUpon>
     </EmbeddedResource>
     <None Include="build\tesvsnip.snk" />
     <None Include="Controls\ObjectListView\ObjectListView.FxCop" />

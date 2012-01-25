@@ -1,46 +1,44 @@
 #region License
+
 // Original Source:
 //  http://www.codeproject.com/KB/combobox/checkedcombobox.aspx
 //
 // The Code Project Open License (CPOL) 1.02
 //   http://www.codeproject.com/info/cpol10.aspx
+
 #endregion
 
 using System;
-using System.Collections.Generic;
+using System.ComponentModel;
+using System.Drawing;
 using System.Text;
 using System.Windows.Forms;
-using System.Drawing;
-using System.Diagnostics;
 
 namespace TESVSnip.Windows.Controls
 {
     public class CheckedComboBox : CustomComboBox
     {
         #region Dropdown Form
+
         /// <summary>
         /// Internal class to represent the dropdown list of the CheckedComboBox
         /// </summary>
-        internal class Dropdown : UserControl 
+        internal class Dropdown : UserControl
         {
             // ---------------------------------- internal class CCBoxEventArgs --------------------------------------------
             /// <summary>
             /// Custom EventArgs encapsulating value as to whether the combo box value(s) should be assignd to or not.
             /// </summary>
-            internal class CCBoxEventArgs : EventArgs {
-                private bool assignValues;
-                public bool AssignValues {
-                    get { return assignValues; }
-                    set { assignValues = value; }
-                }
-                private EventArgs e;
-                public EventArgs EventArgs {
-                    get { return e; }
-                    set { e = value; }
-                }
-                public CCBoxEventArgs(EventArgs e, bool assignValues) : base() {
-                    this.e = e;
-                    this.assignValues = assignValues;
+            internal class CCBoxEventArgs : EventArgs
+            {
+                public bool AssignValues { get; set; }
+
+                public EventArgs EventArgs { get; set; }
+
+                public CCBoxEventArgs(EventArgs e, bool assignValues)
+                {
+                    this.EventArgs = e;
+                    this.AssignValues = assignValues;
                 }
             }
 
@@ -49,36 +47,43 @@ namespace TESVSnip.Windows.Controls
             /// <summary>
             /// A custom CheckedListBox being shown within the dropdown form representing the dropdown list of the CheckedComboBox.
             /// </summary>
-            internal class CustomCheckedListBox : CheckedListBox {
+            internal class CustomCheckedListBox : CheckedListBox
+            {
                 private int curSelIndex = -1;
 
-                public CustomCheckedListBox() : base() {
-                    this.SelectionMode = SelectionMode.One;
-                    this.HorizontalScrollbar = true;                    
+                public CustomCheckedListBox()
+                {
+                    SelectionMode = SelectionMode.One;
+                    HorizontalScrollbar = true;
                 }
 
                 /// <summary>
                 /// Intercepts the keyboard input, [Enter] confirms a selection and [Esc] cancels it.
                 /// </summary>
                 /// <param name="e">The Key event arguments</param>
-                protected override void OnKeyDown(KeyEventArgs e) {
-                    if (e.KeyCode == Keys.Enter) {
+                protected override void OnKeyDown(KeyEventArgs e)
+                {
+                    if (e.KeyCode == Keys.Enter)
+                    {
                         // Enact selection.
                         //((CheckedComboBox.Dropdown) Parent).OnDeactivate(new CCBoxEventArgs(null, true));
-                        ((CheckedComboBox.Dropdown)Parent).Accept();
-                        ((CheckedComboBox.Dropdown)Parent).Hide();
+                        ((Dropdown) Parent).Accept();
+                        (Parent).Hide();
                         e.Handled = true;
-
-                    } else if (e.KeyCode == Keys.Escape) {
+                    }
+                    else if (e.KeyCode == Keys.Escape)
+                    {
                         // Cancel selection.
-                        ((CheckedComboBox.Dropdown)Parent).Reject();
-                        ((CheckedComboBox.Dropdown)Parent).Hide();
+                        ((Dropdown) Parent).Reject();
+                        (Parent).Hide();
                         //((CheckedComboBox.Dropdown) Parent).OnDeactivate(new CCBoxEventArgs(null, false));
                         e.Handled = true;
-
-                    } else if (e.KeyCode == Keys.Delete) {
+                    }
+                    else if (e.KeyCode == Keys.Delete)
+                    {
                         // Delete unckecks all, [Shift + Delete] checks all.
-                        for (int i = 0; i < Items.Count; i++) {
+                        for (int i = 0; i < Items.Count; i++)
+                        {
                             SetItemChecked(i, e.Shift);
                         }
                         e.Handled = true;
@@ -87,62 +92,75 @@ namespace TESVSnip.Windows.Controls
                     base.OnKeyDown(e);
                 }
 
-                protected override void OnMouseMove(MouseEventArgs e) {
+                protected override void OnMouseMove(MouseEventArgs e)
+                {
                     base.OnMouseMove(e);
                     int index = IndexFromPoint(e.Location);
-                    if ((index >= 0) && (index != curSelIndex)) {
+                    if ((index >= 0) && (index != curSelIndex))
+                    {
                         curSelIndex = index;
                         SetSelected(index, true);
                     }
                 }
+            }
 
-            } // end internal class CustomCheckedListBox
+            // end internal class CustomCheckedListBox
 
             // --------------------------------------------------------------------------------------------------------
 
             // ********************************************* Data *********************************************
 
-            private CheckedComboBox ccbParent;
+            private readonly CheckedComboBox ccbParent;
 
             // Keeps track of whether checked item(s) changed, hence the value of the CheckedComboBox as a whole changed.
             // This is simply done via maintaining the old string-representation of the value(s) and the new one and comparing them!
             private string oldStrValue = "";
-            public bool ValueChanged {
-                get {
+
+            public bool ValueChanged
+            {
+                get
+                {
                     string newStrValue = ccbParent.Text;
-                    if ((oldStrValue.Length > 0) && (newStrValue.Length > 0)) {
+                    if ((oldStrValue.Length > 0) && (newStrValue.Length > 0))
+                    {
                         return (oldStrValue.CompareTo(newStrValue) != 0);
-                    } else {
+                    }
+                    else
+                    {
                         return (oldStrValue.Length != newStrValue.Length);
                     }
                 }
             }
 
             // Array holding the checked states of the items. This will be used to reverse any changes if user cancels selection.
-            bool[] checkedStateArr;
+            private bool[] checkedStateArr;
 
             // Whether the dropdown is closed.
             private bool dropdownClosed = true;
 
             private CustomCheckedListBox cclb;
-            public CustomCheckedListBox List {
+
+            public CustomCheckedListBox List
+            {
                 get { return cclb; }
                 set { cclb = value; }
             }
 
             // ********************************************* Construction *********************************************
 
-            public Dropdown(CheckedComboBox ccbParent) {
+            public Dropdown(CheckedComboBox ccbParent)
+            {
                 this.ccbParent = ccbParent;
                 InitializeComponent();
                 // Add a handler to notify our parent of ItemCheck events.
-                this.cclb.ItemCheck += this.cclb_ItemCheck;
+                cclb.ItemCheck += cclb_ItemCheck;
             }
 
             public void Reject()
             {
                 CloseDropdown(false);
             }
+
             public void Accept()
             {
                 CloseDropdown(true);
@@ -152,7 +170,7 @@ namespace TESVSnip.Windows.Controls
             {
                 base.OnVisibleChanged(e);
 
-                if (this.Visible)
+                if (Visible)
                 {
                     dropdownClosed = false;
                     // Assign the old string value to compare with the new value for any changes.
@@ -173,40 +191,44 @@ namespace TESVSnip.Windows.Controls
             // ********************************************* Methods *********************************************
 
             // Create a CustomCheckedListBox which fills up the entire form area.
-            private void InitializeComponent() {
-                this.cclb = new CustomCheckedListBox();
-                this.SuspendLayout();
+            private void InitializeComponent()
+            {
+                cclb = new CustomCheckedListBox();
+                SuspendLayout();
                 // 
                 // cclb
                 // 
-                this.cclb.BorderStyle = System.Windows.Forms.BorderStyle.None;
-                this.cclb.Dock = System.Windows.Forms.DockStyle.Fill;
-                this.cclb.FormattingEnabled = true;
-                this.cclb.Location = new System.Drawing.Point(0, 0);
-                this.cclb.Name = "cclb";
-                this.cclb.Size = new System.Drawing.Size(47, 15);
-                this.cclb.TabIndex = 0;
-                this.cclb.IntegralHeight = false;
-                this.cclb.CheckOnClick = true;
+                cclb.BorderStyle = BorderStyle.None;
+                cclb.Dock = DockStyle.Fill;
+                cclb.FormattingEnabled = true;
+                cclb.Location = new Point(0, 0);
+                cclb.Name = "cclb";
+                cclb.Size = new Size(47, 15);
+                cclb.TabIndex = 0;
+                cclb.IntegralHeight = false;
+                cclb.CheckOnClick = true;
                 // 
                 // Dropdown
                 // 
-                this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
-                this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-                this.BackColor = System.Drawing.SystemColors.Menu;
-                this.ClientSize = new System.Drawing.Size(47, 16);
-                this.Controls.Add(this.cclb);
-                this.ForeColor = System.Drawing.SystemColors.ControlText;
-                this.Name = "ccbParent";
-                this.ResumeLayout(false);
+                AutoScaleDimensions = new SizeF(6F, 13F);
+                AutoScaleMode = AutoScaleMode.Font;
+                BackColor = SystemColors.Menu;
+                ClientSize = new Size(47, 16);
+                Controls.Add(cclb);
+                ForeColor = SystemColors.ControlText;
+                Name = "ccbParent";
+                ResumeLayout(false);
             }
 
-            public string GetCheckedItemsStringValue() {
-                StringBuilder sb = new StringBuilder("");
-                for (int i = 0; i < cclb.CheckedItems.Count; i++) {                    
+            public string GetCheckedItemsStringValue()
+            {
+                var sb = new StringBuilder("");
+                for (int i = 0; i < cclb.CheckedItems.Count; i++)
+                {
                     sb.Append(cclb.GetItemText(cclb.CheckedItems[i])).Append(ccbParent.ValueSeparator);
                 }
-                if (sb.Length > 0) {
+                if (sb.Length > 0)
+                {
                     sb.Remove(sb.Length - ccbParent.ValueSeparator.Length, ccbParent.ValueSeparator.Length);
                 }
                 return sb.ToString();
@@ -224,8 +246,10 @@ namespace TESVSnip.Windows.Controls
             ///       CheckedComboBox (after the dropdown has closed) to determine any actual value changes.
             /// </summary>
             /// <param name="enactChanges"></param>
-            public void CloseDropdown(bool enactChanges) {
-                if (dropdownClosed) {
+            public void CloseDropdown(bool enactChanges)
+            {
+                if (dropdownClosed)
+                {
                     return;
                 }
                 // From now on the dropdown is considered closed. We set the flag here to prevent OnDeactivate() calling
@@ -233,14 +257,17 @@ namespace TESVSnip.Windows.Controls
                 dropdownClosed = true;
 
                 // Perform the actual selection and display of checked items.
-                if (enactChanges) {
-                    ccbParent.SelectedIndex = -1;                    
+                if (enactChanges)
+                {
+                    ccbParent.SelectedIndex = -1;
                     // Set the text portion equal to the string comprising all checked items (if any, otherwise empty!).
                     ccbParent.Text = GetCheckedItemsStringValue();
-
-                } else {
+                }
+                else
+                {
                     // Caller cancelled selection - need to restore the checked items to their original state.
-                    for (int i = 0; i < cclb.Items.Count; i++) {
+                    for (int i = 0; i < cclb.Items.Count; i++)
+                    {
                         cclb.SetItemChecked(i, checkedStateArr[i]);
                     }
                 }
@@ -250,90 +277,100 @@ namespace TESVSnip.Windows.Controls
                 ccbParent.HideDropDown();
             }
 
-            private void cclb_ItemCheck(object sender, ItemCheckEventArgs e) {
+            private void cclb_ItemCheck(object sender, ItemCheckEventArgs e)
+            {
                 if (ccbParent.ItemCheck != null)
                 {
                     try
                     {
-                        if (this.IsHandleCreated)
-                            BeginInvoke(new ItemCheckEventHandler((o, args) => ccbParent.ItemCheck(o, args)), new[] { sender, e });
+                        if (IsHandleCreated)
+                            BeginInvoke(new ItemCheckEventHandler((o, args) => ccbParent.ItemCheck(o, args)),
+                                        new[] {sender, e});
                     }
-                    catch {}
+                    catch
+                    {
+                    }
                 }
             }
+        }
 
-        } // end internal class Dropdown
+        // end internal class Dropdown
+
         #endregion
 
         // ******************************** Data ********************************
         /// <summary>
         /// Required designer variable.
         /// </summary>
-        private System.ComponentModel.IContainer components = null;
+        private readonly IContainer components = null;
+
         // A form-derived object representing the drop-down list of the checked combo box.
-        private Dropdown dropdown;
+        private readonly Dropdown dropdown;
 
         // The valueSeparator character(s) between the ticked elements as they appear in the 
         // text portion of the CheckedComboBox.
-        private string valueSeparator;
-        public string ValueSeparator {
-            get { return valueSeparator; }
-            set { valueSeparator = value; }
-        }
+        public string ValueSeparator { get; set; }
 
-        public bool CheckOnClick {
+        public bool CheckOnClick
+        {
             get { return dropdown.List.CheckOnClick; }
             set { dropdown.List.CheckOnClick = value; }
         }
 
-        public new string DisplayMember {
+        public new string DisplayMember
+        {
             get { return dropdown.List.DisplayMember; }
             set { dropdown.List.DisplayMember = value; }
         }
 
-        public new CheckedListBox.ObjectCollection Items {
+        public new CheckedListBox.ObjectCollection Items
+        {
             get { return dropdown.List.Items; }
         }
 
-        public CheckedListBox.CheckedItemCollection CheckedItems {
+        public CheckedListBox.CheckedItemCollection CheckedItems
+        {
             get { return dropdown.List.CheckedItems; }
         }
-        
-        public CheckedListBox.CheckedIndexCollection CheckedIndices {
+
+        public CheckedListBox.CheckedIndexCollection CheckedIndices
+        {
             get { return dropdown.List.CheckedIndices; }
         }
 
-        public bool ValueChanged {
+        public bool ValueChanged
+        {
             get { return dropdown.ValueChanged; }
         }
 
         // Event handler for when an item check state changes.
         public event ItemCheckEventHandler ItemCheck;
-        
+
         // ******************************** Construction ********************************
 
-        public CheckedComboBox() : base() {
+        public CheckedComboBox()
+        {
             // We want to do the drawing of the dropdown.
-            this.DrawMode = DrawMode.OwnerDrawVariable;
+            DrawMode = DrawMode.OwnerDrawVariable;
             // Default value separator.
-            this.valueSeparator = ", ";
+            ValueSeparator = ", ";
             // This prevents the actual ComboBox dropdown to show, although it's not strickly-speaking necessary.
             // But including this remove a slight flickering just before our dropdown appears (which is caused by
             // the empty-dropdown list of the ComboBox which is displayed for fractions of a second).
-            this.DropDownHeight = 1;            
+            DropDownHeight = 1;
             // This is the default setting - text portion is editable and user must click the arrow button
             // to see the list portion. Although we don't want to allow the user to edit the text portion
             // the DropDownList style is not being used because for some reason it wouldn't allow the text
             // portion to be programmatically set. Hence we set it as editable but disable keyboard input (see below).
-            this.DropDownStyle = ComboBoxStyle.DropDown;
-            this.dropdown = new Dropdown(this);
+            DropDownStyle = ComboBoxStyle.DropDown;
+            dropdown = new Dropdown(this);
             // CheckOnClick style for the dropdown (NOTE: must be set after dropdown is created).
-            this.CheckOnClick = true;
+            CheckOnClick = true;
 
-            this.DropDownControl = dropdown;
-            this.AllowResizeDropDown = true;
-            this.IntegralHeight = false;
-            this.DropDownSizeMode = SizeMode.UseDropDownSize;
+            DropDownControl = dropdown;
+            AllowResizeDropDown = true;
+            IntegralHeight = false;
+            DropDownSizeMode = SizeMode.UseDropDownSize;
         }
 
         // ******************************** Operations ********************************
@@ -342,8 +379,10 @@ namespace TESVSnip.Windows.Controls
         /// Clean up any resources being used.
         /// </summary>
         /// <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
-        protected override void Dispose(bool disposing) {
-            if (disposing && (components != null)) {
+        protected override void Dispose(bool disposing)
+        {
+            if (disposing && (components != null))
+            {
                 components.Dispose();
             }
             base.Dispose(disposing);
@@ -353,6 +392,7 @@ namespace TESVSnip.Windows.Controls
         {
             base.ShowDropDown();
         }
+
         public override void HideDropDown(HideCloseReason reason)
         {
             if (!dropdown.IsClosed)
@@ -365,39 +405,51 @@ namespace TESVSnip.Windows.Controls
             base.HideDropDown(reason);
         }
 
-        protected override void OnKeyDown(KeyEventArgs e) {
-            if (e.KeyCode == Keys.Down) {
+        protected override void OnKeyDown(KeyEventArgs e)
+        {
+            if (e.KeyCode == Keys.Down)
+            {
                 // Signal that the dropdown is "down". This is required so that the behaviour of the dropdown is the same
                 // when it is a result of user pressing the Down_Arrow (which we handle and the framework wouldn't know that
                 // the list portion is down unless we tell it so).
                 // NOTE: all that so the DropDownClosed event fires correctly!
-                if (!this.IsDroppedDown)
+                if (!IsDroppedDown)
                     ShowDropDown();
             }
             // Make sure that certain keys or combinations are not blocked.
             e.Handled = !e.Alt && !(e.KeyCode == Keys.Tab) &&
-                !((e.KeyCode == Keys.Left) || (e.KeyCode == Keys.Right) || (e.KeyCode == Keys.Home) || (e.KeyCode == Keys.End));
+                        !((e.KeyCode == Keys.Left) || (e.KeyCode == Keys.Right) || (e.KeyCode == Keys.Home) ||
+                          (e.KeyCode == Keys.End));
 
             base.OnKeyDown(e);
         }
 
-        protected override void OnKeyPress(KeyPressEventArgs e) {
+        protected override void OnKeyPress(KeyPressEventArgs e)
+        {
             e.Handled = true;
             base.OnKeyPress(e);
         }
 
-        public bool GetItemChecked(int index) {
-            if (index < 0 || index >= Items.Count) {
+        public bool GetItemChecked(int index)
+        {
+            if (index < 0 || index >= Items.Count)
+            {
                 throw new ArgumentOutOfRangeException("index", "value out of range");
-            } else {
+            }
+            else
+            {
                 return dropdown.List.GetItemChecked(index);
             }
         }
 
-        public void SetItemChecked(int index, bool isChecked) {
-            if (index < 0 || index >= Items.Count) {
+        public void SetItemChecked(int index, bool isChecked)
+        {
+            if (index < 0 || index >= Items.Count)
+            {
                 throw new ArgumentOutOfRangeException("index", "value out of range");
-            } else {
+            }
+            else
+            {
                 if (isChecked != dropdown.List.GetItemChecked(index))
                 {
                     dropdown.List.SetItemChecked(index, isChecked);
@@ -406,18 +458,26 @@ namespace TESVSnip.Windows.Controls
             }
         }
 
-        public CheckState GetItemCheckState(int index) {
-            if (index < 0 || index >= Items.Count) {
+        public CheckState GetItemCheckState(int index)
+        {
+            if (index < 0 || index >= Items.Count)
+            {
                 throw new ArgumentOutOfRangeException("index", "value out of range");
-            } else {
+            }
+            else
+            {
                 return dropdown.List.GetItemCheckState(index);
             }
         }
 
-        public void SetItemCheckState(int index, CheckState state) {
-            if (index < 0 || index >= Items.Count) {
+        public void SetItemCheckState(int index, CheckState state)
+        {
+            if (index < 0 || index >= Items.Count)
+            {
                 throw new ArgumentOutOfRangeException("index", "value out of range");
-            } else {
+            }
+            else
+            {
                 dropdown.List.SetItemCheckState(index, state);
                 UpdateText();
             }
@@ -425,9 +485,9 @@ namespace TESVSnip.Windows.Controls
 
         public void UpdateText()
         {
-            this.Text = dropdown.GetCheckedItemsStringValue();
+            Text = dropdown.GetCheckedItemsStringValue();
         }
+    }
 
-    } // end public class CheckedComboBox
-    
+    // end public class CheckedComboBox
 }

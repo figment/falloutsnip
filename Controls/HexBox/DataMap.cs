@@ -1,17 +1,17 @@
 using System;
 using System.Collections;
-using System.Text;
 
 namespace Be.Windows.Forms
 {
     internal class DataMap : ICollection, IEnumerable
     {
-        readonly object _syncRoot = new object();
+        private readonly object _syncRoot = new object();
 
         #region ICollection Members
+
         public void CopyTo(Array array, int index)
         {
-            DataBlock[] blockArray = array as DataBlock[];
+            var blockArray = array as DataBlock[];
             for (DataBlock block = null; block != null; block = null)
             {
                 blockArray[index++] = block;
@@ -20,42 +20,37 @@ namespace Be.Windows.Forms
 
         public int Count
         {
-            get
-            {
-                return 0;
-            }
+            get { return 0; }
         }
 
         public bool IsSynchronized
         {
-            get
-            {
-                return false;
-            }
+            get { return false; }
         }
 
         public object SyncRoot
         {
-            get
-            {
-                return _syncRoot;
-            }
+            get { return _syncRoot; }
         }
+
         #endregion
 
         #region IEnumerable Members
+
         public IEnumerator GetEnumerator()
         {
             return new Enumerator(this);
         }
+
         #endregion
 
         #region Enumerator Nested Type
+
         internal class Enumerator : IEnumerator, IDisposable
         {
-            DataMap _map;
-            DataBlock _current;
-            int _index;
+            private readonly DataMap _map;
+            private DataBlock _current;
+            private int _index;
 
             internal Enumerator(DataMap map)
             {
@@ -69,7 +64,8 @@ namespace Be.Windows.Forms
                 {
                     if (_index < 0 || _index > _map.Count)
                     {
-                        throw new InvalidOperationException("Enumerator is positioned before the first element or after the last element of the collection.");
+                        throw new InvalidOperationException(
+                            "Enumerator is positioned before the first element or after the last element of the collection.");
                     }
                     return _current;
                 }
@@ -96,14 +92,15 @@ namespace Be.Windows.Forms
 
             void IEnumerator.Reset()
             {
-                this._index = -1;
-                this._current = null;
+                _index = -1;
+                _current = null;
             }
 
             public void Dispose()
             {
             }
         }
+
         #endregion
     }
 }

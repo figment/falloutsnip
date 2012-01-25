@@ -1,17 +1,12 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
 using System.Drawing;
-using System.Data;
-using System.Linq;
-using System.Text;
 using System.Windows.Forms;
 
 namespace TESVSnip.RecordControls
 {
     internal partial class OptionalElement : BaseElement, IOuterElementControl
     {
-        IElementControl innerControl = null;
+        private IElementControl innerControl;
 
         public OptionalElement()
         {
@@ -22,18 +17,18 @@ namespace TESVSnip.RecordControls
 
         public override ArraySegment<byte> Data
         {
-            get 
-            { 
-                return this.chkUseValue.Checked && this.innerControl != null 
-                    ? this.innerControl.Data 
-                    : default(ArraySegment<byte>); 
+            get
+            {
+                return chkUseValue.Checked && innerControl != null
+                           ? innerControl.Data
+                           : default(ArraySegment<byte>);
             }
             set
             {
-                if (this.InnerControl != null)
+                if (InnerControl != null)
                 {
-                    this.InnerControl.Data = value;
-                    chkUseValue.Checked = this.innerControl != null && this.innerControl.Data.Count > 0;
+                    InnerControl.Data = value;
+                    chkUseValue.Checked = innerControl != null && innerControl.Data.Count > 0;
                 }
                 UpdateAllControls();
             }
@@ -42,22 +37,22 @@ namespace TESVSnip.RecordControls
         public IElementControl InnerControl
         {
             get { return innerControl; }
-            set 
+            set
             {
                 if (innerControl != value)
                 {
                     innerControl = value;
-                    this.controlPanel.Controls.Clear();
-                    Control c = innerControl as Control;
-                    this.SuspendLayout();
+                    controlPanel.Controls.Clear();
+                    var c = innerControl as Control;
+                    SuspendLayout();
                     if (c != null)
                     {
                         c.Dock = DockStyle.Fill;
-                        this.controlPanel.MinimumSize = c.MinimumSize;
-                        this.controlPanel.Controls.Add(c);
-                        this.MinimumSize = this.controlPanel.MinimumSize + new Size(0, chkUseValue.Height);
+                        controlPanel.MinimumSize = c.MinimumSize;
+                        controlPanel.Controls.Add(c);
+                        MinimumSize = controlPanel.MinimumSize + new Size(0, chkUseValue.Height);
                     }
-                    this.ResumeLayout();
+                    ResumeLayout();
                     UpdateStatus();
                 }
             }
@@ -70,10 +65,10 @@ namespace TESVSnip.RecordControls
 
         private void UpdateStatus()
         {
-            if (this.innerControl == null)
-                this.controlPanel.Enabled = false;
+            if (innerControl == null)
+                controlPanel.Enabled = false;
             else
-                this.controlPanel.Enabled = chkUseValue.Checked;
+                controlPanel.Enabled = chkUseValue.Checked;
         }
 
         protected override void UpdateAllControls()

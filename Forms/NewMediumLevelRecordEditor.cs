@@ -1,11 +1,12 @@
 using System;
-using System.Windows.Forms;
 using System.Collections.Generic;
-using TESVSnip.Windows.Controls;
-using System.Linq;
-using TESVSnip.RecordControls;
-using TESVSnip.Collections.Generic;
 using System.Drawing;
+using System.IO;
+using System.Runtime.InteropServices;
+using System.Windows.Forms;
+using TESVSnip.Collections.Generic;
+using TESVSnip.Properties;
+using TESVSnip.RecordControls;
 
 namespace TESVSnip
 {
@@ -13,15 +14,17 @@ namespace TESVSnip
     {
         private Plugin p;
         private Record r;
-        private SubRecord sr;
+        private readonly SubRecord sr;
         private SubrecordStructure ss;
-        private string strWarnOnSave = null;
-        OrderedDictionary<ElementStructure, IElementControl> controlMap = new OrderedDictionary<ElementStructure, IElementControl>();
+        private readonly string strWarnOnSave;
+
+        private readonly OrderedDictionary<ElementStructure, IElementControl> controlMap =
+            new OrderedDictionary<ElementStructure, IElementControl>();
 
         public NewMediumLevelRecordEditor(Plugin p, Record r, SubRecord sr, SubrecordStructure ss)
         {
             InitializeComponent();
-            this.Icon = Properties.Resources.tesv_ico;
+            Icon = Resources.tesv_ico;
             SuspendLayout();
             this.sr = sr;
             this.ss = ss;
@@ -64,9 +67,9 @@ namespace TESVSnip
                     if (c is IElementControl)
                     {
                         var ec = c as IElementControl;
-                        ec.formIDLookup = new dFormIDLookupR(p.GetRecordByID);
-                        ec.formIDScan = new dFormIDScanRec(p.EnumerateRecords);
-                        ec.strIDLookup = new dLStringLookup(p.LookupFormStrings);
+                        ec.formIDLookup = p.GetRecordByID;
+                        ec.formIDScan = p.EnumerateRecords;
+                        ec.strIDLookup = p.LookupFormStrings;
                         ec.Element = elem;
 
                         if (elem.repeat > 0)
@@ -106,7 +109,7 @@ namespace TESVSnip
                         c.MinimumSize = c.Size;
 
                         controlMap.Add(elem, ec);
-                        this.fpanel1.Controls.Add(c);
+                        fpanel1.Controls.Add(c);
                         panelOffset = c.Bottom;
                     }
                 }
@@ -132,12 +135,13 @@ namespace TESVSnip
             }
             catch
             {
-                strWarnOnSave = "The subrecord doesn't appear to conform to the expected structure.\nThe formatted information may be incorrect.";
-                this.Error.SetError(this.bSave, strWarnOnSave);
-                this.Error.SetIconAlignment(this.bSave, ErrorIconAlignment.MiddleLeft);
-                this.AcceptButton = this.bCancel; // remove save as default button when exception occurs
-                this.CancelButton = this.bCancel;
-                this.UpdateDefaultButton();
+                strWarnOnSave =
+                    "The subrecord doesn't appear to conform to the expected structure.\nThe formatted information may be incorrect.";
+                Error.SetError(bSave, strWarnOnSave);
+                Error.SetIconAlignment(bSave, ErrorIconAlignment.MiddleLeft);
+                AcceptButton = bCancel; // remove save as default button when exception occurs
+                CancelButton = bCancel;
+                UpdateDefaultButton();
             }
             ResumeLayout();
         }
@@ -147,16 +151,19 @@ namespace TESVSnip
             // warn user about data corruption.  But this may be case of fixing using tesvsnip to fix corruption so still allow
             if (strWarnOnSave != null)
             {
-                if (DialogResult.Yes != MessageBox.Show(this, strWarnOnSave + "\n\nData maybe lost if saved. Do you want to continue saving?"
-                    , "Warning", MessageBoxButtons.YesNo, MessageBoxIcon.Warning, MessageBoxDefaultButton.Button2))
+                if (DialogResult.Yes !=
+                    MessageBox.Show(this,
+                                    strWarnOnSave + "\n\nData maybe lost if saved. Do you want to continue saving?"
+                                    , "Warning", MessageBoxButtons.YesNo, MessageBoxIcon.Warning,
+                                    MessageBoxDefaultButton.Button2))
                 {
                     return;
                 }
             }
 
-            using (var str = new System.IO.MemoryStream())
+            using (var str = new MemoryStream())
             {
-                foreach ( KeyValuePair<ElementStructure, IElementControl> kvp in controlMap )
+                foreach (KeyValuePair<ElementStructure, IElementControl> kvp in controlMap)
                 {
                     var c = kvp.Value;
                     if (c is IGroupedElementControl)
@@ -181,10 +188,10 @@ namespace TESVSnip
             }
         }
 
-        [System.Runtime.InteropServices.DllImportAttribute("msvcrt.dll")]
-        static extern int memcmp(byte[] b1, byte[] b2, long count);
+        [DllImport("msvcrt.dll")]
+        private static extern int memcmp(byte[] b1, byte[] b2, long count);
 
-        static bool ByteArrayCompare(byte[] b1, byte[] b2)
+        private static bool ByteArrayCompare(byte[] b1, byte[] b2)
         {
             // Validate buffers are the same length.
             // This also ensures that the count does not exceed the length of either buffer.  
@@ -193,7 +200,6 @@ namespace TESVSnip
 
         private void bCancel_Click(object sender, EventArgs e)
         {
-
         }
 
         private void fpanel1_Resize(object sender, EventArgs e)
@@ -201,7 +207,7 @@ namespace TESVSnip
             fpanel1.SuspendLayout();
             foreach (Control c in fpanel1.Controls)
             {
-                c.MinimumSize = new System.Drawing.Size(this.Width - c.Left - 30, c.MinimumSize.Height);
+                c.MinimumSize = new Size(Width - c.Left - 30, c.MinimumSize.Height);
             }
             fpanel1.ResumeLayout();
         }
@@ -210,18 +216,18 @@ namespace TESVSnip
         {
             // If more elements than default panel size then allow increasing overall form to 3/4 current monitor size
 
-            if (this.fpanel1.PreferredSize.Height > this.fpanel1.Height)
+            if (fpanel1.PreferredSize.Height > fpanel1.Height)
             {
-                var screen = Screen.FromPoint(this.Location);
-                int maxHeight = this.Owner == null ? screen.WorkingArea.Height : this.Owner.Height;
-                int workingSize = Math.Min(maxHeight, screen.WorkingArea.Height * 3 / 4);
-                int offset = this.fpanel1.PreferredSize.Height - this.fpanel1.Height + 40; // height of scrollbar?
-                this.Height = Math.Min(workingSize, this.Height + offset);
+                var screen = Screen.FromPoint(Location);
+                int maxHeight = Owner == null ? screen.WorkingArea.Height : Owner.Height;
+                int workingSize = Math.Min(maxHeight, screen.WorkingArea.Height*3/4);
+                int offset = fpanel1.PreferredSize.Height - fpanel1.Height + 40; // height of scrollbar?
+                Height = Math.Min(workingSize, Height + offset);
 
-                if (this.Owner != null)
+                if (Owner != null)
                 {
-                    int yOff = (this.Owner.Height - this.Height) / 2;
-                    this.Top = this.Owner.Top + yOff;
+                    int yOff = (Owner.Height - Height)/2;
+                    Top = Owner.Top + yOff;
                 }
             }
         }
@@ -233,9 +239,9 @@ namespace TESVSnip
                 c.Focus();
                 return true;
             }
-            foreach ( Control child in c.Controls)
+            foreach (Control child in c.Controls)
             {
-                if ( FocusFirstControl(child) )
+                if (FocusFirstControl(child))
                     return true;
             }
             return false;
@@ -244,7 +250,7 @@ namespace TESVSnip
         private void NewMediumLevelRecordEditor_Shown(object sender, EventArgs e)
         {
             // forward focus to first child control
-            FocusFirstControl(this.fpanel1);
+            FocusFirstControl(fpanel1);
         }
     }
 }

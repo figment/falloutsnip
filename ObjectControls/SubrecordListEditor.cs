@@ -1,74 +1,76 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Drawing;
 using System.Linq;
-using System.Text;
 using System.Windows.Forms;
+using BrightIdeasSoftware;
+using TESVSnip.Collections.Generic;
 using TESVSnip.Properties;
 
 namespace TESVSnip.Forms
 {
     public partial class SubrecordListEditor : UserControl
     {
-        SelectionContext _context = null;
-        private TESVSnip.Collections.Generic.AdvancedList<SubRecord> _subrecords = null;
+        private SelectionContext _context;
+        private AdvancedList<SubRecord> _subrecords;
 
         public SubrecordListEditor()
         {
             InitializeComponent();
             InitializeSubrecordForm();
-            this.SetContext(new SelectionContext());
+            SetContext(new SelectionContext());
         }
 
         public void SetContext(SelectionContext context)
         {
             //this.context = context.Clone();
-            if ( this._context != context)
+            if (_context != context)
             {
-                if (this._context != null)
+                if (_context != null)
                 {
-                    this._context.RecordChanged -= new EventHandler(context_RecordChanged);
-                    this._context.SubRecordChanged -= new EventHandler(context_SubRecordChanged);
+                    _context.RecordChanged -= context_RecordChanged;
+                    _context.SubRecordChanged -= context_SubRecordChanged;
                 }
-                this._context = context;
-                if (this._context != null)
+                _context = context;
+                if (_context != null)
                 {
-                    this._context.SubRecordChanged += new EventHandler(context_SubRecordChanged);
-                    this._context.RecordChanged += new EventHandler(context_RecordChanged);
+                    _context.SubRecordChanged += context_SubRecordChanged;
+                    _context.RecordChanged += context_RecordChanged;
                 }
             }
         }
 
-        public TESVSnip.Collections.Generic.AdvancedList<SubRecord> SubRecords
+        public AdvancedList<SubRecord> SubRecords
         {
-            get { return this._subrecords; }
+            get { return _subrecords; }
             set
             {
-                this._subrecords = value;
-                this.listSubrecord.DataSource = _subrecords;
+                _subrecords = value;
+                listSubrecord.DataSource = _subrecords;
             }
         }
 
-        void context_RecordChanged(object sender, EventArgs e)
+        private void context_RecordChanged(object sender, EventArgs e)
         {
             OnRecordChanged();
         }
 
-        void context_SubRecordChanged(object sender, EventArgs e)
+        private void context_SubRecordChanged(object sender, EventArgs e)
         {
             HandleSubrecordChanged();
         }
 
-        void OnRecordChanged()
+        private void OnRecordChanged()
         {
             _context.SubRecord = null;
             var r = _context.Record as Record;
             _subrecords = r != null ? r.SubRecords : null;
-            this.listSubrecord.DataSource = _subrecords;
+            listSubrecord.DataSource = _subrecords;
         }
 
-        void HandleSubrecordChanged()
+        private void HandleSubrecordChanged()
         {
             var selection = GetSelectedSubrecord();
             if (selection != null)
@@ -76,15 +78,15 @@ namespace TESVSnip.Forms
                 if (selection.Equals(_context.SubRecord))
                     return;
             }
-            this.listSubrecord.ClearSelection();
-            var list = this.listSubrecord.DataSource as IList<SubRecord>;
+            listSubrecord.ClearSelection();
+            var list = listSubrecord.DataSource as IList<SubRecord>;
             if (list != null)
             {
                 int idx = list.IndexOf(selection);
-                if ( idx >= 0 )
-                    this.listSubrecord.SelectItem(idx);
+                if (idx >= 0)
+                    listSubrecord.SelectItem(idx);
             }
-            this.listSubrecord.Refresh();
+            listSubrecord.Refresh();
         }
 
         [Browsable(false), DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
@@ -108,6 +110,7 @@ namespace TESVSnip.Forms
         }
 
         public event EventHandler SelectionChanged;
+
         protected void FireSelectionChanged()
         {
             if (SelectionChanged != null)
@@ -122,15 +125,15 @@ namespace TESVSnip.Forms
                 DataChanged(this, EventArgs.Empty);
         }
 
-
         #region SubRecord Manipulation
+
         private void InitializeSubrecordForm()
         {
-            this.listSubrecord.Columns.Clear();
-            this.listSubrecord.AddBindingColumn("Name", "Name", 50);
-            this.listSubrecord.AddBindingColumn("Size", "Size", 40);
-            this.listSubrecord.AddBindingColumn("IsValid", "*", 20, new Func<SubRecord, string>(a => a.IsValid ? "*" : ""));
-            this.listSubrecord.AddBindingColumn("Description", "Description", 100);
+            listSubrecord.Columns.Clear();
+            listSubrecord.AddBindingColumn("Name", "Name", 50);
+            listSubrecord.AddBindingColumn("Size", "Size", 40);
+            listSubrecord.AddBindingColumn("IsValid", "*", 20, new Func<SubRecord, string>(a => a.IsValid ? "*" : ""));
+            listSubrecord.AddBindingColumn("Description", "Description", 100);
         }
 
         private bool ValidateMakeChange()
@@ -140,9 +143,6 @@ namespace TESVSnip.Forms
 
         internal SubRecord GetSelectedSubrecord()
         {
-            //if (listSubrecord.SelectedIndices.Count < 1) return null;
-            //int idx = listSubrecord.SelectedIndices[0];
-            //return listSubrecord.DataSource[idx] as SubRecord;
             int idx = listSubrecord.GetFocusedItem();
             if (listSubrecord.DataSource != null)
             {
@@ -155,7 +155,7 @@ namespace TESVSnip.Forms
         internal List<SubRecord> GetSelectedSubrecords()
         {
             if (listSubrecord.SelectedIndices.Count < 1) return null;
-            List<SubRecord> recs = new List<SubRecord>();
+            var recs = new List<SubRecord>();
             foreach (int idx in listSubrecord.SelectedIndices)
             {
                 var sr = listSubrecord.DataSource[idx] as SubRecord;
@@ -182,48 +182,52 @@ namespace TESVSnip.Forms
                         int idx = listSubrecord.SelectedIndices[0];
                         if (idx < 0 || idx >= (listSubrecord.Items.Count - 1))
                         {
-                            SubRecord p = new SubRecord(srs);
+                            var p = new SubRecord(srs);
                             br.AddRecord(p);
                         }
                         else
                         {
-                            Record r = (Record)br;
-                            SubRecord p = new SubRecord(srs);
+                            var r = (Record) br;
+                            var p = new SubRecord(srs);
                             r.InsertRecord(idx, p);
                         }
                     }
                     else
                     {
-                        SubRecord p = new SubRecord(srs);
+                        var p = new SubRecord(srs);
                         br.AddRecord(p);
                     }
                 }
                 FireDataChanged();
             }
-            catch (System.Exception ex)
+            catch (Exception ex)
             {
                 MessageBox.Show(ex.ToString(), "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
 
-        class CallbackAction<T>
+        private class CallbackAction<T>
         {
-            T item;
-            Action<T> callback;
+            private readonly T item;
+            private readonly Action<T> callback;
+
             public CallbackAction(T item, Action<T> callback)
             {
                 this.item = item;
                 this.callback = callback;
             }
+
             public void Execute()
             {
-                this.callback(this.item);
+                callback(item);
             }
+
             public void ExecuteEvent(object sender, EventArgs e)
             {
                 Execute();
             }
         }
+
         private void toolStripInsertRecord_DropDownOpening(object sender, EventArgs e)
         {
             // find current subrecord and guess likely candidates
@@ -239,7 +243,7 @@ namespace TESVSnip.Forms
                     RecordStructure rs;
                     if (RecordStructure.Records.TryGetValue(br.Name, out rs))
                     {
-                        var usedNames = new System.Collections.Specialized.StringDictionary();
+                        var usedNames = new StringDictionary();
                         var delayedAddItems = new List<ToolStripMenuItem>();
                         var srs = (sr != null) ? sr.Structure : null;
                         bool found = (srs == null);
@@ -260,16 +264,34 @@ namespace TESVSnip.Forms
 
                             usedNames.Add(s.name, s.name);
 
-                            ToolStripMenuItem item = new ToolStripMenuItem(s.name, null,
-                                new CallbackAction<SubrecordStructure>(s,
-                                    delegate(SubrecordStructure subItem)
-                                    {
-                                        if (idx == -1) br.AddRecord(new SubRecord(subItem));
-                                        else br.InsertRecord(idx, new SubRecord(subItem));
-                                        br.MatchRecordStructureToRecord(this.SubRecords.ToArray());
-                                        FireDataChanged();
-                                    }
-                                    ).ExecuteEvent);
+                            var item = new ToolStripMenuItem(s.name, null,
+                                                             new CallbackAction<SubrecordStructure>(s,
+                                                                                                    delegate(
+                                                                                                        SubrecordStructure
+                                                                                                        subItem)
+                                                                                                        {
+                                                                                                            if (idx ==
+                                                                                                                -1)
+                                                                                                                br.
+                                                                                                                    AddRecord
+                                                                                                                    (new SubRecord
+                                                                                                                         (subItem));
+                                                                                                            else
+                                                                                                                br.
+                                                                                                                    InsertRecord
+                                                                                                                    (idx,
+                                                                                                                     new SubRecord
+                                                                                                                         (subItem));
+                                                                                                            br.
+                                                                                                                MatchRecordStructureToRecord
+                                                                                                                (SubRecords
+                                                                                                                     .
+                                                                                                                     ToArray
+                                                                                                                     ());
+                                                                                                            FireDataChanged
+                                                                                                                ();
+                                                                                                        }
+                                                                 ).ExecuteEvent);
                             item.Tag = s;
                             if (found)
                                 toolStripInsertRecord.DropDownItems.Add(item);
@@ -289,7 +311,7 @@ namespace TESVSnip.Forms
                     toolStripInsertRecord.DropDownItems.Add("NEW_");
                 }
             }
-            catch (System.Exception ex)
+            catch (Exception ex)
             {
                 MessageBox.Show(ex.ToString(), "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
@@ -301,7 +323,6 @@ namespace TESVSnip.Forms
         }
 
 
-
         private void toolStripDeleteRecord_Click(object sender, EventArgs e)
         {
             if (!ValidateMakeChange())
@@ -311,7 +332,7 @@ namespace TESVSnip.Forms
             {
                 if (listSubrecord.SelectedIndices.Count < 1) return;
                 _subrecords.RemoveAt(listSubrecord.SelectedIndices[0]);
-                rec.MatchRecordStructureToRecord(this.SubRecords.ToArray());
+                rec.MatchRecordStructureToRecord(SubRecords.ToArray());
             }
             Selection.SubRecord = GetSelectedSubrecord();
             FireDataChanged();
@@ -337,7 +358,7 @@ namespace TESVSnip.Forms
                 listSubrecord.EnsureVisible(idx - 1);
 
                 Selection.SubRecord = GetSelectedSubrecord();
-                rec.MatchRecordStructureToRecord(this.SubRecords.ToArray());
+                rec.MatchRecordStructureToRecord(SubRecords.ToArray());
                 FireDataChanged();
             }
         }
@@ -361,7 +382,7 @@ namespace TESVSnip.Forms
 
 
             Selection.SubRecord = GetSelectedSubrecord();
-            rec.MatchRecordStructureToRecord(this.SubRecords.ToArray());
+            rec.MatchRecordStructureToRecord(SubRecords.ToArray());
             FireDataChanged();
         }
 
@@ -392,6 +413,7 @@ namespace TESVSnip.Forms
 
 
         public delegate void EditSubrecordHandler(SubRecord sr, bool hexView);
+
         public event EditSubrecordHandler OnEditSubrecord;
 
 
@@ -420,10 +442,10 @@ namespace TESVSnip.Forms
                     {
                         sr.SetData(HexDataEdit.result);
                         sr.Name = HexDataEdit.resultName;
-                        rec.MatchRecordStructureToRecord(this.SubRecords.ToArray());
+                        rec.MatchRecordStructureToRecord(SubRecords.ToArray());
 
                         if (sr.Parent is Record)
-                            sr.Parent.UpdateShortDescription();                        
+                            sr.Parent.UpdateShortDescription();
 
                         listSubrecord.Refresh();
                         FireSubrecordChanged(sr);
@@ -433,9 +455,9 @@ namespace TESVSnip.Forms
             }
             catch
             {
-                
             }
         }
+
         #endregion
 
         private void toolStripCopySubrecord_Click(object sender, EventArgs e)
@@ -460,7 +482,7 @@ namespace TESVSnip.Forms
                 PasteSubRecord();
                 e.Handled = true;
             }
-            else if (e.KeyCode == Keys.Delete & !e.Control && !e.Alt && !e.Shift)
+            else if (e.KeyCode == Keys.Delete && !e.Control && !e.Alt && !e.Shift)
             {
                 DeleteSelection();
             }
@@ -468,7 +490,7 @@ namespace TESVSnip.Forms
 
         private string[] FormIDScan(string type)
         {
-            List<string> ret = new List<string>();
+            var ret = new List<string>();
             if (Selection != null && Selection.Record != null)
             {
                 var p = GetPluginFromNode(Selection.Record);
@@ -478,7 +500,7 @@ namespace TESVSnip.Forms
                     {
                         ret.Add(pair.Value.DescriptiveName);
                         ret.Add(pair.Key.ToString("X8"));
-                    }                    
+                    }
                 }
             }
             return ret.ToArray();
@@ -500,7 +522,16 @@ namespace TESVSnip.Forms
                 return;
             }
 
-            if (!global::TESVSnip.Properties.Settings.Default.UseOldSubRecordEditor
+            if (Properties.Settings.Default.UseOldSubRecordEditor)
+            {
+                new DataEdit(sr.Name, sr.GetData()).ShowDialog();
+                if (!DataEdit.Canceled)
+                {
+                    sr.SetData(DataEdit.result);
+                    sr.Name = DataEdit.resultName;
+                }
+            }
+            else if (!Properties.Settings.Default.UseHexSubRecordEditor
                 && sr.Structure != null
                 && sr.Structure.elements != null
                 && sr.Structure.elements[0].type != ElementValueType.Blob && !sr.Structure.UseHexEditor)
@@ -508,11 +539,11 @@ namespace TESVSnip.Forms
                 Form re;
                 try
                 {
-                    if (global::TESVSnip.Properties.Settings.Default.UseOldSubRecordEditor)
+                    if (Properties.Settings.Default.UseOldSubRecordEditor)
                     {
                         var r = context.Record;
                         var formIDLookup = new dFormIDLookupS(p.LookupFormIDS);
-                        var formIDScan = new dFormIDScan(this.FormIDScan);
+                        var formIDScan = new dFormIDScan(FormIDScan);
                         var strIDLookup = new dLStringLookup(p.LookupFormStrings);
                         re = new MediumLevelRecordEditor(sr, sr.Structure, formIDLookup, formIDScan, strIDLookup);
                     }
@@ -531,7 +562,7 @@ namespace TESVSnip.Forms
                     if (DialogResult.OK == re.ShowDialog(this))
                     {
                         if (sr.Parent is Record)
-                            sr.Parent.UpdateShortDescription();                        
+                            sr.Parent.UpdateShortDescription();
                         listSubrecord.Refresh();
                         FireSubrecordChanged(sr);
                         FireDataChanged();
@@ -541,14 +572,15 @@ namespace TESVSnip.Forms
             }
             else
             {
-                EditSelectedSubrecordHex();                
+                EditSelectedSubrecordHex();
             }
         }
+
         private void CopySelectedSubRecord()
         {
             var sr = GetSelectedSubrecords();
             if (sr == null) return;
-            MainView.Clipboard = sr.Select(ss => { return (SubRecord)ss.Clone(); }).ToArray();
+            MainView.Clipboard = sr.Select(ss => { return (SubRecord) ss.Clone(); }).ToArray();
             UpdateToolStripSelection();
         }
 
@@ -582,20 +614,21 @@ namespace TESVSnip.Forms
                 toolStripMoveRecordUp.Enabled = false;
                 toolStripDeleteRecord.Enabled = false;
             }
-            int idx = this.listSubrecord.GetFocusedItem();
+            int idx = listSubrecord.GetFocusedItem();
             if (idx <= 0)
             {
                 toolStripMoveRecordUp.Enabled = false;
             }
-            if (this.listSubrecord.ItemCount != 0)
+            if (listSubrecord.ItemCount != 0)
             {
-                if (idx == this.listSubrecord.DataSource.Count - 1)
+                if (idx == listSubrecord.DataSource.Count - 1)
                 {
                     toolStripMoveRecordDown.Enabled = false;
                 }
             }
         }
-        void PasteSubRecord()
+
+        private void PasteSubRecord()
         {
             if (!ValidateMakeChange())
                 return;
@@ -611,7 +644,7 @@ namespace TESVSnip.Forms
                 var nodes = MainView.GetClipboardData<SubRecord[]>();
                 foreach (var clipSr in insertIdx < 0 ? nodes : nodes.Reverse()) // insert in revers
                 {
-                    SubRecord sr = clipSr.Clone() as SubRecord;
+                    var sr = clipSr.Clone() as SubRecord;
                     if (sr == null)
                         return;
 
@@ -637,13 +670,13 @@ namespace TESVSnip.Forms
 
                 RebuildSelection();
             }
-            catch (System.Exception ex)
+            catch (Exception ex)
             {
                 MessageBox.Show(ex.ToString(), Resources.ErrorText, MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
 
-        void RebuildSelection()
+        private void RebuildSelection()
         {
             if (Selection == null || Selection.Record == null)
             {
@@ -654,11 +687,13 @@ namespace TESVSnip.Forms
         }
 
         private bool DragDropInProgress;
+
         private void listView1_ItemActivate(object sender, EventArgs e)
         {
             UpdateSubRecordSelection(null);
             //EditSelectedSubrecord();
         }
+
         private void listView1_ItemDrag(object sender, ItemDragEventArgs e)
         {
             if (listSubrecord.SelectedIndices.Count < 1 || e.Button != MouseButtons.Left) return;
@@ -668,7 +703,7 @@ namespace TESVSnip.Forms
 
         private void listView1_GiveFeedback(object sender, GiveFeedbackEventArgs e)
         {
-            System.Drawing.Point p = listSubrecord.PointToClient(Form.MousePosition);
+            Point p = listSubrecord.PointToClient(MousePosition);
             ListViewItem lvi = listSubrecord.GetItemAt(p.X, p.Y);
             if (lvi == null) listSubrecord.SelectedIndices.Clear();
             else lvi.Selected = true;
@@ -676,7 +711,7 @@ namespace TESVSnip.Forms
 
         private void listView1_DragDrop(object sender, DragEventArgs e)
         {
-            int toswap = (int)e.Data.GetData(typeof(int)) - 1;
+            int toswap = (int) e.Data.GetData(typeof (int)) - 1;
             if (toswap == -1) return;
             var rec = Selection.Record as Record;
             SubRecord sr = _subrecords[toswap];
@@ -709,9 +744,9 @@ namespace TESVSnip.Forms
             UpdateSubRecordSelection(null);
         }
 
-        void UpdateSubRecordSelection(ListViewVirtualItemsSelectionRangeChangedEventArgs e)
+        private void UpdateSubRecordSelection(ListViewVirtualItemsSelectionRangeChangedEventArgs e)
         {
-            var n = this.listSubrecord.SelectedIndices.Count;
+            var n = listSubrecord.SelectedIndices.Count;
             var oldSel = Selection.SubRecord;
             var newSel = GetSelectedSubrecord();
             if (oldSel == newSel)
@@ -724,11 +759,14 @@ namespace TESVSnip.Forms
 
         public void DeleteSelection()
         {
-            var objects = listSubrecord.SelectedObjects.OfType<SubRecord>().ToList();
-            if (!objects.Any())
-                return;
+            var objects = GetSelectedSubrecords();
+            if (!objects.Any()) return;
             _subrecords.RemoveRange(objects);
-            listSubrecord.RemoveObjects(objects);
+            FireSelectionChanged();
+            UpdateToolStripSelection();
+            foreach (var sr in objects.Where(sr => sr.Parent is Record).Select(sr=>sr.Parent).Distinct())
+                sr.UpdateShortDescription();
+            listSubrecord.Refresh();
         }
 
         public void PasteFromClipboard()
@@ -738,18 +776,19 @@ namespace TESVSnip.Forms
 
         private void SubrecordListEditor_SizeChanged(object sender, EventArgs e)
         {
-            int totalWidth = listSubrecord.Columns.OfType<BrightIdeasSoftware.OLVColumn>().Sum(column => column.Width);
-            var descColumn = listSubrecord.Columns.OfType<BrightIdeasSoftware.OLVColumn>().LastOrDefault();
+            int totalWidth = listSubrecord.Columns.OfType<OLVColumn>().Sum(column => column.Width);
+            var descColumn = listSubrecord.Columns.OfType<OLVColumn>().LastOrDefault();
             if (descColumn != null)
             {
                 totalWidth -= descColumn.Width;
-                descColumn.Width = this.Width - totalWidth - SystemInformation.VerticalScrollBarWidth - SystemInformation.FrameBorderSize.Width;
+                descColumn.Width = Width - totalWidth - SystemInformation.VerticalScrollBarWidth -
+                                   SystemInformation.FrameBorderSize.Width;
             }
         }
 
         internal event EventHandler<RecordChangeEventArgs> OnSubrecordChanged;
 
-        void FireSubrecordChanged(SubRecord sr)
+        private void FireSubrecordChanged(SubRecord sr)
         {
             if (OnSubrecordChanged != null)
             {
@@ -760,7 +799,7 @@ namespace TESVSnip.Forms
         public void RefreshObject(object model)
         {
             //this.listSubrecord.RefreshObject(model);
-            this.listSubrecord.Refresh();
+            listSubrecord.Refresh();
         }
     }
 }

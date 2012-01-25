@@ -1,10 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Drawing;
-using System.Data;
-using System.Linq;
-using System.Text;
+using System.Globalization;
 using System.Windows.Forms;
 
 namespace TESVSnip.RecordControls
@@ -17,18 +12,20 @@ namespace TESVSnip.RecordControls
         }
 
         #region ITextElementControl Members
+
         public Label LabelType
         {
-            get { return this.lblType; }
+            get { return lblType; }
         }
+
         public Label Label
         {
-            get { return this.lblText; }
+            get { return lblText; }
         }
 
         public TextBoxBase TextBox
         {
-            get { return this.textBox; }
+            get { return textBox; }
         }
 
         #endregion
@@ -40,20 +37,20 @@ namespace TESVSnip.RecordControls
 
         protected virtual void UpdateLabel()
         {
-            if (this.element != null && !string.IsNullOrEmpty(this.element.name))
+            if (element != null && !string.IsNullOrEmpty(element.name))
             {
-                this.lblType.Text = this.element.type.ToString();
-                this.lblText.Text = this.element.name
-                    + (!string.IsNullOrEmpty(element.desc) ? (" (" + element.desc + ")") : "");
+                lblType.Text = element.type.ToString();
+                lblText.Text = element.name
+                               + (!string.IsNullOrEmpty(element.desc) ? (" (" + element.desc + ")") : "");
             }
         }
 
         protected virtual void UpdateText()
         {
             var data = GetCurrentData();
-            if (this.element == null || data == null || data.Array == null)
+            if (element == null || data == null || data.Array == null)
             {
-                this.textBox.Text = "<error>";
+                textBox.Text = "<error>";
             }
             else
             {
@@ -67,12 +64,14 @@ namespace TESVSnip.RecordControls
                         {
                             var v = TypeConverter.h2i(data);
                             textBox.Text = element.hexview ? "0x" + v.ToString("X8") : v.ToString();
-                        } break;
+                        }
+                        break;
                     case ElementValueType.Int:
                         {
                             var v = TypeConverter.h2si(data);
                             textBox.Text = hasFlags || es.hexview ? "0x" + v.ToString("X8") : v.ToString();
-                        } break;
+                        }
+                        break;
                     case ElementValueType.FormID:
                         textBox.Text = TypeConverter.h2i(data).ToString("X8");
                         break;
@@ -83,22 +82,26 @@ namespace TESVSnip.RecordControls
                         {
                             var v = TypeConverter.h2s(data);
                             textBox.Text = hasFlags || es.hexview ? "0x" + v.ToString("X4") : v.ToString();
-                        } break;
+                        }
+                        break;
                     case ElementValueType.Short:
                         {
                             var v = TypeConverter.h2ss(data);
                             tb.Text = hasFlags || es.hexview ? "0x" + v.ToString("X4") : v.ToString();
-                        } break;
+                        }
+                        break;
                     case ElementValueType.Byte:
                         {
                             var v = TypeConverter.h2b(data);
                             tb.Text = hasFlags || es.hexview ? "0x" + v.ToString("X2") : v.ToString();
-                        } break;
+                        }
+                        break;
                     case ElementValueType.SByte:
                         {
                             var v = TypeConverter.h2sb(data);
                             tb.Text = hasFlags || es.hexview ? "0x" + v.ToString("X2") : v.ToString();
-                        } break;
+                        }
+                        break;
                     case ElementValueType.String:
                         tb.Text = TypeConverter.GetZString(data);
                         fitTextBoxToWidth = true;
@@ -115,36 +118,39 @@ namespace TESVSnip.RecordControls
                         {
                             uint id = TypeConverter.IsLikelyString(data) ? 0 : TypeConverter.h2i(data);
                             tb.Text = id.ToString("X8");
-                        } break;
+                        }
+                        break;
                     case ElementValueType.Str4:
                         {
-                            tb.Text = (data.Count >= 4) ? TESVSnip.Encoding.CP1252.GetString(data.Array, data.Offset, 4) : "";
+                            tb.Text = (data.Count >= 4) ? Encoding.CP1252.GetString(data.Array, data.Offset, 4) : "";
                             tb.MaxLength = 4;
-                        } break;
+                        }
+                        break;
                     default:
                         {
                             tb.Text = "<Error>";
                             tb.Enabled = false;
-                        } break;
+                        }
+                        break;
                 }
                 if (fitTextBoxToWidth)
                 {
-                    this.lblText.Left = ((this.Width - this.lblText.Width - 50) /  50) * 50;
-                    this.lblText.Anchor = AnchorStyles.Right | AnchorStyles.Top;
-                    this.textBox.Width = (this.lblText.Left - 20 - this.textBox.Left);
-                    this.textBox.Anchor = AnchorStyles.Left | AnchorStyles.Right | AnchorStyles.Top;
+                    lblText.Left = ((Width - lblText.Width - 50)/50)*50;
+                    lblText.Anchor = AnchorStyles.Right | AnchorStyles.Top;
+                    textBox.Width = (lblText.Left - 20 - textBox.Left);
+                    textBox.Anchor = AnchorStyles.Left | AnchorStyles.Right | AnchorStyles.Top;
                 }
             }
         }
 
-        protected override  void UpdateAllControls()
+        protected override void UpdateAllControls()
         {
             UpdateText();
         }
 
         private void textBox_Validated(object sender, EventArgs e)
         {
-                SaveText();
+            SaveText();
         }
 
         public override void CommitChanges()
@@ -154,16 +160,16 @@ namespace TESVSnip.RecordControls
 
         protected virtual void SaveText()
         {
-            if (this.element == null)
+            if (element == null)
                 return;
             var es = element;
             var tb = textBox;
 
             string tbText = textBox.Text;
-            System.Globalization.NumberStyles numStyle = System.Globalization.NumberStyles.Any;
+            NumberStyles numStyle = NumberStyles.Any;
             if (tbText.StartsWith("0x"))
             {
-                numStyle = System.Globalization.NumberStyles.HexNumber;
+                numStyle = NumberStyles.HexNumber;
                 tbText = tbText.Substring(2);
             }
 
@@ -175,82 +181,89 @@ namespace TESVSnip.RecordControls
                     {
                         uint i;
                         if (element.type == ElementValueType.FormID)
-                            numStyle = System.Globalization.NumberStyles.HexNumber;
+                            numStyle = NumberStyles.HexNumber;
                         if (!uint.TryParse(tbText, numStyle, null, out i))
-                            this.Error.SetError(TextBox, string.Format("Invalid {0} Format", element.type));
+                            Error.SetError(TextBox, string.Format("Invalid {0} Format", element.type));
                         else
                         {
-                            this.Error.SetError(TextBox, null);
+                            Error.SetError(TextBox, null);
                             SetCurrentData(new ArraySegment<byte>(TypeConverter.i2h(i)));
                         }
-                    } break;
+                    }
+                    break;
                 case ElementValueType.Int:
                     {
                         int i;
                         if (!int.TryParse(tbText, numStyle, null, out i))
-                            this.Error.SetError(TextBox, string.Format("Invalid {0} Format", element.type));
+                            Error.SetError(TextBox, string.Format("Invalid {0} Format", element.type));
                         else
                         {
-                            this.Error.SetError(TextBox, null);
+                            Error.SetError(TextBox, null);
                             SetCurrentData(new ArraySegment<byte>(TypeConverter.si2h(i)));
                         }
-                    } break;
+                    }
+                    break;
 
                 case ElementValueType.Float:
                     {
                         float i;
                         if (!float.TryParse(tbText, numStyle, null, out i))
-                            this.Error.SetError(TextBox, string.Format("Invalid {0} Format", element.type));
+                            Error.SetError(TextBox, string.Format("Invalid {0} Format", element.type));
                         else
                         {
-                            this.Error.SetError(TextBox, null);
+                            Error.SetError(TextBox, null);
                             SetCurrentData(new ArraySegment<byte>(TypeConverter.f2h(i)));
                         }
-                    } break;
+                    }
+                    break;
                 case ElementValueType.UShort:
                     {
                         ushort i;
                         if (!ushort.TryParse(tbText, numStyle, null, out i))
-                            this.Error.SetError(TextBox, string.Format("Invalid {0} Format", element.type));
+                            Error.SetError(TextBox, string.Format("Invalid {0} Format", element.type));
                         else
                         {
-                            this.Error.SetError(TextBox, null);
+                            Error.SetError(TextBox, null);
                             SetCurrentData(new ArraySegment<byte>(TypeConverter.s2h(i)));
                         }
-                    } break;
+                    }
+                    break;
                 case ElementValueType.Short:
                     {
                         short i;
                         if (!short.TryParse(tbText, numStyle, null, out i))
-                            this.Error.SetError(TextBox, string.Format("Invalid {0} Format", element.type));
+                            Error.SetError(TextBox, string.Format("Invalid {0} Format", element.type));
                         else
                         {
-                            this.Error.SetError(TextBox, null);
+                            Error.SetError(TextBox, null);
                             SetCurrentData(new ArraySegment<byte>(TypeConverter.ss2h(i)));
                         }
-                    } break;
+                    }
+                    break;
                 case ElementValueType.Byte:
                     {
                         byte i;
                         if (!byte.TryParse(tbText, numStyle, null, out i))
-                            this.Error.SetError(TextBox, string.Format("Invalid {0} Format", element.type));
+                            Error.SetError(TextBox, string.Format("Invalid {0} Format", element.type));
                         else
                         {
-                            this.Error.SetError(TextBox, null);
+                            Error.SetError(TextBox, null);
                             SetCurrentData(new ArraySegment<byte>(TypeConverter.b2h(i)));
                         }
-                    } break;
+                    }
+                    break;
                 case ElementValueType.SByte:
                     {
                         sbyte i;
                         if (!sbyte.TryParse(tbText, numStyle, null, out i))
-                            this.Error.SetError(TextBox, string.Format("Invalid {0} Format", element.type));
+                            Error.SetError(TextBox, string.Format("Invalid {0} Format", element.type));
                         else
                         {
-                            this.Error.SetError(TextBox, null);
+                            Error.SetError(TextBox, null);
                             SetCurrentData(new ArraySegment<byte>(TypeConverter.sb2h(i)));
                         }
-                    } break;
+                    }
+                    break;
                 case ElementValueType.String:
                     SetCurrentData(new ArraySegment<byte>(TypeConverter.str2h(textBox.Text)));
                     break;
@@ -263,19 +276,20 @@ namespace TESVSnip.RecordControls
                 case ElementValueType.LString:
                     {
                         // not handled
-                    } break;
+                    }
+                    break;
                 case ElementValueType.Str4:
                     {
-                        byte[] txtbytes = new byte[] { 0x32, 0x32, 0x32, 0x32 };
+                        var txtbytes = new byte[] {0x32, 0x32, 0x32, 0x32};
                         System.Text.Encoding.Default.GetBytes(tbText, 0, Math.Min(4, tbText.Length), txtbytes, 0);
                         SetCurrentData(new ArraySegment<byte>(txtbytes));
-                    } break;
+                    }
+                    break;
             }
         }
 
         private void TextElement_Load(object sender, EventArgs e)
         {
-
         }
     }
 }

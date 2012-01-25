@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using TESVSnip.Collections.Generic;
 
 namespace TESVSnip
 {
@@ -11,8 +9,7 @@ namespace TESVSnip
         IL,
     }
 
-    public class LocalizedStringDict : Collections.Generic.OrderedDictionary<uint, string>
+    public class LocalizedStringDict : OrderedDictionary<uint, string>
     {
-
     }
 }

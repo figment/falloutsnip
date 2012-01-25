@@ -1,10 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Drawing;
-using System.Data;
-using System.Linq;
-using System.Text;
 using System.Windows.Forms;
 
 namespace TESVSnip.RecordControls
@@ -30,10 +24,10 @@ namespace TESVSnip.RecordControls
         protected override void UpdateAllControls()
         {
             base.UpdateAllControls();
-            if (this.element.flags != null)
+            if (element.flags != null)
             {
                 uint value = TypeConverter.h2i(Data);
-                cboFlags.SetItems(this.element.flags);
+                cboFlags.SetItems(element.flags);
                 cboFlags.SetState(value);
             }
         }
@@ -47,7 +41,7 @@ namespace TESVSnip.RecordControls
                 byte[] data = TypeConverter.i2h(value);
                 SetCurrentData(new ArraySegment<byte>(data, 0, data.Length));
                 TextBox.Text = "0x" + value.ToString("X");
-                this.Changed = true;
+                Changed = true;
             }
         }
     }

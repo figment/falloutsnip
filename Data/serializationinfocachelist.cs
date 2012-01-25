@@ -1,29 +1,33 @@
 using System;
+using System.Collections.Generic;
 
 namespace TESVSnip.Data.Persistance
 {
-	using System;
-	using System.Collections.Generic;
 
-	#region class SerializationInfoCache
-	class SerializationInfoCache
-	{
-		public SerializationInfoCache( string Name, object Value, Type ObjectType)
-		{
-			this.Name = Name;
-			this.Value = Value;
-			this.ObjectType = ObjectType;
-		}
-		public string Name;
-		public Type ObjectType;
-		public object Value;
-	}
-	#endregion
+    #region class SerializationInfoCache
+
+    internal class SerializationInfoCache
+    {
+        public SerializationInfoCache(string Name, object Value, Type ObjectType)
+        {
+            this.Name = Name;
+            this.Value = Value;
+            this.ObjectType = ObjectType;
+        }
+
+        public string Name;
+        public Type ObjectType;
+        public object Value;
+    }
+
+    #endregion
 
     #region class SerializationInfoCacheList
+
     internal class SerializationInfoCacheList : List<SerializationInfoCache>
     {
         #region Public Constructors
+
         #region SerializationInfoCacheList()
 
         /// <overloads>
@@ -34,12 +38,12 @@ namespace TESVSnip.Data.Persistance
         /// that is empty and has the default initial capacity.
         /// </summary>
         /// <remarks>Please refer to <see cref="ArrayList()"/> for details.</remarks>
-
         public SerializationInfoCacheList()
         {
         }
 
         #endregion
+
         #region SerializationInfoCacheList(Int32)
 
         /// <summary>
@@ -51,12 +55,12 @@ namespace TESVSnip.Data.Persistance
         /// <exception cref="ArgumentOutOfRangeException">
         /// <paramref name="capacity"/> is less than zero.</exception>
         /// <remarks>Please refer to <see cref="ArrayList(Int32)"/> for details.</remarks>
-
         public SerializationInfoCacheList(int capacity) : base(capacity)
         {
         }
 
         #endregion
+
         #region SerializationInfoCacheList(SerializationInfoCache[])
 
         /// <summary>
@@ -69,12 +73,14 @@ namespace TESVSnip.Data.Persistance
         /// <exception cref="ArgumentNullException">
         /// <paramref name="array"/> is a null reference.</exception>
         /// <remarks>Please refer to <see cref="ArrayList(ICollection)"/> for details.</remarks>
-
         public SerializationInfoCacheList(IEnumerable<SerializationInfoCache> array) : base(array)
         {
         }
+
         #endregion
+
         #endregion
     }
+
     #endregion
 }

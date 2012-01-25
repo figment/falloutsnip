@@ -1,13 +1,15 @@
 using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Drawing;
 using System.Diagnostics;
+using System.Drawing;
 using System.Runtime.InteropServices;
+using System.Text;
+using System.Windows.Forms;
 
 namespace TESVSnip.Windows.Controls
 {
+
     #region Native Helper Methods
+
     public sealed class NativeMethods
     {
         public const string TOOLTIPS_CLASS = "tooltips_class32";
@@ -61,7 +63,6 @@ namespace TESVSnip.Windows.Controls
         public const int CDRF_NOTIFYPOSTERASE = 0x00000040;
 
 
-
         // Windows Messages defines
         public const Int32 EM_FORMATRANGE = WM_USER + 57;
         public const Int32 EM_GETCHARFORMAT = WM_USER + 58;
@@ -113,10 +114,10 @@ namespace TESVSnip.Windows.Controls
 
             public TOOLINFO()
             {
-                this.cbSize = Marshal.SizeOf(typeof(TOOLINFO));
-                this.rect = new RECT(0, 0, 0, 0);
-                this.hinst = IntPtr.Zero;
-                this.lParam = IntPtr.Zero;
+                cbSize = Marshal.SizeOf(typeof (TOOLINFO));
+                rect = new RECT(0, 0, 0, 0);
+                hinst = IntPtr.Zero;
+                lParam = IntPtr.Zero;
             }
         }
 
@@ -150,7 +151,7 @@ namespace TESVSnip.Windows.Controls
 
             public INITCOMMONCONTROLSEX()
             {
-                this.dwSize = 8;
+                dwSize = 8;
             }
         }
 
@@ -158,10 +159,8 @@ namespace TESVSnip.Windows.Controls
         public struct NMTTDISPINFO
         {
             public NMHDR hdr;
-            [MarshalAs(UnmanagedType.LPTStr)]
-            public string lpszText;
-            [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 80)]
-            public string szText;
+            [MarshalAs(UnmanagedType.LPTStr)] public string lpszText;
+            [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 80)] public string szText;
             public IntPtr hinst;
             public int uFlags;
             public IntPtr lParam;
@@ -217,8 +216,7 @@ namespace TESVSnip.Windows.Controls
             public Int32 crTextColor;
             public byte bCharSet;
             public byte bPitchAndFamily;
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 32)]
-            public char[] szFaceName;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 32)] public char[] szFaceName;
         }
 
         #endregion
@@ -245,9 +243,10 @@ namespace TESVSnip.Windows.Controls
         public static extern int GetLastError();
 
         [DllImport("user32.dll", CharSet = CharSet.Auto, ExactSpelling = true)]
-        public static extern bool SetWindowPos(HandleRef hWnd, int hWndInsertAfter, int x, int y, int cx, int cy, int flags);
+        public static extern bool SetWindowPos(HandleRef hWnd, int hWndInsertAfter, int x, int y, int cx, int cy,
+                                               int flags);
 
-        [System.Runtime.InteropServices.DllImport("user32.dll", CharSet = CharSet.Auto)]
+        [DllImport("user32.dll", CharSet = CharSet.Auto)]
         public static extern Int16 GetAsyncKeyState(int key);
 
 
@@ -255,11 +254,12 @@ namespace TESVSnip.Windows.Controls
         [StructLayout(LayoutKind.Sequential)]
         public class TRACKMOUSEEVENT
         {
-            public int cbSize = Marshal.SizeOf(typeof(NativeMethods.TRACKMOUSEEVENT));
+            public int cbSize = Marshal.SizeOf(typeof (TRACKMOUSEEVENT));
             public int dwFlags;
             public IntPtr hwndTrack;
             public int dwHoverTime;
         }
+
         [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Auto)]
         public class TEXTMETRIC
         {
@@ -284,6 +284,7 @@ namespace TESVSnip.Windows.Controls
             public byte tmPitchAndFamily;
             public byte tmCharSet;
         }
+
         [StructLayout(LayoutKind.Sequential)]
         public class COMRECT
         {
@@ -291,16 +292,17 @@ namespace TESVSnip.Windows.Controls
             public int top;
             public int right;
             public int bottom;
+
             public COMRECT()
             {
             }
 
             public COMRECT(Rectangle r)
             {
-                this.left = r.X;
-                this.top = r.Y;
-                this.right = r.Right;
-                this.bottom = r.Bottom;
+                left = r.X;
+                top = r.Y;
+                right = r.Right;
+                bottom = r.Bottom;
             }
 
             public COMRECT(int left, int top, int right, int bottom)
@@ -311,16 +313,18 @@ namespace TESVSnip.Windows.Controls
                 this.bottom = bottom;
             }
 
-            public static NativeMethods.COMRECT FromXYWH(int x, int y, int width, int height)
+            public static COMRECT FromXYWH(int x, int y, int width, int height)
             {
-                return new NativeMethods.COMRECT(x, y, x + width, y + height);
+                return new COMRECT(x, y, x + width, y + height);
             }
 
             public override string ToString()
             {
-                return string.Concat(new object[] { "Left = ", this.left, " Top ", this.top, " Right = ", this.right, " Bottom = ", this.bottom });
+                return
+                    string.Concat(new object[] {"Left = ", left, " Top ", top, " Right = ", right, " Bottom = ", bottom});
             }
         }
+
         [StructLayout(LayoutKind.Sequential)]
         public struct WINDOWPOS
         {
@@ -334,50 +338,73 @@ namespace TESVSnip.Windows.Controls
         }
 
         [DllImport("comctl32.dll", ExactSpelling = true)]
-        private static extern bool _TrackMouseEvent(NativeMethods.TRACKMOUSEEVENT tme);
+        private static extern bool _TrackMouseEvent(TRACKMOUSEEVENT tme);
+
         [DllImport("gdi32.dll", CharSet = CharSet.Auto, ExactSpelling = true)]
-        public static extern bool BitBlt(IntPtr hDC, int x, int y, int nWidth, int nHeight, IntPtr hSrcDC, int xSrc, int ySrc, int dwRop);
+        public static extern bool BitBlt(IntPtr hDC, int x, int y, int nWidth, int nHeight, IntPtr hSrcDC, int xSrc,
+                                         int ySrc, int dwRop);
+
         [DllImport("gdi32.dll", CharSet = CharSet.Auto, ExactSpelling = true)]
         public static extern IntPtr CreateSolidBrush(int crColor);
+
         [DllImport("gdi32.dll", CharSet = CharSet.Auto, SetLastError = true, ExactSpelling = true)]
         public static extern bool DeleteObject(HandleRef hObject);
+
         [DllImport("user32.dll", CharSet = CharSet.Auto)]
-        public static extern int DrawText(HandleRef hDC, string lpszString, int nCount, ref NativeMethods.RECT lpRect, int nFormat);
+        public static extern int DrawText(HandleRef hDC, string lpszString, int nCount, ref RECT lpRect, int nFormat);
+
         [DllImport("kernel32.dll", CharSet = CharSet.Auto, ExactSpelling = true)]
         public static extern int GetCurrentProcessId();
+
         [DllImport("user32.dll", CharSet = CharSet.Auto, ExactSpelling = true)]
         public static extern int GetMessagePos();
+
         [DllImport("gdi32.dll", CharSet = CharSet.Auto)]
-        public static extern bool GetTextMetrics(HandleRef hdc, NativeMethods.TEXTMETRIC tm);
+        public static extern bool GetTextMetrics(HandleRef hdc, TEXTMETRIC tm);
+
         [DllImport("kernel32.dll", CharSet = CharSet.Auto, ExactSpelling = true)]
         public static extern int GetTickCount();
+
         [DllImport("user32.dll", CharSet = CharSet.Auto)]
         public static extern int GetWindowTextLength(HandleRef hWnd);
+
         [DllImport("gdi32.dll", EntryPoint = "CreatePen", CharSet = CharSet.Auto, ExactSpelling = true)]
         private static extern IntPtr IntCreatePen(int nStyle, int nWidth, int crColor);
+
         [DllImport("user32.dll", CharSet = CharSet.Auto, ExactSpelling = true)]
         public static extern bool IsChild(HandleRef parent, HandleRef child);
+
         [DllImport("gdi32.dll", CharSet = CharSet.Auto, ExactSpelling = true)]
         public static extern bool Rectangle(HandleRef hdc, int left, int top, int right, int bottom);
+
         [DllImport("user32.dll", CharSet = CharSet.Auto, ExactSpelling = true)]
-        public static extern bool RedrawWindow(IntPtr hwnd, NativeMethods.COMRECT rcUpdate, IntPtr hrgnUpdate, int flags);
+        public static extern bool RedrawWindow(IntPtr hwnd, COMRECT rcUpdate, IntPtr hrgnUpdate, int flags);
+
         [DllImport("user32.dll", CharSet = CharSet.Auto)]
         public static extern int RegisterWindowMessage(string msg);
+
         [DllImport("gdi32.dll", CharSet = CharSet.Auto, ExactSpelling = true)]
-        public static extern bool RoundRect(HandleRef hDC, int left, int top, int right, int bottom, int width, int height);
+        public static extern bool RoundRect(HandleRef hDC, int left, int top, int right, int bottom, int width,
+                                            int height);
+
         [DllImport("gdi32.dll", CharSet = CharSet.Auto, ExactSpelling = true)]
         public static extern IntPtr SelectObject(HandleRef hDC, HandleRef hObject);
+
         [DllImport("user32.dll", CharSet = CharSet.Auto, ExactSpelling = true)]
-        public static extern bool SetWindowPos(IntPtr hWnd, IntPtr hWndInsertAfter, int x, int y, int cx, int cy, int flags);
-        public static bool TrackMouseEvent(NativeMethods.TRACKMOUSEEVENT tme)
+        public static extern bool SetWindowPos(IntPtr hWnd, IntPtr hWndInsertAfter, int x, int y, int cx, int cy,
+                                               int flags);
+
+        public static bool TrackMouseEvent(TRACKMOUSEEVENT tme)
         {
             return _TrackMouseEvent(tme);
         }
 
-
         #region User32
+
         #region public Enums
+
         #region enum indices
+
         public enum indices
         {
             GWL_USERDATA = -21,
@@ -396,8 +423,11 @@ namespace TESVSnip.Windows.Controls
             instance = GWL_HINSTANCE,
             wndProc = GWL_WNDPROC,
         }
+
         #endregion
+
         #region styles
+
         public enum styles : uint
         {
             WS_OVERLAPPED = 0x00000000,
@@ -428,7 +458,7 @@ namespace TESVSnip.Windows.Controls
 
             // Common Window Styles
             WS_OVERLAPPEDWINDOW = WS_OVERLAPPED | WS_CAPTION | WS_SYSMENU |
-                WS_THICKFRAME | WS_MINIMIZEBOX | WS_MAXIMIZEBOX,
+                                  WS_THICKFRAME | WS_MINIMIZEBOX | WS_MAXIMIZEBOX,
             WS_POPUPWINDOW = WS_POPUP | WS_BORDER | WS_SYSMENU,
             WS_CHILDWINDOW = WS_CHILD,
 
@@ -463,8 +493,11 @@ namespace TESVSnip.Windows.Controls
             popupWindow = WS_POPUPWINDOW,
             childWindow = WS_CHILDWINDOW,
         }
+
         #endregion
+
         #region exStyles
+
         public enum exStyles : uint
         {
             WS_EX_LEFT = 0x00000000,
@@ -487,8 +520,9 @@ namespace TESVSnip.Windows.Controls
             WS_EX_STATICEDGE = 0x00020000,
             WS_EX_APPWINDOW = 0x00040000,
             WS_EX_OVERLAPPEDWINDOW = WS_EX_WINDOWEDGE | WS_EX_CLIENTEDGE,
+
             WS_EX_PALETTEWINDOW = WS_EX_WINDOWEDGE | WS_EX_TOOLWINDOW |
-                WS_EX_TOPMOST,
+                                  WS_EX_TOPMOST,
             WS_EX_LAYERED = 0x00080000,
             WS_EX_NOINHERITLAYOUT = 0x00100000, // Disable inheritence of mirroring by children
             WS_EX_LAYOUTRTL = 0x00400000, // Right to left mirroring
@@ -525,11 +559,15 @@ namespace TESVSnip.Windows.Controls
             composited = WS_EX_COMPOSITED,
             noActivate = WS_EX_NOACTIVATE,
         }
+
         #endregion
+
         #region posFlags
+
         /*
 		* SetWindowPos Flags
 		*/
+
         public enum posFlags : uint
         {
             SWP_NOSIZE = 0x0001,
@@ -537,27 +575,33 @@ namespace TESVSnip.Windows.Controls
             SWP_NOZORDER = 0x0004,
             SWP_NOREDRAW = 0x0008,
             SWP_NOACTIVATE = 0x0010,
-            SWP_FRAMECHANGED = 0x0020,   /* The frame changed: send WM_NCCALCSIZE */
+            SWP_FRAMECHANGED = 0x0020, /* The frame changed: send WM_NCCALCSIZE */
             SWP_SHOWWINDOW = 0x0040,
             SWP_HIDEWINDOW = 0x0080,
             SWP_NOCOPYBITS = 0x0100,
-            SWP_NOOWNERZORDER = 0x0200,   /* Don't do owner Z ordering */
-            SWP_NOSENDCHANGING = 0x0400,   /* Don't send WM_WINDOWPOSCHANGING */
+            SWP_NOOWNERZORDER = 0x0200, /* Don't do owner Z ordering */
+            SWP_NOSENDCHANGING = 0x0400, /* Don't send WM_WINDOWPOSCHANGING */
             SWP_DRAWFRAME = SWP_FRAMECHANGED,
             SWP_NOREPOSITION = SWP_NOOWNERZORDER,
             SWP_DEFERERASE = 0x2000,
             SWP_ASYNCWINDOWPOS = 0x4000,
         }
+
         #endregion
+
         #region Messages
-        public enum Messages : int
+
+        public enum Messages
         {
             WM_DRAWCLIPBOARD = 0x308,
             WM_CHANGECBCHAIN = 0x30D,
         }
+
         #endregion
+
         #region SysColor
-        public enum SysColor : int
+
+        public enum SysColor
         {
             COLOR_SCROLLBAR = 0,
             COLOR_BACKGROUND = 1,
@@ -596,27 +640,35 @@ namespace TESVSnip.Windows.Controls
             COLOR_3DHILIGHT = COLOR_BTNHIGHLIGHT,
             COLOR_BTNHILIGHT = COLOR_BTNHIGHLIGHT,
         }
+
         #endregion
+
         #region MonitorInfoFlags
+
         [Flags]
         public enum MonitorInfoFlags
         {
             None = 0,
             Primary = 1,
         }
+
         #endregion
 
         #region enum MonitorDefaultTo
+
         public enum MonitorDefaultTo
         {
             Null = 0x00000000,
             Primary = 0x00000001,
             Nearest = 0x00000002,
         }
+
         #endregion
+
         #endregion
 
         #region public Structs
+
         [StructLayout(LayoutKind.Sequential)]
         public struct MONITORINFO
         {
@@ -625,31 +677,42 @@ namespace TESVSnip.Windows.Controls
             public Rectangle rcWork;
             public MonitorInfoFlags dwFlags;
         }
+
         #endregion
 
         [DllImport("USER32.DLL")]
         public static extern int SetParent(IntPtr hWndChild, IntPtr hWndNewParent);
+
         [DllImport("USER32.DLL")]
         public static extern bool IsWindow(IntPtr hWnd);
+
         [DllImport("USER32.DLL")]
-        public static extern bool SetWindowPos(IntPtr hWnd, IntPtr hWndNext, int X, int Y, int cx, int cy, posFlags uFlags);
+        public static extern bool SetWindowPos(IntPtr hWnd, IntPtr hWndNext, int X, int Y, int cx, int cy,
+                                               posFlags uFlags);
+
         [DllImport("USER32.DLL")]
         public static extern uint GetWindowLong(IntPtr hWnd, indices nIndex);
+
         [DllImport("USER32.DLL")]
         public static extern uint SetWindowLong(IntPtr hWnd, indices nIndex, uint val);
 
         #region HasStyle
+
         public static bool HasStyle(IntPtr hWnd, styles styleVal)
         {
             uint dwStyle = GetWindowLong(hWnd, indices.GWL_STYLE);
-            return (((uint)styleVal & dwStyle) == (uint)styleVal) ? true : false;
+            return (((uint) styleVal & dwStyle) == (uint) styleVal) ? true : false;
         }
+
         public static bool IsDisabled(IntPtr hWnd)
         {
             return HasStyle(hWnd, styles.disabled);
         }
+
         #endregion
+
         #region ModifyStyle
+
         public static bool ModifyStyle(IntPtr hWnd, styles dwRemove, styles dwAdd)
         {
             return ModifyStyle(hWnd, dwRemove, dwAdd, 0);
@@ -659,7 +722,7 @@ namespace TESVSnip.Windows.Controls
         {
             Trace.Assert(IsWindow(hWnd));
             uint dwStyle = GetWindowLong(hWnd, indices.GWL_STYLE);
-            uint dwNewStyle = (dwStyle & ~(uint)dwRemove) | (uint)dwAdd;
+            uint dwNewStyle = (dwStyle & ~(uint) dwRemove) | (uint) dwAdd;
             if (dwStyle == dwNewStyle)
                 return false;
 
@@ -667,8 +730,8 @@ namespace TESVSnip.Windows.Controls
             if (nFlags != 0)
             {
                 SetWindowPos(hWnd, IntPtr.Zero, 0, 0, 0, 0,
-                    posFlags.SWP_NOSIZE | posFlags.SWP_NOMOVE |
-                    posFlags.SWP_NOZORDER | posFlags.SWP_NOACTIVATE | (posFlags)nFlags);
+                             posFlags.SWP_NOSIZE | posFlags.SWP_NOMOVE |
+                             posFlags.SWP_NOZORDER | posFlags.SWP_NOACTIVATE | (posFlags) nFlags);
             }
             return true;
         }
@@ -677,11 +740,12 @@ namespace TESVSnip.Windows.Controls
         {
             return ModifyStyleEx(hWnd, dwRemove, dwAdd, 0);
         }
+
         public static bool ModifyStyleEx(IntPtr hWnd, exStyles dwRemove, exStyles dwAdd, uint nFlags)
         {
             Trace.Assert(IsWindow(hWnd));
             uint dwStyle = GetWindowLong(hWnd, indices.GWL_EXSTYLE);
-            uint dwNewStyle = (dwStyle & ~(uint)dwRemove) | (uint)dwAdd;
+            uint dwNewStyle = (dwStyle & ~(uint) dwRemove) | (uint) dwAdd;
             if (dwStyle == dwNewStyle)
                 return false;
 
@@ -689,15 +753,16 @@ namespace TESVSnip.Windows.Controls
             if (nFlags != 0)
             {
                 SetWindowPos(hWnd, IntPtr.Zero, 0, 0, 0, 0,
-                    posFlags.SWP_NOSIZE | posFlags.SWP_NOMOVE |
-                    posFlags.SWP_NOZORDER | posFlags.SWP_NOACTIVATE | (posFlags)nFlags);
+                             posFlags.SWP_NOSIZE | posFlags.SWP_NOMOVE |
+                             posFlags.SWP_NOZORDER | posFlags.SWP_NOACTIVATE | (posFlags) nFlags);
             }
             return true;
         }
+
         #endregion
 
         [DllImport("USER32.DLL")]
-        public static extern IntPtr WindowFromPoint(System.Drawing.Point pt);
+        public static extern IntPtr WindowFromPoint(Point pt);
 
         [DllImport("USER32.DLL")]
         public static extern bool IsChild(IntPtr hWndParent, IntPtr hWnd);
@@ -711,25 +776,26 @@ namespace TESVSnip.Windows.Controls
         private static extern uint GetWindowThreadProcessId(int hWnd, out int ProcessId);
 
         [DllImport("user32")]
-        static extern int GetClassName(int hWnd, [Out] System.Text.StringBuilder lpClassName, int nMaxCount);
+        private static extern int GetClassName(int hWnd, [Out] StringBuilder lpClassName, int nMaxCount);
 
         /// <summary>Workspace static functions for calling enum.  Use a lock to prevent </summary>
         private static IntPtr wrkspc_hwnd;
+
         private static string wrkspc_classid;
 
         public static IntPtr FindMainWindow(int processid, string classname)
         {
             IntPtr retval = IntPtr.Zero;
-            lock (typeof(NativeMethods))
+            lock (typeof (NativeMethods))
             {
                 wrkspc_classid = classname;
-                wrkspc_hwnd = Marshal.AllocHGlobal(Marshal.SizeOf(typeof(uint)));
+                wrkspc_hwnd = Marshal.AllocHGlobal(Marshal.SizeOf(typeof (uint)));
                 try
                 {
-                    EnumWindowsProc myCallBack = new EnumWindowsProc(FindTopWindowByProcessId);
+                    EnumWindowsProc myCallBack = FindTopWindowByProcessId;
                     EnumWindows(myCallBack, processid);
 
-                    int hwnd = (int)Marshal.PtrToStructure(wrkspc_hwnd, typeof(int));
+                    var hwnd = (int) Marshal.PtrToStructure(wrkspc_hwnd, typeof (int));
                     retval = new IntPtr(hwnd);
                 }
                 finally
@@ -744,6 +810,7 @@ namespace TESVSnip.Windows.Controls
             }
             return retval;
         }
+
         private static bool FindTopWindowByProcessId(int hwnd, int lParam)
         {
             try
@@ -752,7 +819,7 @@ namespace TESVSnip.Windows.Controls
                 GetWindowThreadProcessId(hwnd, out procid);
                 if (procid == lParam)
                 {
-                    System.Text.StringBuilder sb = new System.Text.StringBuilder(64);
+                    var sb = new StringBuilder(64);
                     GetClassName(hwnd, sb, 64);
                     string sClass = sb.ToString();
                     if (string.Compare(sClass, wrkspc_classid, true) == 0)
@@ -762,16 +829,18 @@ namespace TESVSnip.Windows.Controls
                     }
                 }
             }
-            catch { }
+            catch
+            {
+            }
 
             return true;
         }
 
         [DllImport("user32.dll")]
-        extern public static bool GetClientRect(int hWnd, out System.Drawing.Rectangle lpRect);
+        public static extern bool GetClientRect(int hWnd, out Rectangle lpRect);
 
         [DllImport("user32.dll")]
-        extern public static bool GetWindowRect(int hWnd, out System.Drawing.Rectangle lpRect);
+        public static extern bool GetWindowRect(int hWnd, out Rectangle lpRect);
 
         /// <summary>
         /// The LockWindowUpdate function disables or enables drawing in the specified window. Only one window can be locked at a time.
@@ -779,13 +848,13 @@ namespace TESVSnip.Windows.Controls
         /// <param name="hwnd">Specifies the window in which drawing will be disabled. If this parameter is NULL, drawing in the locked window is enabled. </param>
         /// <returns>If the function succeeds, the return value is nonzero.</returns>
         [DllImport("user32.dll", SetLastError = true)]
-        extern public static bool LockWindowUpdate(IntPtr hwnd);
+        public static extern bool LockWindowUpdate(IntPtr hwnd);
 
         [DllImport("user32.dll", SetLastError = true)]
-        extern public static IntPtr SendMessage(IntPtr hWnd, uint Msg, UIntPtr wParam, IntPtr lParam);
+        public static extern IntPtr SendMessage(IntPtr hWnd, uint Msg, UIntPtr wParam, IntPtr lParam);
 
         [DllImport("user32.dll", SetLastError = true)]
-        extern public static IntPtr SendMessage(IntPtr hWnd, uint Msg, IntPtr wParam, IntPtr lParam);
+        public static extern IntPtr SendMessage(IntPtr hWnd, uint Msg, IntPtr wParam, IntPtr lParam);
 
         [DllImport("user32.dll", CharSet = CharSet.Auto, ExactSpelling = true)]
         public static extern IntPtr SetFocus(IntPtr hWnd);
@@ -801,6 +870,7 @@ namespace TESVSnip.Windows.Controls
             Lock = 1,
             Unlock = 2,
         }
+
         [DllImport("user32.dll", CharSet = CharSet.Auto, ExactSpelling = true)]
         public static extern bool LockSetForegroundWindow(LockSetForegroundWindowFlags lockCode);
 
@@ -811,16 +881,16 @@ namespace TESVSnip.Windows.Controls
 
         public static Color GetSysColor(SysColor color)
         {
-            return FromRGB(GetSysColor((int)color));
+            return FromRGB(GetSysColor((int) color));
         }
 
-        [DllImport("user32.dll", CharSet = System.Runtime.InteropServices.CharSet.Auto)]
-        static extern int GetSysColor(int nIndex);
+        [DllImport("user32.dll", CharSet = CharSet.Auto)]
+        private static extern int GetSysColor(int nIndex);
 
         private static uint ToRGB(Color color)
         {
             // Format the value of color - 0x00bbggrr
-            return ((uint)(((uint)(color.R) | ((uint)(color.G) << 8)) | (((uint)(color.B)) << 16)));
+            return ((((color.R) | ((uint) (color.G) << 8)) | (((uint) (color.B)) << 16)));
         }
 
         private static Color FromRGB(int color)
@@ -829,16 +899,17 @@ namespace TESVSnip.Windows.Controls
         }
 
         [DllImport("user32.dll")]
-        public static extern short GetAsyncKeyState(System.Windows.Forms.Keys vKey);
+        public static extern short GetAsyncKeyState(Keys vKey);
 
         #region Clipboard Functions
+
         /// <summary>
         /// The SetClipboardViewer function adds the specified window to the chain of clipboard viewers. Clipboard viewer windows receive a WM_DRAWCLIPBOARD message whenever the content of the clipboard changes. 
         /// </summary>
         /// <param name="hWndNewViewer">Handle to the window to be added to the clipboard chain. </param>
         /// <returns>If the function succeeds, the return value identifies the next window in the clipboard viewer chain. If an error occurs or there are no other windows in the clipboard viewer chain, the return value is NULL. To get extended error information, call GetLastError. </returns>
         [DllImport("user32.dll", SetLastError = true)]
-        extern public static IntPtr SetClipboardViewer(IntPtr hWndNewViewer);
+        public static extern IntPtr SetClipboardViewer(IntPtr hWndNewViewer);
 
         /// <summary>
         /// The ChangeClipboardChain function removes a specified window from the chain of clipboard viewers. 
@@ -847,48 +918,49 @@ namespace TESVSnip.Windows.Controls
         /// <param name="hWndRemove">Handle to the window that follows the hWndRemove window in the clipboard viewer chain. (This is the handle returned by SetClipboardViewer, unless the sequence was changed in response to a WM_CHANGECBCHAIN message.)</param>
         /// <returns>The return value indicates the result of passing the WM_CHANGECBCHAIN message to the windows in the clipboard viewer chain. Because a window in the chain typically returns FALSE when it processes WM_CHANGECBCHAIN, the return value from ChangeClipboardChain is typically FALSE. If there is only one window in the chain, the return value is typically TRUE.</returns>
         [DllImport("user32.dll")]
-        extern public static int ChangeClipboardChain(IntPtr hWndRemove, IntPtr hWndNewNext);
+        public static extern int ChangeClipboardChain(IntPtr hWndRemove, IntPtr hWndNewNext);
 
         [DllImport("user32.dll")]
-        extern public static bool CloseClipboard();
+        public static extern bool CloseClipboard();
 
         [DllImport("user32.dll")]
-        extern public static bool OpenClipboard(IntPtr hWndNewOwner);
+        public static extern bool OpenClipboard(IntPtr hWndNewOwner);
 
         [DllImport("user32.dll")]
-        extern public static bool IsClipboardFormatAvailable(uint format);
+        public static extern bool IsClipboardFormatAvailable(uint format);
 
         [DllImport("user32.dll")]
-        extern public static int GetPriorityClipboardFormat(uint[] paFormatPriorityList, int cFormats);
+        public static extern int GetPriorityClipboardFormat(uint[] paFormatPriorityList, int cFormats);
 
         [DllImport("user32.dll")]
-        extern public static uint RegisterClipboardFormat(string lpszFormat);
+        public static extern uint RegisterClipboardFormat(string lpszFormat);
 
         [DllImport("user32.dll")]
-        extern public static int GetClipboardFormatName(uint format, [Out] System.Text.StringBuilder lpszFormatName, int nMaxCount);
+        public static extern int GetClipboardFormatName(uint format, [Out] StringBuilder lpszFormatName, int nMaxCount);
 
         [DllImport("user32.dll")]
-        extern public static int SetClipboardData(uint format, IntPtr hMem);
-        
-        [DllImport("user32.dll")]
-        extern public static IntPtr GetClipboardData(uint format);
+        public static extern int SetClipboardData(uint format, IntPtr hMem);
 
         [DllImport("user32.dll")]
-        extern public static bool EmptyClipboard();
+        public static extern IntPtr GetClipboardData(uint format);
+
+        [DllImport("user32.dll")]
+        public static extern bool EmptyClipboard();
 
         #endregion
 
         [DllImport("kernel32.dll")]
-        static public extern int GlobalSize(IntPtr hMem);
+        public static extern int GlobalSize(IntPtr hMem);
 
         [DllImport("user32.dll")]
-        static extern IntPtr MonitorFromPoint(Point pt, MonitorDefaultTo dwFlags);
+        private static extern IntPtr MonitorFromPoint(Point pt, MonitorDefaultTo dwFlags);
 
         [DllImport("user32.dll")]
-        static extern bool GetMonitorInfo(IntPtr hMonitor, ref MONITORINFO lpmi);
+        private static extern bool GetMonitorInfo(IntPtr hMonitor, ref MONITORINFO lpmi);
 
         #region FitRectOnDesktop
-        public static bool FitRectOnDesktop(ref System.Drawing.Rectangle rect)
+
+        public static bool FitRectOnDesktop(ref Rectangle rect)
         {
             bool modified = false;
             try
@@ -897,8 +969,8 @@ namespace TESVSnip.Windows.Controls
                 Size sz = rect.Size;
 
                 IntPtr hMonitor = MonitorFromPoint(pt, MonitorDefaultTo.Primary);
-                MONITORINFO mi = new MONITORINFO();
-                mi.cbSize = Marshal.SizeOf(typeof(MONITORINFO));
+                var mi = new MONITORINFO();
+                mi.cbSize = Marshal.SizeOf(typeof (MONITORINFO));
                 if (GetMonitorInfo(hMonitor, ref mi))
                 {
                     Rectangle rcWork = mi.rcWork;
@@ -928,20 +1000,22 @@ namespace TESVSnip.Windows.Controls
             }
             return modified;
         }
-        #endregion
+
         #endregion
 
-        const int FACILITY_WINDOWS = 8;
-        const int FACILITY_STORAGE = 3;
-        const int FACILITY_RPC = 1;
-        const int FACILITY_SSPI = 9;
-        const int FACILITY_WIN32 = 7;
-        const int FACILITY_CONTROL = 10;
-        const int FACILITY_NULL = 0;
-        const int FACILITY_ITF = 4;
-        const int FACILITY_DISPATCH = 2;
+        #endregion
 
-        public static int HRESULT_FACILITY(int hr)     
+        private const int FACILITY_WINDOWS = 8;
+        private const int FACILITY_STORAGE = 3;
+        private const int FACILITY_RPC = 1;
+        private const int FACILITY_SSPI = 9;
+        private const int FACILITY_WIN32 = 7;
+        private const int FACILITY_CONTROL = 10;
+        private const int FACILITY_NULL = 0;
+        private const int FACILITY_ITF = 4;
+        private const int FACILITY_DISPATCH = 2;
+
+        public static int HRESULT_FACILITY(int hr)
         {
             return (((hr) >> 16) & 0x1fff);
         }
@@ -950,6 +1024,7 @@ namespace TESVSnip.Windows.Controls
         {
             return ((hr) & 0xFFFF);
         }
+
         public static int HRESULT_SEVERITY(int hr)
         {
             return (((hr) >> 31) & 0x1);
@@ -960,5 +1035,6 @@ namespace TESVSnip.Windows.Controls
             return (((hr) >> 30) & 0x1);
         }
     }
+
     #endregion
 }

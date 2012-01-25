@@ -1,13 +1,8 @@
-﻿
-
-
- 
+﻿using System;
+using System.Collections.Generic;
 
 namespace RTF
 {
-    using System;
-    using System.Collections.Generic;
-
     // ----------------------------------------------------------------------------------------
     //    _                ___        _..-._   Date: 12/11/08    23:33
     //    \`.|\..----...-'`   `-._.-'' _.-..'     
@@ -27,4 +22,3 @@ namespace RTF
     {
     }
 }
-

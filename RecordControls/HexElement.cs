@@ -1,30 +1,26 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Drawing;
-using System.Data;
 using System.Globalization;
-using System.Linq;
-using System.Text;
+using System.IO;
 using System.Windows.Forms;
+using Be.Windows.Forms;
 
 namespace TESVSnip.RecordControls
 {
-    partial class HexElement : BaseElement
+    internal partial class HexElement : BaseElement
     {
-        private Be.Windows.Forms.DynamicByteProvider dbytes;
-        private Be.Windows.Forms.ByteCollection bytes;
+        private readonly DynamicByteProvider dbytes;
+        private readonly ByteCollection bytes;
 
         public HexElement()
         {
             InitializeComponent();
-            dbytes = new Be.Windows.Forms.DynamicByteProvider(new byte[0]);
+            dbytes = new DynamicByteProvider(new byte[0]);
             bytes = dbytes.Bytes;
             hexBox1.ByteProvider = dbytes;
             dbytes.LengthChanged += dbytes_LengthChanged;
             dbytes.Changed += dbytes_Changed;
         }
-        
+
         protected override void SetCurrentData(ArraySegment<byte> value)
         {
             try
@@ -55,14 +51,14 @@ namespace TESVSnip.RecordControls
             }
         }
 
-        void dbytes_Changed(object sender, EventArgs e)
+        private void dbytes_Changed(object sender, EventArgs e)
         {
-            this.Data = new ArraySegment<byte>(dbytes.Bytes.GetBytes());
+            Data = new ArraySegment<byte>(dbytes.Bytes.GetBytes());
         }
 
-        void dbytes_LengthChanged(object sender, EventArgs e)
+        private void dbytes_LengthChanged(object sender, EventArgs e)
         {
-            this.Data = new ArraySegment<byte>(dbytes.Bytes.GetBytes());
+            Data = new ArraySegment<byte>(dbytes.Bytes.GetBytes());
         }
 
         private void cbInsert_CheckedChanged(object sender, EventArgs e)
@@ -72,12 +68,13 @@ namespace TESVSnip.RecordControls
 
         private void tbName_KeyPress(object sender, KeyPressEventArgs e)
         {
-            if (!char.IsControl(e.KeyChar) && !char.IsDigit(e.KeyChar) && !char.IsLetter(e.KeyChar) && e.KeyChar != '_') e.Handled = true;
+            if (!char.IsControl(e.KeyChar) && !char.IsDigit(e.KeyChar) && !char.IsLetter(e.KeyChar) && e.KeyChar != '_')
+                e.Handled = true;
         }
 
         private void hexBox1_SelectionStartChanged(object sender, EventArgs e)
         {
-            int pos = (int)hexBox1.SelectionStart;
+            var pos = (int) hexBox1.SelectionStart;
             if (bytes.Count >= pos + 4)
             {
                 tbFloat.Text = TypeConverter.h2f(bytes[pos], bytes[pos + 1], bytes[pos + 2], bytes[pos + 3]).ToString();
@@ -86,7 +83,8 @@ namespace TESVSnip.RecordControls
                 tbInt.Enabled = true;
                 bCFloat.Enabled = true;
                 bCInt.Enabled = true;
-                tbFormID.Text = TypeConverter.h2i(bytes[pos], bytes[pos + 1], bytes[pos + 2], bytes[pos + 3]).ToString("X8");
+                tbFormID.Text =
+                    TypeConverter.h2i(bytes[pos], bytes[pos + 1], bytes[pos + 2], bytes[pos + 3]).ToString("X8");
                 tbFormID.Enabled = true;
                 bCFormID.Enabled = true;
                 bLookup.Enabled = true;
@@ -123,7 +121,7 @@ namespace TESVSnip.RecordControls
                 return;
             }
             byte[] b = TypeConverter.f2h(f);
-            int pos = (int)hexBox1.SelectionStart;
+            var pos = (int) hexBox1.SelectionStart;
             bytes[pos + 0] = b[0];
             bytes[pos + 1] = b[1];
             bytes[pos + 2] = b[2];
@@ -140,13 +138,12 @@ namespace TESVSnip.RecordControls
                 return;
             }
             byte[] b = TypeConverter.si2h(i);
-            int pos = (int)hexBox1.SelectionStart;
+            var pos = (int) hexBox1.SelectionStart;
             bytes[pos + 0] = b[0];
             bytes[pos + 1] = b[1];
             bytes[pos + 2] = b[2];
             bytes[pos + 3] = b[3];
             hexBox1.Refresh();
-
         }
 
         private void bCShort_Click(object sender, EventArgs e)
@@ -158,12 +155,12 @@ namespace TESVSnip.RecordControls
                 return;
             }
             byte[] b = TypeConverter.ss2h(s);
-            int pos = (int)hexBox1.SelectionStart;
+            var pos = (int) hexBox1.SelectionStart;
             bytes[pos + 0] = b[0];
             bytes[pos + 1] = b[1];
             hexBox1.Refresh();
         }
-        
+
         private void hexBox1_InsertActiveChanged(object sender, EventArgs e)
         {
             if (cbInsert.Checked != hexBox1.InsertActive) cbInsert.Checked = hexBox1.InsertActive;
@@ -172,13 +169,13 @@ namespace TESVSnip.RecordControls
         private void bCFormID_Click(object sender, EventArgs e)
         {
             uint i;
-            if (!uint.TryParse(tbFormID.Text, System.Globalization.NumberStyles.AllowHexSpecifier, null, out i))
+            if (!uint.TryParse(tbFormID.Text, NumberStyles.AllowHexSpecifier, null, out i))
             {
                 MainView.PostStatusWarning("Invalid form ID");
                 return;
             }
             byte[] b = TypeConverter.i2h(i);
-            int pos = (int)hexBox1.SelectionStart;
+            var pos = (int) hexBox1.SelectionStart;
             bytes[pos + 0] = b[0];
             bytes[pos + 1] = b[1];
             bytes[pos + 2] = b[2];
@@ -200,7 +197,7 @@ namespace TESVSnip.RecordControls
         private void bFromFile_Click(object sender, EventArgs e)
         {
             if (openFileDialog1.ShowDialog() != DialogResult.OK) return;
-            byte[] newdata = System.IO.File.ReadAllBytes(openFileDialog1.FileName);
+            byte[] newdata = File.ReadAllBytes(openFileDialog1.FileName);
             bytes.Clear();
             bytes.AddRange(newdata);
             hexBox1.Refresh();
@@ -208,7 +205,6 @@ namespace TESVSnip.RecordControls
 
         private void HexElement_Load(object sender, EventArgs e)
         {
-
         }
     }
 }

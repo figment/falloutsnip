@@ -34,7 +34,6 @@
  * If you wish to use this code in a closed source application, please contact phillip_piper@bigfoot.com.
  */
 
-using System;
 using System.ComponentModel;
 using System.Drawing;
 using System.Windows.Forms;
@@ -71,315 +70,223 @@ namespace BrightIdeasSoftware
     /// Instances of this class specify how should "hot items" (non-selected
     /// rows under the cursor) be renderered.
     /// </summary>
-    public class HotItemStyle : System.ComponentModel.Component, IItemStyle
+    public class HotItemStyle : Component, IItemStyle
     {
         /// <summary>
         /// Gets or sets the font that will be applied by this style
         /// </summary>
         [DefaultValue(null)]
-        public Font Font {
-            get { return this.font; }
-            set { this.font = value; }
-        }
-        private Font font;
+        public Font Font { get; set; }
 
         /// <summary>
         /// Gets or sets the style of font that will be applied by this style
         /// </summary>
         [DefaultValue(FontStyle.Regular)]
-        public FontStyle FontStyle {
-            get { return this.fontStyle; }
-            set { this.fontStyle = value; }
-        }
-        private FontStyle fontStyle;
+        public FontStyle FontStyle { get; set; }
 
         /// <summary>
         /// Gets or sets the color of the text that will be applied by this style
         /// </summary>
-        [DefaultValue(typeof(Color), "")]
-        public Color ForeColor {
-            get { return this.foreColor; }
-            set { this.foreColor = value; }
-        }
-        private Color foreColor;
+        [DefaultValue(typeof (Color), "")]
+        public Color ForeColor { get; set; }
 
         /// <summary>
         /// Gets or sets the background color that will be applied by this style
         /// </summary>
-        [DefaultValue(typeof(Color), "")]
-        public Color BackColor {
-            get { return this.backColor; }
-            set { this.backColor = value; }
-        }
-        private Color backColor;
+        [DefaultValue(typeof (Color), "")]
+        public Color BackColor { get; set; }
 
         /// <summary>
         /// Gets or sets the overlay that should be drawn as part of the hot item
         /// </summary>
-        [Browsable(false),
-         DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
-        public IOverlay Overlay {
-            get { return this.overlay; }
-            set { this.overlay = value; }
-        }
-        private IOverlay overlay;
+        [Browsable(false), DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+        public IOverlay Overlay { get; set; }
 
         /// <summary>
         /// Gets or sets the decoration that should be drawn as part of the hot item
         /// </summary>
         /// <remarks>A decoration is different from an overlay in that an decoration
         /// scrolls with the listview contents, whilst an overlay does not.</remarks>
-        [Browsable(false),
-         DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
-        public IDecoration Decoration {
-            get { return this.decoration; }
-            set { this.decoration = value; }
-        }
-        private IDecoration decoration;
+        [Browsable(false), DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+        public IDecoration Decoration { get; set; }
     }
 
     /// <summary>
     /// This class defines how a cell should be formatted
     /// </summary>
-    [TypeConverter(typeof(ExpandableObjectConverter))]
+    [TypeConverter(typeof (ExpandableObjectConverter))]
     public class CellStyle : IItemStyle
     {
         /// <summary>
         /// Gets or sets the font that will be applied by this style
         /// </summary>
-        public Font Font {
-            get { return this.font; }
-            set { this.font = value; }
-        }
-        private Font font;
+        public Font Font { get; set; }
 
         /// <summary>
         /// Gets or sets the style of font that will be applied by this style
         /// </summary>
         [DefaultValue(FontStyle.Regular)]
-        public FontStyle FontStyle {
-            get { return this.fontStyle; }
-            set { this.fontStyle = value; }
-        }
-        private FontStyle fontStyle;
+        public FontStyle FontStyle { get; set; }
 
         /// <summary>
         /// Gets or sets the color of the text that will be applied by this style
         /// </summary>
-        [DefaultValue(typeof(Color), "")]
-        public Color ForeColor {
-            get { return this.foreColor; }
-            set { this.foreColor = value; }
-        }
-        private Color foreColor;
+        [DefaultValue(typeof (Color), "")]
+        public Color ForeColor { get; set; }
 
         /// <summary>
         /// Gets or sets the background color that will be applied by this style
         /// </summary>
-        [DefaultValue(typeof(Color), "")]
-        public Color BackColor {
-            get { return this.backColor; }
-            set { this.backColor = value; }
-        }
-        private Color backColor;
+        [DefaultValue(typeof (Color), "")]
+        public Color BackColor { get; set; }
     }
 
     /// <summary>
     /// Instances of this class describe how hyperlinks will appear
     /// </summary>
-    public class HyperlinkStyle : System.ComponentModel.Component
+    public class HyperlinkStyle : Component
     {
         /// <summary>
         /// Create a HyperlinkStyle
         /// </summary>
-        public HyperlinkStyle() {
-            this.Normal = new CellStyle();
-            this.Normal.ForeColor = Color.Blue;
-            this.Over = new CellStyle();
-            this.Over.FontStyle = FontStyle.Underline;
-            this.Visited = new CellStyle();
-            this.Visited.ForeColor = Color.Purple;
-            this.OverCursor = Cursors.Hand;
+        public HyperlinkStyle()
+        {
+            Normal = new CellStyle();
+            Normal.ForeColor = Color.Blue;
+            Over = new CellStyle();
+            Over.FontStyle = FontStyle.Underline;
+            Visited = new CellStyle();
+            Visited.ForeColor = Color.Purple;
+            OverCursor = Cursors.Hand;
         }
 
         /// <summary>
         /// What sort of formatting should be applied to hyperlinks in their normal state?
         /// </summary>
-        [Category("Appearance"),
-         Description("How should hyperlinks be drawn")]
-        public CellStyle Normal {
-            get { return this.normalStyle; }
-            set { this.normalStyle = value; }
-        }
-        private CellStyle normalStyle;
+        [Category("Appearance"), Description("How should hyperlinks be drawn")]
+        public CellStyle Normal { get; set; }
 
         /// <summary>
         /// What sort of formatting should be applied to hyperlinks when the mouse is over them?
         /// </summary>
-        [Category("Appearance"),
-         Description("How should hyperlinks be drawn when the mouse is over them?")]
-        public CellStyle Over {
-            get { return this.overStyle; }
-            set { this.overStyle = value; }
-        }
-        private CellStyle overStyle;
+        [Category("Appearance"), Description("How should hyperlinks be drawn when the mouse is over them?")]
+        public CellStyle Over { get; set; }
 
         /// <summary>
         /// What sort of formatting should be applied to hyperlinks after they have been clicked?
         /// </summary>
-        [Category("Appearance"),
-         Description("How should hyperlinks be drawn after they have been clicked")]
-        public CellStyle Visited {
-            get { return this.visitedStyle; }
-            set { this.visitedStyle = value; }
-        }
-        private CellStyle visitedStyle;
+        [Category("Appearance"), Description("How should hyperlinks be drawn after they have been clicked")]
+        public CellStyle Visited { get; set; }
 
         /// <summary>
         /// Gets or sets the cursor that should be shown when the mouse is over a hyperlink.
         /// </summary>
-        [Category("Appearance"),
-         Description("What cursor should be shown when the mouse is over a link?")]
-        public Cursor OverCursor {
-            get { return this.overCursor; }
-            set { this.overCursor = value; }
-        }
-        private Cursor overCursor;
+        [Category("Appearance"), Description("What cursor should be shown when the mouse is over a link?")]
+        public Cursor OverCursor { get; set; }
     }
 
     /// <summary>
     /// Instances of this class control one the styling of one particular state
     /// (normal, hot, pressed) of a header control
     /// </summary>
-    [TypeConverter(typeof(ExpandableObjectConverter))]
+    [TypeConverter(typeof (ExpandableObjectConverter))]
     public class HeaderStateStyle
     {
         /// <summary>
         /// Gets or sets the font that will be applied by this style
         /// </summary>
         [DefaultValue(null)]
-        public Font Font {
-            get { return this.font; }
-            set { this.font = value; }
-        }
-        private Font font;
+        public Font Font { get; set; }
 
         /// <summary>
         /// Gets or sets the color of the text that will be applied by this style
         /// </summary>
-        [DefaultValue(typeof(Color), "")]
-        public Color ForeColor {
-            get { return this.foreColor; }
-            set { this.foreColor = value; }
-        }
-        private Color foreColor;
+        [DefaultValue(typeof (Color), "")]
+        public Color ForeColor { get; set; }
 
         /// <summary>
         /// Gets or sets the background color that will be applied by this style
         /// </summary>
-        [DefaultValue(typeof(Color), "")]
-        public Color BackColor {
-            get { return this.backColor; }
-            set { this.backColor = value; }
-        }
-        private Color backColor;
+        [DefaultValue(typeof (Color), "")]
+        public Color BackColor { get; set; }
 
         /// <summary>
         /// Gets or sets the color in which a frame will be drawn around the header for this column
         /// </summary>
-        [DefaultValue(typeof(Color), "")]
-        public Color FrameColor {
-            get { return this.frameColor; }
-            set { this.frameColor = value; }
-        }
-        private Color frameColor;
+        [DefaultValue(typeof (Color), "")]
+        public Color FrameColor { get; set; }
 
         /// <summary>
         /// Gets or sets the width of the frame that will be drawn around the header for this column
         /// </summary>
         [DefaultValue(0.0f)]
-        public float FrameWidth {
-            get { return this.frameWidth; }
-            set { this.frameWidth = value; }
-        }
-        private float frameWidth;
+        public float FrameWidth { get; set; }
     }
 
     /// <summary>
     /// This class defines how a header should be formatted in its various states.
     /// </summary>
-    public class HeaderFormatStyle : System.ComponentModel.Component
+    public class HeaderFormatStyle : Component
     {
         /// <summary>
         /// Create a new HeaderFormatStyle
         /// </summary>
-        public HeaderFormatStyle() {
-            this.Hot = new HeaderStateStyle();
-            this.Normal = new HeaderStateStyle();
-            this.Pressed = new HeaderStateStyle();
+        public HeaderFormatStyle()
+        {
+            Hot = new HeaderStateStyle();
+            Normal = new HeaderStateStyle();
+            Pressed = new HeaderStateStyle();
         }
 
         /// <summary>
         /// What sort of formatting should be applied to a column header when the mouse is over it?
         /// </summary>
-        [Category("Appearance"),
-         Description("How should the header be drawn when the mouse is over it?")]
-        public HeaderStateStyle Hot {
-            get { return this.hotStyle; }
-            set { this.hotStyle = value; }
-        }
-        private HeaderStateStyle hotStyle;
+        [Category("Appearance"), Description("How should the header be drawn when the mouse is over it?")]
+        public HeaderStateStyle Hot { get; set; }
 
         /// <summary>
         /// What sort of formatting should be applied to a column header in its normal state?
         /// </summary>
-        [Category("Appearance"),
-         Description("How should a column header normally be drawn")]
-        public HeaderStateStyle Normal {
-            get { return this.normalStyle; }
-            set { this.normalStyle = value; }
-        }
-        private HeaderStateStyle normalStyle;
+        [Category("Appearance"), Description("How should a column header normally be drawn")]
+        public HeaderStateStyle Normal { get; set; }
 
         /// <summary>
         /// What sort of formatting should be applied to a column header when pressed?
         /// </summary>
-        [Category("Appearance"),
-         Description("How should a column header be drawn when it is pressed")]
-        public HeaderStateStyle Pressed {
-            get { return this.pressedStyle; }
-            set { this.pressedStyle = value; }
-        }
-        private HeaderStateStyle pressedStyle;
+        [Category("Appearance"), Description("How should a column header be drawn when it is pressed")]
+        public HeaderStateStyle Pressed { get; set; }
 
         /// <summary>
         /// Set the font for all three states
         /// </summary>
         /// <param name="font"></param>
-        public void SetFont(Font font) {
-            this.Normal.Font = font;
-            this.Hot.Font = font;
-            this.Pressed.Font = font;
+        public void SetFont(Font font)
+        {
+            Normal.Font = font;
+            Hot.Font = font;
+            Pressed.Font = font;
         }
 
         /// <summary>
         /// Set the fore color for all three states
         /// </summary>
         /// <param name="color"></param>
-        public void SetForeColor(Color color) {
-            this.Normal.ForeColor = color;
-            this.Hot.ForeColor = color;
-            this.Pressed.ForeColor = color;
+        public void SetForeColor(Color color)
+        {
+            Normal.ForeColor = color;
+            Hot.ForeColor = color;
+            Pressed.ForeColor = color;
         }
 
         /// <summary>
         /// Set the back color for all three states
         /// </summary>
         /// <param name="color"></param>
-        public void SetBackColor(Color color) {
-            this.Normal.BackColor = color;
-            this.Hot.BackColor = color;
-            this.Pressed.BackColor = color;
+        public void SetBackColor(Color color)
+        {
+            Normal.BackColor = color;
+            Hot.BackColor = color;
+            Pressed.BackColor = color;
         }
     }
 }

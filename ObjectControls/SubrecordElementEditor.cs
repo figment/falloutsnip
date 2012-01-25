@@ -1,11 +1,12 @@
 ﻿using System;
-using System.Windows.Forms;
 using System.Collections.Generic;
-using TESVSnip.Windows.Controls;
-using System.Linq;
-using TESVSnip.RecordControls;
-using TESVSnip.Collections.Generic;
 using System.Drawing;
+using System.IO;
+using System.Linq;
+using System.Runtime.InteropServices;
+using System.Windows.Forms;
+using TESVSnip.Collections.Generic;
+using TESVSnip.RecordControls;
 
 namespace TESVSnip.Forms
 {
@@ -15,8 +16,10 @@ namespace TESVSnip.Forms
         private SubRecord sr;
         private SubrecordStructure ss;
         private bool hexView;
-        private string strWarnOnSave = null;
-        OrderedDictionary<ElementStructure, IElementControl> controlMap = new OrderedDictionary<ElementStructure, IElementControl>();
+        private string strWarnOnSave;
+
+        private readonly OrderedDictionary<ElementStructure, IElementControl> controlMap =
+            new OrderedDictionary<ElementStructure, IElementControl>();
 
         public SubrecordEditor()
         {
@@ -34,8 +37,8 @@ namespace TESVSnip.Forms
             sr = null;
             ss = null;
             controlMap.Clear();
-            this.fpanel1.Controls.Clear();
-            this.Enabled = false;
+            fpanel1.Controls.Clear();
+            Enabled = false;
         }
 
         private Plugin GetPluginFromNode(BaseRecord node)
@@ -68,7 +71,7 @@ namespace TESVSnip.Forms
                 ClearControl();
                 SuspendLayout();
                 fpanel1.SuspendLayout();
-                fpanel1.Width = this.Parent.Width;
+                fpanel1.Width = Parent.Width;
                 controlMap.Clear();
 
                 this.hexView = hexView;
@@ -90,7 +93,7 @@ namespace TESVSnip.Forms
                     if (elem != null)
                     {
                         controlMap.Add(elem.Structure, c);
-                        this.fpanel1.Controls.Add(c);
+                        fpanel1.Controls.Add(c);
                         c.Data = elem.Data;
                     }
                 }
@@ -128,9 +131,9 @@ namespace TESVSnip.Forms
                         if (c is IElementControl)
                         {
                             var ec = c as IElementControl;
-                            ec.formIDLookup = new dFormIDLookupR(p.GetRecordByID);
-                            ec.formIDScan = new dFormIDScanRec(p.EnumerateRecords);
-                            ec.strIDLookup = new dLStringLookup(p.LookupFormStrings);
+                            ec.formIDLookup = p.GetRecordByID;
+                            ec.formIDScan = p.EnumerateRecords;
+                            ec.strIDLookup = p.LookupFormStrings;
                             ec.Element = elem;
 
                             if (elem.repeat > 0)
@@ -170,7 +173,7 @@ namespace TESVSnip.Forms
                             c.MinimumSize = c.Size;
 
                             controlMap.Add(elem, ec);
-                            this.fpanel1.Controls.Add(c);
+                            fpanel1.Controls.Add(c);
                             panelOffset = c.Bottom;
                         }
                     }
@@ -194,18 +197,19 @@ namespace TESVSnip.Forms
                         }
                     }
                 }
-                this.Enabled = true;
+                Enabled = true;
             }
             catch
             {
-                strWarnOnSave = "The subrecord doesn't appear to conform to the expected structure.\nThe formatted information may be incorrect.";
+                strWarnOnSave =
+                    "The subrecord doesn't appear to conform to the expected structure.\nThe formatted information may be incorrect.";
             }
             finally
             {
                 fpanel1.ResumeLayout();
                 ResumeLayout();
-                this.EndUpdate();
-                this.Refresh();
+                EndUpdate();
+                Refresh();
             }
         }
 
@@ -216,14 +220,17 @@ namespace TESVSnip.Forms
             // warn user about data corruption.  But this may be case of fixing using tesvsnip to fix corruption so still allow
             if (strWarnOnSave != null)
             {
-                if (DialogResult.Yes != MessageBox.Show(this, strWarnOnSave + "\n\nData maybe lost if saved. Do you want to continue saving?"
-                    , "Warning", MessageBoxButtons.YesNo, MessageBoxIcon.Warning, MessageBoxDefaultButton.Button2))
+                if (DialogResult.Yes !=
+                    MessageBox.Show(this,
+                                    strWarnOnSave + "\n\nData maybe lost if saved. Do you want to continue saving?"
+                                    , "Warning", MessageBoxButtons.YesNo, MessageBoxIcon.Warning,
+                                    MessageBoxDefaultButton.Button2))
                 {
                     return;
                 }
             }
 
-            using (var str = new System.IO.MemoryStream())
+            using (var str = new MemoryStream())
             {
                 foreach (KeyValuePair<ElementStructure, IElementControl> kvp in controlMap)
                 {
@@ -251,10 +258,10 @@ namespace TESVSnip.Forms
             }
         }
 
-        [System.Runtime.InteropServices.DllImportAttribute("msvcrt.dll")]
-        static extern int memcmp(byte[] b1, byte[] b2, long count);
+        [DllImport("msvcrt.dll")]
+        private static extern int memcmp(byte[] b1, byte[] b2, long count);
 
-        static bool ByteArrayCompare(byte[] b1, byte[] b2)
+        private static bool ByteArrayCompare(byte[] b1, byte[] b2)
         {
             // Validate buffers are the same length.
             // This also ensures that the count does not exceed the length of either buffer.  
@@ -266,7 +273,7 @@ namespace TESVSnip.Forms
             fpanel1.SuspendLayout();
             foreach (Control c in fpanel1.Controls)
             {
-                c.MinimumSize = new System.Drawing.Size(this.Width - c.Left - 30, c.MinimumSize.Height);
+                c.MinimumSize = new Size(Width - c.Left - 30, c.MinimumSize.Height);
             }
             fpanel1.ResumeLayout();
         }
@@ -298,9 +305,9 @@ namespace TESVSnip.Forms
                 c.Focus();
                 return true;
             }
-            foreach ( Control child in c.Controls)
+            foreach (Control child in c.Controls)
             {
-                if ( FocusFirstControl(child) )
+                if (FocusFirstControl(child))
                     return true;
             }
             return false;
@@ -308,15 +315,17 @@ namespace TESVSnip.Forms
 
         public void BeginUpdate()
         {
-            SendMessage(this.Handle, WM_SETREDRAW, (IntPtr)0, IntPtr.Zero);
+            SendMessage(Handle, WM_SETREDRAW, (IntPtr) 0, IntPtr.Zero);
         }
+
         public void EndUpdate()
         {
-            SendMessage(this.Handle, WM_SETREDRAW, (IntPtr)1, IntPtr.Zero);
+            SendMessage(Handle, WM_SETREDRAW, (IntPtr) 1, IntPtr.Zero);
         }
-        private const int WM_SETREDRAW = 0x0b;
-        [System.Runtime.InteropServices.DllImport("user32.dll", CharSet = System.Runtime.InteropServices.CharSet.Auto)]
-        private static extern IntPtr SendMessage(IntPtr hWnd, int msg, IntPtr wParam, IntPtr lParam);
 
+        private const int WM_SETREDRAW = 0x0b;
+
+        [DllImport("user32.dll", CharSet = CharSet.Auto)]
+        private static extern IntPtr SendMessage(IntPtr hWnd, int msg, IntPtr wParam, IntPtr lParam);
     }
 }

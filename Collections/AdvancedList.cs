@@ -1,25 +1,20 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
-using System.Text;
 using System.Runtime.Serialization;
 using TESVSnip.Data;
 
 namespace TESVSnip.Collections.Generic
 {
-
-    using System;
-    using System.Collections.Generic;
-    using System.ComponentModel;
-    using System.Collections;
-
     [Persistable(Flags = PersistType.DeclaredOnly), Serializable]
     public class AdvancedList<T> : BindingList<T>, IBindingListView, ISerializable, IPostSerializationCallback
     {
-        bool _allowSort = true;
+        private bool _allowSort = true;
+
         public AdvancedList()
         {
-
         }
 
         public AdvancedList(int capacity)
@@ -28,40 +23,41 @@ namespace TESVSnip.Collections.Generic
 
         public AdvancedList(IList<T> list) : base(list ?? new T[0])
         {
-
         }
 
-		/// <summary>
-		///	Deserialization constructor
-		/// </summary>
+        /// <summary>
+        ///	Deserialization constructor
+        /// </summary>
         protected AdvancedList(SerializationInfo info, StreamingContext context)
-		{
-            var items = info.GetValue("Items", typeof(T[])) as T[];
+        {
+            var items = info.GetValue("Items", typeof (T[])) as T[];
             if (items != null)
-                this.AddRange(items);
+                AddRange(items);
             PersistAssist.Deserialize(this, info, context);
-		}
+        }
 
-		#region ISerializable Members
+        #region ISerializable Members
 
-		void ISerializable.GetObjectData(SerializationInfo info, StreamingContext context)
-		{
-            info.AddValue("Items", this.ToArray());
+        void ISerializable.GetObjectData(SerializationInfo info, StreamingContext context)
+        {
+            info.AddValue("Items", ToArray());
             PersistAssist.Serialize(this, info, context);
-		}
+        }
 
-        bool IPostSerializationCallback.NeedCallback { get {return true;} }
+        bool IPostSerializationCallback.NeedCallback
+        {
+            get { return true; }
+        }
+
         void IPostSerializationCallback.OnPostSerialization()
         {
-
         }
 
-        
-		#endregion
+        #endregion
 
         public virtual bool RemoveRange(IEnumerable<T> items)
         {
-            return items.Aggregate(false, (current, item) => current | this.Remove(item));
+            return items.Aggregate(false, (current, item) => current | Remove(item));
         }
 
         public virtual bool AllowSorting
@@ -87,10 +83,7 @@ namespace TESVSnip.Collections.Generic
 
         protected override ListSortDirection SortDirectionCore
         {
-            get
-            {
-                return sorts == null ? ListSortDirection.Ascending : sorts.PrimaryDirection;
-            }
+            get { return sorts == null ? ListSortDirection.Ascending : sorts.PrimaryDirection; }
         }
 
         protected override PropertyDescriptor SortPropertyCore
@@ -103,13 +96,14 @@ namespace TESVSnip.Collections.Generic
             if (_allowSort)
             {
                 ListSortDescription[] arr = {
-                new ListSortDescription(prop, direction)
-                };
+                                                new ListSortDescription(prop, direction)
+                                            };
                 ApplySort(new ListSortDescriptionCollection(arr));
             }
         }
 
-        PropertyComparerCollection<T> sorts;
+        private PropertyComparerCollection<T> sorts;
+
         public void ApplySort(ListSortDescriptionCollection sortCollection)
         {
             if (_allowSort)
@@ -118,8 +112,8 @@ namespace TESVSnip.Collections.Generic
                 RaiseListChangedEvents = false;
                 try
                 {
-                    PropertyComparerCollection<T> tmp = new PropertyComparerCollection<T>(sortCollection);
-                    List<T> items = new List<T>(this);
+                    var tmp = new PropertyComparerCollection<T>(sortCollection);
+                    var items = new List<T>(this);
                     items.Sort(tmp);
                     int index = 0;
                     foreach (T item in items)
@@ -141,18 +135,22 @@ namespace TESVSnip.Collections.Generic
             get { throw new NotImplementedException(); }
             set { throw new NotImplementedException(); }
         }
+
         void IBindingListView.RemoveFilter()
         {
             throw new NotImplementedException();
         }
+
         ListSortDescriptionCollection IBindingListView.SortDescriptions
         {
             get { return sorts != null ? sorts.Sorts : null; }
         }
+
         bool IBindingListView.SupportsAdvancedSorting
         {
             get { return true; }
         }
+
         bool IBindingListView.SupportsFiltering
         {
             get { return false; }
@@ -162,20 +160,20 @@ namespace TESVSnip.Collections.Generic
         public void AddRange(ICollection<T> items)
         {
             foreach (T item in items)
-                this.Add(item);
+                Add(item);
         }
 
         public void InsertRange(int index, ICollection<T> items)
         {
             foreach (T item in items)
-                this.InsertItem(index, item);
+                InsertItem(index, item);
         }
 
         public T[] ToArray()
         {
-            T[] retval = new T[this.Items.Count];
+            var retval = new T[Items.Count];
             for (int i = 0; i < retval.Length; ++i)
-                retval[i] = this.Items[i];
+                retval[i] = Items[i];
             return retval;
         }
     }
@@ -194,29 +192,29 @@ namespace TESVSnip.Collections.Generic
         {
             if (sorts == null) throw new ArgumentNullException("sorts");
             this.sorts = sorts;
-            List<PropertyComparer<T>> list = new List<PropertyComparer<T>>();
+            var list = new List<PropertyComparer<T>>();
             foreach (ListSortDescription item in sorts)
             {
-                list.Add(new PropertyComparer<T>(item.PropertyDescriptor, item.SortDirection == ListSortDirection.Descending));
+                list.Add(new PropertyComparer<T>(item.PropertyDescriptor,
+                                                 item.SortDirection == ListSortDirection.Descending));
             }
             comparers = list.ToArray();
         }
 
         public PropertyDescriptor PrimaryProperty
         {
-            get
-            {
-                return comparers.Length == 0 ? null : comparers[0].Property;
-            }
+            get { return comparers.Length == 0 ? null : comparers[0].Property; }
         }
+
         public ListSortDirection PrimaryDirection
         {
             get
             {
-                return comparers.Length == 0 ? ListSortDirection.Ascending
-                : comparers[0].Descending ?
-                ListSortDirection.Descending
-                : ListSortDirection.Ascending;
+                return comparers.Length == 0
+                           ? ListSortDirection.Ascending
+                           : comparers[0].Descending
+                                 ? ListSortDirection.Descending
+                                 : ListSortDirection.Ascending;
             }
         }
 
@@ -235,20 +233,31 @@ namespace TESVSnip.Collections.Generic
     public class PropertyComparer<T> : IComparer<T>
     {
         private readonly bool descending;
-        public bool Descending { get { return descending; } }
+
+        public bool Descending
+        {
+            get { return descending; }
+        }
+
         private readonly PropertyDescriptor property;
-        public PropertyDescriptor Property { get { return property; } }
+
+        public PropertyDescriptor Property
+        {
+            get { return property; }
+        }
+
         public PropertyComparer(PropertyDescriptor property, bool descending)
         {
             if (property == null) throw new ArgumentNullException("property");
             this.descending = descending;
             this.property = property;
         }
+
         public int Compare(T x, T y)
         {
             // todo; some null cases
             int value = Comparer.Default.Compare(property.GetValue(x),
-            property.GetValue(y));
+                                                 property.GetValue(y));
             return descending ? -value : value;
         }
     }

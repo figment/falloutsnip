@@ -1,30 +1,27 @@
 ﻿using System;
-using System.Collections;
 using System.ComponentModel;
 using System.Drawing;
 using System.Security.Permissions;
 using System.Windows.Forms;
-using System.Windows.Forms.Design;
 
 namespace TESVSnip.Windows.Controls
 {
     /// <summary>
     /// <c>CustomComboBox</c> is an extension of <c>ComboBox</c> which provides drop-down customization.
     /// </summary>
-    [SecurityPermissionAttribute(SecurityAction.LinkDemand, Flags = SecurityPermissionFlag.UnmanagedCode)]
+    [SecurityPermission(SecurityAction.LinkDemand, Flags = SecurityPermissionFlag.UnmanagedCode)]
     //[Designer(typeof(CustomComboBoxDesigner))]
     public class CustomComboBox : ComboBox, IPopupControlHost
     {
         #region Construction and destruction
 
         public CustomComboBox()
-            : base()
         {
             m_sizeCombo = new Size(base.DropDownWidth, base.DropDownHeight);
-            m_popupCtrl.Closing += new ToolStripDropDownClosingEventHandler(m_dropDown_Closing);
+            m_popupCtrl.Closing += m_dropDown_Closing;
         }
 
-        void m_dropDown_Closing(object sender, ToolStripDropDownClosingEventArgs e)
+        private void m_dropDown_Closing(object sender, ToolStripDropDownClosingEventArgs e)
         {
             m_lastHideTime = DateTime.Now;
         }
@@ -32,6 +29,7 @@ namespace TESVSnip.Windows.Controls
         public CustomComboBox(Control dropControl)
             : this()
         {
+            InitializeComponent();
             DropDownControl = dropControl;
         }
 
@@ -43,7 +41,7 @@ namespace TESVSnip.Windows.Controls
         {
             if (disposing)
             {
-                if(m_timerAutoFocus != null)
+                if (m_timerAutoFocus != null)
                 {
                     m_timerAutoFocus.Dispose();
                     m_timerAutoFocus = null;
@@ -68,11 +66,6 @@ namespace TESVSnip.Windows.Controls
                 base.DroppedDown = false;
         }
 
-        private void m_dropDown_LostFocus(object sender, EventArgs e)
-        {
-            m_lastHideTime = DateTime.Now;
-        }
-
         #endregion
 
         #region Events
@@ -84,23 +77,23 @@ namespace TESVSnip.Windows.Controls
 
         public void RaiseDropDownEvent()
         {
-            EventHandler eventHandler = this.DropDown;
+            EventHandler eventHandler = DropDown;
             if (eventHandler != null)
-                this.DropDown(this, EventArgs.Empty);
+                DropDown(this, EventArgs.Empty);
         }
 
         public void RaiseDropDownClosedEvent()
         {
-            EventHandler eventHandler = this.DropDownClosed;
+            EventHandler eventHandler = DropDownClosed;
             if (eventHandler != null)
-                this.DropDownClosed(this, EventArgs.Empty);
+                DropDownClosed(this, EventArgs.Empty);
         }
 
         public void RaiseSelectedValueChangedEvent(object oldValue, object newValue)
         {
-            OldNewEventHandler<object> eventHandler = this.SelectedValueChanged;
+            OldNewEventHandler<object> eventHandler = SelectedValueChanged;
             if (eventHandler != null)
-                this.SelectedValueChanged(this, new OldNewEventArgs<object>(oldValue, newValue));
+                SelectedValueChanged(this, new OldNewEventArgs<object>(oldValue, newValue));
         }
 
         #endregion
@@ -123,8 +116,8 @@ namespace TESVSnip.Windows.Controls
                 Point location = PointToScreen(new Point(0, Height));
 
                 // Actually show popup.
-                PopupResizeMode resizeMode = (this.m_bIsResizable ? PopupResizeMode.BottomRight : PopupResizeMode.None);
-                m_popupCtrl.Show(this.DropDownControl, location.X, location.Y, Width, Height, resizeMode);
+                PopupResizeMode resizeMode = (m_bIsResizable ? PopupResizeMode.BottomRight : PopupResizeMode.None);
+                m_popupCtrl.Show(DropDownControl, location.X, location.Y, Width, Height, resizeMode);
                 m_bDroppedDown = true;
 
                 m_popupCtrl.PopupControlHost = this;
@@ -134,7 +127,7 @@ namespace TESVSnip.Windows.Controls
                 {
                     m_timerAutoFocus = new Timer();
                     m_timerAutoFocus.Interval = 10;
-                    m_timerAutoFocus.Tick += new EventHandler(timerAutoFocus_Tick);
+                    m_timerAutoFocus.Tick += timerAutoFocus_Tick;
                 }
                 // Enable the timer!
                 m_timerAutoFocus.Enabled = true;
@@ -223,17 +216,17 @@ namespace TESVSnip.Windows.Controls
 
         public const uint CBN_DROPDOWN = 7;
         public const uint CBN_CLOSEUP = 8;
-        
+
         public static uint HIWORD(int n)
         {
-            return (uint)(n >> 16) & 0xffff;
+            return (uint) (n >> 16) & 0xffff;
         }
 
         public override bool PreProcessMessage(ref Message m)
         {
             if (m.Msg == (WM_REFLECT + WM_COMMAND))
             {
-                if (HIWORD((int)m.WParam) == CBN_DROPDOWN)
+                if (HIWORD((int) m.WParam) == CBN_DROPDOWN)
                     return false;
             }
             return base.PreProcessMessage(ref m);
@@ -259,7 +252,7 @@ namespace TESVSnip.Windows.Controls
 
             if (m.Msg == (WM_REFLECT + WM_COMMAND))
             {
-                switch (HIWORD((int)m.WParam))
+                switch (HIWORD((int) m.WParam))
                 {
                     case CBN_DROPDOWN:
                         AutoDropDown();
@@ -274,7 +267,6 @@ namespace TESVSnip.Windows.Controls
 
             base.WndProc(ref m);
         }
-
 
         #endregion
 
@@ -307,7 +299,7 @@ namespace TESVSnip.Windows.Controls
         [Browsable(false)]
         public bool IsDroppedDown
         {
-            get { return this.m_bDroppedDown /*&& m_popupCtrl.Visible*/; }
+            get { return m_bDroppedDown /*&& m_popupCtrl.Visible*/; }
         }
 
         /// <summary>
@@ -316,22 +308,23 @@ namespace TESVSnip.Windows.Controls
         [Category("Custom Drop-Down"), Description("Indicates if drop-down is resizable.")]
         public bool AllowResizeDropDown
         {
-            get { return this.m_bIsResizable; }
-            set { this.m_bIsResizable = value; }
+            get { return m_bIsResizable; }
+            set { m_bIsResizable = value; }
         }
 
         /// <summary>
         /// Indicates current sizing mode.
         /// </summary>
-        [Category("Custom Drop-Down"), Description("Indicates current sizing mode."), DefaultValue(SizeMode.UseComboSize)]
+        [Category("Custom Drop-Down"), Description("Indicates current sizing mode."),
+         DefaultValue(SizeMode.UseComboSize)]
         public SizeMode DropDownSizeMode
         {
-            get { return this.m_sizeMode; }
+            get { return m_sizeMode; }
             set
             {
-                if (value != this.m_sizeMode)
+                if (value != m_sizeMode)
                 {
-                    this.m_sizeMode = value;
+                    m_sizeMode = value;
                     AutoSizeDropDown();
                 }
             }
@@ -451,61 +444,66 @@ namespace TESVSnip.Windows.Controls
         /// <summary>
         /// Popup control.
         /// </summary>
-        private PopupControl m_popupCtrl = new PopupControl();
+        private readonly PopupControl m_popupCtrl = new PopupControl();
 
         /// <summary>
         /// Actual drop-down control itself.
         /// </summary>
-        Control m_dropDownCtrl;
+        private Control m_dropDownCtrl;
+
         /// <summary>
         /// Indicates if drop-down is currently shown.
         /// </summary>
-        bool m_bDroppedDown = false;
+        private bool m_bDroppedDown;
+
         /// <summary>
         /// Indicates current sizing mode.
         /// </summary>
-        SizeMode m_sizeMode = SizeMode.UseComboSize;
+        private SizeMode m_sizeMode = SizeMode.UseComboSize;
+
         /// <summary>
         /// Time drop-down was last hidden.
         /// </summary>
-        DateTime m_lastHideTime = DateTime.Now;
+        private DateTime m_lastHideTime = DateTime.Now;
 
         /// <summary>
         /// Automatic focus timer helps make sure drop-down control is focused for user
         /// input upon drop-down.
         /// </summary>
-        Timer m_timerAutoFocus;
+        private Timer m_timerAutoFocus;
+
         /// <summary>
         /// Original size of control dimensions when first assigned.
         /// </summary>
-        Size m_sizeOriginal = new Size(1, 1);
+        private Size m_sizeOriginal = new Size(1, 1);
+
         /// <summary>
         /// Original size of combo box dropdown when first assigned.
         /// </summary>
-        Size m_sizeCombo;
+        private Size m_sizeCombo;
+
         /// <summary>
         /// Indicates if drop-down is resizable.
         /// </summary>
-        bool m_bIsResizable = true;
+        private bool m_bIsResizable = true;
 
         #endregion
 
         private void InitializeComponent()
         {
-            this.SuspendLayout();
+            SuspendLayout();
             // 
             // CustomComboBox
             // 
-            this.KeyDown += new System.Windows.Forms.KeyEventHandler(this.CustomComboBox_KeyDown);
-            this.ResumeLayout(false);
-
+            KeyDown += CustomComboBox_KeyDown;
+            ResumeLayout(false);
         }
 
         private void CustomComboBox_KeyDown(object sender, KeyEventArgs e)
         {
             if (e.KeyCode == Keys.Down)
             {
-                if (!this.IsDroppedDown)
+                if (!IsDroppedDown)
                     ShowDropDown();
             }
         }

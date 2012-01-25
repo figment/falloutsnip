@@ -30,16 +30,15 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Text;
 using System.Windows.Forms;
-using System.Drawing;
-using System.Drawing.Drawing2D;
 
-namespace BrightIdeasSoftware {
-    
+namespace BrightIdeasSoftware
+{
     /// <summary>
     /// A data transfer object that knows how to transform a list of model
     /// objects into a text and HTML representation.
     /// </summary>
-    public class OLVDataObject : DataObject {
+    public class OLVDataObject : DataObject
+    {
         #region Life and death
 
         /// <summary>
@@ -47,7 +46,8 @@ namespace BrightIdeasSoftware {
         /// </summary>
         /// <param name="olv">The source of the data object</param>
         public OLVDataObject(ObjectListView olv)
-            : this(olv, olv.SelectedObjects) {
+            : this(olv, olv.SelectedObjects)
+        {
         }
 
         /// <summary>
@@ -56,12 +56,13 @@ namespace BrightIdeasSoftware {
         /// </summary>
         /// <param name="olv">The source of the data object</param>
         /// <param name="modelObjects">The model objects to be put into the data object</param>
-        public OLVDataObject(ObjectListView olv, IList modelObjects) {
-            this.objectListView = olv;
+        public OLVDataObject(ObjectListView olv, IList modelObjects)
+        {
+            objectListView = olv;
             this.modelObjects = modelObjects;
-            this.includeHiddenColumns = olv.IncludeHiddenColumnsInDataTransfer;
-            this.includeColumnHeaders = olv.IncludeColumnHeadersInCopy;
-            this.CreateTextFormats();
+            includeHiddenColumns = olv.IncludeHiddenColumnsInDataTransfer;
+            includeColumnHeaders = olv.IncludeColumnHeadersInCopy;
+            CreateTextFormats();
         }
 
         #endregion
@@ -73,35 +74,43 @@ namespace BrightIdeasSoftware {
         /// and HTML representation. If this is false, only visible columns will
         /// be included.
         /// </summary>
-        public bool IncludeHiddenColumns {
+        public bool IncludeHiddenColumns
+        {
             get { return includeHiddenColumns; }
         }
-        private bool includeHiddenColumns;
+
+        private readonly bool includeHiddenColumns;
 
         /// <summary>
         /// Gets or sets whether column headers will also be included in the text
         /// and HTML representation.
         /// </summary>
-        public bool IncludeColumnHeaders {
+        public bool IncludeColumnHeaders
+        {
             get { return includeColumnHeaders; }
         }
-        private bool includeColumnHeaders;
+
+        private readonly bool includeColumnHeaders;
 
         /// <summary>
         /// Gets the ObjectListView that is being used as the source of the data
         /// </summary>
-        public ObjectListView ListView {
+        public ObjectListView ListView
+        {
             get { return objectListView; }
         }
-        private ObjectListView objectListView;
+
+        private readonly ObjectListView objectListView;
 
         /// <summary>
         /// Gets the model objects that are to be placed in the data object
         /// </summary>
-        public IList ModelObjects {
+        public IList ModelObjects
+        {
             get { return modelObjects; }
         }
-        private IList modelObjects = new ArrayList();
+
+        private readonly IList modelObjects = new ArrayList();
 
         #endregion
 
@@ -109,18 +118,22 @@ namespace BrightIdeasSoftware {
         /// Put a text and HTML representation of our model objects
         /// into the data object.
         /// </summary>
-        public void CreateTextFormats() {
-            IList<OLVColumn> columns = this.IncludeHiddenColumns ? this.ListView.AllColumns : this.ListView.ColumnsInDisplayOrder;
+        public void CreateTextFormats()
+        {
+            IList<OLVColumn> columns = IncludeHiddenColumns ? ListView.AllColumns : ListView.ColumnsInDisplayOrder;
 
             // Build text and html versions of the selection
-            StringBuilder sbText = new StringBuilder();
-            StringBuilder sbHtml = new StringBuilder("<table>");
+            var sbText = new StringBuilder();
+            var sbHtml = new StringBuilder("<table>");
 
             // Include column headers
-            if (includeColumnHeaders) {
+            if (includeColumnHeaders)
+            {
                 sbHtml.Append("<tr><td>");
-                foreach (OLVColumn col in columns) {
-                    if (col != columns[0]) {
+                foreach (OLVColumn col in columns)
+                {
+                    if (col != columns[0])
+                    {
                         sbText.Append("\t");
                         sbHtml.Append("</td><td>");
                     }
@@ -132,10 +145,13 @@ namespace BrightIdeasSoftware {
                 sbHtml.AppendLine("</td></tr>");
             }
 
-            foreach (object modelObject in this.ModelObjects) {
+            foreach (object modelObject in ModelObjects)
+            {
                 sbHtml.Append("<tr><td>");
-                foreach (OLVColumn col in columns) {
-                    if (col != columns[0]) {
+                foreach (OLVColumn col in columns)
+                {
+                    if (col != columns[0])
+                    {
                         sbText.Append("\t");
                         sbHtml.Append("</td><td>");
                     }
@@ -152,23 +168,27 @@ namespace BrightIdeasSoftware {
             // For some reason, SetText() with UnicodeText doesn't set the basic CF_TEXT format,
             // but using SetData() does.
             //this.SetText(sbText.ToString(), TextDataFormat.UnicodeText);
-            this.SetData(sbText.ToString());
-            this.SetText(ConvertToHtmlFragment(sbHtml.ToString()), TextDataFormat.Html);
+            SetData(sbText.ToString());
+            SetText(ConvertToHtmlFragment(sbHtml.ToString()), TextDataFormat.Html);
         }
 
         /// <summary>
         /// Make a HTML representation of our model objects
         /// </summary>
-        public string CreateHtml() {
-            IList<OLVColumn> columns = this.ListView.ColumnsInDisplayOrder;
+        public string CreateHtml()
+        {
+            IList<OLVColumn> columns = ListView.ColumnsInDisplayOrder;
 
             // Build html version of the selection
-            StringBuilder sbHtml = new StringBuilder("<table>");
+            var sbHtml = new StringBuilder("<table>");
 
-            foreach (object modelObject in this.ModelObjects) {
+            foreach (object modelObject in ModelObjects)
+            {
                 sbHtml.Append("<tr><td>");
-                foreach (OLVColumn col in columns) {
-                    if (col != columns[0]) {
+                foreach (OLVColumn col in columns)
+                {
+                    if (col != columns[0])
+                    {
                         sbHtml.Append("</td><td>");
                     }
                     string strValue = col.GetStringValue(modelObject);
@@ -188,7 +208,8 @@ namespace BrightIdeasSoftware {
         /// </remarks>
         /// <param name="fragment">The HTML to put onto the clipboard. It must be valid HTML!</param>
         /// <returns>A string that can be put onto the clipboard and will be recognized as HTML</returns>
-        private string ConvertToHtmlFragment(string fragment) {
+        private string ConvertToHtmlFragment(string fragment)
+        {
             // Minimal implementation of HTML clipboard format
             string source = "http://www.codeproject.com/KB/list/ObjectListView.aspx";
 
@@ -213,7 +234,8 @@ namespace BrightIdeasSoftware {
             int startFragment = prefixLength + html.IndexOf(fragment);
             int endFragment = startFragment + fragment.Length;
 
-            return String.Format(MARKER_BLOCK, prefixLength, prefixLength + html.Length, startFragment, endFragment, source, html);
+            return String.Format(MARKER_BLOCK, prefixLength, prefixLength + html.Length, startFragment, endFragment,
+                                 source, html);
         }
     }
 }

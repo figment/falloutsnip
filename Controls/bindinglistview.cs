@@ -1,36 +1,36 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Text;
-using System.Windows.Forms;
-using System.Runtime.InteropServices;
 using System.ComponentModel;
 using System.Reflection;
+using System.Runtime.InteropServices;
+using System.Windows.Forms;
 
 namespace TESVSnip.Windows.Controls
 {
-	/// <summary>
-	/// Summary description for BindingListView.
-	/// </summary>
-	public class BindingListView : VirtualListView
-	{
-		IList _data = null;
+    /// <summary>
+    /// Summary description for BindingListView.
+    /// </summary>
+    public class BindingListView : VirtualListView
+    {
+        private IList _data;
 
-        int lvcacheStart = -1;
-        int lvcacheEnd = -1;
-        private List<ListViewItem> lvcache = new List<ListViewItem>();
+        private int lvcacheStart = -1;
+        private int lvcacheEnd = -1;
+        private readonly List<ListViewItem> lvcache = new List<ListViewItem>();
 
-		public BindingListView()
-		{
-			InitializeComponent();
+        public BindingListView()
+        {
+            InitializeComponent();
 
-			this.FullRowSelect = true;
-			this.HideSelection = false;
-			this.View = System.Windows.Forms.View.Details;
-			base.QueryItemText += new QueryItemTextHandler(BindingListView_QueryItemText);
-            base.CacheVirtualItems += new CacheVirtualItemsEventHandler(BindingListView_CacheVirtualItems);
-            base.RetrieveVirtualItem += new RetrieveVirtualItemEventHandler(BindingListView_RetrieveVirtualItem);
-		}
+            FullRowSelect = true;
+            HideSelection = false;
+            View = View.Details;
+            base.QueryItemText += BindingListView_QueryItemText;
+            base.CacheVirtualItems += BindingListView_CacheVirtualItems;
+            base.RetrieveVirtualItem += BindingListView_RetrieveVirtualItem;
+        }
+
         [DllImport("uxtheme.dll", CharSet = CharSet.Unicode, ExactSpelling = true)]
         internal static extern int SetWindowTheme(IntPtr hWnd, string appName, string partList);
 
@@ -38,25 +38,25 @@ namespace TESVSnip.Windows.Controls
         protected override void OnHandleCreated(EventArgs e)
         {
             base.OnHandleCreated(e);
-            SetWindowTheme(this.Handle, "explorer", null);
+            SetWindowTheme(Handle, "explorer", null);
         }
 
         private ListViewItem CreateBlankListViewItem()
         {
-            ListViewItem.ListViewSubItem[] subItems = new ListViewItem.ListViewSubItem[this.Columns.Count];
-            for (int i=0; i<subItems.Length; ++i)
+            var subItems = new ListViewItem.ListViewSubItem[Columns.Count];
+            for (int i = 0; i < subItems.Length; ++i)
                 subItems[i] = new ListViewItem.ListViewSubItem();
-            return new ListViewItem(subItems,-1);
+            return new ListViewItem(subItems, -1);
         }
 
-        void FillListViewItem(ListViewItem lvItem, int index)
+        private void FillListViewItem(ListViewItem lvItem, int index)
         {
-            if (index >= 0 && this._data != null && index < this._data.Count)
+            if (index >= 0 && _data != null && index < _data.Count)
             {
-                object item = this._data[index];
+                object item = _data[index];
                 for (int i = 0; i < lvItem.SubItems.Count; ++i)
                 {
-                    ColumnBinding header = this.Columns[i] as ColumnBinding;
+                    var header = Columns[i] as ColumnBinding;
                     var subItem = lvItem.SubItems[i];
                     if (header != null)
                     {
@@ -67,9 +67,9 @@ namespace TESVSnip.Windows.Controls
             }
         }
 
-        void BindingListView_RetrieveVirtualItem(object sender, RetrieveVirtualItemEventArgs e)
+        private void BindingListView_RetrieveVirtualItem(object sender, RetrieveVirtualItemEventArgs e)
         {
-            if (e.ItemIndex>=lvcacheStart && e.ItemIndex<=lvcacheEnd)
+            if (e.ItemIndex >= lvcacheStart && e.ItemIndex <= lvcacheEnd)
             {
                 e.Item = lvcache[e.ItemIndex - lvcacheStart];
             }
@@ -80,7 +80,7 @@ namespace TESVSnip.Windows.Controls
             }
         }
 
-        void BindingListView_CacheVirtualItems(object sender, CacheVirtualItemsEventArgs e)
+        private void BindingListView_CacheVirtualItems(object sender, CacheVirtualItemsEventArgs e)
         {
             int len = e.EndIndex - e.StartIndex + 1;
             lvcacheStart = e.StartIndex;
@@ -93,57 +93,61 @@ namespace TESVSnip.Windows.Controls
                 if (lvcache.Count > len)
                     lvcache.RemoveRange(len, lvcache.Count - len);
             }
-            for (int i = 0; i<lvcache.Count; ++i)
+            for (int i = 0; i < lvcache.Count; ++i)
             {
                 FillListViewItem(lvcache[i], e.StartIndex + i);
-            }            
+            }
         }
 
         private event QueryItemTextHandler _QueryItemText;
+
         public new event QueryItemTextHandler QueryItemText
         {
             add { _QueryItemText += value; }
             remove { _QueryItemText -= value; }
         }
-		
-
-		public new IList Items
-		{
-			get{ return _data; }
-		}
 
 
-        public ColumnBinding AddBindingColumn<T,TResult>(string PropertyName, string DisplayName)
+        public new IList Items
         {
-            ColumnBinding column = new ColumnBinding();
+            get { return _data; }
+        }
+
+
+        public ColumnBinding AddBindingColumn<T, TResult>(string PropertyName, string DisplayName)
+        {
+            var column = new ColumnBinding();
             column.Text = DisplayName;
             column.Property = new ColumnPropertyDescriptor<T, TResult>(PropertyName, null);
-            this.Columns.Add(column);
+            Columns.Add(column);
             return column;
         }
 
         public ColumnBinding AddBindingColumn<T, TResult>(string PropertyName, string DisplayName, int width)
         {
-            ColumnBinding column = AddBindingColumn<T,TResult>(PropertyName, DisplayName);
+            ColumnBinding column = AddBindingColumn<T, TResult>(PropertyName, DisplayName);
             column.Width = width;
             return column;
         }
 
-        public ColumnBinding AddBindingColumn<T, TResult>(string PropertyName, string DisplayName, int width, Delegate transform)
+        public ColumnBinding AddBindingColumn<T, TResult>(string PropertyName, string DisplayName, int width,
+                                                          Delegate transform)
         {
             ColumnBinding column = AddBindingColumn<T, TResult>(PropertyName, DisplayName, width);
             column.Property = new ColumnPropertyDescriptor<T, TResult>(PropertyName, transform);
             return column;
         }
 
-        public ColumnBinding AddBindingColumn<T, TResult>(string PropertyName, string DisplayName, int width, HorizontalAlignment textAlign)
+        public ColumnBinding AddBindingColumn<T, TResult>(string PropertyName, string DisplayName, int width,
+                                                          HorizontalAlignment textAlign)
         {
             ColumnBinding column = AddBindingColumn<T, TResult>(PropertyName, DisplayName, width);
             column.TextAlign = textAlign;
             return column;
         }
 
-        public ColumnBinding AddBindingColumn<T, TResult>(string PropertyName, string DisplayName, int width, HorizontalAlignment textAlign, Delegate transform)
+        public ColumnBinding AddBindingColumn<T, TResult>(string PropertyName, string DisplayName, int width,
+                                                          HorizontalAlignment textAlign, Delegate transform)
         {
             ColumnBinding column = AddBindingColumn<T, TResult>(PropertyName, DisplayName, width, textAlign);
             column.Property = new ColumnPropertyDescriptor<T, TResult>(PropertyName, transform);
@@ -151,20 +155,20 @@ namespace TESVSnip.Windows.Controls
         }
 
         public ColumnBinding AddBindingColumn(string PropertyName, string DisplayName)
-		{
-			ColumnBinding column = new ColumnBinding();
-			column.Text = DisplayName;
+        {
+            var column = new ColumnBinding();
+            column.Text = DisplayName;
             column.Property = new ColumnPropertyDescriptor<object, string>(PropertyName, null);
-			this.Columns.Add( column );
+            Columns.Add(column);
             return column;
-		}
+        }
 
         public ColumnBinding AddBindingColumn(string PropertyName, string DisplayName, int width)
-		{
-			ColumnBinding column = AddBindingColumn(PropertyName, DisplayName);
-			column.Width = width;
+        {
+            ColumnBinding column = AddBindingColumn(PropertyName, DisplayName);
+            column.Width = width;
             return column;
-		}
+        }
 
         public ColumnBinding AddBindingColumn(string PropertyName, string DisplayName, int width, Delegate transform)
         {
@@ -173,14 +177,16 @@ namespace TESVSnip.Windows.Controls
             return column;
         }
 
-		public ColumnBinding AddBindingColumn(string PropertyName, string DisplayName, int width, HorizontalAlignment textAlign)
-		{
-			ColumnBinding column = AddBindingColumn(PropertyName, DisplayName, width);
-			column.TextAlign = textAlign;
+        public ColumnBinding AddBindingColumn(string PropertyName, string DisplayName, int width,
+                                              HorizontalAlignment textAlign)
+        {
+            ColumnBinding column = AddBindingColumn(PropertyName, DisplayName, width);
+            column.TextAlign = textAlign;
             return column;
-		}
+        }
 
-        public ColumnBinding AddBindingColumn(string PropertyName, string DisplayName, int width, HorizontalAlignment textAlign, Delegate transform)
+        public ColumnBinding AddBindingColumn(string PropertyName, string DisplayName, int width,
+                                              HorizontalAlignment textAlign, Delegate transform)
         {
             ColumnBinding column = AddBindingColumn(PropertyName, DisplayName, width, textAlign);
             column.Property = new ColumnPropertyDescriptor<object, string>(PropertyName, transform);
@@ -189,220 +195,219 @@ namespace TESVSnip.Windows.Controls
 
         public void AddBindingColumn(PropertyDescriptor property)
         {
-            ColumnBinding column = new ColumnBinding();
+            var column = new ColumnBinding();
             column.Text = property.DisplayName;
             column.Property = property;
-            this.Columns.Add(column);
+            Columns.Add(column);
         }
-       
+
         public void AddBindingColumn(PropertyDescriptor property, string DisplayName)
-		{
-			ColumnBinding column = new ColumnBinding();
-			column.Text = DisplayName;
-			column.Property = property;
-			this.Columns.Add( column );
-		}
+        {
+            var column = new ColumnBinding();
+            column.Text = DisplayName;
+            column.Property = property;
+            Columns.Add(column);
+        }
 
-		public void AddBindingColumn(PropertyDescriptor property, string DisplayName, int width)
-		{
-			ColumnBinding column = new ColumnBinding();
-			column.Text = DisplayName;
-			column.Property = property;
-			column.Width = width;
-			this.Columns.Add( column );
-		}
+        public void AddBindingColumn(PropertyDescriptor property, string DisplayName, int width)
+        {
+            var column = new ColumnBinding();
+            column.Text = DisplayName;
+            column.Property = property;
+            column.Width = width;
+            Columns.Add(column);
+        }
 
-		public void AddBindingColumn(PropertyDescriptor property, string DisplayName, int width, HorizontalAlignment textAlign)
-		{
-			ColumnBinding column = new ColumnBinding();
-			column.Text = DisplayName;
-			column.Property = property;
-			column.Width = width;
-			column.TextAlign = textAlign;
-			this.Columns.Add( column );
-		}
+        public void AddBindingColumn(PropertyDescriptor property, string DisplayName, int width,
+                                     HorizontalAlignment textAlign)
+        {
+            var column = new ColumnBinding();
+            column.Text = DisplayName;
+            column.Property = property;
+            column.Width = width;
+            column.TextAlign = textAlign;
+            Columns.Add(column);
+        }
 
-		public void RemoveBindingColumns( string PropertyName )
-		{
-			foreach ( ColumnBinding column in this.Columns )
-			{
-				if ( (column.Property != null && column.Property.Name == PropertyName)
-				  || (column.FieldName == PropertyName )
-				   )
-				{
-					this.Columns.Remove(column);
-					break;
-				}
-			}
-		}
+        public void RemoveBindingColumns(string PropertyName)
+        {
+            foreach (ColumnBinding column in Columns)
+            {
+                if ((column.Property != null && column.Property.Name == PropertyName)
+                    || (column.FieldName == PropertyName)
+                    )
+                {
+                    Columns.Remove(column);
+                    break;
+                }
+            }
+        }
+
         public ColumnBinding GetColumnBinding(int column)
         {
-            return ( column >= 0 && column < this.Columns.Count ) ? this.Columns[column] as ColumnBinding : null;
+            return (column >= 0 && column < Columns.Count) ? Columns[column] as ColumnBinding : null;
         }
 
-		public void ClearBindingColumns( )
-		{
-			this.Columns.Clear();
-		}
+        public void ClearBindingColumns()
+        {
+            Columns.Clear();
+        }
 
-		public IList DataSource
-		{
-			get{ return _data; }		
-			set
-			{ 
-				if (_data != value)
-				{
-					IBindingList list = _data as IBindingList;
-					if (list != null) list.ListChanged -= new System.ComponentModel.ListChangedEventHandler(DataSource_ListChanged);
+        public IList DataSource
+        {
+            get { return _data; }
+            set
+            {
+                if (_data != value)
+                {
+                    var list = _data as IBindingList;
+                    if (list != null) list.ListChanged -= DataSource_ListChanged;
 
-					_data = value; 
+                    _data = value;
 
-					list = _data as IBindingList;
-					if (list != null) list.ListChanged += new System.ComponentModel.ListChangedEventHandler(DataSource_ListChanged);
+                    list = _data as IBindingList;
+                    if (list != null) list.ListChanged += DataSource_ListChanged;
 
-					if (this.Columns.Count == 0 && _data is ITypedList)
-					{
-						ITypedList typedList = _data as ITypedList;
-						PropertyDescriptorCollection properties = typedList.GetItemProperties(null);
-						if (properties != null)
-						{
-							foreach( PropertyDescriptor pd in properties )
-							{
-								ColumnBinding column = new ColumnBinding();
-								column.Text = pd.DisplayName;
-								column.Property = pd;
-								this.Columns.Add( column );
-							}
-						}
-					}
-					ItemCount = (_data == null) ? 0 : _data.Count;
-				}
-			}
-		}
+                    if (Columns.Count == 0 && _data is ITypedList)
+                    {
+                        var typedList = _data as ITypedList;
+                        PropertyDescriptorCollection properties = typedList.GetItemProperties(null);
+                        if (properties != null)
+                        {
+                            foreach (PropertyDescriptor pd in properties)
+                            {
+                                var column = new ColumnBinding();
+                                column.Text = pd.DisplayName;
+                                column.Property = pd;
+                                Columns.Add(column);
+                            }
+                        }
+                    }
+                    ItemCount = (_data == null) ? 0 : _data.Count;
+                }
+            }
+        }
 
-		private void BindingListView_QueryItemText(int item, int subItem, out string text)
-		{
-			text = string.Empty;
-			try
-			{
+        private void BindingListView_QueryItemText(int item, int subItem, out string text)
+        {
+            text = string.Empty;
+            try
+            {
                 if (_QueryItemText != null)
                 {
                     _QueryItemText(item, subItem, out text);
                 }
-				else if( DataSource != null && item < DataSource.Count)
-				{
-					ColumnBinding header = this.Columns[subItem] as ColumnBinding;
-					if (header != null)
-					{
-						object value = header.GetPropertyValue( DataSource[item] );
-						if (value != null) text = value.ToString();
-					}
-				}
-			}
-			catch{}
-		}
+                else if (DataSource != null && item < DataSource.Count)
+                {
+                    var header = Columns[subItem] as ColumnBinding;
+                    if (header != null)
+                    {
+                        object value = header.GetPropertyValue(DataSource[item]);
+                        if (value != null) text = value.ToString();
+                    }
+                }
+            }
+            catch
+            {
+            }
+        }
 
-		private void DataSource_ListChanged(object sender, System.ComponentModel.ListChangedEventArgs e)
-		{
-			switch ( e.ListChangedType )
-			{
-				case ListChangedType.ItemAdded: goto case ListChangedType.Reset;
-				case ListChangedType.ItemChanged: goto case ListChangedType.Reset;
-				case ListChangedType.ItemDeleted: goto case ListChangedType.Reset;
-				case ListChangedType.ItemMoved: goto case ListChangedType.Reset;
-				case ListChangedType.Reset: 
-					ItemCount = (_data == null) ? 0 : _data.Count;
+        private void DataSource_ListChanged(object sender, ListChangedEventArgs e)
+        {
+            switch (e.ListChangedType)
+            {
+                case ListChangedType.ItemAdded:
+                    goto case ListChangedType.Reset;
+                case ListChangedType.ItemChanged:
+                    goto case ListChangedType.Reset;
+                case ListChangedType.ItemDeleted:
+                    goto case ListChangedType.Reset;
+                case ListChangedType.ItemMoved:
+                    goto case ListChangedType.Reset;
+                case ListChangedType.Reset:
+                    ItemCount = (_data == null) ? 0 : _data.Count;
                     Invalidate();
-					break;
-			}
-		}
+                    break;
+            }
+        }
 
-		private void InitializeComponent()
-		{
-            this.SuspendLayout();
+        private void InitializeComponent()
+        {
+            SuspendLayout();
             // 
             // BindingListView
             // 
-            this.KeyDown += new System.Windows.Forms.KeyEventHandler(this.BindingListView_KeyDown);
-            this.CustomSort += new CustomSortHandler(BindingListView_CustomSort);
-            this.ResumeLayout(false);
+            KeyDown += BindingListView_KeyDown;
+            CustomSort += BindingListView_CustomSort;
+            ResumeLayout(false);
+        }
 
-		}
-	
-		protected override void Dispose(bool disposing)
-		{
-			base.QueryItemText -= new QueryItemTextHandler(BindingListView_QueryItemText);
-			DataSource = null;
-			base.Dispose (disposing);
+        protected override void Dispose(bool disposing)
+        {
+            base.QueryItemText -= BindingListView_QueryItemText;
+            DataSource = null;
+            base.Dispose(disposing);
         }
 
         #region ColumnPropertyDescriptor
+
         /// <summary>
         /// Custom column property descriptor
         /// </summary>
-        private class ColumnPropertyDescriptor<T, TResult> 
+        private class ColumnPropertyDescriptor<T, TResult>
             : PropertyDescriptor
-		{
-			#region Fields
-			/// <summary>
-			/// Contains the field index.
-			/// </summary>
-			string _propName = string.Empty;
-            Delegate _propValueCast = null;
-			#endregion
+        {
+            #region Fields
 
-			#region Constructors
+            private readonly Delegate _propValueCast;
 
-			/// <summary>
-			/// Initializes a new instance of the CsvPropertyDescriptor class.
-			/// </summary>
-			/// <param name="fieldName">The field name.</param>
-			/// <param name="index">The field index.</param>
+            #endregion
+
+            #region Constructors
+
+            /// <summary>
+            /// Initializes a new instance of the CsvPropertyDescriptor class.
+            /// </summary>
+            /// <param name="fieldName">The field name.</param>
+            /// <param name="index">The field index.</param>
             public ColumnPropertyDescriptor(string fieldName, Delegate propertyFunction)
-				: base(fieldName, null)
-			{
-				_propValueCast = propertyFunction;
-			}
+                : base(fieldName, null)
+            {
+                _propValueCast = propertyFunction;
+            }
 
-			#endregion
+            #endregion
 
-			#region Properties
 
-			/// <summary>
-			/// Gets the field index.
-			/// </summary>
-			/// <value>The field index.</value>
-            public Delegate Function
-			{
-				get { return _propValueCast; }
-			}
+            #region Overrides
 
-			#endregion
+            public override bool CanResetValue(object component)
+            {
+                return false;
+            }
 
-			#region Overrides
-
-			public override bool CanResetValue(object component)
-			{
-				return false;
-			}
-
-			public override object GetValue(object item)
-			{
-				object value = null;
+            public override object GetValue(object item)
+            {
+                object value = null;
                 if (_propValueCast != null)
                 {
-                    try { value = _propValueCast.DynamicInvoke(item); }
-                    catch { }
+                    try
+                    {
+                        value = _propValueCast.DynamicInvoke(item);
+                    }
+                    catch
+                    {
+                    }
                 }
-                else if (string.IsNullOrEmpty(this.Name))
+                else if (string.IsNullOrEmpty(Name))
                 {
                     value = item;
                 }
                 else
                 {
-                    if (this.Name.IndexOf(".") > 0)
+                    if (Name.IndexOf(".") > 0)
                     {
-                        string[] fields = this.Name.Split('.');
+                        string[] fields = Name.Split('.');
                         object context = item;
                         foreach (string field in fields)
                         {
@@ -418,7 +423,7 @@ namespace TESVSnip.Windows.Controls
                     }
                     else
                     {
-                        PropertyInfo prop = item.GetType().GetProperty(this.Name);
+                        PropertyInfo prop = item.GetType().GetProperty(Name);
                         if (prop != null)
                         {
                             value = prop.GetValue(item, new object[0]);
@@ -427,7 +432,7 @@ namespace TESVSnip.Windows.Controls
                         {
                             foreach (PropertyDescriptor pd in TypeDescriptor.GetProperties(item))
                             {
-                                if (pd.Name == this.Name)
+                                if (pd.Name == Name)
                                 {
                                     value = pd.GetValue(item);
                                     break;
@@ -436,85 +441,79 @@ namespace TESVSnip.Windows.Controls
                         }
                     }
                 }
-				return value;
-			}
+                return value;
+            }
 
-			public override void ResetValue(object component)
-			{
-			}
+            public override void ResetValue(object component)
+            {
+            }
 
-			public override void SetValue(object component, object value)
-			{
-			}
+            public override void SetValue(object component, object value)
+            {
+            }
 
-			public override bool ShouldSerializeValue(object component)
-			{
-				return false;
-			}
+            public override bool ShouldSerializeValue(object component)
+            {
+                return false;
+            }
 
-			public override Type ComponentType
-			{
-				get
-				{
-                    return typeof(T);
-				}
-			}
+            public override Type ComponentType
+            {
+                get { return typeof (T); }
+            }
 
-			public override bool IsReadOnly
-			{
-				get
-				{
-					return true;
-				}
-			}
+            public override bool IsReadOnly
+            {
+                get { return true; }
+            }
 
-			public override Type PropertyType
-			{
-				get
-				{
-					return typeof(TResult);
-				}
-			}
+            public override Type PropertyType
+            {
+                get { return typeof (TResult); }
+            }
 
-			#endregion
+            #endregion
         }
+
         #endregion
 
         #region class ColumnBinding
+
         public class ColumnBinding : ColumnHeader
-		{
-			PropertyDescriptor _propDesc = null;
+        {
+            private PropertyDescriptor _propDesc;
             //string _propName = string.Empty;
             //Delegate _propValueCast = null;
 
-			public string FieldName
-			{
-				get { return _propDesc.Name; }
-			}
+            public string FieldName
+            {
+                get { return _propDesc.Name; }
+            }
 
-			public PropertyDescriptor Property
-			{
-				get { return _propDesc; }
-				set { _propDesc = value; }
-			}
+            public PropertyDescriptor Property
+            {
+                get { return _propDesc; }
+                set { _propDesc = value; }
+            }
 
-			public object GetPropertyValue(object item)
-			{
-				object value = null;
-				if (_propDesc != null)
-				{
-					object entry = item;
+            public object GetPropertyValue(object item)
+            {
+                object value = null;
+                if (_propDesc != null)
+                {
+                    object entry = item;
                     if (item is ICustomTypeDescriptor)
                     {
                         entry = (item as ICustomTypeDescriptor).GetPropertyOwner(_propDesc);
-                        if (entry == null) 
+                        if (entry == null)
                             entry = item;
                     }
-					value = _propDesc.GetValue(entry);
-				}
-				return value;
-			}
+                    value = _propDesc.GetValue(entry);
+                }
+                return value;
+            }
         }
+
         #endregion
 
         private void BindingListView_KeyDown(object sender, KeyEventArgs e)
@@ -530,14 +529,14 @@ namespace TESVSnip.Windows.Controls
         }
 
 
-        void BindingListView_CustomSort(int iColumn)
+        private void BindingListView_CustomSort(int iColumn)
         {
-            if (DataSource != null && iColumn >= 0 && iColumn < this.Columns.Count)
-			{
-                ColumnBinding header = this.Columns[iColumn] as ColumnBinding;
-				if (header != null)
-				{
-                    IBindingListView view = this.DataSource as IBindingListView;
+            if (DataSource != null && iColumn >= 0 && iColumn < Columns.Count)
+            {
+                var header = Columns[iColumn] as ColumnBinding;
+                if (header != null)
+                {
+                    var view = DataSource as IBindingListView;
                     if (view != null)
                     {
                         string fieldName = header.Property != null ? header.Property.Name : header.FieldName;
@@ -546,10 +545,10 @@ namespace TESVSnip.Windows.Controls
                             // handle existing sorts
                             if (view.IsSorted)
                             {
-                                ListSortDescription[] arr = new ListSortDescription[view.SortDescriptions.Count];
-                                view.SortDescriptions.CopyTo(arr,0);
+                                var arr = new ListSortDescription[view.SortDescriptions.Count];
+                                view.SortDescriptions.CopyTo(arr, 0);
                                 bool found = false;
-                                for (int idx = 0; idx<arr.Length; ++idx)
+                                for (int idx = 0; idx < arr.Length; ++idx)
                                 {
                                     ListSortDescription desc = arr[idx];
                                     if (desc.PropertyDescriptor.Name == fieldName)
@@ -563,14 +562,14 @@ namespace TESVSnip.Windows.Controls
                                             }
                                             else
                                             {
-                                                List<ListSortDescription> list = new List<ListSortDescription>(arr);
+                                                var list = new List<ListSortDescription>(arr);
                                                 list.Remove(desc);
                                                 arr = list.ToArray();
                                             }
                                         }
                                         else
                                         {
-                                            List<ListSortDescription> list = new List<ListSortDescription>(arr);
+                                            var list = new List<ListSortDescription>(arr);
                                             list.Remove(desc);
                                             list.Insert(0, desc);
                                             desc.SortDirection = ListSortDirection.Ascending;
@@ -581,8 +580,9 @@ namespace TESVSnip.Windows.Controls
                                 }
                                 if (!found)
                                 {
-                                    List<ListSortDescription> list = new List<ListSortDescription>(arr);
-                                    list.Insert(0, new ListSortDescription(header.Property, ListSortDirection.Descending));
+                                    var list = new List<ListSortDescription>(arr);
+                                    list.Insert(0,
+                                                new ListSortDescription(header.Property, ListSortDirection.Descending));
                                     while (list.Count > 3)
                                         list.RemoveAt(list.Count - 1);
                                     arr = list.ToArray();
@@ -595,10 +595,8 @@ namespace TESVSnip.Windows.Controls
                             }
                         }
                     }
-				}
-			}
+                }
+            }
         }
-
-	}
-
+    }
 }

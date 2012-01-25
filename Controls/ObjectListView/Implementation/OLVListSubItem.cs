@@ -27,32 +27,34 @@
 
 using System;
 using System.Collections.Generic;
-using System.Text;
-using System.Windows.Forms;
 using System.ComponentModel;
+using System.Windows.Forms;
 
-namespace BrightIdeasSoftware {
-
+namespace BrightIdeasSoftware
+{
     /// <summary>
     /// A ListViewSubItem that knows which image should be drawn against it.
     /// </summary>
     [Browsable(false)]
-    public class OLVListSubItem : ListViewItem.ListViewSubItem {
+    public class OLVListSubItem : ListViewItem.ListViewSubItem
+    {
         #region Constructors
 
         /// <summary>
         /// Create a OLVListSubItem
         /// </summary>
-        public OLVListSubItem() {
+        public OLVListSubItem()
+        {
         }
 
         /// <summary>
         /// Create a OLVListSubItem that shows the given string and image
         /// </summary>
-        public OLVListSubItem(object modelValue, string text, Object image) {
-            this.ModelValue = modelValue;
-            this.Text = text;
-            this.ImageSelector = image;
+        public OLVListSubItem(object modelValue, string text, Object image)
+        {
+            ModelValue = modelValue;
+            Text = text;
+            ImageSelector = image;
         }
 
         #endregion
@@ -62,50 +64,50 @@ namespace BrightIdeasSoftware {
         /// <summary>
         /// Gets or sets the model value is being displayed by this subitem.
         /// </summary>
-        public object ModelValue
-        {
-            get { return modelValue; }
-            private set { modelValue = value; }
-        }
-        private object modelValue;
+        public object ModelValue { get; private set; }
 
         /// <summary>
         /// Gets if this subitem has any decorations set for it.
         /// </summary>
-        public bool HasDecoration {
-            get {
-                return this.decorations != null && this.decorations.Count > 0;
-            }
+        public bool HasDecoration
+        {
+            get { return decorations != null && decorations.Count > 0; }
         }
 
         /// <summary>
         /// Gets or sets the decoration that will be drawn over this item
         /// </summary>
         /// <remarks>Setting this replaces all other decorations</remarks>
-        public IDecoration Decoration {
-            get {
-                if (this.HasDecoration)
-                    return this.Decorations[0];
+        public IDecoration Decoration
+        {
+            get
+            {
+                if (HasDecoration)
+                    return Decorations[0];
                 else
                     return null;
             }
-            set {
-                this.Decorations.Clear();
+            set
+            {
+                Decorations.Clear();
                 if (value != null)
-                    this.Decorations.Add(value);
+                    Decorations.Add(value);
             }
         }
 
         /// <summary>
         /// Gets the collection of decorations that will be drawn over this item
         /// </summary>
-        public IList<IDecoration> Decorations {
-            get {
-                if (this.decorations == null)
-                    this.decorations = new List<IDecoration>();
-                return this.decorations;
+        public IList<IDecoration> Decorations
+        {
+            get
+            {
+                if (decorations == null)
+                    decorations = new List<IDecoration>();
+                return decorations;
             }
         }
+
         private IList<IDecoration> decorations;
 
         /// <summary>
@@ -113,20 +115,12 @@ namespace BrightIdeasSoftware {
         /// </summary>
         /// <remarks><para>This can be an Image, a string or an int. A string or an int will
         /// be used as an index into the small image list.</para></remarks>
-        public Object ImageSelector {
-            get { return imageSelector; }
-            set { imageSelector = value; }
-        }
-        private Object imageSelector;
+        public Object ImageSelector { get; set; }
 
         /// <summary>
         /// Gets or sets the url that should be invoked when this subitem is clicked
         /// </summary>
-        public string Url {
-            get { return this.url; }
-            set { this.url = value; }
-        }
-        private string url;
+        public string Url { get; set; }
 
         #endregion
 
@@ -140,5 +134,4 @@ namespace BrightIdeasSoftware {
 
         #endregion
     }
-
 }

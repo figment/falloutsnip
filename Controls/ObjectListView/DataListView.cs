@@ -42,7 +42,6 @@ using System.Windows.Forms;
 
 namespace BrightIdeasSoftware
 {
-
     /// <summary>
     /// A DataListView is a ListView that can be bound to a datasource (which would normally be a DataTable or DataView).
     /// </summary>
@@ -60,19 +59,13 @@ namespace BrightIdeasSoftware
     public class DataListView : ObjectListView
     {
         /// <summary>
-        /// Make a DataListView
-        /// </summary>
-        public DataListView()
-        {
-        }
-
-        /// <summary>
         /// Create the DataSourceAdapter that this control will use.
         /// </summary>
         /// <returns>A DataSourceAdapter configured for this list</returns>
         /// <remarks>Subclasses should overrride this to create their
         /// own specialized adapters</remarks>
-        protected virtual DataSourceAdapter CreateDataSourceAdapter() {
+        protected virtual DataSourceAdapter CreateDataSourceAdapter()
+        {
             return new DataSourceAdapter(this);
         }
 
@@ -99,11 +92,11 @@ namespace BrightIdeasSoftware
         /// also be used to navigate relations between lists.</para>
         /// </remarks>
         [Category("Data"),
-        TypeConverter("System.Windows.Forms.Design.DataSourceConverter, System.Design")]
+         TypeConverter("System.Windows.Forms.Design.DataSourceConverter, System.Design")]
         public virtual Object DataSource
         {
-            get { return this.Adapter.DataSource; }
-            set { this.Adapter.DataSource = value; }
+            get { return Adapter.DataSource; }
+            set { Adapter.DataSource = value; }
         }
 
         /// <summary>
@@ -111,12 +104,12 @@ namespace BrightIdeasSoftware
         /// </summary>
         /// <remarks>If the data source is not a DataSet or DataViewManager, this property has no effect</remarks>
         [Category("Data"),
-         Editor("System.Windows.Forms.Design.DataMemberListEditor, System.Design", typeof(UITypeEditor)),
+         Editor("System.Windows.Forms.Design.DataMemberListEditor, System.Design", typeof (UITypeEditor)),
          DefaultValue("")]
         public virtual string DataMember
         {
-            get { return this.Adapter.DataMember; }
-            set { this.Adapter.DataMember = value; }
+            get { return Adapter.DataMember; }
+            set { Adapter.DataMember = value; }
         }
 
         #endregion
@@ -127,14 +120,17 @@ namespace BrightIdeasSoftware
         /// Gets or sets the DataSourceAdaptor that does the bulk of the work needed
         /// for data binding.
         /// </summary>
-        protected DataSourceAdapter Adapter {
-            get {
+        protected DataSourceAdapter Adapter
+        {
+            get
+            {
                 if (adapter == null)
-                    adapter = this.CreateDataSourceAdapter();
-                return adapter; 
+                    adapter = CreateDataSourceAdapter();
+                return adapter;
             }
             set { adapter = value; }
         }
+
         private DataSourceAdapter adapter;
 
         #endregion

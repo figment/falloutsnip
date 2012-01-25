@@ -34,35 +34,44 @@
 // exception statement from your version.
 
 using System;
+using System.Collections;
 using System.IO;
 using ICSharpCode.SharpZipLib.Core;
 
-namespace ICSharpCode.SharpZipLib.Zip {
+namespace ICSharpCode.SharpZipLib.Zip
+{
     /// <summary>
     /// FastZip provides facilities for creating and extracting zip files.
     /// </summary>
-    class FastZip {
+    internal class FastZip
+    {
         #region Enumerations
+
         /// <summary>
         /// Defines the desired handling when overwriting files during extraction.
         /// </summary>
-        enum Overwrite {
+        private enum Overwrite
+        {
             /// <summary>
             /// Prompt the user to confirm overwriting
             /// </summary>
             Prompt,
+
             /// <summary>
             /// Never overwrite files.
             /// </summary>
             Never,
+
             /// <summary>
             /// Always overwrite files.
             /// </summary>
             Always
         }
+
         #endregion
 
         #region CreateZip
+
         /// <summary>
         /// Create a zip file/archive.
         /// </summary>
@@ -70,7 +79,8 @@ namespace ICSharpCode.SharpZipLib.Zip {
         /// <param name="sourceDirectory">The directory to obtain files and directories from.</param>
         /// <param name="recurse">True to recurse directories, false for no recursion.</param>
         /// <param name="fileFilter">The file filter to apply.</param>
-        public void CreateZip(string zipFileName, string sourceDirectory, bool recurse, string fileFilter) {
+        public void CreateZip(string zipFileName, string sourceDirectory, bool recurse, string fileFilter)
+        {
             CreateZip(File.Create(zipFileName), sourceDirectory, recurse, fileFilter, null);
         }
 
@@ -82,12 +92,14 @@ namespace ICSharpCode.SharpZipLib.Zip {
         /// <param name="recurse">True to recurse directories, false for no recursion.</param>
         /// <param name="fileFilter">The <see cref="PathFilter">file filter</see> to apply.</param>
         /// <param name="directoryFilter">The <see cref="PathFilter">directory filter</see> to apply.</param>
-        public void CreateZip(Stream outputStream, string sourceDirectory, bool recurse, string fileFilter, string directoryFilter) {
+        public void CreateZip(Stream outputStream, string sourceDirectory, bool recurse, string fileFilter,
+                              string directoryFilter)
+        {
             entryFactory_.NameTransform = new ZipNameTransform(sourceDirectory);
-            using(outputStream_ = new ZipOutputStream(outputStream)) {
-
-                FileSystemScanner scanner = new FileSystemScanner(fileFilter, directoryFilter);
-                scanner.ProcessFile += new ProcessFileHandler(ProcessFile);
+            using (outputStream_ = new ZipOutputStream(outputStream))
+            {
+                var scanner = new FileSystemScanner(fileFilter, directoryFilter);
+                scanner.ProcessFile += ProcessFile;
 
                 scanner.Scan(sourceDirectory, recurse);
             }
@@ -96,13 +108,15 @@ namespace ICSharpCode.SharpZipLib.Zip {
         #endregion
 
         #region ExtractZip
+
         /// <summary>
         /// Extract the contents of a zip file.
         /// </summary>
         /// <param name="zipFileName">The zip file to extract from.</param>
         /// <param name="targetDirectory">The directory to save extracted information in.</param>
         /// <param name="fileFilter">A filter to apply to files.</param>
-        public void ExtractZip(string zipFileName, string targetDirectory, string fileFilter) {
+        public void ExtractZip(string zipFileName, string targetDirectory, string fileFilter)
+        {
             ExtractZip(zipFileName, targetDirectory, fileFilter, null);
         }
 
@@ -116,69 +130,87 @@ namespace ICSharpCode.SharpZipLib.Zip {
         /// <param name="fileFilter">A filter to apply to files.</param>
         /// <param name="directoryFilter">A filter to apply to directories.</param>
         /// <param name="restoreDateTime">Flag indicating wether to restore the date and time for extracted files.</param>
-        public void ExtractZip(string zipFileName, string targetDirectory, string fileFilter, string directoryFilter) {
+        public void ExtractZip(string zipFileName, string targetDirectory, string fileFilter, string directoryFilter)
+        {
             continueRunning_ = true;
             extractNameTransform_ = new WindowsNameTransform(targetDirectory);
 
             fileFilter_ = new NameFilter(fileFilter);
             directoryFilter_ = new NameFilter(directoryFilter);
 
-            using(zipFile_ = new ZipFile(zipFileName)) {
-
-                System.Collections.IEnumerator enumerator = zipFile_.GetEnumerator();
-                while(continueRunning_ && enumerator.MoveNext()) {
-                    ZipEntry entry = (ZipEntry)enumerator.Current;
-                    if(entry.IsFile) {
+            using (zipFile_ = new ZipFile(zipFileName))
+            {
+                IEnumerator enumerator = zipFile_.GetEnumerator();
+                while (continueRunning_ && enumerator.MoveNext())
+                {
+                    var entry = (ZipEntry) enumerator.Current;
+                    if (entry.IsFile)
+                    {
                         // TODO Path.GetDirectory can fail here on invalid characters.
-                        if(directoryFilter_.IsMatch(Path.GetDirectoryName(entry.Name)) && fileFilter_.IsMatch(entry.Name)) {
+                        if (directoryFilter_.IsMatch(Path.GetDirectoryName(entry.Name)) &&
+                            fileFilter_.IsMatch(entry.Name))
+                        {
                             ExtractEntry(entry);
                         }
                     }
                 }
             }
         }
+
         #endregion
 
         #region Internal Processing
 
-        void ProcessFile(object sender, ScanEventArgs e) {
-            if(e.ContinueRunning) {
-                using(FileStream stream=File.OpenRead(e.Name)) {
-                    ZipEntry entry=entryFactory_.MakeFileEntry(e.Name);
+        private void ProcessFile(object sender, ScanEventArgs e)
+        {
+            if (e.ContinueRunning)
+            {
+                using (FileStream stream = File.OpenRead(e.Name))
+                {
+                    ZipEntry entry = entryFactory_.MakeFileEntry(e.Name);
                     outputStream_.PutNextEntry(entry);
                     AddFileContents(stream);
                 }
             }
         }
 
-        void AddFileContents(Stream stream) {
-            if(stream==null) {
+        private void AddFileContents(Stream stream)
+        {
+            if (stream == null)
+            {
                 throw new ArgumentNullException("stream");
             }
 
-            if(buffer_==null) {
-                buffer_=new byte[4096];
+            if (buffer_ == null)
+            {
+                buffer_ = new byte[4096];
             }
 
             StreamUtils.Copy(stream, outputStream_, buffer_);
         }
 
-        void ExtractFileEntry(ZipEntry entry, string targetName) {
+        private void ExtractFileEntry(ZipEntry entry, string targetName)
+        {
             bool proceed = true;
 
-            if(proceed) {
-
-                if(continueRunning_) {
-                    try {
-                        using(FileStream outputStream = File.Create(targetName)) {
-                            if(buffer_ == null) {
+            if (proceed)
+            {
+                if (continueRunning_)
+                {
+                    try
+                    {
+                        using (FileStream outputStream = File.Create(targetName))
+                        {
+                            if (buffer_ == null)
+                            {
                                 buffer_ = new byte[4096];
                             }
                             StreamUtils.Copy(zipFile_.GetInputStream(entry), outputStream, buffer_);
-
                         }
                         File.SetLastWriteTime(targetName, entry.DateTime);
-                    } catch(Exception) {
+                    }
+                    catch (Exception)
+                    {
                         continueRunning_ = false;
                         throw;
                     }
@@ -186,14 +218,19 @@ namespace ICSharpCode.SharpZipLib.Zip {
             }
         }
 
-        void ExtractEntry(ZipEntry entry) {
+        private void ExtractEntry(ZipEntry entry)
+        {
             bool doExtraction = entry.IsCompressionMethodSupported();
             string targetName = entry.Name;
 
-            if(doExtraction) {
-                if(entry.IsFile) {
+            if (doExtraction)
+            {
+                if (entry.IsFile)
+                {
                     targetName = extractNameTransform_.TransformFile(targetName);
-                } else if(entry.IsDirectory) {
+                }
+                else if (entry.IsDirectory)
+                {
                     targetName = extractNameTransform_.TransformDirectory(targetName);
                 }
 
@@ -204,19 +241,28 @@ namespace ICSharpCode.SharpZipLib.Zip {
 
             string dirName = null;
 
-            if(doExtraction) {
-                if(entry.IsDirectory) {
+            if (doExtraction)
+            {
+                if (entry.IsDirectory)
+                {
                     dirName = targetName;
-                } else {
+                }
+                else
+                {
                     dirName = Path.GetDirectoryName(Path.GetFullPath(targetName));
                 }
             }
 
-            if(doExtraction && !Directory.Exists(dirName)) {
-                if(!entry.IsDirectory) {
-                    try {
+            if (doExtraction && !Directory.Exists(dirName))
+            {
+                if (!entry.IsDirectory)
+                {
+                    try
+                    {
                         Directory.CreateDirectory(dirName);
-                    } catch(Exception) {
+                    }
+                    catch (Exception)
+                    {
                         doExtraction = false;
                         continueRunning_ = false;
                         throw;
@@ -224,7 +270,8 @@ namespace ICSharpCode.SharpZipLib.Zip {
                 }
             }
 
-            if(doExtraction && entry.IsFile) {
+            if (doExtraction && entry.IsFile)
+            {
                 ExtractFileEntry(entry, targetName);
             }
         }
@@ -232,15 +279,16 @@ namespace ICSharpCode.SharpZipLib.Zip {
         #endregion
 
         #region Instance Fields
-        bool continueRunning_;
-        byte[] buffer_;
-        ZipOutputStream outputStream_;
-        ZipFile zipFile_;
-        NameFilter fileFilter_;
-        NameFilter directoryFilter_;
 
-        IEntryFactory entryFactory_ = new ZipEntryFactory();
-        INameTransform extractNameTransform_;
+        private bool continueRunning_;
+        private byte[] buffer_;
+        private ZipOutputStream outputStream_;
+        private ZipFile zipFile_;
+        private NameFilter fileFilter_;
+        private NameFilter directoryFilter_;
+
+        private readonly IEntryFactory entryFactory_ = new ZipEntryFactory();
+        private INameTransform extractNameTransform_;
 
         #endregion
     }

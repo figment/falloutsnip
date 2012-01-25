@@ -1,15 +1,12 @@
-﻿
-
+﻿using System;
+using System.Drawing;
+using System.Drawing.Imaging;
+using System.IO;
+using System.Runtime.InteropServices;
+using System.Text;
 
 namespace RTF
 {
-    using System;
-    using System.Drawing;
-    using System.Drawing.Imaging;
-    using System.IO;
-    using System.Runtime.InteropServices;
-    using System.Text;
-
     public partial class RTFBuilder
     {
         #region Nested type: RTFImage
@@ -52,8 +49,8 @@ namespace RTF
 
             public RTFImage(RTFBuilder builder)
             {
-                this._builder = builder;
-                this.sb = new StringBuilder();
+                _builder = builder;
+                sb = new StringBuilder();
             }
 
             #endregion
@@ -80,7 +77,8 @@ namespace RTF
             /// Flags used to specify the format of the Windows Metafile returned
             /// </param>
             [DllImport("gdiplus.dll")]
-            private static extern uint GdipEmfToWmfBits(IntPtr _hEmf, uint _bufferSize, byte[] _buffer, int _mappingMode, EmfToWmfBitsFlags _flags);
+            private static extern uint GdipEmfToWmfBits(IntPtr _hEmf, uint _bufferSize, byte[] _buffer, int _mappingMode,
+                                                        EmfToWmfBitsFlags _flags);
 
             #endregion
 
@@ -102,16 +100,16 @@ namespace RTF
 
 
                 // Create the image control string and append it to the RTF string
-                this.WriteImagePrefix(image, xDpi, yDpi);
+                WriteImagePrefix(image, xDpi, yDpi);
 
 
                 // Create the Windows Metafile and append its bytes in HEX format
-                this.WriteRtfImage(image);
+                WriteRtfImage(image);
 
                 // Close the RTF image control string
-                this.sb.Append(this.RTF_IMAGE_POST);
+                sb.Append(RTF_IMAGE_POST);
 
-                this._builder._sb.Append(this.sb.ToString());
+                _builder._sb.Append(sb.ToString());
             }
 
             #endregion
@@ -179,28 +177,28 @@ namespace RTF
                 // being displayed
 
                 // Calculate the current width of the image in (0.01)mm
-                int picw = (int) Math.Round((_image.Width / xDpi) * HMM_PER_INCH);
+                var picw = (int) Math.Round((_image.Width/xDpi)*HMM_PER_INCH);
 
                 // Calculate the current height of the image in (0.01)mm
-                int pich = (int) Math.Round((_image.Height / yDpi) * HMM_PER_INCH);
+                var pich = (int) Math.Round((_image.Height/yDpi)*HMM_PER_INCH);
 
                 // Calculate the target width of the image in twips
-                int picwgoal = (int) Math.Round((_image.Width / xDpi) * TWIPS_PER_INCH);
+                var picwgoal = (int) Math.Round((_image.Width/xDpi)*TWIPS_PER_INCH);
 
                 // Calculate the target height of the image in twips
-                int pichgoal = (int) Math.Round((_image.Height / yDpi) * TWIPS_PER_INCH);
+                var pichgoal = (int) Math.Round((_image.Height/yDpi)*TWIPS_PER_INCH);
 
                 // Append values to RTF string
-                this.sb.Append(@"{\pict\wmetafile8");
-                this.sb.Append(@"\picw");
-                this.sb.Append(picw);
-                this.sb.Append(@"\pich");
-                this.sb.Append(pich);
-                this.sb.Append(@"\picwgoal");
-                this.sb.Append(picwgoal);
-                this.sb.Append(@"\pichgoal");
-                this.sb.Append(pichgoal);
-                this.sb.Append(" ");
+                sb.Append(@"{\pict\wmetafile8");
+                sb.Append(@"\picw");
+                sb.Append(picw);
+                sb.Append(@"\pich");
+                sb.Append(pich);
+                sb.Append(@"\picwgoal");
+                sb.Append(picwgoal);
+                sb.Append(@"\pichgoal");
+                sb.Append(pichgoal);
+                sb.Append(" ");
             }
 
             /// <summary>
@@ -259,19 +257,21 @@ namespace RTF
                             // A call to EmfToWmfBits with a null buffer return the size of the
                             // buffer need to store the WMF bits.  Use this to get the buffer
                             // size.
-                            uint _bufferSize = GdipEmfToWmfBits(_hEmf, 0, null, MM_ANISOTROPIC, EmfToWmfBitsFlags.EmfToWmfBitsFlagsDefault);
+                            uint _bufferSize = GdipEmfToWmfBits(_hEmf, 0, null, MM_ANISOTROPIC,
+                                                                EmfToWmfBitsFlags.EmfToWmfBitsFlagsDefault);
 
                             // Create an array to hold the bits
                             _buffer = new byte[_bufferSize];
 
                             // A call to EmfToWmfBits with a valid buffer copies the bits into the
                             // buffer an returns the number of bits in the WMF.  
-                            uint _convertedSize = GdipEmfToWmfBits(_hEmf, _bufferSize, _buffer, MM_ANISOTROPIC, EmfToWmfBitsFlags.EmfToWmfBitsFlagsDefault);
+                            uint _convertedSize = GdipEmfToWmfBits(_hEmf, _bufferSize, _buffer, MM_ANISOTROPIC,
+                                                                   EmfToWmfBitsFlags.EmfToWmfBitsFlagsDefault);
                         }
                         // Append the bits to the RTF string
                         for (int i = 0; i < _buffer.Length; ++i)
                         {
-                            this.sb.Append(String.Format("{0:X2}", _buffer[i]));
+                            sb.Append(String.Format("{0:X2}", _buffer[i]));
                         }
                         if (_stream != null)
                         {
@@ -317,7 +317,7 @@ namespace RTF
 
                 // Don't simulate clipping by using the XOR operator.
                 EmfToWmfBitsFlagsNoXORClip = 0x00000004
-            } ;
+            };
 
             #endregion
         }

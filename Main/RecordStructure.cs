@@ -1,17 +1,53 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
-using System.Xml;
+using System.Globalization;
+using System.IO;
 using System.Linq;
+using System.Xml.Serialization;
+using TESVSnip.Data;
 
-namespace TESVSnip {
-
-    class RecordXmlException : Exception { public RecordXmlException(string msg) : base(msg) { } }
-    public enum ElementValueType {
-        String, Float, Int, Short, Byte, FormID, fstring, Blob, LString, BString, UShort, UInt, SByte, Str4
+namespace TESVSnip
+{
+    internal class RecordXmlException : Exception
+    {
+        public RecordXmlException(string msg) : base(msg)
+        {
+        }
     }
+
+    public enum ElementValueType
+    {
+        String,
+        Float,
+        Int,
+        Short,
+        Byte,
+        FormID,
+        fstring,
+        Blob,
+        LString,
+        BString,
+        UShort,
+        UInt,
+        SByte,
+        Str4
+    }
+
     public enum CondType
     {
-        None, Equal, Not, Greater, Less, GreaterEqual, LessEqual, StartsWith, EndsWith, Contains, Exists, Missing
+        None,
+        Equal,
+        Not,
+        Greater,
+        Less,
+        GreaterEqual,
+        LessEqual,
+        StartsWith,
+        EndsWith,
+        Contains,
+        Exists,
+        Missing
     }
 
     public struct Conditional
@@ -27,50 +63,51 @@ namespace TESVSnip {
     }
 
 
-    class SubrecordBase
+    internal class SubrecordBase
     {
         protected SubrecordBase(SubrecordBase src, int optional, int repeat)
         {
-            if ( src.name.StartsWith("&#x") )
+            if (src.name.StartsWith("&#x"))
             {
-                string[] val = src.name.Split(new char[]{';'}, 2, StringSplitOptions.None);
-                char c = (char)int.Parse(val[0].Substring(3), System.Globalization.NumberStyles.HexNumber, null);
-                this.name = c + val[1];
+                string[] val = src.name.Split(new[] {';'}, 2, StringSplitOptions.None);
+                var c = (char) int.Parse(val[0].Substring(3), NumberStyles.HexNumber, null);
+                name = c + val[1];
             }
             else
-                this.name = src.name;
-            this.desc = src.desc;
+                name = src.name;
+            desc = src.desc;
             this.optional = optional;
             this.repeat = repeat;
         }
 
-        protected SubrecordBase(TESVSnip.Data.Subrecord node)
+        protected SubrecordBase(Subrecord node)
         {
             if (node.name.StartsWith("&#x"))
             {
-                string[] val = node.name.Split(new char[] { ';' }, 2, StringSplitOptions.None);
-                char c = (char)int.Parse(val[0].Substring(3), System.Globalization.NumberStyles.HexNumber, null);
-                this.name = c + val[1];
+                string[] val = node.name.Split(new[] {';'}, 2, StringSplitOptions.None);
+                var c = (char) int.Parse(val[0].Substring(3), NumberStyles.HexNumber, null);
+                name = c + val[1];
             }
             else
-                this.name = node.name;
-            this.repeat = node.repeat;
-            this.optional = node.optional;
-            this.desc = node.desc;
+                name = node.name;
+            repeat = node.repeat;
+            optional = node.optional;
+            desc = node.desc;
         }
-        protected SubrecordBase(TESVSnip.Data.Group node)
+
+        protected SubrecordBase(Group node)
         {
             if (node.name.StartsWith("&#x"))
             {
-                string[] val = node.name.Split(new char[] { ';' }, 2, StringSplitOptions.None);
-                char c = (char)int.Parse(val[0].Substring(3), System.Globalization.NumberStyles.HexNumber, null);
-                this.name = c + val[1];
+                string[] val = node.name.Split(new[] {';'}, 2, StringSplitOptions.None);
+                var c = (char) int.Parse(val[0].Substring(3), NumberStyles.HexNumber, null);
+                name = c + val[1];
             }
             else
-                this.name = node.name;
-            this.repeat = node.repeat;
-            this.optional = node.optional;
-            this.desc = node.desc;
+                name = node.name;
+            repeat = node.repeat;
+            optional = node.optional;
+            desc = node.desc;
         }
 
         public readonly string name;
@@ -78,24 +115,35 @@ namespace TESVSnip {
         public readonly int repeat;
         public readonly int optional;
 
-        public virtual bool IsGroup { get { return false; } }
+        public virtual bool IsGroup
+        {
+            get { return false; }
+        }
 
         public override string ToString()
         {
-            if (string.IsNullOrEmpty(desc) ||  this.name == this.desc)
-                return this.name;
-            return string.Format("{0}: {1}", this.name, this.desc);
+            if (string.IsNullOrEmpty(desc) || name == desc)
+                return name;
+            return string.Format("{0}: {1}", name, desc);
         }
     }
 
-    class SubrecordGroup : SubrecordBase
+    internal class SubrecordGroup : SubrecordBase
     {
-        public SubrecordGroup(TESVSnip.Data.Group node, SubrecordBase[] items) : base(node) { elements = items; }
-        public override bool IsGroup { get { return true; } }
+        public SubrecordGroup(Group node, SubrecordBase[] items) : base(node)
+        {
+            elements = items;
+        }
+
+        public override bool IsGroup
+        {
+            get { return true; }
+        }
+
         public readonly SubrecordBase[] elements;
     }
 
-    class SubrecordStructure : SubrecordBase
+    internal class SubrecordStructure : SubrecordBase
     {
         public readonly ElementStructure[] elements;
         public readonly bool notininfo;
@@ -115,23 +163,26 @@ namespace TESVSnip {
         /// <param name="repeat"></param>
         public SubrecordStructure(SubrecordStructure src, int optional, int repeat) : base(src, optional, repeat)
         {
-            this.elements = src.elements;
-            this.notininfo = src.notininfo;
-            this.size = src.size;
-            this.Condition = src.Condition;
-            this.CondID = src.CondID;
-            this.CondOperand = src.CondOperand;
-            this.ContainsConditionals = src.ContainsConditionals;
-            this.UseHexEditor = src.UseHexEditor;
+            elements = src.elements;
+            notininfo = src.notininfo;
+            size = src.size;
+            Condition = src.Condition;
+            CondID = src.CondID;
+            CondOperand = src.CondOperand;
+            ContainsConditionals = src.ContainsConditionals;
+            UseHexEditor = src.UseHexEditor;
         }
-        public SubrecordStructure(TESVSnip.Data.Subrecord node) : base(node)
+
+        public SubrecordStructure(Subrecord node) : base(node)
         {
-            this.notininfo = node.notininfo;
-            this.size = node.size;
-            this.Condition = (!string.IsNullOrEmpty(node.condition)) ? (CondType)Enum.Parse(typeof(CondType), node.condition, true) : CondType.None;
-            this.CondID = node.condid;
-            this.CondOperand = node.condvalue;
-            this.UseHexEditor = node.usehexeditor;
+            notininfo = node.notininfo;
+            size = node.size;
+            Condition = (!string.IsNullOrEmpty(node.condition))
+                            ? (CondType) Enum.Parse(typeof (CondType), node.condition, true)
+                            : CondType.None;
+            CondID = node.condid;
+            CondOperand = node.condvalue;
+            UseHexEditor = node.usehexeditor;
             //if (optional && repeat)
             //{
             //    throw new RecordXmlException("repeat and optional must both have the same value if they are non zero");
@@ -146,7 +197,7 @@ namespace TESVSnip {
         }
     }
 
-    class ElementStructure 
+    internal class ElementStructure
     {
         public readonly string name;
         public readonly string desc;
@@ -164,91 +215,105 @@ namespace TESVSnip {
 
         public ElementStructure()
         {
-            this.name = "DATA";
-            this.desc = "Data";
-            this.group = 0;
-            this.hexview = true;
-            this.notininfo = true;
-            this.optional = false;
-            this.options = null;
-            this.flags = null;
-            this.repeat = 0;
-            this.CondID = 0;
-            this.FormIDType = null;
-            this.multiline = false;
-            this.type = ElementValueType.Blob;
+            name = "DATA";
+            desc = "Data";
+            @group = 0;
+            hexview = true;
+            notininfo = true;
+            optional = false;
+            options = null;
+            flags = null;
+            repeat = 0;
+            CondID = 0;
+            FormIDType = null;
+            multiline = false;
+            type = ElementValueType.Blob;
         }
 
-        public ElementStructure(TESVSnip.Data.SubrecordElement node)
+        public ElementStructure(SubrecordElement node)
         {
-            this.name = node.name;
-            this.desc = node.desc;
-            this.group = node.group;
-            this.hexview = node.hexview;
-            this.notininfo = node.notininfo;
-            this.optional = node.optional != 0;
-            this.options = node.options == null ? new string[0] : node.options.Split(new char[] { ';' }, StringSplitOptions.RemoveEmptyEntries);
-            this.flags = node.flags == null ? new string[0] : node.flags.Split(new char[] { ';' });
-            this.repeat = node.repeat;
-            this.CondID = node.condid;
+            name = node.name;
+            desc = node.desc;
+            @group = node.group;
+            hexview = node.hexview;
+            notininfo = node.notininfo;
+            optional = node.optional != 0;
+            options = node.options == null
+                          ? new string[0]
+                          : node.options.Split(new[] {';'}, StringSplitOptions.RemoveEmptyEntries);
+            flags = node.flags == null ? new string[0] : node.flags.Split(new[] {';'});
+            repeat = node.repeat;
+            CondID = node.condid;
             if (optional || repeat > 0)
             {
-                if (group != 0) throw new RecordXmlException("Elements with a group attribute cant be marked optional or repeat");
+                if (group != 0)
+                    throw new RecordXmlException("Elements with a group attribute cant be marked optional or repeat");
             }
-            this.FormIDType = null;
-            this.multiline = node.multiline;
-            this.type = (ElementValueType)Enum.Parse(typeof(ElementValueType), node.type, true);
-            switch (this.type)
+            FormIDType = null;
+            multiline = node.multiline;
+            type = (ElementValueType) Enum.Parse(typeof (ElementValueType), node.type, true);
+            switch (type)
             {
                 case ElementValueType.FormID:
-                    this.FormIDType = node.reftype;
+                    FormIDType = node.reftype;
                     break;
                 case ElementValueType.Blob:
-                    if (repeat > 0 || optional) throw new RecordXmlException("blob or fstring type elements can't be marked with repeat or optional");
+                    if (repeat > 0 || optional)
+                        throw new RecordXmlException(
+                            "blob or fstring type elements can't be marked with repeat or optional");
                     break;
                 case ElementValueType.fstring:
-                    if (repeat > 0 || optional) throw new RecordXmlException("blob or fstring type elements can't be marked with repeat or optional");
+                    if (repeat > 0 || optional)
+                        throw new RecordXmlException(
+                            "blob or fstring type elements can't be marked with repeat or optional");
                     break;
             }
-
         }
 
         public override string ToString()
         {
-            if (string.IsNullOrEmpty(desc) ||  this.desc == this.name)
-                return this.name;
-            return string.Format("{0}: {1}", this.name, this.desc);
+            if (string.IsNullOrEmpty(desc) || desc == name)
+                return name;
+            return string.Format("{0}: {1}", name, desc);
         }
     }
 
-    class RecordStructure {
+    internal class RecordStructure
+    {
         #region Static
-        private static bool loaded;
-        public static bool Loaded { get { return loaded; } }
 
-        public static Dictionary<string, RecordStructure> Records = new Dictionary<string, RecordStructure>(StringComparer.InvariantCultureIgnoreCase);
-        private static string xmlPath=System.IO.Path.Combine(Program.settingsDir, @"RecordStructure.xml");
-        
-        private RecordStructure(TESVSnip.Data.RecordsRecord rec, SubrecordBase[] subrecordTree, SubrecordStructure[] subrecords)
+        private static bool loaded;
+
+        public static bool Loaded
         {
-            this.name = rec.name;
-            this.description = rec.desc;
+            get { return loaded; }
+        }
+
+        public static Dictionary<string, RecordStructure> Records =
+            new Dictionary<string, RecordStructure>(StringComparer.InvariantCultureIgnoreCase);
+
+        private static readonly string xmlPath = Path.Combine(Program.settingsDir, @"RecordStructure.xml");
+
+        private RecordStructure(RecordsRecord rec, SubrecordBase[] subrecordTree, SubrecordStructure[] subrecords)
+        {
+            name = rec.name;
+            description = rec.desc;
             this.subrecordTree = subrecordTree;
             this.subrecords = subrecords;
         }
 
-        private static List<SubrecordBase> GetSubrecordStructures(System.Collections.ICollection items, Dictionary<string, TESVSnip.Data.Group> dict)
+        private static List<SubrecordBase> GetSubrecordStructures(ICollection items, Dictionary<string, Group> dict)
         {
             var subrecords = new List<SubrecordBase>();
             foreach (var sr in items)
             {
-                if (sr is TESVSnip.Data.Subrecord)
+                if (sr is Subrecord)
                 {
-                    subrecords.Add(new SubrecordStructure((TESVSnip.Data.Subrecord)sr));
+                    subrecords.Add(new SubrecordStructure((Subrecord) sr));
                 }
-                else if (sr is TESVSnip.Data.Group)
+                else if (sr is Group)
                 {
-                    var g = sr as TESVSnip.Data.Group;
+                    var g = sr as Group;
                     var ssr = GetSubrecordStructures((g.Items.Count > 0) ? g.Items : dict[g.id].Items, dict);
                     if (ssr.Count > 0)
                     {
@@ -262,6 +327,7 @@ namespace TESVSnip {
             }
             return subrecords;
         }
+
         /// <summary>
         /// Build the Subrecord array with groups expanded
         /// </summary>
@@ -269,12 +335,12 @@ namespace TESVSnip {
         /// <returns></returns>
         private static List<SubrecordStructure> BuildSubrecordStructure(IEnumerable<SubrecordBase> list)
         {
-            List<SubrecordStructure> subrecords = new List<SubrecordStructure>();
+            var subrecords = new List<SubrecordStructure>();
             foreach (var sr in list)
             {
                 if (sr is SubrecordStructure)
                 {
-                    subrecords.Add((SubrecordStructure)sr);
+                    subrecords.Add((SubrecordStructure) sr);
                 }
                 else if (sr is SubrecordGroup)
                 {
@@ -293,19 +359,22 @@ namespace TESVSnip {
             return subrecords;
         }
 
-        public static void Load() 
+        public static void Load()
         {
-            if(loaded) {
-                Records.Clear();
-            } else loaded=true;
-
-
-            System.Xml.Serialization.XmlSerializer xs = new System.Xml.Serialization.XmlSerializer(typeof(TESVSnip.Data.Records));
-            using (System.IO.FileStream fs = System.IO.File.OpenRead(xmlPath))
+            if (loaded)
             {
-                var baseRec = xs.Deserialize(fs) as TESVSnip.Data.Records;
-                var groups = baseRec.Items.OfType<TESVSnip.Data.Group>().ToDictionary(x => x.id, StringComparer.InvariantCultureIgnoreCase);
-                foreach (var rec in baseRec.Items.OfType<TESVSnip.Data.RecordsRecord>())
+                Records.Clear();
+            }
+            else loaded = true;
+
+
+            var xs = new XmlSerializer(typeof (Records));
+            using (FileStream fs = File.OpenRead(xmlPath))
+            {
+                var baseRec = xs.Deserialize(fs) as Records;
+                var groups = baseRec.Items.OfType<Group>().ToDictionary(x => x.id,
+                                                                        StringComparer.InvariantCultureIgnoreCase);
+                foreach (var rec in baseRec.Items.OfType<RecordsRecord>())
                 {
                     List<SubrecordBase> subrecords = GetSubrecordStructures(rec.Items, groups);
                     var sss = BuildSubrecordStructure(subrecords);
@@ -313,6 +382,7 @@ namespace TESVSnip {
                 }
             }
         }
+
         #endregion
 
         //public readonly SubrecordBase[] subrecords;
@@ -323,11 +393,9 @@ namespace TESVSnip {
 
         public override string ToString()
         {
-            if (string.IsNullOrEmpty(description) && this.description != this.name)
-                return this.name;
-            return string.Format("{0}: {1}", this.name, this.description);
+            if (string.IsNullOrEmpty(description) && description != name)
+                return name;
+            return string.Format("{0}: {1}", name, description);
         }
-
     }
-
 }

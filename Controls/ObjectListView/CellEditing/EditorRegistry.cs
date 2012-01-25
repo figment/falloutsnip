@@ -28,12 +28,11 @@
 
 using System;
 using System.Collections.Generic;
-using System.Text;
-using System.Windows.Forms;
 using System.Reflection;
+using System.Windows.Forms;
 
-namespace BrightIdeasSoftware {
-
+namespace BrightIdeasSoftware
+{
     /// <summary>
     /// A delegate that creates an editor for the given value
     /// </summary>
@@ -53,36 +52,41 @@ namespace BrightIdeasSoftware {
     /// <remarks>
     /// <para>All ObjectListViews share the same editor registry.</para>
     /// </remarks>
-    public class EditorRegistry {
+    public class EditorRegistry
+    {
         #region Initializing
 
         /// <summary>
         /// Create an EditorRegistry
         /// </summary>
-        public EditorRegistry() {
-            this.InitializeStandardTypes();
+        public EditorRegistry()
+        {
+            InitializeStandardTypes();
         }
 
-        private void InitializeStandardTypes() {
-            this.Register(typeof(Boolean), typeof(BooleanCellEditor));
-            this.Register(typeof(Int16), typeof(IntUpDown));
-            this.Register(typeof(Int32), typeof(IntUpDown));
-            this.Register(typeof(Int64), typeof(IntUpDown));
-            this.Register(typeof(UInt16), typeof(UintUpDown));
-            this.Register(typeof(UInt32), typeof(UintUpDown));
-            this.Register(typeof(UInt64), typeof(UintUpDown));
-            this.Register(typeof(Single), typeof(FloatCellEditor));
-            this.Register(typeof(Double), typeof(FloatCellEditor));
-            this.Register(typeof(DateTime), delegate(Object model, OLVColumn column, Object value) {
-                DateTimePicker c = new DateTimePicker();
-                c.Format = DateTimePickerFormat.Short;
-                return c;
-            });
-            this.Register(typeof(Boolean), delegate(Object model, OLVColumn column, Object value) {
-                CheckBox c = new BooleanCellEditor2();
-                c.ThreeState = column.TriStateCheckBoxes;
-                return c;
-            });
+        private void InitializeStandardTypes()
+        {
+            Register(typeof (Boolean), typeof (BooleanCellEditor));
+            Register(typeof (Int16), typeof (IntUpDown));
+            Register(typeof (Int32), typeof (IntUpDown));
+            Register(typeof (Int64), typeof (IntUpDown));
+            Register(typeof (UInt16), typeof (UintUpDown));
+            Register(typeof (UInt32), typeof (UintUpDown));
+            Register(typeof (UInt64), typeof (UintUpDown));
+            Register(typeof (Single), typeof (FloatCellEditor));
+            Register(typeof (Double), typeof (FloatCellEditor));
+            Register(typeof (DateTime), delegate
+                                            {
+                                                var c = new DateTimePicker();
+                                                c.Format = DateTimePickerFormat.Short;
+                                                return c;
+                                            });
+            Register(typeof (Boolean), delegate(Object model, OLVColumn column, Object value)
+                                           {
+                                               CheckBox c = new BooleanCellEditor2();
+                                               c.ThreeState = column.TriStateCheckBoxes;
+                                               return c;
+                                           });
         }
 
         #endregion
@@ -97,10 +101,14 @@ namespace BrightIdeasSoftware {
         /// <example>
         /// ObjectListView.EditorRegistry.Register(typeof(Color), typeof(MySpecialColorEditor));
         /// </example>
-        public void Register(Type type, Type controlType) {
-            this.Register(type, delegate(Object model, OLVColumn column, Object value) {
-                return controlType.InvokeMember("", BindingFlags.CreateInstance, null, null, null) as Control;
-            });
+        public void Register(Type type, Type controlType)
+        {
+            Register(type,
+                     delegate
+                         {
+                             return
+                                 controlType.InvokeMember("", BindingFlags.CreateInstance, null, null, null) as Control;
+                         });
         }
 
         /// <summary>
@@ -117,8 +125,9 @@ namespace BrightIdeasSoftware {
         ///     return new MySpecialColorEditor();
         /// }
         /// </example>
-        public void Register(Type type, EditorCreatorDelegate creator) {
-            this.creatorMap[type] = creator;
+        public void Register(Type type, EditorCreatorDelegate creator)
+        {
+            creatorMap[type] = creator;
         }
 
         /// <summary>
@@ -126,8 +135,9 @@ namespace BrightIdeasSoftware {
         /// that have not been handled.
         /// </summary>
         /// <param name="creator">The delegate that will create a editor for all other types</param>
-        public void RegisterDefault(EditorCreatorDelegate creator) {
-            this.defaultCreator = creator;
+        public void RegisterDefault(EditorCreatorDelegate creator)
+        {
+            defaultCreator = creator;
         }
 
         /// <summary>
@@ -135,8 +145,9 @@ namespace BrightIdeasSoftware {
         /// before any other option is considered.
         /// </summary>
         /// <param name="creator">The delegate that will create a control</param>
-        public void RegisterFirstChance(EditorCreatorDelegate creator) {
-            this.firstChanceCreator = creator;
+        public void RegisterFirstChance(EditorCreatorDelegate creator)
+        {
+            firstChanceCreator = creator;
         }
 
         #endregion
@@ -153,31 +164,34 @@ namespace BrightIdeasSoftware {
         /// value for the column/model combination. It could be simply representative of
         /// the appropriate type of value.</param>
         /// <returns>A Control that can edit the given type of values</returns>
-        public Control GetEditor(Object model, OLVColumn column, Object value) {
+        public Control GetEditor(Object model, OLVColumn column, Object value)
+        {
             Control editor;
 
             // Give the first chance delegate a chance to decide
-            if (this.firstChanceCreator != null) {
-                editor = this.firstChanceCreator(model, column, value);
+            if (firstChanceCreator != null)
+            {
+                editor = firstChanceCreator(model, column, value);
                 if (editor != null)
                     return editor;
             }
 
             // Try to find a creator based on the type of the value (or the column)
             Type type = value == null ? column.DataType : value.GetType();
-            if (type != null && this.creatorMap.ContainsKey(type)) {
-                editor = this.creatorMap[type](model, column, value);
+            if (type != null && creatorMap.ContainsKey(type))
+            {
+                editor = creatorMap[type](model, column, value);
                 if (editor != null)
                     return editor;
             }
 
             // Enums without other processing get a special editor
             if (value != null && value.GetType().IsEnum)
-                return this.CreateEnumEditor(value.GetType());
+                return CreateEnumEditor(value.GetType());
 
             // Give any default creator a final chance
-            if (this.defaultCreator != null)
-                return this.defaultCreator(model, column, value);
+            if (defaultCreator != null)
+                return defaultCreator(model, column, value);
 
             return null;
         }
@@ -186,7 +200,8 @@ namespace BrightIdeasSoftware {
         /// Create and return an editor that will edit values of the given type
         /// </summary>
         /// <param name="type">A enum type</param>
-        protected Control CreateEnumEditor(Type type) {
+        protected Control CreateEnumEditor(Type type)
+        {
             return new EnumCellEditor(type);
         }
 
@@ -196,7 +211,9 @@ namespace BrightIdeasSoftware {
 
         private EditorCreatorDelegate firstChanceCreator;
         private EditorCreatorDelegate defaultCreator;
-        private Dictionary<Type, EditorCreatorDelegate> creatorMap = new Dictionary<Type, EditorCreatorDelegate>();
+
+        private readonly Dictionary<Type, EditorCreatorDelegate> creatorMap =
+            new Dictionary<Type, EditorCreatorDelegate>();
 
         #endregion
     }

@@ -1,10 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Drawing;
-using System.Data;
-using System.Linq;
-using System.Text;
 using System.Windows.Forms;
 
 namespace TESVSnip.RecordControls
@@ -48,25 +42,25 @@ namespace TESVSnip.RecordControls
         {
             base.UpdateAllControls();
             var data = GetCurrentData();
-            if (this.element.options != null)
+            if (element.options != null)
             {
                 var value = TypeConverter.h2si(data);
-                this.cboOptions.Items.Clear();
+                cboOptions.Items.Clear();
                 int idx = -1;
                 for (int j = 0; j < element.options.Length; j += 2)
                 {
                     int cbVal;
-                    if ( int.TryParse(element.options[j+1], out cbVal) )
+                    if (int.TryParse(element.options[j + 1], out cbVal))
                     {
-                        this.cboOptions.Items.Add(new comboBoxItem(element.options[j], cbVal ));
+                        cboOptions.Items.Add(new comboBoxItem(element.options[j], cbVal));
                         if (cbVal == value)
-                            idx = this.cboOptions.Items.Count-1;
+                            idx = cboOptions.Items.Count - 1;
                     }
                 }
-                if (idx < this.cboOptions.Items.Count)
-                    this.cboOptions.SelectedIndex = idx;
+                if (idx < cboOptions.Items.Count)
+                    cboOptions.SelectedIndex = idx;
                 else
-                    this.cboOptions.SelectedIndex = -1;
+                    cboOptions.SelectedIndex = -1;
             }
         }
 
@@ -74,7 +68,7 @@ namespace TESVSnip.RecordControls
         {
             var data = GetCurrentData();
             int oldIndex = TypeConverter.h2si(data);
-            var cbi = this.cboOptions.SelectedItem as comboBoxItem;
+            var cbi = cboOptions.SelectedItem as comboBoxItem;
             if (cbi != null)
             {
                 int newIndex = cbi.value;
@@ -82,7 +76,7 @@ namespace TESVSnip.RecordControls
                 {
                     oldIndex = newIndex;
                     SetCurrentData(new ArraySegment<byte>(TypeConverter.si2h(newIndex)));
-                    this.Changed = true;
+                    Changed = true;
                     UpdateText();
                 }
             }

@@ -256,7 +256,7 @@
     <value>Form ID</value>
   </data>
   <data name="toolStripIncrFindTypeFilter.Size" type="System.Drawing.Size, System.Drawing">
-    <value>80, 25</value>
+    <value>80, 23</value>
   </data>
   <data name="toolStripIncrFindTypeFilter.ToolTipText" xml:space="preserve">
     <value>Search Type</value>
@@ -1695,49 +1695,49 @@
     <value>Options</value>
   </data>
   <data name="englishToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>116, 22</value>
+    <value>152, 22</value>
   </data>
   <data name="englishToolStripMenuItem.Text" xml:space="preserve">
     <value>&amp;English</value>
   </data>
   <data name="czechToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>116, 22</value>
+    <value>152, 22</value>
   </data>
   <data name="czechToolStripMenuItem.Text" xml:space="preserve">
     <value>&amp;Czech</value>
   </data>
   <data name="frenchToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>116, 22</value>
+    <value>152, 22</value>
   </data>
   <data name="frenchToolStripMenuItem.Text" xml:space="preserve">
     <value>&amp;French</value>
   </data>
   <data name="germanToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>116, 22</value>
+    <value>152, 22</value>
   </data>
   <data name="germanToolStripMenuItem.Text" xml:space="preserve">
     <value>&amp;German</value>
   </data>
   <data name="italianToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>116, 22</value>
+    <value>152, 22</value>
   </data>
   <data name="italianToolStripMenuItem.Text" xml:space="preserve">
     <value>&amp;Italian</value>
   </data>
   <data name="spanishToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>116, 22</value>
+    <value>152, 22</value>
   </data>
   <data name="spanishToolStripMenuItem.Text" xml:space="preserve">
     <value>&amp;Spanish</value>
   </data>
   <data name="russianToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>116, 22</value>
+    <value>152, 22</value>
   </data>
   <data name="russianToolStripMenuItem.Text" xml:space="preserve">
     <value>&amp;Russian</value>
   </data>
   <data name="polishToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>116, 22</value>
+    <value>152, 22</value>
   </data>
   <data name="polishToolStripMenuItem.Text" xml:space="preserve">
     <value>&amp;Polish</value>

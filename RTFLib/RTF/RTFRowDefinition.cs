@@ -1,14 +1,9 @@
-﻿
-
-
- 
+﻿using System.Diagnostics;
+using System.Drawing;
+using System.Windows.Forms;
 
 namespace RTF
 {
-    using System.Diagnostics;
-    using System.Drawing;
-    using System.Windows.Forms;
-
     /// <summary>
     /// 
     /// </summary>
@@ -50,14 +45,15 @@ namespace RTF
         /// <param name="rTFBorderSide">The RTFBorderSide.</param>
         /// <param name="borderWidth">Width of the border.</param>
         /// <param name="borderColor">Color of the border.</param>
-        public RTFRowDefinition(int rowWidth, RTFAlignment alignment, RTFBorderSide rTFBorderSide, int borderWidth, Color borderColor, Padding padding)
+        public RTFRowDefinition(int rowWidth, RTFAlignment alignment, RTFBorderSide rTFBorderSide, int borderWidth,
+                                Color borderColor, Padding padding)
         {
-            this._padding = padding;
-            this._alignment = alignment;
-            this._rTFBorderSide = rTFBorderSide;
-            this._borderWidth = borderWidth;
-            this._borderColor = borderColor;
-            this._rowWidth = rowWidth * RTFBuilder.TWIPSA4 / 100;
+            _padding = padding;
+            _alignment = alignment;
+            _rTFBorderSide = rTFBorderSide;
+            _borderWidth = borderWidth;
+            _borderColor = borderColor;
+            _rowWidth = rowWidth*RTFBuilder.TWIPSA4/100;
         }
 
         #endregion
@@ -71,13 +67,13 @@ namespace RTF
         public RTFAlignment Alignment
         {
             [DebuggerStepThrough]
-            get { return this._alignment; }
+            get { return _alignment; }
         }
 
         public Padding Padding
         {
             [DebuggerStepThrough]
-            get { return this._padding; }
+            get { return _padding; }
         }
 
         /// <summary>
@@ -87,7 +83,7 @@ namespace RTF
         public RTFBorderSide RTFBorderSide
         {
             [DebuggerStepThrough]
-            get { return this._rTFBorderSide; }
+            get { return _rTFBorderSide; }
         }
 
         /// <summary>
@@ -97,7 +93,7 @@ namespace RTF
         public int BorderWidth
         {
             [DebuggerStepThrough]
-            get { return this._borderWidth; }
+            get { return _borderWidth; }
         }
 
         /// <summary>
@@ -107,7 +103,7 @@ namespace RTF
         public Color BorderColor
         {
             [DebuggerStepThrough]
-            get { return this._borderColor; }
+            get { return _borderColor; }
         }
 
         /// <summary>
@@ -117,13 +113,11 @@ namespace RTF
         public int RowWidth
         {
             [DebuggerStepThrough]
-            get { return this._rowWidth; }
+            get { return _rowWidth; }
             [DebuggerStepThrough]
-            set { this._rowWidth = value; }
+            set { _rowWidth = value; }
         }
 
         #endregion
     }
 }
-
-

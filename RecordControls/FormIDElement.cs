@@ -1,10 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Drawing;
 using System.Linq;
-using System.Text;
-using System.Windows.Forms;
 
 namespace TESVSnip.RecordControls
 {
@@ -14,19 +9,21 @@ namespace TESVSnip.RecordControls
         {
             public readonly string name;
             public readonly uint value;
+
             public comboBoxItem(string name, uint value)
             {
                 this.name = name;
                 this.value = value;
             }
+
             public override string ToString()
             {
                 return name;
             }
         }
 
-        bool inSelChange = false;
-        bool inUpdateText = false;
+        private bool inSelChange;
+        private bool inUpdateText;
 
         public FormIDElement()
         {
@@ -39,6 +36,7 @@ namespace TESVSnip.RecordControls
             cboRecType.Items.AddRange(recitems);
             cboRecType.SelectedIndex = 0;
         }
+
         protected override void UpdateText()
         {
             if (inUpdateText) return;
@@ -53,6 +51,7 @@ namespace TESVSnip.RecordControls
                 inUpdateText = false;
             }
         }
+
         protected override void UpdateElement()
         {
             base.UpdateElement();
@@ -87,23 +86,23 @@ namespace TESVSnip.RecordControls
                 var options = formIDScan(str);
                 if (options == null)
                 {
-                    this.cboFormID.SelectedIndex = -1;
+                    cboFormID.SelectedIndex = -1;
                 }
                 else
                 {
                     var value = TypeConverter.h2si(data);
-                    this.cboFormID.Items.Clear();
+                    cboFormID.Items.Clear();
                     int idx = -1;
                     foreach (var cbVal in options.OrderBy(x => x.Value.DescriptiveName))
                     {
-                        this.cboFormID.Items.Add( new comboBoxItem(cbVal.Value.DescriptiveName, cbVal.Key) );
+                        cboFormID.Items.Add(new comboBoxItem(cbVal.Value.DescriptiveName, cbVal.Key));
                         if (cbVal.Key == value)
-                            idx = this.cboFormID.Items.Count - 1;
+                            idx = cboFormID.Items.Count - 1;
                     }
-                    if (idx < this.cboFormID.Items.Count)
-                        this.cboFormID.SelectedIndex = idx;
+                    if (idx < cboFormID.Items.Count)
+                        cboFormID.SelectedIndex = idx;
                     else
-                        this.cboFormID.SelectedIndex = -1;
+                        cboFormID.SelectedIndex = -1;
                 }
             }
         }
@@ -122,7 +121,7 @@ namespace TESVSnip.RecordControls
 
                 var data = GetCurrentData();
                 uint oldIndex = TypeConverter.h2i(data);
-                var cbi = this.cboFormID.SelectedItem as comboBoxItem;
+                var cbi = cboFormID.SelectedItem as comboBoxItem;
                 if (cbi != null)
                 {
                     uint newIndex = cbi.value;
@@ -130,7 +129,7 @@ namespace TESVSnip.RecordControls
                     {
                         oldIndex = newIndex;
                         SetCurrentData(new ArraySegment<byte>(TypeConverter.i2h(newIndex)));
-                        this.Changed = true;
+                        Changed = true;
                         UpdateText();
                     }
                 }
@@ -143,7 +142,7 @@ namespace TESVSnip.RecordControls
 
         private void FormIDElement_SizeChanged(object sender, EventArgs e)
         {
-            this.cboFormID.Width = this.Width - this.cboFormID.Left - 8;
+            cboFormID.Width = Width - cboFormID.Left - 8;
         }
     }
 }

@@ -334,5 +334,17 @@ namespace TESVSnip.Properties {
                 this["CompressionLimit"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool UseHexSubRecordEditor {
+            get {
+                return ((bool)(this["UseHexSubRecordEditor"]));
+            }
+            set {
+                this["UseHexSubRecordEditor"] = value;
+            }
+        }
     }
 }

@@ -1,8 +1,12 @@
 ﻿using System;
-using System.Windows.Forms;
+using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics;
+using System.Drawing;
+using System.Globalization;
 using System.Linq;
-using System.Reflection;
+using System.Media;
+using System.Windows.Forms;
 
 namespace TESVSnip
 {
@@ -12,7 +16,8 @@ namespace TESVSnip
     internal partial class MainView
     {
         #region Search Helpers
-        enum SearchType
+
+        private enum SearchType
         {
             EditorID,
             FormID,
@@ -21,13 +26,15 @@ namespace TESVSnip
             TypeFullSearch,
             FormIDRef,
         }
-        class ComboHelper<T, U>
+
+        private class ComboHelper<T, U>
         {
             public ComboHelper(T key, U value)
             {
-                this.Key = key;
-                this.Value = value;
+                Key = key;
+                Value = value;
             }
+
             public T Key { get; set; }
             public U Value { get; set; }
 
@@ -36,19 +43,20 @@ namespace TESVSnip
                 return Value.ToString();
             }
         }
+
         #endregion
 
-        void InitializeToolStripFind()
+        private void InitializeToolStripFind()
         {
-            ComboHelper<SearchType, string>[] items = new ComboHelper<SearchType, string>[]
-            {
-                new ComboHelper<SearchType, string>(SearchType.EditorID, "Editor ID"),
-                new ComboHelper<SearchType, string>(SearchType.FormID, "Form ID"),
-                new ComboHelper<SearchType, string>(SearchType.FullSearch, "Full Search"),
-                new ComboHelper<SearchType, string>(SearchType.TypeEditorIdSearch, "Name w/Type"),
-                new ComboHelper<SearchType, string>(SearchType.TypeFullSearch, "Full w/Type"),
-                new ComboHelper<SearchType, string>(SearchType.FormIDRef, "Form ID Ref."),               
-            };
+            var items = new[]
+                            {
+                                new ComboHelper<SearchType, string>(SearchType.EditorID, "Editor ID"),
+                                new ComboHelper<SearchType, string>(SearchType.FormID, "Form ID"),
+                                new ComboHelper<SearchType, string>(SearchType.FullSearch, "Full Search"),
+                                new ComboHelper<SearchType, string>(SearchType.TypeEditorIdSearch, "Name w/Type"),
+                                new ComboHelper<SearchType, string>(SearchType.TypeFullSearch, "Full w/Type"),
+                                new ComboHelper<SearchType, string>(SearchType.FormIDRef, "Form ID Ref."),
+                            };
             toolStripIncrFindType.Items.Clear();
             foreach (var itm in items) toolStripIncrFindType.Items.Add(itm);
             toolStripIncrFindType.SelectedIndex = 0;
@@ -85,21 +93,21 @@ namespace TESVSnip
 
         private void toolStripIncrFindTypeFilter_VisibleChanged(object sender, EventArgs e)
         {
-            if (toolStripIncrFindTypeFilter.Visible == true)
+            if (toolStripIncrFindTypeFilter.Visible)
             {
                 if (Selection != null)
                 {
-                    Selection.RecordChanged += new EventHandler(toolStripIncrFindSelection_RecordChanged);
+                    Selection.RecordChanged += toolStripIncrFindSelection_RecordChanged;
                     toolStripIncrFindSelection_RecordChanged(null, null);
                 }
             }
             else
             {
-                Selection.RecordChanged -= new EventHandler(toolStripIncrFindSelection_RecordChanged);
+                Selection.RecordChanged -= toolStripIncrFindSelection_RecordChanged;
             }
         }
 
-        void toolStripIncrFindSelection_RecordChanged(object sender, EventArgs e)
+        private void toolStripIncrFindSelection_RecordChanged(object sender, EventArgs e)
         {
             if (Selection != null && Selection.Record != null)
             {
@@ -109,11 +117,13 @@ namespace TESVSnip
         }
 
         #region class RecursiveRecordIterator
-        class RecursiveRecordIterator : IEnumerator<BaseRecord>
+
+        private class RecursiveRecordIterator : IEnumerator<BaseRecord>
         {
-            Stack<RecordIterator> stack;
-            bool forward;
-            bool needMoveNext = false;
+            private Stack<RecordIterator> stack;
+            private readonly bool forward;
+            private bool needMoveNext;
+
             public RecursiveRecordIterator(BaseRecord tn, bool forward)
             {
                 this.forward = forward;
@@ -127,18 +137,18 @@ namespace TESVSnip
 
             public void Dispose()
             {
-                foreach ( var itr in this.stack) itr.Dispose();
-                this.stack.Clear();
+                foreach (var itr in stack) itr.Dispose();
+                stack.Clear();
             }
 
-            object System.Collections.IEnumerator.Current
+            object IEnumerator.Current
             {
-                get { return this.Current; }
+                get { return Current; }
             }
 
             public bool MoveNext()
             {
-                while (this.stack.Count > 0)
+                while (stack.Count > 0)
                 {
                     var itr = stack.Peek();
                     if (needMoveNext && !itr.MoveNext()) return false;
@@ -151,28 +161,28 @@ namespace TESVSnip
                         itr = new RecordIterator(itr.Current, -1, forward);
                         stack.Push(itr);
                     }
-                    while(true)
+                    while (true)
                     {
                         bool ok = itr.MoveNext();
                         if (ok) return true;
-                        this.stack.Pop();
-                        if (this.stack.Count == 0)
+                        stack.Pop();
+                        if (stack.Count == 0)
                             return false;
-                        itr = stack.Peek();                        
+                        itr = stack.Peek();
                     }
                 }
-                return false;                
+                return false;
             }
 
             public void Reset()
             {
-                while (this.stack.Count > 1)
+                while (stack.Count > 1)
                 {
-                    var itr = this.stack.Pop();
+                    var itr = stack.Pop();
                     itr.Dispose();
                 }
-                if (this.stack.Count == 1)
-                    this.stack.Peek().Reset();
+                if (stack.Count == 1)
+                    stack.Peek().Reset();
                 needMoveNext = true;
             }
 
@@ -181,42 +191,44 @@ namespace TESVSnip
                 var queue = new Stack<RecordIterator>();
                 for (; tn != null && tn.Parent != null; tn = tn.Parent)
                     queue.Push(new RecordIterator(tn, forward));
-                if (this.stack == null || this.stack.Count == 0)
+                if (stack == null || stack.Count == 0)
                 {
-                    this.stack = new Stack<RecordIterator>(queue);
+                    stack = new Stack<RecordIterator>(queue);
                 }
                 else
                 {
-                    foreach (var itm in queue) this.stack.Push(itm);
-                }                
+                    foreach (var itm in queue) stack.Push(itm);
+                }
             }
         }
+
         #endregion
-        
+
         #region class RecordIterator
-        class RecordIterator : IEnumerator<BaseRecord>
+
+        private class RecordIterator : IEnumerator<BaseRecord>
         {
-            BaseRecord parent;
-            int current;
-            bool forward;
+            private BaseRecord parent;
+            private int current;
+            private readonly bool forward;
 
             public RecordIterator(BaseRecord rec, bool forward)
             {
-                this.parent = rec.Parent;
-                this.current = parent.Records.IndexOf(rec);
+                parent = rec.Parent;
+                current = parent.Records.IndexOf(rec);
                 this.forward = forward;
             }
 
             public RecordIterator(BaseRecord parent, int index, bool forward)
             {
                 this.parent = parent;
-                this.current = (index != -1) ? index : (forward ? -1 : parent.Records.Count);
+                current = (index != -1) ? index : (forward ? -1 : parent.Records.Count);
                 this.forward = forward;
             }
 
             public BaseRecord Current
             {
-                get 
+                get
                 {
                     if (parent == null || current < 0 || current >= parent.Records.Count)
                         return null;
@@ -228,12 +240,12 @@ namespace TESVSnip
             public void Dispose()
             {
                 current = -1;
-                this.parent = null;
+                parent = null;
             }
 
-            object System.Collections.IEnumerator.Current
+            object IEnumerator.Current
             {
-                get { return this.Current; }
+                get { return Current; }
             }
 
             public bool MoveNext()
@@ -252,14 +264,16 @@ namespace TESVSnip
                 }
             }
         }
+
         #endregion
 
-        internal BaseRecord IncrementalSearch(BaseRecord tn, bool first, bool forward, bool wrapAround, Predicate<BaseRecord> searchFunc)
+        internal BaseRecord IncrementalSearch(BaseRecord tn, bool first, bool forward, bool wrapAround,
+                                              Predicate<BaseRecord> searchFunc)
         {
-            using (RecursiveRecordIterator itr = new RecursiveRecordIterator(tn, forward))
+            using (var itr = new RecursiveRecordIterator(tn, forward))
             {
                 BaseRecord startNode = null;
-                System.Diagnostics.Debug.Assert(tn.Equals(itr.Current));
+                Debug.Assert(tn.Equals(itr.Current));
                 bool keep = first;
                 do
                 {
@@ -284,7 +298,7 @@ namespace TESVSnip
             return null;
         }
 
-        class SearchSettings
+        private class SearchSettings
         {
             public SearchType type;
             public BaseRecord startNode;
@@ -298,29 +312,18 @@ namespace TESVSnip
 
             public SearchSettings()
             {
-                this.type = SearchType.EditorID;
-                this.startNode = null;
-                this.text = null;
-                this.first = true;
-                this.partial = true;
-                this.forward = true;
-                this.wrapAround = true;
-                this.updateFunc = null;
-                this.rectype = null;
-            }
-            public SearchSettings(SearchType type, BaseRecord tn, string text, bool first, bool partial, bool forward, bool wrapAround, Predicate<BaseRecord> updateFunc)
-            {
-                this.type = type;
-                this.startNode = tn;
-                this.text = text;
-                this.first = first;
-                this.partial = partial;
-                this.forward = forward;
-                this.wrapAround = wrapAround;
-                this.updateFunc = updateFunc;
-                this.rectype = null;
+                type = SearchType.EditorID;
+                startNode = null;
+                text = null;
+                first = true;
+                partial = true;
+                forward = true;
+                wrapAround = true;
+                updateFunc = null;
+                rectype = null;
             }
         }
+
         /// <summary>
         /// Helper routine for doing an actual search
         /// </summary>
@@ -343,17 +346,17 @@ namespace TESVSnip
                     return null;
 
                 uint searchID;
-                if (!uint.TryParse(ctx.text, System.Globalization.NumberStyles.AllowHexSpecifier, null, out searchID))
+                if (!uint.TryParse(ctx.text, NumberStyles.AllowHexSpecifier, null, out searchID))
                 {
-                    MessageBox.Show("Invalid FormID");
+                    MainView.PostStatusWarning("Invalid FormID");
                     return null;
                 }
                 searchFunction = (BaseRecord node) =>
-                {
-                    var rec = node as Record;
-                    if (ctx.updateFunc != null && ctx.updateFunc(node)) return true;
-                    return (rec != null) ? rec.FormID == searchID : false;
-                };
+                                     {
+                                         var rec = node as Record;
+                                         if (ctx.updateFunc != null && ctx.updateFunc(node)) return true;
+                                         return (rec != null) ? rec.FormID == searchID : false;
+                                     };
             }
             else if (ctx.type == SearchType.EditorID || ctx.type == SearchType.TypeEditorIdSearch)
             {
@@ -364,52 +367,51 @@ namespace TESVSnip
 
                 string searchString = string.IsNullOrEmpty(ctx.text) ? null : ctx.text.ToLowerInvariant();
                 searchFunction = (BaseRecord node) =>
-                {
-                    var rec = node as Record;
-                    if (rec != null)
-                    {
-                        bool typeOk = true;
-                        if (ctx.type == SearchType.TypeEditorIdSearch)
-                            typeOk = !string.IsNullOrEmpty(rec.Name) && string.Compare(rec.Name, ctx.rectype, true) == 0;
-                        if (typeOk)
                         {
-                            if (string.IsNullOrEmpty(searchString))
+                            var rec = node as Record;
+                            if (rec != null)
                             {
-                                return true;
+                                bool typeOk = true;
+                                if (ctx.type == SearchType.TypeEditorIdSearch)
+                                    typeOk = !string.IsNullOrEmpty(rec.Name) && string.Compare(rec.Name, ctx.rectype, true) == 0;
+                                if (typeOk)
+                                {
+                                    if (string.IsNullOrEmpty(searchString))
+                                    {
+                                        return true;
+                                    }
+                                    else if (ctx.partial)
+                                    {
+                                        var val = rec.DescriptiveName.ToLowerInvariant();
+                                        if (val.Contains(searchString))
+                                            return true;
+                                    }
+                                    else
+                                    {
+                                        var val = rec.DescriptiveName.ToLowerInvariant().Substring(2,rec.DescriptiveName.Length - 3);
+                                        if (val == searchString)
+                                            return true;
+                                    }
+                                }
                             }
-                            else if (ctx.partial)
-                            {
-                                var val = rec.DescriptiveName.ToLowerInvariant();
-                                if (val.Contains(searchString))
-                                    return true;
-                            }
-                            else
-                            {
-                                var val = rec.DescriptiveName.ToLowerInvariant().Substring(2, rec.DescriptiveName.Length - 3);
-                                if (val == searchString)
-                                    return true;
-                            }
-                        }
-                    }
-                    if (ctx.updateFunc != null && ctx.updateFunc(node)) return true;
-                    return false;
-                };
+                            if (ctx.updateFunc != null && ctx.updateFunc(node)) return true;
+                            return false;
+                        };
             }
             else if (ctx.type == SearchType.FullSearch || ctx.type == SearchType.TypeFullSearch)
             {
-                if (ctx.type == SearchType.TypeFullSearch && string.IsNullOrEmpty(ctx.rectype))
-                    return null;
-                if (ctx.type == SearchType.FullSearch && string.IsNullOrEmpty(ctx.text))
-                    return null;
+                if (ctx.type == SearchType.TypeFullSearch && string.IsNullOrEmpty(ctx.rectype)) return null;
+                if (ctx.type == SearchType.FullSearch && string.IsNullOrEmpty(ctx.text)) return null;
                 string searchString = ctx.text.ToLowerInvariant();
-                searchFunction = (BaseRecord node) =>
+                searchFunction = node =>
                 {
                     var rec = node as Record;
                     if (rec != null)
                     {
                         bool typeOk = true;
                         if (ctx.type == SearchType.TypeFullSearch)
-                            typeOk = !string.IsNullOrEmpty(rec.Name) && string.Compare(rec.Name, ctx.rectype, true) == 0;
+                            typeOk = !string.IsNullOrEmpty(rec.Name) &&
+                                    string.Compare(rec.Name, ctx.rectype, true) == 0;
                         if (typeOk)
                         {
                             foreach (SubRecord sr in rec.SubRecords)
@@ -418,7 +420,8 @@ namespace TESVSnip
                                 if (!string.IsNullOrEmpty(val))
                                 {
                                     val = val.ToLowerInvariant();
-                                    if ((ctx.partial && val.Contains(searchString)) || (val == searchString))
+                                    if ((ctx.partial && val.Contains(searchString)) ||
+                                        (val == searchString))
                                         return true;
                                 }
                             }
@@ -434,28 +437,23 @@ namespace TESVSnip
                     return null;
 
                 uint searchID;
-                if (!uint.TryParse(ctx.text, System.Globalization.NumberStyles.AllowHexSpecifier, null, out searchID))
+                if (!uint.TryParse(ctx.text, NumberStyles.AllowHexSpecifier, null, out searchID))
                 {
-                    MessageBox.Show("Invalid FormID");
+                    MainView.PostStatusWarning("Invalid FormID");
                     return null;
                 }
-                searchFunction = (BaseRecord node) =>
+                searchFunction = node =>
                 {
                     var rec = node as Record;
                     if (rec != null)
                     {
                         rec.MatchRecordStructureToRecord();
-                        foreach (var sr in rec.SubRecords)
+                        if ((from sr in rec.SubRecords from elem in rec.EnumerateElements(sr) 
+                             let es = elem.Structure 
+                             where es != null && es.type == ElementValueType.FormID select elem)
+                             .Any(elem => searchID == TypeConverter.h2i(elem.Data)))
                         {
-                            foreach (var elem in rec.EnumerateElements(sr) )
-                            {
-                                var es = elem.Structure;
-                                if (es != null && es.type == ElementValueType.FormID)
-                                {
-                                    if (searchID == TypeConverter.h2i(elem.Data))
-                                        return true;
-                                }                                    
-                            }
+                            return true;
                         }
                     }
                     if (ctx.updateFunc != null && ctx.updateFunc(node)) return true;
@@ -466,6 +464,7 @@ namespace TESVSnip
         }
 
         #region Non-Conforming Records
+
         private void findNonconformingRecordToolStripMenuItem_Click(object sender, EventArgs e)
         {
             toolStripIncrInvalidRec.Visible = !toolStripIncrInvalidRec.Visible;
@@ -482,9 +481,9 @@ namespace TESVSnip
             if (totalNodes == 0)
             {
                 toolStripIncrInvalidRecStatus.Text = "No Plugins Loaded";
-                toolStripIncrInvalidRecStatus.ForeColor = System.Drawing.Color.Maroon;
-                if (!TESVSnip.Properties.Settings.Default.NoWindowsSounds)
-                    System.Media.SystemSounds.Beep.Play();
+                toolStripIncrInvalidRecStatus.ForeColor = Color.Maroon;
+                if (!Properties.Settings.Default.NoWindowsSounds)
+                    SystemSounds.Beep.Play();
                 return;
             }
             tn = PluginTree.SelectedRecord ?? PluginTree.TopRecord ?? null;
@@ -495,51 +494,51 @@ namespace TESVSnip
             toolStripIncrInvalidRecStatus.Text = "";
 
             Predicate<BaseRecord> searchFunc = (BaseRecord n) =>
-            {
-                if (IsNonConformingRecord(n))
-                    return true;
-                if (IsBackroundProcessCanceled()) // returning true will stop it
-                    return true;
-                int counter = (int)((float)++currentCount / totalNodes * 100.0f);
-                if (counter != prevCount)
-                {
-                    prevCount = counter;
-                    if (counter % 10 == 0) UpdateBackgroundProgress(counter);
-                }
-                return false;
-            };
+                                                   {
+                                                       if (IsNonConformingRecord(n))
+                                                           return true;
+                                                       if (IsBackroundProcessCanceled()) // returning true will stop it
+                                                           return true;
+                                                       var counter = (int)(++currentCount / totalNodes * 100.0f);
+                                                       if (counter != prevCount)
+                                                       {
+                                                           prevCount = counter;
+                                                           if (counter % 10 == 0) UpdateBackgroundProgress(counter);
+                                                       }
+                                                       return false;
+                                                   };
 
             StartBackgroundWork(() => { foundNode = IncrementalSearch(tn, false, forward, wrapAround, searchFunc); }
-                , () =>
-                {
-                    if (IsBackroundProcessCanceled())
-                    {
-                        toolStripIncrInvalidRecStatus.Text = "Search Canceled";
-                        toolStripIncrInvalidRecStatus.ForeColor = System.Drawing.Color.Black;
-                    }
-                    else
-                    {
-                        if (foundNode != null)
-                        {
-                            toolStripIncrInvalidRecStatus.Text = "Invalid Record Found";
-                            toolStripIncrInvalidRecStatus.ForeColor = System.Drawing.Color.Black;
-                            PluginTree.SelectedRecord = foundNode;
-                        }
-                        else
-                        {
-                            toolStripIncrInvalidRecStatus.Text = "No Invalid Records Found";
-                            toolStripIncrInvalidRecStatus.ForeColor = System.Drawing.Color.Maroon;
-                            if (!TESVSnip.Properties.Settings.Default.NoWindowsSounds)
-                                System.Media.SystemSounds.Beep.Play();
-                        }
-                    }
-                }
-            );
+                                , () =>
+                                      {
+                                          if (IsBackroundProcessCanceled())
+                                          {
+                                              toolStripIncrInvalidRecStatus.Text = "Search Canceled";
+                                              toolStripIncrInvalidRecStatus.ForeColor = Color.Black;
+                                          }
+                                          else
+                                          {
+                                              if (foundNode != null)
+                                              {
+                                                  toolStripIncrInvalidRecStatus.Text = "Invalid Record Found";
+                                                  toolStripIncrInvalidRecStatus.ForeColor = Color.Black;
+                                                  PluginTree.SelectedRecord = foundNode;
+                                              }
+                                              else
+                                              {
+                                                  toolStripIncrInvalidRecStatus.Text = "No Invalid Records Found";
+                                                  toolStripIncrInvalidRecStatus.ForeColor = Color.Maroon;
+                                                  if (!Properties.Settings.Default.NoWindowsSounds)
+                                                      SystemSounds.Beep.Play();
+                                              }
+                                          }
+                                      }
+                );
         }
 
         internal bool findNonConformingRecordIncremental(BaseRecord tn, bool forward, bool wrapAround)
         {
-            var node = IncrementalSearch(tn, false, forward, wrapAround, new Predicate<BaseRecord>(IsNonConformingRecord));
+            var node = IncrementalSearch(tn, false, forward, wrapAround, IsNonConformingRecord);
             if (node != null)
                 PluginTree.SelectedRecord = node;
             return node != null;
@@ -557,7 +556,6 @@ namespace TESVSnip
 
         #endregion
 
-
         #region Increment Record Search
 
         private void toolStripIncrFindNext_Click(object sender, EventArgs e)
@@ -572,9 +570,9 @@ namespace TESVSnip
             if (totalNodes == 0)
             {
                 toolStripIncrInvalidRecStatus.Text = "No Plugins Loaded";
-                toolStripIncrInvalidRecStatus.ForeColor = System.Drawing.Color.Maroon;
-                if (!TESVSnip.Properties.Settings.Default.NoWindowsSounds)
-                    System.Media.SystemSounds.Beep.Play();
+                toolStripIncrInvalidRecStatus.ForeColor = Color.Maroon;
+                if (!Properties.Settings.Default.NoWindowsSounds)
+                    SystemSounds.Beep.Play();
                 return;
             }
             int prevCount = 0;
@@ -583,20 +581,21 @@ namespace TESVSnip
             toolStripIncrFindStatus.Text = "";
 
             // Grab selected node before searching as it can only be accessed from UI thread
-            if (start == null) start = PluginTree.SelectedRecord != null ? PluginTree.SelectedRecord : PluginTree.TopRecord;
+            if (start == null)
+                start = PluginTree.SelectedRecord != null ? PluginTree.SelectedRecord : PluginTree.TopRecord;
 
             Predicate<BaseRecord> updateFunc = (BaseRecord n) =>
-            {
-                if (IsBackroundProcessCanceled()) // returning true will stop it
-                    return true;
-                int counter = (int)((float)++currentCount / totalNodes * 100.0f);
-                if (counter != prevCount)
-                {
-                    prevCount = counter;
-                    if (counter % 10 == 0) UpdateBackgroundProgress(counter);
-                }
-                return false;
-            };
+                                                   {
+                                                       if (IsBackroundProcessCanceled()) // returning true will stop it
+                                                           return true;
+                                                       var counter = (int)(++currentCount / totalNodes * 100.0f);
+                                                       if (counter != prevCount)
+                                                       {
+                                                           prevCount = counter;
+                                                           if (counter % 10 == 0) UpdateBackgroundProgress(counter);
+                                                       }
+                                                       return false;
+                                                   };
 
             var searchContext = new SearchSettings();
 
@@ -614,8 +613,8 @@ namespace TESVSnip
             // exclude null text searches except for when type is specified
             if (searchContext.type != SearchType.TypeEditorIdSearch && string.IsNullOrEmpty(searchContext.text))
             {
-                if (!TESVSnip.Properties.Settings.Default.NoWindowsSounds)
-                    System.Media.SystemSounds.Beep.Play();
+                if (!Properties.Settings.Default.NoWindowsSounds)
+                    SystemSounds.Beep.Play();
                 toolStripIncrFind.Focus();
                 toolStripIncrFindText.Select();
                 toolStripIncrFindText.Focus();
@@ -623,37 +622,37 @@ namespace TESVSnip
             }
 
             StartBackgroundWork(() => { foundNode = PerformSearch(searchContext); }
-                , () =>
-                {
-                    if (IsBackroundProcessCanceled())
-                    {
-                        toolStripIncrFindStatus.Text = "Search Canceled";
-                        toolStripIncrFindStatus.ForeColor = System.Drawing.Color.Black;
-                    }
-                    else
-                    {
-                        if (foundNode != null)
-                        {
-                            toolStripIncrFindStatus.Text = "Match Found";
-                            toolStripIncrFindStatus.ForeColor = System.Drawing.Color.Black;
-                            PluginTree.SelectedRecord = foundNode;
-                            toolStripIncrFindText.Tag = false;
-                        }
-                        else
-                        {
-                            toolStripIncrFindText.Tag = true;
+                                , () =>
+                                      {
+                                          if (IsBackroundProcessCanceled())
+                                          {
+                                              toolStripIncrFindStatus.Text = "Search Canceled";
+                                              toolStripIncrFindStatus.ForeColor = Color.Black;
+                                          }
+                                          else
+                                          {
+                                              if (foundNode != null)
+                                              {
+                                                  toolStripIncrFindStatus.Text = "Match Found";
+                                                  toolStripIncrFindStatus.ForeColor = Color.Black;
+                                                  PluginTree.SelectedRecord = foundNode;
+                                                  toolStripIncrFindText.Tag = false;
+                                              }
+                                              else
+                                              {
+                                                  toolStripIncrFindText.Tag = true;
 
-                            toolStripIncrFindStatus.Text = "No Matches Found";
-                            toolStripIncrFindStatus.ForeColor = System.Drawing.Color.Maroon;
-                            if (!TESVSnip.Properties.Settings.Default.NoWindowsSounds)
-                                System.Media.SystemSounds.Beep.Play();
-                        }
-                        toolStripIncrFind.Focus();
-                        toolStripIncrFindText.Select();
-                        toolStripIncrFindText.Focus();                        
-                    }
-                }
-            );
+                                                  toolStripIncrFindStatus.Text = "No Matches Found";
+                                                  toolStripIncrFindStatus.ForeColor = Color.Maroon;
+                                                  if (!Properties.Settings.Default.NoWindowsSounds)
+                                                      SystemSounds.Beep.Play();
+                                              }
+                                              toolStripIncrFind.Focus();
+                                              toolStripIncrFindText.Select();
+                                              toolStripIncrFindText.Focus();
+                                          }
+                                      }
+                );
         }
 
         private void toolStripIncrFindPrev_Click(object sender, EventArgs e)
@@ -688,24 +687,23 @@ namespace TESVSnip
             }
         }
 
-        void ResetSearch()
+        private void ResetSearch()
         {
             // use tag to indicate text changed and therefore reset the search
             toolStripIncrFindText.Tag = true;
             toolStripIncrFindStatus.Text = "";
         }
+
         private void toolStripIncrFindText_TextChanged(object sender, EventArgs e)
         {
             ResetSearch();
         }
+
         private void toolStripIncrFindTypeFilter_SelectedIndexChanged(object sender, EventArgs e)
         {
             ResetSearch();
         }
 
-
         #endregion
-
-
     }
 }

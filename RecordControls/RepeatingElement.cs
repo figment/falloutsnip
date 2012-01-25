@@ -1,10 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Drawing;
-using System.Data;
-using System.Linq;
-using System.Text;
 using System.Windows.Forms;
 using TESVSnip.Collections.Generic;
 
@@ -12,31 +8,31 @@ namespace TESVSnip.RecordControls
 {
     internal partial class RepeatingElement : BaseElement, IOuterElementControl, IGroupedElementControl
     {
-        IElementControl innerControl = null;
-        AdvancedList<ArraySegment<byte>> elements = new AdvancedList<ArraySegment<byte>>();
-        BindingSource bs = new BindingSource();
-        bool inUpdatePosition = false;
+        private IElementControl innerControl;
+        private readonly AdvancedList<ArraySegment<byte>> elements = new AdvancedList<ArraySegment<byte>>();
+        private readonly BindingSource bs = new BindingSource();
+        private bool inUpdatePosition;
 
         public RepeatingElement()
         {
             InitializeComponent();
             bs.DataSource = elements;
-            this.bindingNavigator.BindingSource = bs;
-            bs.CurrentChanged += new EventHandler(bs_CurrentChanged);
+            bindingNavigator.BindingSource = bs;
+            bs.CurrentChanged += bs_CurrentChanged;
         }
 
-        void bs_CurrentChanged(object sender, EventArgs e)
+        private void bs_CurrentChanged(object sender, EventArgs e)
         {
-            if (this.innerControl != null)
+            if (innerControl != null)
             {
                 if (bs.Current != null)
                 {
-                    var data = (ArraySegment<byte>)bs.Current;
-                    this.innerControl.Data = data;
+                    var data = (ArraySegment<byte>) bs.Current;
+                    innerControl.Data = data;
                 }
                 else
                 {
-                    this.innerControl.Data = default(ArraySegment<byte>);
+                    innerControl.Data = default(ArraySegment<byte>);
                 }
             }
         }
@@ -59,7 +55,6 @@ namespace TESVSnip.RecordControls
         }
 
         #endregion
-
 
         protected override ArraySegment<byte> GetCurrentData()
         {
@@ -85,10 +80,10 @@ namespace TESVSnip.RecordControls
 
         protected override void UpdateElement()
         {
-            if (this.Element != null && !string.IsNullOrEmpty(this.Element.name))
+            if (Element != null && !string.IsNullOrEmpty(Element.name))
             {
-                this.groupBox1.Text = string.Format("{0}: {1}", this.Element.type, this.Element.name)
-                    + (!string.IsNullOrEmpty(Element.desc) ? (" (" + Element.desc + ")") : "");
+                groupBox1.Text = string.Format("{0}: {1}", Element.type, Element.name)
+                                 + (!string.IsNullOrEmpty(Element.desc) ? (" (" + Element.desc + ")") : "");
             }
         }
 
@@ -99,39 +94,40 @@ namespace TESVSnip.RecordControls
             {
                 if (innerControl != value)
                 {
-                    if (this.innerControl != null)
-                        this.innerControl.DataChanged -= new EventHandler(innerControl_DataChanged);
+                    if (innerControl != null)
+                        innerControl.DataChanged -= innerControl_DataChanged;
 
                     innerControl = value;
-                    this.controlPanel.Controls.Clear();
-                    Control c = innerControl as Control;
-                    this.SuspendLayout();
+                    controlPanel.Controls.Clear();
+                    var c = innerControl as Control;
+                    SuspendLayout();
                     if (c != null)
                     {
                         c.Dock = DockStyle.Fill;
-                        c.MinimumSize = new Size(this.Width - c.Left - 24, c.Height - this.controlPanel.Height + c.MinimumSize.Height + 8);
-                        this.MinimumSize = new Size(this.Width, this.Size.Height - this.controlPanel.Height + c.MinimumSize.Height + 16);
-                        this.controlPanel.MinimumSize = new Size(c.MinimumSize.Width, c.MinimumSize.Height + 8);
-                        this.controlPanel.Controls.Add(c);
+                        c.MinimumSize = new Size(Width - c.Left - 24,
+                                                 c.Height - controlPanel.Height + c.MinimumSize.Height + 8);
+                        MinimumSize = new Size(Width, Size.Height - controlPanel.Height + c.MinimumSize.Height + 16);
+                        controlPanel.MinimumSize = new Size(c.MinimumSize.Width, c.MinimumSize.Height + 8);
+                        controlPanel.Controls.Add(c);
                         //this.Size = this.MinimumSize;
                     }
-                    this.ResumeLayout();
-                    if (this.innerControl != null)
-                        this.innerControl.DataChanged += new EventHandler(innerControl_DataChanged);
+                    ResumeLayout();
+                    if (innerControl != null)
+                        innerControl.DataChanged += innerControl_DataChanged;
                 }
             }
         }
 
-        void innerControl_DataChanged(object sender, EventArgs e)
+        private void innerControl_DataChanged(object sender, EventArgs e)
         {
-            SetCurrentData(this.innerControl.Data);
+            SetCurrentData(innerControl.Data);
         }
 
         private void RepeatingElement_Resize(object sender, EventArgs e)
         {
             if (innerControl != null)
             {
-                var c = this.innerControl as Control;
+                var c = innerControl as Control;
                 //c.MinimumSize = new Size(this.Width - c.Left - 24, this.MinimumSize.Height);
             }
         }
@@ -145,14 +141,14 @@ namespace TESVSnip.RecordControls
         }
 
         private void bindingNavigatorAddNewItem2_Click(object sender, EventArgs e)
-        {   
+        {
             // save current changes prior to adding new elements
-            if (this.innerControl != null)
-                this.innerControl.CommitChanges();
-            if ( this.Element != null )
+            if (innerControl != null)
+                innerControl.CommitChanges();
+            if (Element != null)
             {
-                byte[] bytes = new byte[0];
-                switch (this.Element.type)
+                var bytes = new byte[0];
+                switch (Element.type)
                 {
                     case ElementValueType.SByte:
                     case ElementValueType.Byte:
@@ -174,11 +170,10 @@ namespace TESVSnip.RecordControls
                         break;
                 }
                 elements.Add(new ArraySegment<byte>(bytes));
-
             }
             else
             {
-                elements.Add( default(ArraySegment<byte>) );
+                elements.Add(default(ArraySegment<byte>));
             }
             try
             {

@@ -37,65 +37,78 @@
 using System;
 using System.IO;
 
-namespace ICSharpCode.SharpZipLib.Core {
+namespace ICSharpCode.SharpZipLib.Core
+{
+
     #region EventArgs
+
     /// <summary>
     /// Event arguments for scanning.
     /// </summary>
-    class ScanEventArgs : EventArgs {
+    internal class ScanEventArgs : EventArgs
+    {
         #region Constructors
+
         /// <summary>
         /// Initialise a new instance of <see cref="ScanEventArgs"/>
         /// </summary>
         /// <param name="name">The file or directory name.</param>
-        public ScanEventArgs(string name) {
+        public ScanEventArgs(string name)
+        {
             name_ = name;
         }
+
         #endregion
 
         /// <summary>
         /// The file or directory name for this event.
         /// </summary>
-        public string Name {
+        public string Name
+        {
             get { return name_; }
         }
 
         /// <summary>
         /// Get set a value indicating if scanning should continue or not.
         /// </summary>
-        public bool ContinueRunning {
+        public bool ContinueRunning
+        {
             get { return continueRunning_; }
         }
 
         #region Instance Fields
-        string name_;
-        bool continueRunning_ = true;
+
+        private readonly string name_;
+        private bool continueRunning_ = true;
+
         #endregion
     }
-
 
     #endregion
 
     #region Delegates
+
     /// <summary>
     /// Delegate invoked before starting to process a file.
     /// </summary>
     /// <param name="sender">The source of the event</param>
     /// <param name="e">The event arguments.</param>
-    delegate void ProcessFileHandler(object sender, ScanEventArgs e);
+    internal delegate void ProcessFileHandler(object sender, ScanEventArgs e);
 
     /// <summary>
     /// Delegate invoked when a file has been completely processed.
     /// </summary>
     /// <param name="sender">The source of the event</param>
     /// <param name="e">The event arguments.</param>
-    delegate void CompletedFileHandler(object sender, ScanEventArgs e);
+    internal delegate void CompletedFileHandler(object sender, ScanEventArgs e);
+
     #endregion
 
     /// <summary>
     /// FileSystemScanner provides facilities scanning of files and directories.
     /// </summary>
-    class FileSystemScanner {
+    internal class FileSystemScanner
+    {
         #region Constructors
 
         /// <summary>
@@ -103,7 +116,8 @@ namespace ICSharpCode.SharpZipLib.Core {
         /// </summary>
         /// <param name="fileFilter">The <see cref="PathFilter">file filter</see> to apply.</param>
         /// <param name="directoryFilter">The <see cref="PathFilter"> directory filter</see> to apply.</param>
-        public FileSystemScanner(string fileFilter, string directoryFilter) {
+        public FileSystemScanner(string fileFilter, string directoryFilter)
+        {
             fileFilter_ = new PathFilter(fileFilter);
             directoryFilter_ = new PathFilter(directoryFilter);
         }
@@ -116,17 +130,20 @@ namespace ICSharpCode.SharpZipLib.Core {
         /// Delegate to invoke when a file is processed.
         /// </summary>
         public ProcessFileHandler ProcessFile;
+
         #endregion
 
         /// <summary>
         /// Raise the ProcessFile event.
         /// </summary>
         /// <param name="file">The file name.</param>
-        void OnProcessFile(string file) {
+        private void OnProcessFile(string file)
+        {
             ProcessFileHandler handler = ProcessFile;
 
-            if(handler!= null) {
-                ScanEventArgs args = new ScanEventArgs(file);
+            if (handler != null)
+            {
+                var args = new ScanEventArgs(file);
                 handler(this, args);
                 alive_ = args.ContinueRunning;
             }
@@ -137,39 +154,53 @@ namespace ICSharpCode.SharpZipLib.Core {
         /// </summary>
         /// <param name="directory">The base directory to scan.</param>
         /// <param name="recurse">True to recurse subdirectories, false to scan a single directory.</param>
-        public void Scan(string directory, bool recurse) {
+        public void Scan(string directory, bool recurse)
+        {
             alive_ = true;
             ScanDir(directory, recurse);
         }
 
-        void ScanDir(string directory, bool recurse) {
-            string[] names = System.IO.Directory.GetFiles(directory);
+        private void ScanDir(string directory, bool recurse)
+        {
+            string[] names = Directory.GetFiles(directory);
             bool hasMatch = false;
-            for(int fileIndex = 0;fileIndex < names.Length;++fileIndex) {
-                if(!fileFilter_.IsMatch(names[fileIndex])) {
+            for (int fileIndex = 0; fileIndex < names.Length; ++fileIndex)
+            {
+                if (!fileFilter_.IsMatch(names[fileIndex]))
+                {
                     names[fileIndex] = null;
-                } else {
+                }
+                else
+                {
                     hasMatch = true;
                 }
             }
 
-            if(alive_ && hasMatch) {
-                foreach(string fileName in names) {
-                    if(fileName != null) {
+            if (alive_ && hasMatch)
+            {
+                foreach (string fileName in names)
+                {
+                    if (fileName != null)
+                    {
                         OnProcessFile(fileName);
-                        if(!alive_) {
+                        if (!alive_)
+                        {
                             break;
                         }
                     }
                 }
             }
 
-            if(alive_ && recurse) {
-                names = System.IO.Directory.GetDirectories(directory);
-                foreach(string fulldir in names) {
-                    if((directoryFilter_ == null) || (directoryFilter_.IsMatch(fulldir))) {
+            if (alive_ && recurse)
+            {
+                names = Directory.GetDirectories(directory);
+                foreach (string fulldir in names)
+                {
+                    if ((directoryFilter_ == null) || (directoryFilter_.IsMatch(fulldir)))
+                    {
                         ScanDir(fulldir, true);
-                        if(!alive_) {
+                        if (!alive_)
+                        {
                             break;
                         }
                     }
@@ -178,18 +209,22 @@ namespace ICSharpCode.SharpZipLib.Core {
         }
 
         #region Instance Fields
+
         /// <summary>
         /// The file filter currently in use.
         /// </summary>
-        IScanFilter fileFilter_;
+        private readonly IScanFilter fileFilter_;
+
         /// <summary>
         /// The directory filter currently in use.
         /// </summary>
-        IScanFilter directoryFilter_;
+        private readonly IScanFilter directoryFilter_;
+
         /// <summary>
         /// Flag indicating if scanning should continue running.
         /// </summary>
-        bool alive_;
+        private bool alive_;
+
         #endregion
     }
 }

@@ -1,11 +1,10 @@
-﻿namespace RTF
-{
-    using System;
+﻿using System;
 
+namespace RTF
+{
     partial class RTFBuilder
     {
         #region Nested type: RawFonts
-
 
         // ----------------------------------------------------------------------------------------
         //    _                ___        _..-._   Date: 01/11/08    21:15

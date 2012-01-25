@@ -1,12 +1,10 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
-using System.Runtime.Serialization;
 using System.Linq;
-using System.Drawing;
-using System.Text;
-using RTF;
+using System.Runtime.Serialization;
 using TESVSnip.Data;
 
 namespace TESVSnip
@@ -14,52 +12,61 @@ namespace TESVSnip
     [Persistable(Flags = PersistType.DeclaredOnly), Serializable]
     public sealed class GroupRecord : Rec, IDeserializationCallback, IGroupRecord
     {
-        [Persistable]
-        readonly List<Rec> records = new List<Rec>();
+        [Persistable] private readonly List<Rec> records = new List<Rec>();
 
-        public override IList Records { get { return records; } }
+        public override IList Records
+        {
+            get { return records; }
+        }
 
-        [Persistable]
-        private readonly byte[] data;
-        [Persistable]
-        public uint groupType;
-        [Persistable]
-        public uint dateStamp;
-        [Persistable]
-        public uint flags;
+        [Persistable] private readonly byte[] data;
+        [Persistable] public uint groupType;
+        [Persistable] public uint dateStamp;
+        [Persistable] public uint flags;
 
         public string ContentsType
         {
-            get { return groupType == 0 ? TESVSnip.Encoding.CP1252.GetString(data,0,4) : ""; }
+            get { return groupType == 0 ? Encoding.CP1252.GetString(data, 0, 4) : ""; }
         }
 
         public override long Size
         {
-            get { long size = 24; foreach (Rec rec in Records) size += rec.Size2; return size; }
+            get
+            {
+                long size = 24;
+                foreach (Rec rec in Records) size += rec.Size2;
+                return size;
+            }
         }
-        public override long Size2 { get { return Size; } }
+
+        public override long Size2
+        {
+            get { return Size; }
+        }
 
         public override void AddRecord(BaseRecord br)
         {
-            Rec r = br as Rec;
-            if (r == null) throw new TESParserException("Record to add was not of the correct type." +
-                   Environment.NewLine + "Groups can only hold records or other groups.");
+            var r = br as Rec;
+            if (r == null)
+                throw new TESParserException("Record to add was not of the correct type." +
+                                             Environment.NewLine + "Groups can only hold records or other groups.");
             r.Parent = this;
             records.Add(r);
             FireRecordListUpdate(this, this);
         }
-        
+
         public override void InsertRecord(int idx, BaseRecord br)
         {
-            Rec r = br as Rec;
-            if (r == null) throw new TESParserException("Record to add was not of the correct type." +
-                   Environment.NewLine + "Groups can only hold records or other groups.");
+            var r = br as Rec;
+            if (r == null)
+                throw new TESParserException("Record to add was not of the correct type." +
+                                             Environment.NewLine + "Groups can only hold records or other groups.");
             r.Parent = this;
-            if (idx < 0 || idx > this.records.Count)
-                idx = this.records.Count;
+            if (idx < 0 || idx > records.Count)
+                idx = records.Count;
 
 #if DEBUG
-            System.Diagnostics.Trace.TraceInformation("Insert '{0}' at {1}", r, idx);
+            Trace.TraceInformation("Insert '{0}' at {1}", r, idx);
 #endif
 
             records.Insert(idx, r);
@@ -68,7 +75,7 @@ namespace TESVSnip
 
         public override bool DeleteRecord(BaseRecord br)
         {
-            Rec r = br as Rec;
+            var r = br as Rec;
             if (r == null) return false;
             bool ok = records.Remove(r);
             if (ok) r.Parent = null;
@@ -76,9 +83,10 @@ namespace TESVSnip
             FireRecordDeleted(this, r);
             return ok;
         }
+
         public override int IndexOf(BaseRecord br)
         {
-            return this.records.IndexOf(br as Rec);
+            return records.IndexOf(br as Rec);
         }
 
 
@@ -86,16 +94,19 @@ namespace TESVSnip
         {
             if (br.Count(r => !(r is Record || r is GroupRecord)) > 0)
             {
-                throw new TESParserException("Record to add was not of the correct type.\nGroups can only hold records or other groups.");               
+                throw new TESParserException(
+                    "Record to add was not of the correct type.\nGroups can only hold records or other groups.");
             }
-            foreach ( var r in br ) r.Parent = this;
+            foreach (var r in br) r.Parent = this;
             records.AddRange(br.OfType<Rec>());
-            FireRecordListUpdate(this, this);            
+            FireRecordListUpdate(this, this);
         }
+
         public override bool DeleteRecords(IEnumerable<BaseRecord> br)
         {
             if (br.Count(r => !(r is Record || r is GroupRecord)) > 0)
-                throw new TESParserException("Record to delete was not of the correct type.\nGroups can only hold records or other groups.");
+                throw new TESParserException(
+                    "Record to delete was not of the correct type.\nGroups can only hold records or other groups.");
             var ok = false;
             foreach (Rec r in from Rec r in br where records.Remove(r) select r)
             {
@@ -106,10 +117,12 @@ namespace TESVSnip
             FireRecordListUpdate(this, this);
             return ok;
         }
+
         public override void InsertRecords(int index, IEnumerable<BaseRecord> br)
         {
             if (br.Count(r => !(r is Record || r is GroupRecord)) > 0)
-                throw new TESParserException("Record to add was not of the correct type.\nGroups can only hold records or other groups.");
+                throw new TESParserException(
+                    "Record to add was not of the correct type.\nGroups can only hold records or other groups.");
             records.InsertRange(index, br.OfType<Rec>());
             FireRecordListUpdate(this, this);
         }
@@ -125,7 +138,7 @@ namespace TESVSnip
         public override IEnumerable<BaseRecord> Enumerate(Predicate<BaseRecord> match)
         {
             if (!match(this)) yield break;
-            foreach (BaseRecord r in this.Records)
+            foreach (BaseRecord r in Records)
                 foreach (var itm in r.Enumerate(match))
                     yield return itm;
         }
@@ -134,18 +147,16 @@ namespace TESVSnip
         {
             if (!base.While(action))
                 return false;
-            return this.Records.Cast<BaseRecord>().All(r => r.While(action));
+            return Records.Cast<BaseRecord>().All(r => r.While(action));
         }
 
         public override void ForEach(Action<BaseRecord> action)
         {
             base.ForEach(action);
-            foreach (BaseRecord r in this.Records) r.ForEach(action);
+            foreach (BaseRecord r in Records) r.ForEach(action);
         }
 
-        GroupRecord() { }
-
-        GroupRecord(SerializationInfo info, StreamingContext context)
+        private GroupRecord(SerializationInfo info, StreamingContext context)
             : base(info, context)
         {
         }
@@ -157,7 +168,7 @@ namespace TESVSnip
             data = br.ReadBytes(4);
             groupType = br.ReadUInt32();
             dateStamp = br.ReadUInt32();
-            string contentType = groupType == 0 ? TESVSnip.Encoding.CP1252.GetString(data) : "";
+            string contentType = groupType == 0 ? Encoding.CP1252.GetString(data) : "";
             if (!Oblivion) flags = br.ReadUInt32();
             uint amountRead = 0;
             while (amountRead < Size - (Oblivion ? 20 : 24))
@@ -165,20 +176,20 @@ namespace TESVSnip
 #if DEBUG
                 long szPos = br.BaseStream.Position;
 #endif
-                string s = Plugin.ReadRecName(br);
+                string s = ReadRecName(br);
                 uint recsize = br.ReadUInt32();
 #if DEBUG
-                System.Diagnostics.Trace.TraceInformation("{0} {1}", s, recsize);
+                Trace.TraceInformation("{0} {1}", s, recsize);
 #endif
                 if (s == "GRUP")
                 {
                     bool skip = filterAll || (recFilter != null && Array.IndexOf(recFilter, contentType) >= 0);
-                    GroupRecord gr = new GroupRecord(recsize, br, Oblivion, recFilter, skip);
+                    var gr = new GroupRecord(recsize, br, Oblivion, recFilter, skip);
                     amountRead += recsize;
 
                     if (!filterAll) AddRecord(gr);
 #if DEBUG
-                    System.Diagnostics.Debug.Assert((br.BaseStream.Position - szPos) == recsize);
+                    Debug.Assert((br.BaseStream.Position - szPos) == recsize);
 #endif
                 }
                 else
@@ -188,17 +199,17 @@ namespace TESVSnip
                     {
                         long size = (recsize + (Oblivion ? 12 : 16));
                         //if ((br.ReadUInt32() & 0x00040000) > 0) size += 4;
-                        br.BaseStream.Position += size;// just read past the data
-                        amountRead += (uint)(recsize + (Oblivion ? 20 : 24));
+                        br.BaseStream.Position += size; // just read past the data
+                        amountRead += (uint) (recsize + (Oblivion ? 20 : 24));
                     }
                     else
                     {
-                        Record r = new Record(s, recsize, br, Oblivion);
-                        amountRead += (uint)(recsize + (Oblivion ? 20 : 24));
+                        var r = new Record(s, recsize, br, Oblivion);
+                        amountRead += (uint) (recsize + (Oblivion ? 20 : 24));
                         AddRecord(r);
                     }
 #if DEBUG
-                    System.Diagnostics.Debug.Assert((br.BaseStream.Position - szPos) - (Oblivion ? 20 : 24) == recsize);
+                    Debug.Assert((br.BaseStream.Position - szPos) - (Oblivion ? 20 : 24) == recsize);
 #endif
                 }
             }
@@ -206,26 +217,26 @@ namespace TESVSnip
             {
                 throw new TESParserException("Record block did not match the size specified in the group header");
             }
-            this.UpdateShortDescription();
+            UpdateShortDescription();
         }
 
         public GroupRecord(string data)
         {
             Name = "GRUP";
             this.data = new byte[4];
-            for (int i = 0; i < 4; i++) this.data[i] = (byte)data[i];
+            for (int i = 0; i < 4; i++) this.data[i] = (byte) data[i];
             UpdateShortDescription();
         }
 
         private GroupRecord(GroupRecord gr)
         {
             Name = "GRUP";
-            data = (byte[])gr.data.Clone();
+            data = (byte[]) gr.data.Clone();
             groupType = gr.groupType;
             dateStamp = gr.dateStamp;
             flags = gr.flags;
             records = new List<Rec>(gr.records.Count);
-            for (int i = 0; i < gr.records.Count; i++) AddRecord((Rec)gr.records[i].Clone());
+            for (int i = 0; i < gr.records.Count; i++) AddRecord(gr.records[i].Clone());
             Name = gr.Name;
             UpdateShortDescription();
         }
@@ -235,20 +246,22 @@ namespace TESVSnip
             switch (groupType)
             {
                 case 0:
-                    return "(Contains: " + (char)data[0] + (char)data[1] + (char)data[2] + (char)data[3] + ")";
+                    return "(Contains: " + (char) data[0] + (char) data[1] + (char) data[2] + (char) data[3] + ")";
                 case 2:
                 case 3:
-                    return "(Block number: " + (data[0] + data[1] * 256 + data[2] * 256 * 256 + data[3] * 256 * 256 * 256).ToString() + ")";
+                    return "(Block number: " +
+                           (data[0] + data[1]*256 + data[2]*256*256 + data[3]*256*256*256).ToString() + ")";
                 case 4:
                 case 5:
-                    return "(Coordinates: [" + (data[0] + data[1] * 256) + ", " + data[2] + data[3] * 256 + "])";
+                    return "(Coordinates: [" + (data[0] + data[1]*256) + ", " + data[2] + data[3]*256 + "])";
                 case 1:
                 case 6:
                 case 7:
                 case 8:
                 case 9:
                 case 10:
-                    return "(Parent FormID: 0x" + data[3].ToString("x2") + data[2].ToString("x2") + data[1].ToString("x2") + data[0].ToString("x2") + ")";
+                    return "(Parent FormID: 0x" + data[3].ToString("x2") + data[2].ToString("x2") +
+                           data[1].ToString("x2") + data[0].ToString("x2") + ")";
             }
             return null;
         }
@@ -296,15 +309,15 @@ namespace TESVSnip
                     break;
             }
             return desc + Environment.NewLine +
-                "Records: " + records.Count.ToString() + Environment.NewLine +
-                "Size: " + Size.ToString() + " bytes (including header)";
+                   "Records: " + records.Count.ToString() + Environment.NewLine +
+                   "Size: " + Size.ToString() + " bytes (including header)";
         }
 
         internal override void SaveData(BinaryWriter bw)
         {
             long startpos = bw.BaseStream.Position;
-            uint svSize = (uint)Size;
-            uint svSize2 = (uint)Size2;
+            var svSize = (uint) Size;
+            var svSize2 = (uint) Size2;
             WriteString(bw, "GRUP");
             bw.Write(svSize);
             bw.Write(data);
@@ -314,7 +327,7 @@ namespace TESVSnip
             foreach (Rec r in Records) r.SaveData(bw);
             bw.Flush();
             long curpos = bw.BaseStream.Position;
-            uint wrSize = (uint)(curpos - startpos);
+            var wrSize = (uint) (curpos - startpos);
             if (wrSize != svSize2) // fix size probably due to compression
             {
                 bw.BaseStream.Position = startpos + 4;
@@ -325,7 +338,7 @@ namespace TESVSnip
 
         internal override List<string> GetIDs(bool lower)
         {
-            List<string> list = new List<string>();
+            var list = new List<string>();
             foreach (Record r in Records) list.AddRange(r.GetIDs(lower));
             return list;
         }
@@ -335,8 +348,16 @@ namespace TESVSnip
             return new GroupRecord(this);
         }
 
-        public byte[] GetData() { return (byte[])data.Clone(); }
-        internal byte[] GetReadonlyData() { return data; }
+        public byte[] GetData()
+        {
+            return (byte[]) data.Clone();
+        }
+
+        internal byte[] GetReadonlyData()
+        {
+            return data;
+        }
+
         public void SetData(byte[] data)
         {
             if (data.Length != 4) throw new ArgumentException("data length must be 4");
@@ -347,7 +368,7 @@ namespace TESVSnip
         {
             if (groupType == 0)
             {
-                string data = TESVSnip.Encoding.CP1252.GetString(this.data);
+                string data = Encoding.CP1252.GetString(this.data);
                 string desc = string.Format(" ({0})", data);
                 if (groupType == 0)
                 {
@@ -358,11 +379,11 @@ namespace TESVSnip
                             desc += " - " + rec.description;
                     }
                 }
-                this.descriptiveName = desc;
+                descriptiveName = desc;
             }
             else
             {
-                this.descriptiveName = "";
+                descriptiveName = "";
             }
         }
 
@@ -370,7 +391,7 @@ namespace TESVSnip
 
         void IDeserializationCallback.OnDeserialization(object sender)
         {
-            foreach (BaseRecord rec in this.Records)
+            foreach (BaseRecord rec in Records)
                 rec.Parent = this;
         }
 

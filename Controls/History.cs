@@ -1,4 +1,5 @@
 ﻿#region License
+
 //////////////////////////////////////////////////////////////////////////
 // Navigational history (go back/forward) for WinForms controls
 // www.codeproject.com/KB/miscctrl/​WinFormsHistory.aspx
@@ -6,7 +7,9 @@
 //  Release under CPOL License
 //  http://www.codeproject.com/info/cpol10.aspx
 //////////////////////////////////////////////////////////////////////////
+
 #endregion
+
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -22,7 +25,7 @@ namespace OC.Windows.Forms
     public sealed class History<T> : IDisposable where T : class
     {
         #region Events & Delegates
-        
+
         /// <summary>Occurs when user chose from menu or clicked button.</summary>
         public event EventHandler<HistoryEventArgs<T>> GotoItem;
 
@@ -45,14 +48,14 @@ namespace OC.Windows.Forms
         /// limitList == 0 for unlimited history.
         /// </summary>
         public History(ToolStripSplitButton back, ToolStripSplitButton forward, uint limitList)
-        { 
+        {
             list = new LinkedList<T>();
 
             cms = new ToolStripDropDownMenu();
-            cms.Opening += new CancelEventHandler(cms_Opening);
-            cms.Closed += new ToolStripDropDownClosedEventHandler(cms_Closed);
-            cms.ItemClicked += new ToolStripItemClickedEventHandler(cms_ItemClicked);
-            cms.RightToLeft = RightToLeft.No;   // if buttons are mirrored
+            cms.Opening += cms_Opening;
+            cms.Closed += cms_Closed;
+            cms.ItemClicked += cms_ItemClicked;
+            cms.RightToLeft = RightToLeft.No; // if buttons are mirrored
 
             ensureOpeningOfMenu();
 
@@ -61,24 +64,24 @@ namespace OC.Windows.Forms
             assignButton(back);
             assignButton(forward);
 
-            limit = (int)limitList;
+            limit = (int) limitList;
             _Enabled = true;
         }
 
         #region Fields
 
         private T _CurrentItem;
-        readonly LinkedList<T> list;
+        private readonly LinkedList<T> list;
         private LinkedListNode<T> current;
 
-        readonly ToolStripDropDownMenu cms;
-        readonly ToolStripSplitButton tssbBack;
-        readonly ToolStripSplitButton tssbForward;
+        private readonly ToolStripDropDownMenu cms;
+        private readonly ToolStripSplitButton tssbBack;
+        private readonly ToolStripSplitButton tssbForward;
 
         private bool _AllowDuplicates;
         private bool _Enabled;
         private bool inProc;
-        readonly int limit;
+        private readonly int limit;
 
         private GetHistoryMenuText _GetMenuText;
         private GetHistoryMenuImage _GetMenuImage;
@@ -119,7 +122,7 @@ namespace OC.Windows.Forms
         public T CurrentItem
         {
             get { return _CurrentItem; }
-            set 
+            set
             {
                 if (_Enabled)
                 {
@@ -177,11 +180,11 @@ namespace OC.Windows.Forms
             }
         }
 
-        private void addCurrentItem( T item)
+        private void addCurrentItem(T item)
         {
             if (!_AllowDuplicates && list.Contains(item))
             {
-                list.Remove(item);      
+                list.Remove(item);
             }
 
             list.AddFirst(item);
@@ -204,7 +207,7 @@ namespace OC.Windows.Forms
 
         private void cms_ItemClicked(object sender, ToolStripItemClickedEventArgs e)
         {
-            LinkedListNode<T> node = (LinkedListNode<T>)e.ClickedItem.Tag;
+            var node = (LinkedListNode<T>) e.ClickedItem.Tag;
 
             OnGotoItem(node);
 
@@ -212,7 +215,7 @@ namespace OC.Windows.Forms
             limitList();
             enableButtons();
         }
-        
+
         // dynamic filling of menu
         private void cms_Opening(object sender, CancelEventArgs e)
         {
@@ -220,14 +223,14 @@ namespace OC.Windows.Forms
 
             cms.Items.Clear();
 
-            ToolStripItem tssb = ((ToolStripDropDownMenu)sender).OwnerItem;
+            ToolStripItem tssb = ((ToolStripDropDownMenu) sender).OwnerItem;
             bool isBackMenu = tssb.Equals(tssbBack);
 
             LinkedListNode<T> node = isBackMenu ? current.Next : current.Previous;
 
             while (node != null)
             {
-                ToolStripMenuItem tsmi = new ToolStripMenuItem();
+                var tsmi = new ToolStripMenuItem();
                 tsmi.Tag = node;
 
                 if (_GetMenuText != null)
@@ -278,7 +281,7 @@ namespace OC.Windows.Forms
         {
             if (tssb != null)
             {
-                tssb.ButtonClick += new EventHandler(tssb_ButtonClick);
+                tssb.ButtonClick += tssb_ButtonClick;
                 tssb.DropDown = cms;
                 tssb.Enabled = false;
             }
@@ -286,7 +289,7 @@ namespace OC.Windows.Forms
 
         private void enableButtons()
         {
-            if (tssbBack != null) 
+            if (tssbBack != null)
                 tssbBack.Enabled = (current != null && current.Next != null);
             if (tssbForward != null)
                 tssbForward.Enabled = (current != null && current.Previous != null);
@@ -332,8 +335,11 @@ namespace OC.Windows.Forms
             _Item = item;
         }
 
-        readonly T _Item;
+        private readonly T _Item;
 
-        public T Item { get { return _Item; } }
+        public T Item
+        {
+            get { return _Item; }
+        }
     }
 }

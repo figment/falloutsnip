@@ -1,11 +1,11 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
-using System.IO;
-using System.Runtime.Serialization;
-using System.Linq;
 using System.Drawing;
+using System.IO;
+using System.Linq;
+using System.Runtime.Serialization;
 using System.Text;
+using System.Windows.Forms;
 using RTF;
 using TESVSnip.Data;
 
@@ -16,28 +16,40 @@ namespace TESVSnip
     {
         private Record Owner;
 
-        [Persistable]
-        private byte[] Data;
+        [Persistable] private byte[] Data;
 
-        public override long Size { get { return Data.Length; } }
-        public override long Size2 { get { return 6 + Data.Length + (Data.Length > ushort.MaxValue ? 10 : 0); } }
+        public override long Size
+        {
+            get { return Data.Length; }
+        }
+
+        public override long Size2
+        {
+            get { return 6 + Data.Length + (Data.Length > ushort.MaxValue ? 10 : 0); }
+        }
 
         public byte[] GetData()
         {
-            return (byte[])Data.Clone();
+            return (byte[]) Data.Clone();
         }
-        internal byte[] GetReadonlyData() { return Data; }
+
+        internal byte[] GetReadonlyData()
+        {
+            return Data;
+        }
+
         public void SetData(byte[] data)
         {
-            Data = (byte[])data.Clone();
+            Data = (byte[]) data.Clone();
         }
+
         public void SetStrData(string s, bool nullTerminate)
         {
             if (nullTerminate) s += '\0';
             Data = System.Text.Encoding.Default.GetBytes(s);
         }
 
-        SubRecord(SerializationInfo info, StreamingContext context)
+        private SubRecord(SerializationInfo info, StreamingContext context)
             : base(info, context)
         {
         }
@@ -86,7 +98,7 @@ namespace TESVSnip
                         }
                     }
                 }
-                this.Data = new byte[size];
+                Data = new byte[size];
                 // TODO: populate with defaults if provided...
             }
         }
@@ -95,7 +107,8 @@ namespace TESVSnip
         {
             Owner = rec;
             Name = name;
-            if (size == 0) size = br.ReadUInt16(); else br.BaseStream.Position += 2;
+            if (size == 0) size = br.ReadUInt16();
+            else br.BaseStream.Position += 2;
             Data = new byte[size];
             br.Read(Data, 0, Data.Length);
         }
@@ -104,13 +117,13 @@ namespace TESVSnip
         {
             Owner = null;
             Name = sr.Name;
-            Data = (byte[])sr.Data.Clone();
+            Data = (byte[]) sr.Data.Clone();
         }
 
         public override BaseRecord Parent
         {
             get { return Owner; }
-            internal set { this.Owner = value as Record; }
+            internal set { Owner = value as Record; }
         }
 
         public override BaseRecord Clone()
@@ -130,16 +143,16 @@ namespace TESVSnip
             if (Data.Length > ushort.MaxValue)
             {
                 WriteString(bw, "XXXX");
-                bw.Write((ushort)4);
+                bw.Write((ushort) 4);
                 bw.Write(Data.Length);
                 WriteString(bw, Name);
-                bw.Write((ushort)0);
+                bw.Write((ushort) 0);
                 bw.Write(Data, 0, Data.Length);
             }
             else
             {
                 WriteString(bw, Name);
-                bw.Write((ushort)Data.Length);
+                bw.Write((ushort) Data.Length);
                 bw.Write(Data, 0, Data.Length);
             }
         }
@@ -147,34 +160,42 @@ namespace TESVSnip
         public override string GetDesc()
         {
             return "[Subrecord]" + Environment.NewLine +
-                "Name: " + Name + Environment.NewLine +
-                "Size: " + Size.ToString() + " bytes (Excluding header)";
+                   "Name: " + Name + Environment.NewLine +
+                   "Size: " + Size.ToString() + " bytes (Excluding header)";
         }
-        public override bool DeleteRecord(BaseRecord br) { return false; }
+
+        public override bool DeleteRecord(BaseRecord br)
+        {
+            return false;
+        }
+
         public override void AddRecord(BaseRecord br)
         {
             throw new TESParserException("Subrecords cannot contain additional data.");
         }
+
         public string GetStrData()
         {
             string s = "";
             foreach (byte b in Data)
             {
                 if (b == 0) break;
-                s += (char)b;
+                s += (char) b;
             }
             return s;
         }
+
         public string GetStrData(int id)
         {
             string s = "";
             foreach (byte b in Data)
             {
                 if (b == 0) break;
-                s += (char)b;
+                s += (char) b;
             }
             return s;
         }
+
         public string GetHexData()
         {
             string s = "";
@@ -184,36 +205,38 @@ namespace TESVSnip
 
         public string Description
         {
-            get { return this.Structure != null ? this.Structure.desc : ""; }
+            get { return Structure != null ? Structure.desc : ""; }
         }
 
         public bool IsValid
         {
-            get { return this.Structure != null && (this.Structure.size == 0 || this.Structure.size == this.Size); }
+            get { return Structure != null && (Structure.size == 0 || Structure.size == Size); }
         }
 
         internal SubrecordStructure Structure { get; private set; }
 
         internal void AttachStructure(SubrecordStructure ss)
         {
-            this.Structure = ss;
+            Structure = ss;
         }
+
         internal void DetachStructure()
         {
-            this.Structure = null;
+            Structure = null;
         }
 
         internal string GetFormattedData(SelectionContext context)
         {
-            var sb = new System.Text.StringBuilder();
+            var sb = new StringBuilder();
             GetFormattedData(sb, context);
             return sb.ToString();
         }
 
         #region Get Formatted Data
-        public override void GetFormattedData(System.Text.StringBuilder s, SelectionContext context)
+
+        public override void GetFormattedData(StringBuilder s, SelectionContext context)
         {
-            SubrecordStructure ss = this.Structure;
+            SubrecordStructure ss = Structure;
             if (ss == null)
                 return;
 
@@ -244,11 +267,15 @@ namespace TESVSnip
                             {
                                 case ElementValueType.Int:
                                     {
-
-                                        string tmps = TypeConverter.h2si(Data[offset], Data[offset + 1], Data[offset + 2], Data[offset + 3]).ToString();
+                                        string tmps =
+                                            TypeConverter.h2si(Data[offset], Data[offset + 1], Data[offset + 2],
+                                                               Data[offset + 3]).ToString();
                                         if (!sselem.notininfo)
                                         {
-                                            if (sselem.hexview) s.Append(TypeConverter.h2i(Data[offset], Data[offset + 1], Data[offset + 2], Data[offset + 3]).ToString("X8"));
+                                            if (sselem.hexview)
+                                                s.Append(
+                                                    TypeConverter.h2i(Data[offset], Data[offset + 1], Data[offset + 2],
+                                                                      Data[offset + 3]).ToString("X8"));
                                             else s.Append(tmps);
                                             if (sselem.options != null && sselem.options.Length > 0)
                                             {
@@ -260,8 +287,9 @@ namespace TESVSnip
                                             }
                                             else if (sselem.flags != null && sselem.flags.Length > 0)
                                             {
-                                                uint val = TypeConverter.h2i(Data[offset], Data[offset + 1], Data[offset + 2], Data[offset + 3]);
-                                                var tmp2 = new System.Text.StringBuilder();
+                                                uint val = TypeConverter.h2i(Data[offset], Data[offset + 1],
+                                                                             Data[offset + 2], Data[offset + 3]);
+                                                var tmp2 = new StringBuilder();
                                                 for (int k = 0; k < sselem.flags.Length; k++)
                                                 {
                                                     if ((val & (1 << k)) != 0)
@@ -275,13 +303,19 @@ namespace TESVSnip
                                             }
                                         }
                                         offset += 4;
-                                    } break;
+                                    }
+                                    break;
                                 case ElementValueType.UInt:
                                     {
-                                        string tmps = TypeConverter.h2i(Data[offset], Data[offset + 1], Data[offset + 2], Data[offset + 3]).ToString();
+                                        string tmps =
+                                            TypeConverter.h2i(Data[offset], Data[offset + 1], Data[offset + 2],
+                                                              Data[offset + 3]).ToString();
                                         if (!sselem.notininfo)
                                         {
-                                            if (sselem.hexview) s.Append(TypeConverter.h2i(Data[offset], Data[offset + 1], Data[offset + 2], Data[offset + 3]).ToString("X8"));
+                                            if (sselem.hexview)
+                                                s.Append(
+                                                    TypeConverter.h2i(Data[offset], Data[offset + 1], Data[offset + 2],
+                                                                      Data[offset + 3]).ToString("X8"));
                                             else s.Append(tmps);
                                             if (sselem.options != null && sselem.options.Length > 0)
                                             {
@@ -293,8 +327,9 @@ namespace TESVSnip
                                             }
                                             else if (sselem.flags != null && sselem.flags.Length > 0)
                                             {
-                                                uint val = TypeConverter.h2i(Data[offset], Data[offset + 1], Data[offset + 2], Data[offset + 3]);
-                                                var tmp2 = new System.Text.StringBuilder();
+                                                uint val = TypeConverter.h2i(Data[offset], Data[offset + 1],
+                                                                             Data[offset + 2], Data[offset + 3]);
+                                                var tmp2 = new StringBuilder();
                                                 for (int k = 0; k < sselem.flags.Length; k++)
                                                 {
                                                     if ((val & (1 << k)) != 0)
@@ -315,19 +350,22 @@ namespace TESVSnip
                                         string tmps = TypeConverter.h2ss(Data[offset], Data[offset + 1]).ToString();
                                         if (!sselem.notininfo)
                                         {
-                                            if (sselem.hexview) s.Append(TypeConverter.h2ss(Data[offset], Data[offset + 1]).ToString("X4"));
+                                            if (sselem.hexview)
+                                                s.Append(
+                                                    TypeConverter.h2ss(Data[offset], Data[offset + 1]).ToString("X4"));
                                             else s.Append(tmps);
                                             if (sselem.options != null && sselem.options.Length > 0)
                                             {
                                                 for (int k = 0; k < sselem.options.Length; k += 2)
                                                 {
-                                                    if (tmps == sselem.options[k + 1]) s.AppendFormat(" ({0})", sselem.options[k]);
+                                                    if (tmps == sselem.options[k + 1])
+                                                        s.AppendFormat(" ({0})", sselem.options[k]);
                                                 }
                                             }
                                             else if (sselem.flags != null && sselem.flags.Length > 0)
                                             {
                                                 uint val = TypeConverter.h2s(Data[offset], Data[offset + 1]);
-                                                var tmp2 = new System.Text.StringBuilder();
+                                                var tmp2 = new StringBuilder();
                                                 for (int k = 0; k < sselem.flags.Length; k++)
                                                 {
                                                     if ((val & (1 << k)) != 0)
@@ -348,19 +386,21 @@ namespace TESVSnip
                                         string tmps = TypeConverter.h2s(Data[offset], Data[offset + 1]).ToString();
                                         if (!sselem.notininfo)
                                         {
-                                            if (sselem.hexview) s.Append(TypeConverter.h2s(Data[offset], Data[offset + 1]).ToString("X4"));
+                                            if (sselem.hexview)
+                                                s.Append(TypeConverter.h2s(Data[offset], Data[offset + 1]).ToString("X4"));
                                             else s.Append(tmps);
                                             if (sselem.options != null && sselem.options.Length > 0)
                                             {
                                                 for (int k = 0; k < sselem.options.Length; k += 2)
                                                 {
-                                                    if (tmps == sselem.options[k + 1]) s.Append(" (").Append(sselem.options[k]).Append(")");
+                                                    if (tmps == sselem.options[k + 1])
+                                                        s.Append(" (").Append(sselem.options[k]).Append(")");
                                                 }
                                             }
                                             else if (sselem.flags != null && sselem.flags.Length > 0)
                                             {
                                                 uint val = TypeConverter.h2s(Data[offset], Data[offset + 1]);
-                                                var tmp2 = new System.Text.StringBuilder();
+                                                var tmp2 = new StringBuilder();
                                                 for (int k = 0; k < sselem.flags.Length; k++)
                                                 {
                                                     if ((val & (1 << k)) != 0)
@@ -394,7 +434,7 @@ namespace TESVSnip
                                             else if (sselem.flags != null && sselem.flags.Length > 0)
                                             {
                                                 int val = Data[offset];
-                                                var tmp2 = new System.Text.StringBuilder();
+                                                var tmp2 = new StringBuilder();
                                                 for (int k = 0; k < sselem.flags.Length; k++)
                                                 {
                                                     if ((val & (1 << k)) != 0)
@@ -411,7 +451,7 @@ namespace TESVSnip
                                     break;
                                 case ElementValueType.SByte:
                                     {
-                                        string tmps = ((sbyte)Data[offset]).ToString();
+                                        string tmps = ((sbyte) Data[offset]).ToString();
                                         if (!sselem.notininfo)
                                         {
                                             if (sselem.hexview) s.Append(Data[offset].ToString("X2"));
@@ -427,7 +467,7 @@ namespace TESVSnip
                                             else if (sselem.flags != null && sselem.flags.Length > 0)
                                             {
                                                 int val = Data[offset];
-                                                var tmp2 = new System.Text.StringBuilder();
+                                                var tmp2 = new StringBuilder();
                                                 for (int k = 0; k < sselem.flags.Length; k++)
                                                 {
                                                     if ((val & (1 << k)) != 0)
@@ -444,19 +484,23 @@ namespace TESVSnip
                                     break;
                                 case ElementValueType.FormID:
                                     {
-                                        uint id = TypeConverter.h2i(Data[offset], Data[offset + 1], Data[offset + 2], Data[offset + 3]);
+                                        uint id = TypeConverter.h2i(Data[offset], Data[offset + 1], Data[offset + 2],
+                                                                    Data[offset + 3]);
                                         if (!sselem.notininfo) s.Append(id.ToString("X8"));
                                         if (id != 0 && formIDLookup != null) s.Append(": ").Append(formIDLookup(id));
                                         offset += 4;
-                                    } break;
+                                    }
+                                    break;
                                 case ElementValueType.Float:
-                                    if (!sselem.notininfo) s.Append(TypeConverter.h2f(Data[offset], Data[offset + 1], Data[offset + 2], Data[offset + 3]));
+                                    if (!sselem.notininfo)
+                                        s.Append(TypeConverter.h2f(Data[offset], Data[offset + 1], Data[offset + 2],
+                                                                   Data[offset + 3]));
                                     offset += 4;
                                     break;
                                 case ElementValueType.String:
                                     if (!sselem.notininfo)
                                     {
-                                        while (Data[offset] != 0) s.Append((char)Data[offset++]);
+                                        while (Data[offset] != 0) s.Append((char) Data[offset++]);
                                     }
                                     else
                                     {
@@ -469,14 +513,15 @@ namespace TESVSnip
                                     offset += Data.Length - offset;
                                     break;
                                 case ElementValueType.Blob:
-                                    if (!sselem.notininfo) s.Append(TypeConverter.GetHexData(Data, offset, Data.Length - offset));
+                                    if (!sselem.notininfo)
+                                        s.Append(TypeConverter.GetHexData(Data, offset, Data.Length - offset));
                                     offset += Data.Length - offset;
                                     break;
                                 case ElementValueType.BString:
                                     {
                                         int len = TypeConverter.h2s(Data[offset], Data[offset + 1]);
                                         if (!sselem.notininfo)
-                                            s.Append(TESVSnip.Encoding.CP1252.GetString(Data, offset + 2, len));
+                                            s.Append(Encoding.CP1252.GetString(Data, offset + 2, len));
                                         offset += (2 + len);
                                     }
                                     break;
@@ -497,16 +542,17 @@ namespace TESVSnip
                                         else
                                         {
                                             if (!sselem.notininfo)
-                                                while (Data[offset] != 0) s.Append((char)Data[offset++]);
+                                                while (Data[offset] != 0) s.Append((char) Data[offset++]);
                                             else
                                                 while (Data[offset] != 0) offset++;
                                             offset++;
                                         }
-                                    } break;
+                                    }
+                                    break;
                                 case ElementValueType.Str4:
                                     {
                                         if (!sselem.notininfo)
-                                            s.Append(TESVSnip.Encoding.CP1252.GetString(Data, offset, 4));
+                                            s.Append(Encoding.CP1252.GetString(Data, offset, 4));
                                         offset += 4;
                                     }
                                     break;
@@ -533,25 +579,26 @@ namespace TESVSnip
 
         public static RTFBuilderbase AppendLink(RTFBuilderbase s, string text, string hyperlink)
         {
-            if (global::TESVSnip.Properties.Settings.Default.DisableHyperlinks)
+            if (Properties.Settings.Default.DisableHyperlinks)
                 s.Append(text);
             else
                 s.AppendLink(text, hyperlink);
             return s;
         }
 
-        public override void GetFormattedHeader(RTF.RTFBuilder s, SelectionContext context)
+        public override void GetFormattedHeader(RTFBuilder s, SelectionContext context)
         {
-            s.FontStyle(FontStyle.Bold).FontSize(s.DefaultFontSize + 4).ForeColor(KnownColor.DarkGray).AppendLine("[Subrecord data]");
+            s.FontStyle(FontStyle.Bold).FontSize(s.DefaultFontSize + 4).ForeColor(KnownColor.DarkGray).AppendLine(
+                "[Subrecord data]");
         }
 
-        public override void GetFormattedData(RTF.RTFBuilder s, SelectionContext context)
+        public override void GetFormattedData(RTFBuilder s, SelectionContext context)
         {
-            SubrecordStructure ss = this.Structure;
+            SubrecordStructure ss = Structure;
             if (ss == null || ss.elements == null)
             {
-                s.Append("String:\t").AppendLine(this.GetStrData()).AppendLine();
-                s.Append("Hex: \t").AppendLine(this.GetHexData());
+                s.Append("String:\t").AppendLine(GetStrData()).AppendLine();
+                s.Append("Hex: \t").AppendLine(GetHexData());
                 s.AppendPara();
                 return;
             }
@@ -577,7 +624,8 @@ namespace TESVSnip
                 foreach (var element in elems)
                 {
                     Size sz = s.MeasureText(element.Structure.name);
-                    int width = Math.Max(sz.Width / 11, 10); // approximate convert pixels to twips as the rtflib has crap documentation
+                    int width = Math.Max(sz.Width/11, 10);
+                        // approximate convert pixels to twips as the rtflib has crap documentation
                     if (width > maxFirstCellWidth)
                         maxFirstCellWidth = width;
                 }
@@ -592,24 +640,30 @@ namespace TESVSnip
 
                     // setup borders for header
                     var value = element.Value;
-                    var nameCell = new RTFCellDefinition(maxFirstCellWidth, RTFAlignment.MiddleLeft, RTFBorderSide.Default, 15, Color.DarkGray, System.Windows.Forms.Padding.Empty);
+                    var nameCell = new RTFCellDefinition(maxFirstCellWidth, RTFAlignment.MiddleLeft,
+                                                         RTFBorderSide.Default, 15, Color.DarkGray, Padding.Empty);
                     row.Add(nameCell);
                     switch (sselem.type)
                     {
                         case ElementValueType.FormID:
-                            row.Add(new RTFCellDefinition(12, RTFAlignment.MiddleLeft, RTFBorderSide.Default, 15, Color.DarkGray, System.Windows.Forms.Padding.Empty));
-                            row.Add(new RTFCellDefinition(30, RTFAlignment.MiddleLeft, RTFBorderSide.Default, 15, Color.DarkGray, System.Windows.Forms.Padding.Empty));
+                            row.Add(new RTFCellDefinition(12, RTFAlignment.MiddleLeft, RTFBorderSide.Default, 15,
+                                                          Color.DarkGray, Padding.Empty));
+                            row.Add(new RTFCellDefinition(30, RTFAlignment.MiddleLeft, RTFBorderSide.Default, 15,
+                                                          Color.DarkGray, Padding.Empty));
                             // Optional Add cell for 
                             break;
                         case ElementValueType.LString:
-                            row.Add(new RTFCellDefinition(12, RTFAlignment.MiddleLeft, RTFBorderSide.Default, 15, Color.DarkGray, System.Windows.Forms.Padding.Empty));
-                            row.Add(new RTFCellDefinition(30, RTFAlignment.MiddleLeft, RTFBorderSide.Default, 15, Color.DarkGray, System.Windows.Forms.Padding.Empty));
+                            row.Add(new RTFCellDefinition(12, RTFAlignment.MiddleLeft, RTFBorderSide.Default, 15,
+                                                          Color.DarkGray, Padding.Empty));
+                            row.Add(new RTFCellDefinition(30, RTFAlignment.MiddleLeft, RTFBorderSide.Default, 15,
+                                                          Color.DarkGray, Padding.Empty));
                             break;
 
                         case ElementValueType.BString:
                         case ElementValueType.String:
                         case ElementValueType.fstring:
-                            row.Add(new RTFCellDefinition(42, RTFAlignment.MiddleLeft, RTFBorderSide.Default, 15, Color.DarkGray, System.Windows.Forms.Padding.Empty));
+                            row.Add(new RTFCellDefinition(42, RTFAlignment.MiddleLeft, RTFBorderSide.Default, 15,
+                                                          Color.DarkGray, Padding.Empty));
                             break;
                         case ElementValueType.Int:
                         case ElementValueType.UInt:
@@ -618,30 +672,40 @@ namespace TESVSnip
                         case ElementValueType.Short:
                         case ElementValueType.UShort:
                         case ElementValueType.Float:
-                            row.Add(new RTFCellDefinition(12, RTFAlignment.MiddleLeft, RTFBorderSide.Default, 15, Color.DarkGray, System.Windows.Forms.Padding.Empty));
-                            row.Add(new RTFCellDefinition(30, RTFAlignment.MiddleLeft, hasOptions || hasFlags ? RTFBorderSide.Default : RTFBorderSide.Default
-                                , 15, Color.DarkGray, System.Windows.Forms.Padding.Empty));
+                            row.Add(new RTFCellDefinition(12, RTFAlignment.MiddleLeft, RTFBorderSide.Default, 15,
+                                                          Color.DarkGray, Padding.Empty));
+                            row.Add(new RTFCellDefinition(30, RTFAlignment.MiddleLeft,
+                                                          hasOptions || hasFlags
+                                                              ? RTFBorderSide.Default
+                                                              : RTFBorderSide.Default
+                                                          , 15, Color.DarkGray, Padding.Empty));
                             break;
                         case ElementValueType.Blob:
-                            row.Add(new RTFCellDefinition(42, RTFAlignment.MiddleLeft, RTFBorderSide.Default, 15, Color.DarkGray, System.Windows.Forms.Padding.Empty));
+                            row.Add(new RTFCellDefinition(42, RTFAlignment.MiddleLeft, RTFBorderSide.Default, 15,
+                                                          Color.DarkGray, Padding.Empty));
                             break;
                         case ElementValueType.Str4:
-                            row.Add(new RTFCellDefinition(42, RTFAlignment.MiddleLeft, RTFBorderSide.Default, 15, Color.DarkGray, System.Windows.Forms.Padding.Empty));
+                            row.Add(new RTFCellDefinition(42, RTFAlignment.MiddleLeft, RTFBorderSide.Default, 15,
+                                                          Color.DarkGray, Padding.Empty));
                             break;
                         default:
-                            row.Add(new RTFCellDefinition(42, RTFAlignment.MiddleLeft, RTFBorderSide.Default, 15, Color.DarkGray, System.Windows.Forms.Padding.Empty));
+                            row.Add(new RTFCellDefinition(42, RTFAlignment.MiddleLeft, RTFBorderSide.Default, 15,
+                                                          Color.DarkGray, Padding.Empty));
                             break;
                     }
                     maxWidth = Math.Max(maxWidth, row.Sum(x => x.CellWidthRaw));
                 }
 
-                int rowWidth = (int)(maxWidth * 100.0f);
-                var p = new System.Windows.Forms.Padding { All = 50 };
+                var rowWidth = (int) (maxWidth*100.0f);
+                var p = new Padding {All = 50};
 
-                var hdrd = new RTFRowDefinition(rowWidth, RTFAlignment.TopLeft, RTFBorderSide.Default, 15, SystemColors.WindowText, p);
-                var hdrcds = new RTFCellDefinition[] {
-                    new RTFCellDefinition(rowWidth, RTFAlignment.MiddleLeft, RTFBorderSide.Default, 15, Color.DarkGray, System.Windows.Forms.Padding.Empty)
-                };
+                var hdrd = new RTFRowDefinition(rowWidth, RTFAlignment.TopLeft, RTFBorderSide.Default, 15,
+                                                SystemColors.WindowText, p);
+                var hdrcds = new[]
+                                 {
+                                     new RTFCellDefinition(rowWidth, RTFAlignment.MiddleLeft, RTFBorderSide.Default, 15,
+                                                           Color.DarkGray, Padding.Empty)
+                                 };
 
                 addTerminatingParagraph = true;
                 s.Reset();
@@ -659,7 +723,8 @@ namespace TESVSnip
                 }
                 for (int rowIdx = 0; rowIdx < elems.Count; ++rowIdx)
                 {
-                    var rd = new RTFRowDefinition(rowWidth, RTFAlignment.TopLeft, RTFBorderSide.Default, 15, SystemColors.WindowText, p);
+                    var rd = new RTFRowDefinition(rowWidth, RTFAlignment.TopLeft, RTFBorderSide.Default, 15,
+                                                  SystemColors.WindowText, p);
                     var cds = table[rowIdx];
                     var elem = elems[rowIdx];
                     var sselem = elem.Structure;
@@ -676,7 +741,7 @@ namespace TESVSnip
                     {
                         case ElementValueType.FormID:
                             {
-                                uint id = (uint)value;
+                                var id = (uint) value;
                                 strValue = id.ToString("X8");
                                 if (id != 0)
                                     rec = formIDLookupR != null ? formIDLookupR(id) : null;
@@ -689,22 +754,26 @@ namespace TESVSnip
                                         var data = new ArraySegment<byte>(full.Data, 0, full.Data.Length);
                                         bool isString = TypeConverter.IsLikelyString(data);
                                         string lvalue = (isString)
-                                            ? full.GetStrData()
-                                            : strLookup != null
-                                            ? strLookup(TypeConverter.h2i(data))
-                                            : null;
+                                                            ? full.GetStrData()
+                                                            : strLookup != null
+                                                                  ? strLookup(TypeConverter.h2i(data))
+                                                                  : null;
                                         if (!string.IsNullOrEmpty(lvalue))
                                         {
                                             var first = cds[cds.Count - 1];
                                             Size sz = s.MeasureText(lvalue);
-                                            int width = Math.Min(40, Math.Max(sz.Width / 12, 10)); // approximate convert pixels to twips as the rtflib has crap documentation
-                                            var second = new RTFCellDefinition(width, RTFAlignment.MiddleLeft, RTFBorderSide.Default, 0, Color.DarkGray, System.Windows.Forms.Padding.Empty);
+                                            int width = Math.Min(40, Math.Max(sz.Width/12, 10));
+                                                // approximate convert pixels to twips as the rtflib has crap documentation
+                                            var second = new RTFCellDefinition(width, RTFAlignment.MiddleLeft,
+                                                                               RTFBorderSide.Default, 0, Color.DarkGray,
+                                                                               Padding.Empty);
                                             cds.Add(second);
                                             strDesc2 = lvalue;
                                         }
                                     }
                                 }
-                            } break;
+                            }
+                            break;
                         case ElementValueType.LString:
                             {
                                 if (elem.Type == ElementValueType.String)
@@ -723,7 +792,8 @@ namespace TESVSnip
                                     strValue = id.ToString("X8");
                                     strDesc = strLookup != null ? strLookup(id) : null;
                                 }
-                            } break;
+                            }
+                            break;
                         case ElementValueType.Blob:
                             strValue = TypeConverter.GetHexData(elem.Data);
                             break;
@@ -735,7 +805,7 @@ namespace TESVSnip
                         case ElementValueType.UShort:
                             {
                                 if (sselem.hexview || hasFlags)
-                                    strValue = string.Format(string.Format("{{0:X{0}}}", elem.Data.Count * 2), value);
+                                    strValue = string.Format(string.Format("{{0:X{0}}}", elem.Data.Count*2), value);
                                 else
                                     strValue = value == null ? "" : value.ToString();
                                 if (hasOptions)
@@ -750,7 +820,7 @@ namespace TESVSnip
                                 else if (hasFlags)
                                 {
                                     uint intVal = Convert.ToUInt32(value);
-                                    var tmp2 = new System.Text.StringBuilder();
+                                    var tmp2 = new StringBuilder();
                                     for (int k = 0; k < sselem.flags.Length; k++)
                                     {
                                         if ((intVal & (1 << k)) != 0)
@@ -761,7 +831,8 @@ namespace TESVSnip
                                     }
                                     strDesc = tmp2.ToString();
                                 }
-                            } break;
+                            }
+                            break;
                         case ElementValueType.Str4:
                             strValue = TypeConverter.GetString(elem.Data);
                             break;
@@ -792,7 +863,7 @@ namespace TESVSnip
                                     switch (sselem.type)
                                     {
                                         case ElementValueType.FormID:
-                                            if (((uint)value) == 0)
+                                            if (((uint) value) == 0)
                                             {
                                                 rb.Append(strValue);
                                             }
@@ -802,7 +873,8 @@ namespace TESVSnip
                                             }
                                             else if (!string.IsNullOrEmpty(sselem.FormIDType))
                                             {
-                                                AppendLink(rb, strValue, string.Format("{0}:{1}", sselem.FormIDType, strValue));
+                                                AppendLink(rb, strValue,
+                                                           string.Format("{0}:{1}", sselem.FormIDType, strValue));
                                             }
                                             else
                                             {
@@ -842,6 +914,7 @@ namespace TESVSnip
                 }
             }
         }
+
 #if false
         public void GetFormattedDataOriginal(RTF.RTFBuilder s, SelectionContext context)
         {
@@ -1215,18 +1288,19 @@ namespace TESVSnip
             }
         }
 #endif
+
         #endregion
 
         public bool TryGetValue<T>(int offset, out T value)
         {
-            value = (T)TypeConverter.GetObject<T>(this.Data, offset);
+            value = (T) TypeConverter.GetObject<T>(Data, offset);
             return true;
         }
 
         public T GetValue<T>(int offset)
         {
             T value;
-            if (!TryGetValue<T>(offset, out value))
+            if (!TryGetValue(offset, out value))
                 value = default(T);
             return value;
         }
@@ -1234,22 +1308,23 @@ namespace TESVSnip
 
         internal override List<string> GetIDs(bool lower)
         {
-            List<string> list = new List<string>();
+            var list = new List<string>();
             if (Name == "EDID")
             {
                 if (lower)
                 {
-                    list.Add(this.GetStrData().ToLower());
+                    list.Add(GetStrData().ToLower());
                 }
                 else
                 {
-                    list.Add(this.GetStrData());
+                    list.Add(GetStrData());
                 }
             }
             return list;
         }
 
         #region Enumerate Elements
+
         internal IEnumerable<Element> EnumerateElements()
         {
             return EnumerateElements(false);
@@ -1263,14 +1338,14 @@ namespace TESVSnip
         /// <returns></returns>
         internal IEnumerable<Element> EnumerateElements(bool rawData)
         {
-            if (this.Structure == null)
+            if (Structure == null)
             {
-                yield return new Element(new ElementStructure(), new ArraySegment<byte>(this.GetData()));
+                yield return new Element(new ElementStructure(), new ArraySegment<byte>(GetData()));
             }
             else
             {
-                byte[] data = this.GetReadonlyData();
-                var ss = this.Structure;
+                byte[] data = GetReadonlyData();
+                var ss = Structure;
                 int offset = 0;
                 foreach (var es in ss.elements)
                 {
@@ -1288,6 +1363,7 @@ namespace TESVSnip
                 }
             }
         }
+
         internal IEnumerable<Element> EnumerateElements(Dictionary<int, Conditional> conditions)
         {
             foreach (var elem in EnumerateElements())
@@ -1302,15 +1378,16 @@ namespace TESVSnip
                 yield return elem;
             }
         }
+
         #endregion
 
         public override string DescriptiveName
         {
             get
             {
-                if (string.IsNullOrEmpty(Description) && this.Description != this.Name)
-                    return this.Name;
-                return string.Format("{0}: {1}", this.Name, this.Description);
+                if (string.IsNullOrEmpty(Description) && Description != Name)
+                    return Name;
+                return string.Format("{0}: {1}", Name, Description);
             }
         }
     }

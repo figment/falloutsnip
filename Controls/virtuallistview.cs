@@ -1,22 +1,30 @@
 using System;
-using System.Windows.Forms;
+using System.Collections.Generic;
+using System.ComponentModel;
 using System.Diagnostics;
 using System.Drawing;
-using System.Runtime.InteropServices;
-using System.ComponentModel;
 using System.Reflection;
+using System.Runtime.InteropServices;
 using System.Threading;
+using System.Windows.Forms;
 
 namespace TESVSnip.Windows.Controls
 {
+
     #region VirtualListView Delegates
+
     public delegate void QueryItemTextHandler(int item, int subItem, out string text);
+
     public delegate void QueryItemImageHandler(int item, int subItem, out int imageIndex);
+
     public delegate void QueryItemIndentHandler(int item, out int itemIndent);
+
     public delegate void CustomDrawHandler(ref NMLVCUSTOMDRAW item, ref CustomDrawFlags flags);
+
     public delegate void CustomSortHandler(int iColumn);
 
     public delegate void CustomDragHandler(ref NMLISTVIEW item, bool begin);
+
     #endregion
 
     [Flags]
@@ -44,6 +52,7 @@ namespace TESVSnip.Windows.Controls
         LVIS_OVERLAYMASK = 0x0F00,
         LVIS_STATEIMAGEMASK = 0xF000,
     }
+
     [Flags]
     internal enum ListViewStyles : uint
     {
@@ -80,7 +89,7 @@ namespace TESVSnip.Windows.Controls
 
     internal enum ListViewMessages
     {
-        LVM_FIRST = 0x1000,      // ListView messages
+        LVM_FIRST = 0x1000, // ListView messages
         LVM_SETITEM = (LVM_FIRST + 76),
         LVM_GETTOPINDEX = (LVM_FIRST + 39),
         LVM_SETITEMCOUNT = (LVM_FIRST + 47),
@@ -102,7 +111,9 @@ namespace TESVSnip.Windows.Controls
 
         LVM_HITTEST = (LVM_FIRST + 18),
     }
+
     #region LVS_EX
+
     internal enum LVS_EX
     {
         LVS_EX_GRIDLINES = 0x00000001,
@@ -127,24 +138,27 @@ namespace TESVSnip.Windows.Controls
         LVS_EX_SNAPTOGRID = 0x00080000,
         LVS_EX_SIMPLESELECT = 0x00100000
     }
+
     #endregion
 
     internal enum NotificationCodes
     {
-        NM_FIRST = unchecked((int)(0U - 0U)),       // generic to all controls
-        NM_LAST = unchecked((int)(0U - 99U)),
+        NM_FIRST = unchecked((int) (0U - 0U)), // generic to all controls
+        NM_LAST = unchecked((int) (0U - 99U)),
         NM_RCLICK = (NM_FIRST - 5),
         NM_CUSTOMDRAW = (NM_FIRST - 12),
     }
+
     internal enum HeaderMessageCodes
     {
         HDM_FIRST = 0x1200,
         HDM_HITTEST = (HDM_FIRST + 6),
     }
+
     internal enum ListViewNotificationCodes
     {
-        LVN_FIRST = unchecked((int)(0U - 100U)),       // listview
-        LVN_LAST = unchecked((int)(0U - 199U)),
+        LVN_FIRST = unchecked((int) (0U - 100U)), // listview
+        LVN_LAST = unchecked((int) (0U - 199U)),
 
         LVN_ITEMCHANGING = (LVN_FIRST - 0),
         LVN_ITEMCHANGED = (LVN_FIRST - 1),
@@ -169,6 +183,7 @@ namespace TESVSnip.Windows.Controls
         LVN_SETDISPINFOA = (LVN_FIRST - 51),
         LVN_SETDISPINFOW = (LVN_FIRST - 78),
     }
+
     internal enum HeaderNotificationCodes
     {
         HDN_FIRST = (0 - 300),
@@ -247,6 +262,7 @@ namespace TESVSnip.Windows.Controls
         public int idFrom;
         public int code;
     }
+
     [StructLayout(LayoutKind.Sequential)]
     internal struct LVITEMA
     {
@@ -265,6 +281,7 @@ namespace TESVSnip.Windows.Controls
         public uint cColumns; // tile view columns
         public UIntPtr puColumns;
     }
+
     [StructLayout(LayoutKind.Sequential)]
     internal struct LVITEMW
     {
@@ -306,10 +323,11 @@ namespace TESVSnip.Windows.Controls
         LVHT_TORIGHT = 0x0020,
         LVHT_TOLEFT = 0x0040,
     }
+
     [StructLayout(LayoutKind.Sequential)]
     public struct LVHITTESTINFO
     {
-        public System.Drawing.Point pt;
+        public Point pt;
         public ListViewHitTestFlags flags;
         public int iItem;
         public int iSubItem;
@@ -335,7 +353,7 @@ namespace TESVSnip.Windows.Controls
         public NMHDR hdr;
         public CustomDrawStage dwDrawStage;
         public IntPtr hdc;
-        public System.Drawing.Rectangle rc;
+        public Rectangle rc;
         public UIntPtr dwItemSpec;
         public uint uItemState;
         public IntPtr lItemlParam;
@@ -356,7 +374,7 @@ namespace TESVSnip.Windows.Controls
         public int iPartId;
         public int iStateId;
         // Group Custom Draw
-        public System.Drawing.Rectangle rcText;
+        public Rectangle rcText;
         public uint uAlign;
     }
 
@@ -369,9 +387,10 @@ namespace TESVSnip.Windows.Controls
         public uint uNewState;
         public uint uOldState;
         public uint uChanged;
-        public System.Drawing.Point ptAction;
+        public Point ptAction;
         public IntPtr lParam;
     };
+
     [StructLayout(LayoutKind.Sequential)]
     public struct NMLVODSTATECHANGE
     {
@@ -393,7 +412,7 @@ namespace TESVSnip.Windows.Controls
         CDRF_SKIPDEFAULT = 0x00000004,
         CDRF_NOTIFYPOSTPAINT = 0x00000010,
         CDRF_NOTIFYITEMDRAW = 0x00000020,
-        CDRF_NOTIFYSUBITEMDRAW = 0x00000020,   // flags are the same, we can distinguish by context
+        CDRF_NOTIFYSUBITEMDRAW = 0x00000020, // flags are the same, we can distinguish by context
         CDRF_NOTIFYPOSTERASE = 0x00000040,
     }
 
@@ -402,20 +421,26 @@ namespace TESVSnip.Windows.Controls
     /// </summary>
     public class VirtualListView : ListView
     {
-        Bitmap internalBitmap = null;
-        Graphics internalGraphics = null;
+        private Bitmap internalBitmap;
+        private Graphics internalGraphics;
+
         private delegate int SetSizeHandler(int n);
+
         private static readonly FieldInfo virtualListSize;
-        private object syncObject = new object();
-        private IAsyncResult setSizeResult = null;
+        private readonly object syncObject = new object();
+        private IAsyncResult setSizeResult;
 
         static VirtualListView()
         {
-            virtualListSize = typeof(ListView).GetField("virtualListSize", BindingFlags.GetField | BindingFlags.SetField | BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public);
+            virtualListSize = typeof (ListView).GetField("virtualListSize",
+                                                         BindingFlags.GetField | BindingFlags.SetField |
+                                                         BindingFlags.Instance | BindingFlags.NonPublic |
+                                                         BindingFlags.Public);
         }
 
         // store the item count to prevent the call to SendMessage(LVM_GETITEMCOUNT)
-        private int itemCount = 0;
+        private int itemCount;
+
         public int ItemCount
         {
             get { return itemCount; }
@@ -425,12 +450,12 @@ namespace TESVSnip.Windows.Controls
                 {
                     int oldValue = itemCount;
                     itemCount = value;
-                    if (this.InvokeRequired)
+                    if (InvokeRequired)
                     {
                         if (Monitor.TryEnter(syncObject))
                         {
                             if (setSizeResult == null)
-                                setSizeResult = this.BeginInvoke(new SetSizeHandler(this.SetSizeToItemCount), itemCount);
+                                setSizeResult = BeginInvoke(new SetSizeHandler(SetSizeToItemCount), itemCount);
                             Monitor.Exit(syncObject);
                         }
                     }
@@ -451,12 +476,13 @@ namespace TESVSnip.Windows.Controls
                 {
                     throw new ArgumentException("Invalid Size", "value");
                 }
-                if (value != this.VirtualListSize)
+                if (value != VirtualListSize)
                 {
                     virtualListSize.SetValue(this, value);
-                    if ((base.IsHandleCreated && this.VirtualMode) && !base.DesignMode)
+                    if ((base.IsHandleCreated && VirtualMode) && !base.DesignMode)
                     {
-                        PostMessage(this.Handle, (uint)ListViewMessages.LVM_SETITEMCOUNT, new UIntPtr((uint)value), new IntPtr((int)ListViewScroll.LVSICF_NOSCROLL));
+                        PostMessage(Handle, (uint) ListViewMessages.LVM_SETITEMCOUNT, new UIntPtr((uint) value),
+                                    new IntPtr((int) ListViewScroll.LVSICF_NOSCROLL));
                     }
                     if (autoScroll && value > 0)
                     {
@@ -472,16 +498,17 @@ namespace TESVSnip.Windows.Controls
             {
                 VirtualListSize = ItemCount;
                 if (setSizeResult != null)
-                    this.EndInvoke(setSizeResult);
+                    EndInvoke(setSizeResult);
                 setSizeResult = null;
             }
             return itemCount;
         }
 
-        bool autoScroll = false;
+        private bool autoScroll;
+
         public bool AutoScroll
         {
-            get { return this.autoScroll; }
+            get { return autoScroll; }
             set
             {
                 if (autoScroll != value)
@@ -498,6 +525,7 @@ namespace TESVSnip.Windows.Controls
                 }
             }
         }
+
         public event EventHandler AutoScrollChanged;
 
         public VirtualListView()
@@ -505,8 +533,8 @@ namespace TESVSnip.Windows.Controls
             // virtual listviews must be Details or Listview with no sorting
             View = View.Details;
             Sorting = SortOrder.None;
-            this.VirtualMode = true;
-            base.ColumnClick += new ColumnClickEventHandler(VirtualListView_ColumnClick);
+            VirtualMode = true;
+            base.ColumnClick += VirtualListView_ColumnClick;
         }
 
         private void DisposeInternal()
@@ -524,50 +552,53 @@ namespace TESVSnip.Windows.Controls
             base.Dispose(disposing);
         }
 
-        protected override System.Windows.Forms.CreateParams CreateParams
+        protected override CreateParams CreateParams
         {
             get
             {
                 CreateParams cp = base.CreateParams;
                 // LVS_OWNERDATA style must be set when the control is created
-                cp.Style |= (int)ListViewStyles.LVS_OWNERDATA;
+                cp.Style |= (int) ListViewStyles.LVS_OWNERDATA;
                 return cp;
             }
         }
 
-        public new System.Windows.Forms.View View
+        public new View View
         {
-            get
-            {
-                return View.Details;
-            }
-            set
-            {
-                base.View = View.Details;
-            }
+            get { return View.Details; }
+            set { base.View = View.Details; }
         }
 
         #region Display query callbacks
+
         [Category("Draw")]
         public event QueryItemTextHandler QueryItemText;
+
         [Category("Draw")]
         public event QueryItemImageHandler QueryItemImage;
+
         [Category("Draw")]
         public event QueryItemIndentHandler QueryItemIndent;
+
         [Category("Draw")]
         public event CustomDrawHandler CustomDraw;
+
         [Category("Action")]
         public event CustomSortHandler CustomSort;
+
         [Category("Action")]
         public event ColumnClickEventHandler ColumnRightClick;
+
         [Category("Action")]
         public event CustomDragHandler CustomDrag;
+
         #endregion
 
         #region void OnDispInfoNotice
-        void OnDispInfoNotice(ref Message m, bool useAnsi)
+
+        private void OnDispInfoNotice(ref Message m, bool useAnsi)
         {
-            NMLVDISPINFOW info = (NMLVDISPINFOW)m.GetLParam(typeof(NMLVDISPINFOW));
+            var info = (NMLVDISPINFOW) m.GetLParam(typeof (NMLVDISPINFOW));
             string lvtext = null;
 
             if ((info.item.mask & ListViewItemMask.LVIF_TEXT) > 0)
@@ -580,20 +611,21 @@ namespace TESVSnip.Windows.Controls
                         try
                         {
                             int maxIndex = Math.Min(info.item.cchTextMax - 1,
-                                lvtext.Length);
+                                                    lvtext.Length);
 
-                            char[] data = new char[maxIndex + 1];
+                            var data = new char[maxIndex + 1];
 
                             lvtext.CopyTo(0, data, 0, Math.Min(maxIndex, lvtext.Length));
 
                             data[maxIndex] = '\0';
 
-                            System.Runtime.InteropServices.Marshal.Copy(data,
-                                0, info.item.pszText, data.Length);
+                            Marshal.Copy(data,
+                                         0, info.item.pszText, data.Length);
                         }
                         catch (Exception e)
                         {
-                            Debug.WriteLine("Failed to copy text name from client: " + e.ToString(), "VirtualListView.OnDispInfoNotice");
+                            Debug.WriteLine("Failed to copy text name from client: " + e,
+                                            "VirtualListView.OnDispInfoNotice");
                         }
                     }
                 }
@@ -605,10 +637,10 @@ namespace TESVSnip.Windows.Controls
                 if (QueryItemImage != null)
                 {
                     QueryItemImage(info.item.iItem,
-                        info.item.iSubItem, out imageIndex);
+                                   info.item.iSubItem, out imageIndex);
                 }
                 info.item.iImage = imageIndex;
-                System.Runtime.InteropServices.Marshal.StructureToPtr(info, m.LParam, false);
+                Marshal.StructureToPtr(info, m.LParam, false);
             }
 
             if ((info.item.mask & ListViewItemMask.LVIF_INDENT) > 0)
@@ -617,21 +649,23 @@ namespace TESVSnip.Windows.Controls
                 if (QueryItemIndent != null)
                 {
                     QueryItemIndent(info.item.iItem, out
-						itemIndent);
+                                                         itemIndent);
                 }
                 info.item.iIndent = itemIndent;
-                System.Runtime.InteropServices.Marshal.StructureToPtr(info, m.LParam, false);
+                Marshal.StructureToPtr(info, m.LParam, false);
             }
             m.Result = new IntPtr(0);
         }
+
         #endregion
 
         #region CustomDrawing
-        unsafe CustomDrawFlags OnCustomDraw(ref Message m)
+
+        private unsafe CustomDrawFlags OnCustomDraw(ref Message m)
         {
             if (CustomDraw != null)
             {
-                NMLVCUSTOMDRAW* nmlvcustomdrawPtr = (NMLVCUSTOMDRAW*)m.LParam;
+                var nmlvcustomdrawPtr = (NMLVCUSTOMDRAW*) m.LParam;
                 CustomDrawFlags flags = CustomDrawFlags.CDRF_DODEFAULT;
                 CustomDraw(ref *nmlvcustomdrawPtr, ref flags);
                 if (flags != CustomDrawFlags.CDRF_DODEFAULT)
@@ -639,36 +673,38 @@ namespace TESVSnip.Windows.Controls
             }
             return CustomDrawFlags.CDRF_DODEFAULT;
         }
+
         #endregion
 
-
         #region CustomSorting
-        unsafe bool OnCustomSort(ref Message m)
+
+        private unsafe bool OnCustomSort(ref Message m)
         {
             if (CustomSort != null)
             {
-                NMLISTVIEW* nmlvPtr = (NMLISTVIEW*)m.LParam;
+                var nmlvPtr = (NMLISTVIEW*) m.LParam;
                 CustomSort((*nmlvPtr).iItem);
                 return true;
             }
             return false;
         }
+
         #endregion
 
-
         #region CustomSorting
-        unsafe bool OnBeginDrag(ref Message m)
+
+        private unsafe bool OnBeginDrag(ref Message m)
         {
             if (CustomDrag != null)
             {
-                NMLISTVIEW* nmlvPtr = (NMLISTVIEW*)m.LParam;
+                var nmlvPtr = (NMLISTVIEW*) m.LParam;
                 CustomDrag(ref *nmlvPtr, true);
                 return true;
             }
             return false;
         }
-        #endregion
 
+        #endregion
 
         protected override void OnHandleDestroyed(EventArgs e)
         {
@@ -686,7 +722,7 @@ namespace TESVSnip.Windows.Controls
         /// <summary>Occurs when a Windows message is dispatched.</summary>
         /// <param name="message">Message to process.</param>
         /// <remarks>Overrides WM_PAINT, WM_ERASEBKGND.</remarks>
-        protected override void WndProc(ref System.Windows.Forms.Message m)
+        protected override void WndProc(ref Message m)
         {
             const int WM_PAINT = 0x000F;
             const int WM_PRINTCLIENT = 0x0318;
@@ -699,53 +735,53 @@ namespace TESVSnip.Windows.Controls
             bool messageProcessed = false;
             switch (m.Msg)
             {
-                case (int)7: // WM_SETFOCUS
+                case 7: // WM_SETFOCUS
                     //try { base.WndProc(ref m); } // skip immediate parent to avoid focus problems
                     //catch{}
                     m.Result = IntPtr.Zero;
                     messageProcessed = true;
                     break;
 
-                // case (int)WindowsMessage.WM_REFLECT + (int)WindowsMessage.WM_NOTIFY:
-                case (int)(0x0400 + 0x1c00 + WM_NOTIFY):
+                    // case (int)WindowsMessage.WM_REFLECT + (int)WindowsMessage.WM_NOTIFY:
+                case (0x0400 + 0x1c00 + WM_NOTIFY):
                     m.Result = IntPtr.Zero;
-                    nm1 = (NMHDR)m.GetLParam(typeof(NMHDR));
+                    nm1 = (NMHDR) m.GetLParam(typeof (NMHDR));
                     switch (nm1.code)
                     {
-                        case (int)ListViewNotificationCodes.LVN_ITEMCHANGED:
+                        case (int) ListViewNotificationCodes.LVN_ITEMCHANGED:
                             messageProcessed = true;
                             break;
 
-                        case (int)ListViewNotificationCodes.LVN_GETDISPINFOW:
+                        case (int) ListViewNotificationCodes.LVN_GETDISPINFOW:
                             OnDispInfoNotice(ref m, false);
                             messageProcessed = true;
                             break;
 
-                        // ignore dragging as we are virtual and ListView doesnt like it.
-                        case (int)ListViewNotificationCodes.LVN_BEGINDRAG:
+                            // ignore dragging as we are virtual and ListView doesnt like it.
+                        case (int) ListViewNotificationCodes.LVN_BEGINDRAG:
                             OnBeginDrag(ref m);
                             messageProcessed = true;
                             break;
 
-                        case (int)ListViewNotificationCodes.LVN_BEGINRDRAG:
+                        case (int) ListViewNotificationCodes.LVN_BEGINRDRAG:
                             OnBeginDrag(ref m);
                             messageProcessed = true;
                             break;
 
-                        case (int)NotificationCodes.NM_CUSTOMDRAW:
-                            m.Result = new IntPtr((int)OnCustomDraw(ref m));
+                        case (int) NotificationCodes.NM_CUSTOMDRAW:
+                            m.Result = new IntPtr((int) OnCustomDraw(ref m));
                             messageProcessed = true;
                             break;
 
-                        case (int)ListViewNotificationCodes.LVN_ODSTATECHANGED:
+                        case (int) ListViewNotificationCodes.LVN_ODSTATECHANGED:
                             {
                                 messageProcessed = true;
-                                NMLVODSTATECHANGE lvod = (NMLVODSTATECHANGE)m.GetLParam(typeof(NMLVODSTATECHANGE));
-                                int num1 = lvod.uOldState & (int)ListViewItemStates.LVIS_SELECTED;
-                                int num2 = lvod.uNewState & (int)ListViewItemStates.LVIS_SELECTED;
+                                var lvod = (NMLVODSTATECHANGE) m.GetLParam(typeof (NMLVODSTATECHANGE));
+                                int num1 = lvod.uOldState & (int) ListViewItemStates.LVIS_SELECTED;
+                                int num2 = lvod.uNewState & (int) ListViewItemStates.LVIS_SELECTED;
                                 if (num2 == num1)
                                     return;
-                                this.OnSelectedIndexChanged(EventArgs.Empty);
+                                OnSelectedIndexChanged(EventArgs.Empty);
                                 break;
                             }
 
@@ -755,18 +791,19 @@ namespace TESVSnip.Windows.Controls
                     break;
 
                 case WM_NOTIFY:
-                    nm1 = (NMHDR)m.GetLParam(typeof(NMHDR));
-                    if (nm1.code == (int)NotificationCodes.NM_RCLICK)
+                    nm1 = (NMHDR) m.GetLParam(typeof (NMHDR));
+                    if (nm1.code == (int) NotificationCodes.NM_RCLICK)
                     {
-                        IntPtr header = (IntPtr)SendMessage(Handle, (int)ListViewMessages.LVM_GETHEADER, IntPtr.Zero, IntPtr.Zero);
+                        IntPtr header = SendMessage(Handle, (int) ListViewMessages.LVM_GETHEADER, IntPtr.Zero,
+                                                    IntPtr.Zero);
                         uint curpos = GetMessagePos();
-                        Point ptheader = PointToClient(new Point((int)(short)curpos, (int)curpos >> 16));
-                        HDHITTESTINFO hdhti = new HDHITTESTINFO();
+                        Point ptheader = PointToClient(new Point((short) curpos, (int) curpos >> 16));
+                        var hdhti = new HDHITTESTINFO();
                         hdhti.pt = ptheader;
                         SendMessage(header, HeaderMessageCodes.HDM_HITTEST, IntPtr.Zero, ref hdhti);
                         OnColumnRightClick(new ColumnClickEventArgs(hdhti.iItem));
                     }
-                    else if (nm1.code == (int)HeaderNotificationCodes.HDN_ITEMCLICKW)
+                    else if (nm1.code == (int) HeaderNotificationCodes.HDN_ITEMCLICKW)
                     {
                         if (OnCustomSort(ref m))
                         {
@@ -790,17 +827,16 @@ namespace TESVSnip.Windows.Controls
                         OnResize(EventArgs.Empty);
 
                     //Set up 
-                    RECT updateRect = new RECT();
+                    var updateRect = new RECT();
                     if (GetUpdateRect(m.HWnd, ref updateRect, false) == 0)
                         break;
 
-                    PAINTSTRUCT paintStruct = new PAINTSTRUCT();
+                    var paintStruct = new PAINTSTRUCT();
                     IntPtr screenHdc = BeginPaint(m.HWnd, ref paintStruct);
                     using (Graphics screenGraphics = Graphics.FromHdc(screenHdc))
                     {
-
                         //Draw Internal Graphics
-                        internalGraphics.Clear(this.BackColor);
+                        internalGraphics.Clear(BackColor);
                         IntPtr hdc = internalGraphics.GetHdc();
                         Message printClientMessage = Message.Create(Handle, WM_PRINTCLIENT, hdc, IntPtr.Zero);
                         DefWndProc(ref printClientMessage);
@@ -826,8 +862,13 @@ namespace TESVSnip.Windows.Controls
             }
             if (!messageProcessed)
             {
-                try { base.WndProc(ref m); }
-                catch { }
+                try
+                {
+                    base.WndProc(ref m);
+                }
+                catch
+                {
+                }
             }
         }
 
@@ -837,14 +878,14 @@ namespace TESVSnip.Windows.Controls
 
             // Activate double buffering
             SetStyle(ControlStyles.AllPaintingInWmPaint
-                | ControlStyles.OptimizedDoubleBuffer
-                | ControlStyles.ResizeRedraw, true);
+                     | ControlStyles.OptimizedDoubleBuffer
+                     | ControlStyles.ResizeRedraw, true);
 
-            LVS_EX styles = (LVS_EX)SendMessage(this.Handle,
-                (int)ListViewMessages.LVM_GETEXTENDEDLISTVIEWSTYLE, 0, 0).ToInt32();
+            var styles = (LVS_EX) SendMessage(Handle,
+                                              (int) ListViewMessages.LVM_GETEXTENDEDLISTVIEWSTYLE, 0, 0).ToInt32();
             styles |= LVS_EX.LVS_EX_DOUBLEBUFFER | LVS_EX.LVS_EX_BORDERSELECT;
-            SendMessage(this.Handle,
-                (int)ListViewMessages.LVM_SETEXTENDEDLISTVIEWSTYLE, 0, (int)styles);
+            SendMessage(Handle,
+                        (int) ListViewMessages.LVM_SETEXTENDEDLISTVIEWSTYLE, 0, (int) styles);
 
             // Allows for catching the WM_ERASEBKGND message
             SetStyle(ControlStyles.EnableNotifyMessage, true);
@@ -866,59 +907,69 @@ namespace TESVSnip.Windows.Controls
 
         public bool IsItemSelected(int index)
         {
-            return (0 != SendMessage(this.Handle, ListViewMessages.LVM_GETITEMSTATE, index, (int)ListViewItemStates.LVIS_SELECTED));
+            return (0 !=
+                    SendMessage(Handle, ListViewMessages.LVM_GETITEMSTATE, index, (int) ListViewItemStates.LVIS_SELECTED));
         }
+
         public bool IsItemFocused(int index)
         {
-            return (0 != SendMessage(this.Handle, ListViewMessages.LVM_GETITEMSTATE, index, (int)ListViewItemStates.LVIS_FOCUSED));
+            return (0 !=
+                    SendMessage(Handle, ListViewMessages.LVM_GETITEMSTATE, index, (int) ListViewItemStates.LVIS_FOCUSED));
         }
 
         internal void SetItemState(int index, uint data, ListViewItemStates mask)
         {
-            LVITEMA _ms_lvi = new LVITEMA();
+            var _ms_lvi = new LVITEMA();
             _ms_lvi.stateMask = mask;
             _ms_lvi.state = data;
-            SendMessage(this.Handle, ListViewMessages.LVM_SETITEMSTATE, index, ref _ms_lvi);
+            SendMessage(Handle, ListViewMessages.LVM_SETITEMSTATE, index, ref _ms_lvi);
         }
+
         public void ClearSelection()
         {
             int next = -1;
             while (true)
             {
-                next = SendMessage(this.Handle, ListViewMessages.LVM_GETNEXTITEM, next, (int)ListViewNextItemCodes.LVNI_SELECTED);
+                next = SendMessage(Handle, ListViewMessages.LVM_GETNEXTITEM, next,
+                                   (int) ListViewNextItemCodes.LVNI_SELECTED);
                 if (next == -1) break;
                 SetItemState(next, 0, ListViewItemStates.LVIS_SELECTED);
             }
         }
+
         public int[] GetSelectionIndices()
         {
-            System.Collections.Generic.List<int> sel = new System.Collections.Generic.List<int>();
+            var sel = new List<int>();
             int next = -1;
             while (true)
             {
-                next = SendMessage(this.Handle, ListViewMessages.LVM_GETNEXTITEM, next, (int)ListViewNextItemCodes.LVNI_SELECTED);
+                next = SendMessage(Handle, ListViewMessages.LVM_GETNEXTITEM, next,
+                                   (int) ListViewNextItemCodes.LVNI_SELECTED);
                 if (next == -1) break;
                 sel.Add(next);
                 SetItemState(next, 0, ListViewItemStates.LVIS_SELECTED);
             }
             return sel.ToArray();
         }
+
         public void SelectItem(int index)
         {
-            SetItemState(index, (unchecked((uint)-1)), ListViewItemStates.LVIS_SELECTED);
+            SetItemState(index, (unchecked((uint) -1)), ListViewItemStates.LVIS_SELECTED);
         }
+
         public int GetFocusedItem()
         {
-            return SendMessage(this.Handle, ListViewMessages.LVM_GETNEXTITEM, -1, 1);
+            return SendMessage(Handle, ListViewMessages.LVM_GETNEXTITEM, -1, 1);
         }
+
         public void FocusItem(int index)
         {
-            SetItemState(index, (unchecked((uint)-1)), ListViewItemStates.LVIS_FOCUSED);
+            SetItemState(index, (unchecked((uint) -1)), ListViewItemStates.LVIS_FOCUSED);
         }
 
         public bool HasSelection()
         {
-            return (0 != SendMessage(this.Handle, ListViewMessages.LVM_GETSELECTEDCOUNT, 0, 0));
+            return (0 != SendMessage(Handle, ListViewMessages.LVM_GETSELECTEDCOUNT, 0, 0));
         }
 
         public string GetItemText(int item, int subItem)
@@ -931,14 +982,14 @@ namespace TESVSnip.Windows.Controls
                     return lvtext;
             }
 
-            LVITEMW _ms_lvi = new LVITEMW();
+            var _ms_lvi = new LVITEMW();
             _ms_lvi.mask = ListViewItemMask.LVIF_TEXT;
             _ms_lvi.iSubItem = subItem;
             _ms_lvi.cchTextMax = 512;
-            _ms_lvi.pszText = Marshal.AllocCoTaskMem((_ms_lvi.cchTextMax) * 2 /*Marshal.SizeOf(typeof(char))*/ );
+            _ms_lvi.pszText = Marshal.AllocCoTaskMem((_ms_lvi.cchTextMax)*2 /*Marshal.SizeOf(typeof(char))*/);
             try
             {
-                SendMessage(this.Handle, ListViewMessages.LVM_GETITEMTEXT, item, ref _ms_lvi);
+                SendMessage(Handle, ListViewMessages.LVM_GETITEMTEXT, item, ref _ms_lvi);
                 return Marshal.PtrToStringAuto(_ms_lvi.pszText, _ms_lvi.cchTextMax);
             }
             finally
@@ -949,21 +1000,23 @@ namespace TESVSnip.Windows.Controls
 
         public Font GetItemFont(int item)
         {
-            return this.Font;
+            return Font;
         }
+
         public Color GetItemBackColor(int item)
         {
-            return this.BackColor;
+            return BackColor;
         }
+
         public Color GetItemForeColor(int item)
         {
-            return this.ForeColor;
+            return ForeColor;
         }
 
         public Rectangle GetItemRect(int item, ListViewImageRect lvir)
         {
-            Rectangle rect = new Rectangle(0, 0, 0, 0);
-            SendMessage(this.Handle, ListViewMessages.LVM_GETITEMRECT, item, ref rect);
+            var rect = new Rectangle(0, 0, 0, 0);
+            SendMessage(Handle, ListViewMessages.LVM_GETITEMRECT, item, ref rect);
             return rect;
         }
 
@@ -973,8 +1026,8 @@ namespace TESVSnip.Windows.Controls
         public void AutoFitColumnHeaders()
         {
             // Autofit all selection columns
-            foreach (ColumnHeader heading in this.Columns)
-                heading.Width = -2;  // Use Heading
+            foreach (ColumnHeader heading in Columns)
+                heading.Width = -2; // Use Heading
         }
 
         public void SelectAll()
@@ -982,72 +1035,71 @@ namespace TESVSnip.Windows.Controls
             int next = -1;
             while (true)
             {
-                next = SendMessage(this.Handle, ListViewMessages.LVM_GETNEXTITEM, next, (int)ListViewNextItemCodes.LVNI_ALL);
+                next = SendMessage(Handle, ListViewMessages.LVM_GETNEXTITEM, next, (int) ListViewNextItemCodes.LVNI_ALL);
                 if (next == -1) break;
-                SetItemState(next, (unchecked((uint)-1)), ListViewItemStates.LVIS_SELECTED);
+                SetItemState(next, (unchecked((uint) -1)), ListViewItemStates.LVIS_SELECTED);
             }
         }
 
         public void SetSubItemImage(int itemIndex, int subItemIndex, int imageIndex)
         {
-            LVITEMA lvItem = new LVITEMA();
+            var lvItem = new LVITEMA();
             lvItem.mask = ListViewItemMask.LVIF_IMAGE;
             lvItem.iItem = itemIndex;
             lvItem.iSubItem = subItemIndex;
             lvItem.iImage = imageIndex;
-            SendMessageLVI(this.Handle, (int)ListViewMessages.LVM_SETITEM, 0, ref lvItem);
+            SendMessageLVI(Handle, (int) ListViewMessages.LVM_SETITEM, 0, ref lvItem);
         }
 
         [DllImport("user32.dll", CharSet = CharSet.Auto)]
         private static extern IntPtr SendMessage(IntPtr hWnd, int msg,
-            int wParam, int lParam);
+                                                 int wParam, int lParam);
 
 
         public void EnableSubImages()
         {
-            SendMessage(this.Handle, ListViewMessages.LVM_SETEXTENDEDLISTVIEWSTYLE,
-                (int)LVS_EX.LVS_EX_SUBITEMIMAGES, (int)LVS_EX.LVS_EX_SUBITEMIMAGES);
+            SendMessage(Handle, ListViewMessages.LVM_SETEXTENDEDLISTVIEWSTYLE,
+                        (int) LVS_EX.LVS_EX_SUBITEMIMAGES, (int) LVS_EX.LVS_EX_SUBITEMIMAGES);
         }
 
-        public LVHITTESTINFO RawHitTest(System.Drawing.Point pt)
+        public LVHITTESTINFO RawHitTest(Point pt)
         {
-            LVHITTESTINFO lvhti = new LVHITTESTINFO();
+            var lvhti = new LVHITTESTINFO();
             lvhti.pt = pt;
             lvhti.iItem = -1;
             lvhti.iSubItem = -1;
             lvhti.flags = ListViewHitTestFlags.LVHT_EMPTY;
-            SendMessage(this.Handle, ListViewMessages.LVM_HITTEST, 0, ref lvhti);
+            SendMessage(Handle, ListViewMessages.LVM_HITTEST, 0, ref lvhti);
             return lvhti;
         }
 
         #region SendMessage Variations
-        [DllImport("user32.dll", SetLastError = true)]
-        extern static int SendMessage(IntPtr hWnd, ListViewMessages Msg, int wParam, ref LVHITTESTINFO lvhti);
 
         [DllImport("user32.dll", SetLastError = true)]
-        extern static int SendMessage(IntPtr hWnd, ListViewMessages Msg, int wParam, ref LVITEMA lvitem);
+        private static extern int SendMessage(IntPtr hWnd, ListViewMessages Msg, int wParam, ref LVHITTESTINFO lvhti);
 
         [DllImport("user32.dll", SetLastError = true)]
-        extern static int SendMessage(IntPtr hWnd, ListViewMessages Msg, int wParam, ref LVITEMW lvitem);
+        private static extern int SendMessage(IntPtr hWnd, ListViewMessages Msg, int wParam, ref LVITEMA lvitem);
 
         [DllImport("user32.dll", SetLastError = true)]
-        extern static int SendMessage(IntPtr hWnd, ListViewMessages Msg, int wParam, ref Rectangle lvitem);
+        private static extern int SendMessage(IntPtr hWnd, ListViewMessages Msg, int wParam, ref LVITEMW lvitem);
 
         [DllImport("user32.dll", SetLastError = true)]
-        extern static int SendMessage(IntPtr hWnd, ListViewMessages Msg, int wParam, int lvitem);
+        private static extern int SendMessage(IntPtr hWnd, ListViewMessages Msg, int wParam, ref Rectangle lvitem);
 
         [DllImport("user32.dll", SetLastError = true)]
-        extern private static IntPtr SendMessage(IntPtr hWnd, uint Msg, UIntPtr wParam, IntPtr lParam);
+        private static extern int SendMessage(IntPtr hWnd, ListViewMessages Msg, int wParam, int lvitem);
 
         [DllImport("user32.dll", SetLastError = true)]
-        extern private static IntPtr SendMessage(IntPtr hWnd, uint Msg, IntPtr wParam, IntPtr lParam);
+        private static extern IntPtr SendMessage(IntPtr hWnd, uint Msg, IntPtr wParam, IntPtr lParam);
 
         [DllImport("user32.dll", EntryPoint = "SendMessage", CharSet = CharSet.Auto)]
         private static extern IntPtr SendMessageLVI(IntPtr hWnd, int msg,
-            int wParam, ref LVITEMA lvi);
+                                                    int wParam, ref LVITEMA lvi);
 
         [DllImport("User32.dll")]
-        private static extern int SendMessage(IntPtr hWnd, HeaderMessageCodes uMsg, IntPtr wParam, ref HDHITTESTINFO lParam);
+        private static extern int SendMessage(IntPtr hWnd, HeaderMessageCodes uMsg, IntPtr wParam,
+                                              ref HDHITTESTINFO lParam);
 
         [DllImport("User32.dll")]
         private static extern uint GetMessagePos();
@@ -1055,40 +1107,22 @@ namespace TESVSnip.Windows.Controls
         #endregion
 
         #region PostMessage Variations
-        [DllImport("user32.dll", SetLastError = true)]
-        extern static int PostMessage(IntPtr hWnd, ListViewMessages Msg, int wParam, ref LVITEMA lvitem);
 
         [DllImport("user32.dll", SetLastError = true)]
-        extern static int PostMessage(IntPtr hWnd, ListViewMessages Msg, int wParam, ref LVITEMW lvitem);
-
-        [DllImport("user32.dll", SetLastError = true)]
-        extern static int PostMessage(IntPtr hWnd, ListViewMessages Msg, int wParam, ref Rectangle lvitem);
-
-        [DllImport("user32.dll", SetLastError = true)]
-        extern static int PostMessage(IntPtr hWnd, ListViewMessages Msg, int wParam, int lvitem);
-
-        [DllImport("user32.dll", SetLastError = true)]
-        extern private static IntPtr PostMessage(IntPtr hWnd, uint Msg, UIntPtr wParam, IntPtr lParam);
-
-        [DllImport("user32.dll", SetLastError = true)]
-        extern private static IntPtr PostMessage(IntPtr hWnd, uint Msg, IntPtr wParam, IntPtr lParam);
-
-        [DllImport("user32.dll", EntryPoint = "PostMessage", CharSet = CharSet.Auto)]
-        private static extern IntPtr PostMessageLVI(IntPtr hWnd, int msg,
-            int wParam, ref LVITEMA lvi);
+        private static extern IntPtr PostMessage(IntPtr hWnd, uint Msg, UIntPtr wParam, IntPtr lParam);
 
         #endregion
 
         #region OnResize
+
         /// <summary>Occurs when window is resized.</summary>
         /// <param name="e">A System.EventArgs.Empty.</param>
         /// <remarks>Recreates internal Graphics object. </remarks>
-        protected override void OnResize(System.EventArgs e)
+        protected override void OnResize(EventArgs e)
         {
             if (internalBitmap == null ||
                 internalBitmap.Width != Width || internalBitmap.Height != Height)
             {
-
                 if (Width != 0 && Height != 0)
                 {
                     DisposeInternal();
@@ -1097,9 +1131,11 @@ namespace TESVSnip.Windows.Controls
                 }
             }
         }
+
         #endregion
 
         #region Win32
+
         [DllImport("User32.dll")]
         public static extern int GetUpdateRect(IntPtr hwnd, ref RECT rect, bool erase);
 
@@ -1138,20 +1174,22 @@ namespace TESVSnip.Windows.Controls
             public int Reserved7;
             public int Reserved8;
         }
+
         #endregion
 
         #region Clipboard Format
+
         public void Copy()
         {
-            ListView.SelectedIndexCollection indices = this.SelectedIndices;
+            SelectedIndexCollection indices = SelectedIndices;
             int nItems = indices.Count;
-            int nCols = this.Columns.Count;
-            char[] illegal = new char[] { '\t', '\n' };
-            string[] items = new string[nItems + 1];
-            string[] colvals = new string[nCols];
+            int nCols = Columns.Count;
+            var illegal = new[] {'\t', '\n'};
+            var items = new string[nItems + 1];
+            var colvals = new string[nCols];
             for (int j = 0; j < nCols; j++)
             {
-                ColumnHeader header = this.Columns[j];
+                ColumnHeader header = Columns[j];
                 colvals[header.Index] = header.Text;
             }
             items[0] = string.Join("\t", colvals);
@@ -1160,8 +1198,8 @@ namespace TESVSnip.Windows.Controls
                 int idx = indices[i];
                 for (int j = 0; j < nCols; j++)
                 {
-                    int col = this.Columns[j].Index;
-                    string text = this.GetItemText(idx, col);
+                    int col = Columns[j].Index;
+                    string text = GetItemText(idx, col);
                     if (-1 != text.IndexOfAny(illegal))
                         text = '\"' + text + '\"';
                     colvals[col] = text;
@@ -1170,14 +1208,15 @@ namespace TESVSnip.Windows.Controls
             }
             Clipboard.SetDataObject(string.Join("\r\n", items));
         }
+
         #endregion
 
-        void VirtualListView_ColumnClick(object sender, ColumnClickEventArgs e)
+        private void VirtualListView_ColumnClick(object sender, ColumnClickEventArgs e)
         {
             if (CustomSort != null)
             {
                 CustomSort(e.Column);
-            }            
+            }
         }
     }
 }
