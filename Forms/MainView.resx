@@ -256,7 +256,7 @@
     <value>Form ID</value>
   </data>
   <data name="toolStripIncrFindTypeFilter.Size" type="System.Drawing.Size, System.Drawing">
-    <value>80, 23</value>
+    <value>80, 25</value>
   </data>
   <data name="toolStripIncrFindTypeFilter.ToolTipText" xml:space="preserve">
     <value>Search Type</value>
@@ -1531,9 +1531,6 @@
   </data>
   <data name="deleteToolStripMenuItem.Enabled" type="System.Boolean, mscorlib">
     <value>False</value>
-  </data>
-  <data name="deleteToolStripMenuItem.ShortcutKeys" type="System.Windows.Forms.Keys, System.Windows.Forms">
-    <value>Del</value>
   </data>
   <data name="deleteToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
     <value>190, 22</value>
