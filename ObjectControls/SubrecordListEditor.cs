@@ -423,7 +423,7 @@ namespace TESVSnip.Forms
                         sr.Name = HexDataEdit.resultName;
                         rec.MatchRecordStructureToRecord(this.SubRecords.ToArray());
 
-                        if (sr.Name == "EDID" && sr.Parent is Record)
+                        if (sr.Parent is Record)
                             sr.Parent.UpdateShortDescription();                        
 
                         listSubrecord.Refresh();
@@ -461,6 +461,10 @@ namespace TESVSnip.Forms
                 PasteSubRecord();
                 e.Handled = true;
             }
+            else if (e.KeyCode == Keys.Delete & !e.Control && !e.Alt && !e.Shift)
+            {
+                DeleteSelection();
+            }
         }
 
         private string[] FormIDScan(string type)
@@ -493,7 +497,7 @@ namespace TESVSnip.Forms
 
             if (OnEditSubrecord != null)
             {
-                OnEditSubrecord(sr, true);
+                OnEditSubrecord(sr, false);
                 return;
             }
 
@@ -527,7 +531,7 @@ namespace TESVSnip.Forms
                 {
                     if (DialogResult.OK == re.ShowDialog(this))
                     {
-                        if (sr.Name == "EDID" && sr.Parent is Record)
+                        if (sr.Parent is Record)
                             sr.Parent.UpdateShortDescription();                        
                         listSubrecord.Refresh();
                         FireSubrecordChanged(sr);
@@ -752,6 +756,12 @@ namespace TESVSnip.Forms
             {
                 OnSubrecordChanged(this, new RecordChangeEventArgs(sr));
             }
+        }
+
+        public void RefreshObject(object model)
+        {
+            //this.listSubrecord.RefreshObject(model);
+            this.listSubrecord.Refresh();
         }
     }
 }

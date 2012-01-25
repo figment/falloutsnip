@@ -523,7 +523,10 @@ namespace TESVSnip.ObjectControls
 
         private void PluginTree_SizeChanged(object sender, EventArgs e)
         {
-            this._olvColumnName.Width = this.Width - SystemInformation.VerticalScrollBarWidth - SystemInformation.FrameBorderSize.Width;
+            try{
+            if (this._olvColumnName != null)
+                this._olvColumnName.Width = this.Width - SystemInformation.VerticalScrollBarWidth - SystemInformation.FrameBorderSize.Width;
+            } catch{}
         }
 
         private void PluginTree_SelectedIndexChanged(object sender, EventArgs e)
@@ -670,6 +673,13 @@ namespace TESVSnip.ObjectControls
         {
             if (_historyHandler.CurrentItem != PluginTree.SelectedRecord)
                 _historyHandler.CurrentItem = PluginTree.SelectedRecord;
+
+            foreach (var sel in this.PluginTree.SelectedRecords.OfType<Record>())
+            {
+                sel.MatchRecordStructureToRecord();
+                sel.UpdateShortDescription();
+            }
+
             UpdateToolStripSelection();
             if (SelectionChanged != null)
                 SelectionChanged(this, EventArgs.Empty);
@@ -769,6 +779,14 @@ namespace TESVSnip.ObjectControls
                 var form = new TESVSnip.Forms.FullRecordEditor(r);
                 form.StartPosition = FormStartPosition.CenterScreen;
                 form.Show(this);
+            }
+        }
+
+        private void PluginTree_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (!e.Control && !e.Alt && !e.Shift && e.KeyCode == Keys.Delete)
+            {
+                DeleteSelection();
             }
         }
     }

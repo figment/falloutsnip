@@ -130,9 +130,6 @@
     <value>112</value>
   </metadata>
   <assembly alias="System.Drawing" name="System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
-  <data name="$this.AutoScaleDimensions" type="System.Drawing.SizeF, System.Drawing">
-    <value>6, 13</value>
-  </data>
   <data name="$this.ClientSize" type="System.Drawing.Size, System.Drawing">
     <value>765, 546</value>
   </data>
@@ -150,7 +147,7 @@
     <value>subrecordPanel</value>
   </data>
   <data name="&gt;&gt;subrecordPanel.Type" xml:space="preserve">
-    <value>TESVSnip.Forms.SubrecordListEditor, TESVSnip, Version=3.0.4404.5, Culture=neutral, PublicKeyToken=null</value>
+    <value>TESVSnip.Forms.SubrecordListEditor, TESVSnip, Version=3.2.4406.0, Culture=neutral, PublicKeyToken=null</value>
   </data>
   <data name="&gt;&gt;subrecordPanel.Parent" xml:space="preserve">
     <value>$this</value>
@@ -175,7 +172,7 @@
     <value>PluginTree</value>
   </data>
   <data name="&gt;&gt;PluginTree.Type" xml:space="preserve">
-    <value>TESVSnip.ObjectControls.PluginTreeView, TESVSnip, Version=3.0.4404.5, Culture=neutral, PublicKeyToken=null</value>
+    <value>TESVSnip.ObjectControls.PluginTreeView, TESVSnip, Version=3.2.4406.0, Culture=neutral, PublicKeyToken=null</value>
   </data>
   <data name="&gt;&gt;PluginTree.Parent" xml:space="preserve">
     <value>recordPanel</value>
@@ -223,7 +220,7 @@
     <value>rtfInfo</value>
   </data>
   <data name="&gt;&gt;rtfInfo.Type" xml:space="preserve">
-    <value>RichTextBoxLinks.RichTextBoxEx, TESVSnip, Version=3.0.4404.5, Culture=neutral, PublicKeyToken=null</value>
+    <value>RichTextBoxLinks.RichTextBoxEx, TESVSnip, Version=3.2.4406.0, Culture=neutral, PublicKeyToken=null</value>
   </data>
   <data name="&gt;&gt;rtfInfo.Parent" xml:space="preserve">
     <value>$this</value>

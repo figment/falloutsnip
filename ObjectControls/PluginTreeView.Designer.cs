@@ -236,6 +236,7 @@
             this.PluginTree.SelectedIndexChanged += new System.EventHandler(this.PluginTree_SelectedIndexChanged);
             this.PluginTree.SizeChanged += new System.EventHandler(this.PluginTree_SizeChanged);
             this.PluginTree.Enter += new System.EventHandler(this.PluginTree_Enter);
+            this.PluginTree.KeyDown += new System.Windows.Forms.KeyEventHandler(this.PluginTree_KeyDown);
             this.PluginTree.MouseDoubleClick += new System.Windows.Forms.MouseEventHandler(this.PluginTree_MouseDoubleClick);
             // 
             // PluginTreeView

@@ -160,7 +160,7 @@
             // subrecordListEditor
             // 
             resources.ApplyResources(this.subrecordListEditor, "subrecordListEditor");
-            this.subrecordListEditor.MinimumSize = new System.Drawing.Size(200, 120);
+            this.subrecordListEditor.MinimumSize = new System.Drawing.Size(267, 148);
             this.subrecordListEditor.Name = "subrecordListEditor";
             this.subrecordListEditor.SubRecords = null;
             // 
@@ -183,7 +183,7 @@
             // elementEditor
             // 
             resources.ApplyResources(this.elementEditor, "elementEditor");
-            this.elementEditor.MinimumSize = new System.Drawing.Size(300, 200);
+            this.elementEditor.MinimumSize = new System.Drawing.Size(400, 246);
             this.elementEditor.Name = "elementEditor";
             // 
             // RecordEditor

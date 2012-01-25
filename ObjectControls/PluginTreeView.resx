@@ -295,7 +295,7 @@
     <value>PluginTree</value>
   </data>
   <data name="&gt;&gt;PluginTree.Type" xml:space="preserve">
-    <value>TESVSnip.Controls.CustomTreeView, TESVSnip, Version=3.0.4404.3, Culture=neutral, PublicKeyToken=null</value>
+    <value>TESVSnip.Controls.CustomTreeView, TESVSnip, Version=3.2.4406.0, Culture=neutral, PublicKeyToken=null</value>
   </data>
   <data name="&gt;&gt;PluginTree.Parent" xml:space="preserve">
     <value>$this</value>

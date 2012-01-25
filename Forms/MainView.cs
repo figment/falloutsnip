@@ -46,13 +46,13 @@ namespace TESVSnip
             InitializeComponent();
 
             this.dockingManagerExtender.AutomaticStatePersistence = global::TESVSnip.Properties.Settings.Default.AutoSaveDockingState;
-            this.dockingManagerExtender.DockingManager.ContentHiding += delegate(Content c, System.ComponentModel.CancelEventArgs cea) { cea.Cancel = true; };
             this.dockingManagerExtender.DockingManager.ContextMenu += delegate(Crownwood.Magic.Menus.PopupMenu pm, System.ComponentModel.CancelEventArgs cea)
             {
                 pm.MenuCommands.RemoveAt(pm.MenuCommands.Count - 1);
                 pm.MenuCommands.RemoveAt(pm.MenuCommands.Count - 1);
                 pm.MenuCommands.RemoveAt(pm.MenuCommands.Count - 1);
             };
+            
 
             // Register message filter.
             try
@@ -128,19 +128,8 @@ namespace TESVSnip
             PluginTree.SelectionChanged += PluginTree_SelectionChanged;
             subrecordPanel.SelectionChanged += subrecordPanel_SelectionChanged;
             subrecordPanel.OnSubrecordChanged += subrecordPanel_OnSubrecordChanged;
+            subrecordPanel.DataChanged += subrecordPanel_DataChanged;
         }
-
-        void subrecordPanel_OnSubrecordChanged(object sender, RecordChangeEventArgs e)
-        {
-            if ( e.Record is SubRecord )
-            {
-                this.subrecordPanel.Refresh();
-                if ( e.Record.Parent is Record)
-                    this.PluginTree.RefreshObject(e.Record.Parent);
-            }
-            
-        }
-
         void PluginTree_OnSelectionUpdated(object sender, EventArgs e)
         {
             // fix EDID if relevant
@@ -1521,6 +1510,10 @@ namespace TESVSnip
 
         private void MainView_Shown(object sender, EventArgs e)
         {
+            // Only prevent content hiding after window if first shown
+            this.dockingManagerExtender.DockingManager.ContentHiding += delegate(Content c, System.ComponentModel.CancelEventArgs cea) { cea.Cancel = true; };
+            this.dockingManagerExtender.DockingManager.ShowAllContents();
+
             if (!DesignMode)
             {
                 try
@@ -1559,6 +1552,24 @@ namespace TESVSnip
             else if (this.subrecordPanel.ContainsFocus)
             {
                 this.subrecordPanel.EditSelectedSubrecordHex();
+            }
+        }
+
+
+        void subrecordPanel_DataChanged(object sender, EventArgs e)
+        {
+            var sr = subrecordPanel.GetSelectedSubrecord();
+            if (sr != null)
+                UpdateMainText(sr);
+        }
+
+        void subrecordPanel_OnSubrecordChanged(object sender, RecordChangeEventArgs e)
+        {
+            if (e.Record is SubRecord)
+            {
+                if (e.Record.Parent is Record)
+                    this.PluginTree.RefreshObject(e.Record.Parent);
+                this.subrecordPanel.RefreshObject(e.Record);
             }
         }
     }

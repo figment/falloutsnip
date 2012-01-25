@@ -96,8 +96,7 @@ namespace TESVSnip
                 {
                     serializationItems.Remove(this);
                     this.SubRecords.AddRange(items.OfType<SubRecord>().ToList());
-                    foreach (var sr in this.SubRecords)
-                        sr.Parent = this;
+                    FixSubrecordOwner();
                 }
                 if (serializationItems.Count == 0)
                     serializationItems = null;
@@ -157,6 +156,7 @@ namespace TESVSnip
             Name = r.Name;
             descNameOverride = new Func<string>(DefaultDescriptiveName);
             UpdateShortDescription();
+            FixSubrecordOwner();
         }
 
         public Record()
@@ -165,6 +165,13 @@ namespace TESVSnip
             SubRecords = new TESVSnip.Collections.Generic.AdvancedList<SubRecord>();
             descNameOverride = new Func<string>(DefaultDescriptiveName);
             UpdateShortDescription();
+            FixSubrecordOwner();
+        }
+
+        private void FixSubrecordOwner()
+        {
+            foreach (var sr in this.SubRecords)
+                sr.Parent = this;
         }
 
         public override BaseRecord Clone()

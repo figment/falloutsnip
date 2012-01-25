@@ -14,6 +14,7 @@ namespace TESVSnip.Forms
         private Record r;
         private SubRecord sr;
         private SubrecordStructure ss;
+        private bool hexView;
         private string strWarnOnSave = null;
         OrderedDictionary<ElementStructure, IElementControl> controlMap = new OrderedDictionary<ElementStructure, IElementControl>();
 
@@ -49,7 +50,7 @@ namespace TESVSnip.Forms
 
         public void SetContext(Record r, SubRecord sr, bool hexView)
         {
-            if (this.r == r && this.sr == sr)
+            if (this.r == r && this.sr == sr && this.hexView == hexView)
                 return;
 
             if (r == null || sr == null)
@@ -70,13 +71,14 @@ namespace TESVSnip.Forms
                 fpanel1.Width = this.Parent.Width;
                 controlMap.Clear();
 
+                this.hexView = hexView;
                 this.r = r;
                 this.sr = sr;
                 var p = GetPluginFromNode(r);
                 ss = sr.Structure;
 
                 // default to blob if no elements
-                if (ss == null || ss.elements == null)
+                if (ss == null || ss.elements == null || hexView)
                 {
                     var c = new HexElement();
                     c.Left = 8;

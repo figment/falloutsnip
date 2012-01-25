@@ -53,7 +53,6 @@
             this.subrecordPanel.Controls.Add(this.listSubrecord);
             this.subrecordPanel.Controls.Add(this.toolStripSubRecord);
             resources.ApplyResources(this.subrecordPanel, "subrecordPanel");
-            this.subrecordPanel.MinimumSize = new System.Drawing.Size(200, 100);
             this.subrecordPanel.Name = "subrecordPanel";
             // 
             // toolStripSubRecord
@@ -194,7 +193,7 @@
             resources.ApplyResources(this, "$this");
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.Controls.Add(this.subrecordPanel);
-            this.MinimumSize = new System.Drawing.Size(200, 120);
+            this.MinimumSize = new System.Drawing.Size(192, 120);
             this.Name = "SubrecordListEditor";
             this.SizeChanged += new System.EventHandler(this.SubrecordListEditor_SizeChanged);
             this.subrecordPanel.ResumeLayout(false);

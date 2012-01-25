@@ -930,7 +930,7 @@ namespace TESVSnip {
             resources.ApplyResources(this.subrecordPanel, "subrecordPanel");
             this.subrecordPanel.MinimumSize = new System.Drawing.Size(200, 120);
             this.subrecordPanel.Name = "subrecordPanel";
-            this.dockingManagerExtender.SetPreferredSize(this.subrecordPanel, new System.Drawing.Size(200, 100));
+            this.dockingManagerExtender.SetPreferredSize(this.subrecordPanel, new System.Drawing.Size(204, 100));
             this.subrecordPanel.SubRecords = null;
             this.dockingManagerExtender.SetTabbedMode(this.subrecordPanel, true);
             this.dockingManagerExtender.SetTitle(this.subrecordPanel, "Subrecord Panel");
@@ -938,8 +938,8 @@ namespace TESVSnip {
             // 
             // MainView
             // 
+            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
             resources.ApplyResources(this, "$this");
-            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.Controls.Add(this.subrecordPanel);
             this.Controls.Add(this.recordPanel);
             this.Controls.Add(this.rtfInfo);

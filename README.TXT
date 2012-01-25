@@ -9,6 +9,15 @@ Requirements:
   .NET 3.5
 
 Change Log:
+v 3.3
+- Miscellaneous fixes where subrecord parentage was lost when copy/paste of record. Fixes EDID refresh issues.
+- Fix refresh of main text panel when subrecord changed
+- Change location where docking windows are hooked to allow floating positions to be loaded on startup
+- Remove global menu hook for Delete key and handle on a control by control basis
+
+v 3.2
+- Handle resize due to DPI scaling before main view is fully so constructed
+
 v 3.1
 - Extra error handling to try and track down errors
 - Handle issue with use of Flag Dropdown combobox while control is still being initialized

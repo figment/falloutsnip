@@ -125,15 +125,17 @@
   <data name="horizontalSplitContainer.Location" type="System.Drawing.Point, System.Drawing">
     <value>0, 0</value>
   </data>
+  <data name="horizontalSplitContainer.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>4, 4, 4, 4</value>
+  </data>
   <data name="verticalSplitContainer.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
     <value>Fill</value>
   </data>
-  <assembly alias="mscorlib" name="mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
-  <data name="verticalSplitContainer.IsSplitterFixed" type="System.Boolean, mscorlib">
-    <value>True</value>
-  </data>
   <data name="verticalSplitContainer.Location" type="System.Drawing.Point, System.Drawing">
     <value>0, 0</value>
+  </data>
+  <data name="verticalSplitContainer.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>4, 4, 4, 4</value>
   </data>
   <data name="verticalSplitContainer.Orientation" type="System.Windows.Forms.Orientation, System.Windows.Forms">
     <value>Horizontal</value>
@@ -142,11 +144,15 @@
     <value>Top, Left, Right</value>
   </data>
   <data name="comboBox1.Location" type="System.Drawing.Point, System.Drawing">
-    <value>105, 24</value>
+    <value>140, 30</value>
+  </data>
+  <data name="comboBox1.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>4, 4, 4, 4</value>
   </data>
   <data name="comboBox1.Size" type="System.Drawing.Size, System.Drawing">
-    <value>120, 21</value>
+    <value>142, 23</value>
   </data>
+  <assembly alias="mscorlib" name="mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
   <data name="comboBox1.TabIndex" type="System.Int32, mscorlib">
     <value>5</value>
   </data>
@@ -163,13 +169,16 @@
     <value>0</value>
   </data>
   <data name="tbFlags3.Location" type="System.Drawing.Point, System.Drawing">
-    <value>150, 46</value>
+    <value>192, 55</value>
+  </data>
+  <data name="tbFlags3.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>4, 4, 4, 4</value>
   </data>
   <data name="tbFlags3.MaxLength" type="System.Int32, mscorlib">
     <value>8</value>
   </data>
   <data name="tbFlags3.Size" type="System.Drawing.Size, System.Drawing">
-    <value>69, 20</value>
+    <value>91, 22</value>
   </data>
   <data name="tbFlags3.TabIndex" type="System.Int32, mscorlib">
     <value>9</value>
@@ -190,13 +199,16 @@
     <value>1</value>
   </data>
   <data name="textBox1.Location" type="System.Drawing.Point, System.Drawing">
-    <value>42, 24</value>
+    <value>56, 30</value>
+  </data>
+  <data name="textBox1.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>4, 4, 4, 4</value>
   </data>
   <data name="textBox1.MaxLength" type="System.Int32, mscorlib">
     <value>8</value>
   </data>
   <data name="textBox1.Size" type="System.Drawing.Size, System.Drawing">
-    <value>57, 20</value>
+    <value>75, 22</value>
   </data>
   <data name="textBox1.TabIndex" type="System.Int32, mscorlib">
     <value>4</value>
@@ -217,13 +229,16 @@
     <value>2</value>
   </data>
   <data name="tbFlags2.Location" type="System.Drawing.Point, System.Drawing">
-    <value>42, 46</value>
+    <value>56, 57</value>
+  </data>
+  <data name="tbFlags2.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>4, 4, 4, 4</value>
   </data>
   <data name="tbFlags2.MaxLength" type="System.Int32, mscorlib">
     <value>8</value>
   </data>
   <data name="tbFlags2.Size" type="System.Drawing.Size, System.Drawing">
-    <value>57, 20</value>
+    <value>75, 22</value>
   </data>
   <data name="tbFlags2.TabIndex" type="System.Int32, mscorlib">
     <value>7</value>
@@ -247,13 +262,16 @@
     <value>Top, Right</value>
   </data>
   <data name="tbFormID.Location" type="System.Drawing.Point, System.Drawing">
-    <value>156, 3</value>
+    <value>191, 4</value>
+  </data>
+  <data name="tbFormID.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>4, 4, 4, 4</value>
   </data>
   <data name="tbFormID.MaxLength" type="System.Int32, mscorlib">
     <value>8</value>
   </data>
   <data name="tbFormID.Size" type="System.Drawing.Size, System.Drawing">
-    <value>69, 20</value>
+    <value>91, 22</value>
   </data>
   <data name="tbFormID.TabIndex" type="System.Int32, mscorlib">
     <value>2</value>
@@ -277,10 +295,13 @@
     <value>True</value>
   </data>
   <data name="label3.Location" type="System.Drawing.Point, System.Drawing">
-    <value>112, 49</value>
+    <value>141, 59</value>
+  </data>
+  <data name="label3.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>4, 0, 4, 0</value>
   </data>
   <data name="label3.Size" type="System.Drawing.Size, System.Drawing">
-    <value>38, 13</value>
+    <value>50, 17</value>
   </data>
   <data name="label3.TabIndex" type="System.Int32, mscorlib">
     <value>8</value>
@@ -304,10 +325,13 @@
     <value>True</value>
   </data>
   <data name="label2.Location" type="System.Drawing.Point, System.Drawing">
-    <value>1, 49</value>
+    <value>1, 60</value>
+  </data>
+  <data name="label2.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>4, 0, 4, 0</value>
   </data>
   <data name="label2.Size" type="System.Drawing.Size, System.Drawing">
-    <value>38, 13</value>
+    <value>50, 17</value>
   </data>
   <data name="label2.TabIndex" type="System.Int32, mscorlib">
     <value>6</value>
@@ -331,10 +355,13 @@
     <value>True</value>
   </data>
   <data name="label1.Location" type="System.Drawing.Point, System.Drawing">
-    <value>1, 28</value>
+    <value>1, 34</value>
+  </data>
+  <data name="label1.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>4, 0, 4, 0</value>
   </data>
   <data name="label1.Size" type="System.Drawing.Size, System.Drawing">
-    <value>38, 13</value>
+    <value>50, 17</value>
   </data>
   <data name="label1.TabIndex" type="System.Int32, mscorlib">
     <value>3</value>
@@ -358,10 +385,13 @@
     <value>True</value>
   </data>
   <data name="label4.Location" type="System.Drawing.Point, System.Drawing">
-    <value>1, 6</value>
+    <value>1, 7</value>
+  </data>
+  <data name="label4.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>4, 0, 4, 0</value>
   </data>
   <data name="label4.Size" type="System.Drawing.Size, System.Drawing">
-    <value>35, 13</value>
+    <value>45, 17</value>
   </data>
   <data name="label4.TabIndex" type="System.Int32, mscorlib">
     <value>0</value>
@@ -385,13 +415,16 @@
     <value>Top, Left, Right</value>
   </data>
   <data name="tbName.Location" type="System.Drawing.Point, System.Drawing">
-    <value>42, 3</value>
+    <value>56, 4</value>
+  </data>
+  <data name="tbName.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>4, 4, 4, 4</value>
   </data>
   <data name="tbName.MaxLength" type="System.Int32, mscorlib">
     <value>4</value>
   </data>
   <data name="tbName.Size" type="System.Drawing.Size, System.Drawing">
-    <value>114, 20</value>
+    <value>134, 22</value>
   </data>
   <data name="tbName.TabIndex" type="System.Int32, mscorlib">
     <value>1</value>
@@ -429,8 +462,11 @@
   <data name="subrecordListEditor.Location" type="System.Drawing.Point, System.Drawing">
     <value>0, 0</value>
   </data>
+  <data name="subrecordListEditor.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>5, 5, 5, 5</value>
+  </data>
   <data name="subrecordListEditor.Size" type="System.Drawing.Size, System.Drawing">
-    <value>228, 278</value>
+    <value>287, 346</value>
   </data>
   <data name="subrecordListEditor.TabIndex" type="System.Int32, mscorlib">
     <value>0</value>
@@ -460,10 +496,13 @@
     <value>1</value>
   </data>
   <data name="verticalSplitContainer.Size" type="System.Drawing.Size, System.Drawing">
-    <value>228, 351</value>
+    <value>287, 432</value>
   </data>
   <data name="verticalSplitContainer.SplitterDistance" type="System.Int32, mscorlib">
-    <value>69</value>
+    <value>81</value>
+  </data>
+  <data name="verticalSplitContainer.SplitterWidth" type="System.Int32, mscorlib">
+    <value>5</value>
   </data>
   <data name="verticalSplitContainer.TabIndex" type="System.Int32, mscorlib">
     <value>0</value>
@@ -499,10 +538,13 @@
     <value>NoControl</value>
   </data>
   <data name="bCancel.Location" type="System.Drawing.Point, System.Drawing">
-    <value>423, 325</value>
+    <value>581, 400</value>
+  </data>
+  <data name="bCancel.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>4, 4, 4, 4</value>
   </data>
   <data name="bCancel.Size" type="System.Drawing.Size, System.Drawing">
-    <value>75, 23</value>
+    <value>100, 28</value>
   </data>
   <data name="bCancel.TabIndex" type="System.Int32, mscorlib">
     <value>2</value>
@@ -529,10 +571,13 @@
     <value>NoControl</value>
   </data>
   <data name="bSave.Location" type="System.Drawing.Point, System.Drawing">
-    <value>342, 325</value>
+    <value>473, 400</value>
+  </data>
+  <data name="bSave.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>4, 4, 4, 4</value>
   </data>
   <data name="bSave.Size" type="System.Drawing.Size, System.Drawing">
-    <value>75, 23</value>
+    <value>100, 28</value>
   </data>
   <data name="bSave.TabIndex" type="System.Int32, mscorlib">
     <value>1</value>
@@ -564,8 +609,11 @@
   <data name="elementEditor.Location" type="System.Drawing.Point, System.Drawing">
     <value>0, 0</value>
   </data>
+  <data name="elementEditor.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>5, 5, 5, 5</value>
+  </data>
   <data name="elementEditor.Size" type="System.Drawing.Size, System.Drawing">
-    <value>501, 319</value>
+    <value>685, 393</value>
   </data>
   <data name="elementEditor.TabIndex" type="System.Int32, mscorlib">
     <value>0</value>
@@ -595,10 +643,13 @@
     <value>1</value>
   </data>
   <data name="horizontalSplitContainer.Size" type="System.Drawing.Size, System.Drawing">
-    <value>733, 351</value>
+    <value>977, 432</value>
   </data>
   <data name="horizontalSplitContainer.SplitterDistance" type="System.Int32, mscorlib">
-    <value>228</value>
+    <value>287</value>
+  </data>
+  <data name="horizontalSplitContainer.SplitterWidth" type="System.Int32, mscorlib">
+    <value>5</value>
   </data>
   <data name="horizontalSplitContainer.TabIndex" type="System.Int32, mscorlib">
     <value>0</value>
@@ -619,10 +670,13 @@
     <value>True</value>
   </metadata>
   <data name="$this.AutoScaleDimensions" type="System.Drawing.SizeF, System.Drawing">
-    <value>6, 13</value>
+    <value>8, 16</value>
+  </data>
+  <data name="$this.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>4, 4, 4, 4</value>
   </data>
   <data name="$this.Size" type="System.Drawing.Size, System.Drawing">
-    <value>733, 351</value>
+    <value>977, 432</value>
   </data>
   <data name="&gt;&gt;$this.Name" xml:space="preserve">
     <value>RecordEditor</value>
