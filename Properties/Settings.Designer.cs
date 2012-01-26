@@ -346,5 +346,38 @@ namespace TESVSnip.Properties {
                 this["UseHexSubRecordEditor"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        public global::System.Collections.Specialized.StringCollection SearchMRUNameList {
+            get {
+                return ((global::System.Collections.Specialized.StringCollection)(this["SearchMRUNameList"]));
+            }
+            set {
+                this["SearchMRUNameList"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        public global::System.Collections.Specialized.StringCollection SearchMRUFormIDList {
+            get {
+                return ((global::System.Collections.Specialized.StringCollection)(this["SearchMRUFormIDList"]));
+            }
+            set {
+                this["SearchMRUFormIDList"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        public global::System.Collections.Specialized.StringCollection SearchMRUFullList {
+            get {
+                return ((global::System.Collections.Specialized.StringCollection)(this["SearchMRUFullList"]));
+            }
+            set {
+                this["SearchMRUFullList"] = value;
+            }
+        }
     }
 }

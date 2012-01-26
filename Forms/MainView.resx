@@ -147,7 +147,7 @@
     <value>subrecordPanel</value>
   </data>
   <data name="&gt;&gt;subrecordPanel.Type" xml:space="preserve">
-    <value>TESVSnip.Forms.SubrecordListEditor, TESVSnip, Version=3.2.4406.0, Culture=neutral, PublicKeyToken=null</value>
+    <value>TESVSnip.Forms.SubrecordListEditor, TESVSnip, Version=3.3.4406.2, Culture=neutral, PublicKeyToken=null</value>
   </data>
   <data name="&gt;&gt;subrecordPanel.Parent" xml:space="preserve">
     <value>$this</value>
@@ -172,7 +172,7 @@
     <value>PluginTree</value>
   </data>
   <data name="&gt;&gt;PluginTree.Type" xml:space="preserve">
-    <value>TESVSnip.ObjectControls.PluginTreeView, TESVSnip, Version=3.2.4406.0, Culture=neutral, PublicKeyToken=null</value>
+    <value>TESVSnip.ObjectControls.PluginTreeView, TESVSnip, Version=3.3.4406.2, Culture=neutral, PublicKeyToken=null</value>
   </data>
   <data name="&gt;&gt;PluginTree.Parent" xml:space="preserve">
     <value>recordPanel</value>
@@ -220,7 +220,7 @@
     <value>rtfInfo</value>
   </data>
   <data name="&gt;&gt;rtfInfo.Type" xml:space="preserve">
-    <value>RichTextBoxLinks.RichTextBoxEx, TESVSnip, Version=3.2.4406.0, Culture=neutral, PublicKeyToken=null</value>
+    <value>RichTextBoxLinks.RichTextBoxEx, TESVSnip, Version=3.3.4406.2, Culture=neutral, PublicKeyToken=null</value>
   </data>
   <data name="&gt;&gt;rtfInfo.Parent" xml:space="preserve">
     <value>$this</value>
@@ -989,6 +989,12 @@
   <data name="&gt;&gt;collapseBranchToolStripMenuItem.Type" xml:space="preserve">
     <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
+  <data name="&gt;&gt;findInRecordsToolStripMenuItem.Name" xml:space="preserve">
+    <value>findInRecordsToolStripMenuItem</value>
+  </data>
+  <data name="&gt;&gt;findInRecordsToolStripMenuItem.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
   <data name="&gt;&gt;findToolStripMenuItem.Name" xml:space="preserve">
     <value>findToolStripMenuItem</value>
   </data>
@@ -1500,7 +1506,7 @@
     <value>Ctrl+X</value>
   </data>
   <data name="cutToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>190, 22</value>
+    <value>236, 22</value>
   </data>
   <data name="cutToolStripMenuItem.Text" xml:space="preserve">
     <value>Cut</value>
@@ -1512,7 +1518,7 @@
     <value>Ctrl+C</value>
   </data>
   <data name="copyToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>190, 22</value>
+    <value>236, 22</value>
   </data>
   <data name="copyToolStripMenuItem.Text" xml:space="preserve">
     <value>&amp;Copy</value>
@@ -1524,7 +1530,7 @@
     <value>Ctrl+V</value>
   </data>
   <data name="pasteToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>190, 22</value>
+    <value>236, 22</value>
   </data>
   <data name="pasteToolStripMenuItem.Text" xml:space="preserve">
     <value>&amp;Paste</value>
@@ -1533,7 +1539,7 @@
     <value>False</value>
   </data>
   <data name="deleteToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>190, 22</value>
+    <value>236, 22</value>
   </data>
   <data name="deleteToolStripMenuItem.Text" xml:space="preserve">
     <value>&amp;Delete</value>
@@ -1542,7 +1548,7 @@
     <value>False</value>
   </data>
   <data name="insertRecordToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>190, 22</value>
+    <value>236, 22</value>
   </data>
   <data name="insertRecordToolStripMenuItem.Text" xml:space="preserve">
     <value>&amp;New record</value>
@@ -1551,7 +1557,7 @@
     <value>False</value>
   </data>
   <data name="insertSubrecordToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>190, 22</value>
+    <value>236, 22</value>
   </data>
   <data name="insertSubrecordToolStripMenuItem.Text" xml:space="preserve">
     <value>New subrecord</value>
@@ -1560,7 +1566,7 @@
     <value>Ctrl+E</value>
   </data>
   <data name="editSelectedToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>190, 22</value>
+    <value>236, 22</value>
   </data>
   <data name="editSelectedToolStripMenuItem.Text" xml:space="preserve">
     <value>&amp;Edit Selected...</value>
@@ -1569,13 +1575,13 @@
     <value>Ctrl+H</value>
   </data>
   <data name="editHeaderToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>190, 22</value>
+    <value>236, 22</value>
   </data>
   <data name="editHeaderToolStripMenuItem.Text" xml:space="preserve">
     <value>Edit &amp;Header...</value>
   </data>
   <data name="addMasterToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>190, 22</value>
+    <value>236, 22</value>
   </data>
   <data name="addMasterToolStripMenuItem.Text" xml:space="preserve">
     <value>Add &amp;Master...</value>
@@ -1605,19 +1611,28 @@
     <value>C&amp;ollapse Branch</value>
   </data>
   <data name="expandCollapseToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>190, 22</value>
+    <value>236, 22</value>
   </data>
   <data name="expandCollapseToolStripMenuItem.Text" xml:space="preserve">
     <value>E&amp;xpand/Collapse</value>
+  </data>
+  <data name="findInRecordsToolStripMenuItem.ShortcutKeys" type="System.Windows.Forms.Keys, System.Windows.Forms">
+    <value>Ctrl+Shift+F</value>
+  </data>
+  <data name="findInRecordsToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
+    <value>236, 22</value>
+  </data>
+  <data name="findInRecordsToolStripMenuItem.Text" xml:space="preserve">
+    <value>Find in Records...</value>
   </data>
   <data name="findToolStripMenuItem.ShortcutKeys" type="System.Windows.Forms.Keys, System.Windows.Forms">
     <value>Ctrl+F</value>
   </data>
   <data name="findToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>190, 22</value>
+    <value>236, 22</value>
   </data>
   <data name="findToolStripMenuItem.Text" xml:space="preserve">
-    <value>&amp;Find</value>
+    <value>Incremental &amp;Find</value>
   </data>
   <data name="editToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
     <value>39, 20</value>
@@ -1695,49 +1710,49 @@
     <value>Options</value>
   </data>
   <data name="englishToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>152, 22</value>
+    <value>116, 22</value>
   </data>
   <data name="englishToolStripMenuItem.Text" xml:space="preserve">
     <value>&amp;English</value>
   </data>
   <data name="czechToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>152, 22</value>
+    <value>116, 22</value>
   </data>
   <data name="czechToolStripMenuItem.Text" xml:space="preserve">
     <value>&amp;Czech</value>
   </data>
   <data name="frenchToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>152, 22</value>
+    <value>116, 22</value>
   </data>
   <data name="frenchToolStripMenuItem.Text" xml:space="preserve">
     <value>&amp;French</value>
   </data>
   <data name="germanToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>152, 22</value>
+    <value>116, 22</value>
   </data>
   <data name="germanToolStripMenuItem.Text" xml:space="preserve">
     <value>&amp;German</value>
   </data>
   <data name="italianToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>152, 22</value>
+    <value>116, 22</value>
   </data>
   <data name="italianToolStripMenuItem.Text" xml:space="preserve">
     <value>&amp;Italian</value>
   </data>
   <data name="spanishToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>152, 22</value>
+    <value>116, 22</value>
   </data>
   <data name="spanishToolStripMenuItem.Text" xml:space="preserve">
     <value>&amp;Spanish</value>
   </data>
   <data name="russianToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>152, 22</value>
+    <value>116, 22</value>
   </data>
   <data name="russianToolStripMenuItem.Text" xml:space="preserve">
     <value>&amp;Russian</value>
   </data>
   <data name="polishToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>152, 22</value>
+    <value>116, 22</value>
   </data>
   <data name="polishToolStripMenuItem.Text" xml:space="preserve">
     <value>&amp;Polish</value>

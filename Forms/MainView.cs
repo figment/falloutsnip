@@ -1433,5 +1433,19 @@ namespace TESVSnip
         {
             Properties.Settings.Default.UseHexSubRecordEditor = hexModeToolStripMenuItem.Checked;
         }
+
+        private void findInRecordsToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            var form = new RecordSearchForm();
+            form.Show(this);
+        }
+        internal static void SynchronizeSelection(IEnumerable<BaseRecord> selection)
+        {
+            foreach (MainView form in Application.OpenForms.OfType<MainView>())
+            {
+                (form).PluginTree.SetSelectedRecords(selection);
+            }
+
+        }
     }
 }

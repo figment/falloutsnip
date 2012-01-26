@@ -332,6 +332,13 @@ namespace TESVSnip.Properties {
             }
         }
         
+        internal static System.Drawing.Bitmap Find2 {
+            get {
+                object obj = ResourceManager.GetObject("Find2", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
         /// <summary>
         ///   Looks up a localized string similar to First Load Options.
         /// </summary>
@@ -444,6 +451,15 @@ namespace TESVSnip.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to No Plugins Loaded.
+        /// </summary>
+        internal static string No_Plugins_Loaded {
+            get {
+                return ResourceManager.GetString("No_Plugins_Loaded", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to No plugin selected.
         /// </summary>
         internal static string NoPluginSelected {
@@ -493,6 +509,13 @@ namespace TESVSnip.Properties {
             }
         }
         
+        internal static System.Drawing.Bitmap reload_all_tabs {
+            get {
+                object obj = ResourceManager.GetObject("reload_all_tabs", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
         /// <summary>
         ///   Looks up a localized string similar to This file has had a filter applied and contents potentially removed.  
         ///Do you still want to save?.
@@ -500,6 +523,22 @@ namespace TESVSnip.Properties {
         internal static string SavePluginWithFilterAppliedInquiry {
             get {
                 return ResourceManager.GetString("SavePluginWithFilterAppliedInquiry", resourceCulture);
+            }
+        }
+        
+        internal static System.Drawing.Bitmap search {
+            get {
+                object obj = ResourceManager.GetObject("search", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to {0} Found.
+        /// </summary>
+        internal static string SearchProgressChanged_Items_Found {
+            get {
+                return ResourceManager.GetString("SearchProgressChanged_Items_Found", resourceCulture);
             }
         }
         

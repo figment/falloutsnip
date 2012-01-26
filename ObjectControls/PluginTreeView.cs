@@ -12,7 +12,7 @@ using TESVSnip.Properties;
 
 namespace TESVSnip.ObjectControls
 {
-    public partial class PluginTreeView : UserControl
+    public partial class PluginTreeView : UserControl, ISupportInitialize
     {
         private History<BaseRecord> _historyHandler;
         private OLVColumn _olvColumnName;
@@ -22,6 +22,15 @@ namespace TESVSnip.ObjectControls
         public PluginTreeView()
         {
             InitializeComponent();
+        }
+
+        public void BeginInit()
+        {
+        }
+
+        public void EndInit()
+        {
+            if (DesignMode) return;
             InitializeToolStripRecords();
             InitializeTreeList();
             UpdateToolStripSelection();
@@ -79,6 +88,11 @@ namespace TESVSnip.ObjectControls
         public void UpdateRoots()
         {
             PluginTree.Roots = PluginList.All.Records;
+        }
+
+        public void SetSelectedRecords(IEnumerable<BaseRecord> records)
+        {
+            this.PluginTree.SelectedRecords = records;
         }
 
         private void FireSelectionUpdated()

@@ -11,7 +11,7 @@ using TESVSnip.Properties;
 
 namespace TESVSnip.Forms
 {
-    public partial class SubrecordListEditor : UserControl
+    public partial class SubrecordListEditor : UserControl, ISupportInitialize
     {
         private SelectionContext _context;
         private AdvancedList<SubRecord> _subrecords;
@@ -19,9 +19,24 @@ namespace TESVSnip.Forms
         public SubrecordListEditor()
         {
             InitializeComponent();
+        }
+
+
+        #region ISupportInitialize Members
+
+        public void BeginInit()
+        {
+        }
+
+        public void EndInit()
+        {
+            if (this.DesignMode) return;
             InitializeSubrecordForm();
             SetContext(new SelectionContext());
         }
+
+        #endregion
+
 
         public void SetContext(SelectionContext context)
         {
@@ -68,6 +83,7 @@ namespace TESVSnip.Forms
             var r = _context.Record as Record;
             _subrecords = r != null ? r.SubRecords : null;
             listSubrecord.DataSource = _subrecords;
+            listSubrecord.Refresh();
         }
 
         private void HandleSubrecordChanged()

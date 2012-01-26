@@ -1390,5 +1390,29 @@ namespace TESVSnip
                 return string.Format("{0}: {1}", Name, Description);
             }
         }
+
+        private Plugin GetPlugin()
+        {
+            BaseRecord tn = this.Owner;
+            while (!(tn is Plugin) && tn != null) tn = tn.Parent;
+            if (tn != null) return tn as Plugin;
+            return null;
+        }
+
+        public string GetLString()
+        {
+            var data = new ArraySegment<byte>(GetReadonlyData());
+            bool isString = (data.Count != 4) || TypeConverter.IsLikelyString(data);
+            if (isString)
+            {
+                return TypeConverter.GetString(data);
+            }
+            else
+            {
+                uint id = TypeConverter.h2i(data);
+                var p = GetPlugin();
+                return p != null ? p.LookupFormStrings(id) : null;
+            }
+        }
     }
 }

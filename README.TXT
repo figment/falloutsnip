@@ -9,6 +9,10 @@ Requirements:
   .NET 3.5
 
 Change Log:
+v 3.4
+- Add search results form (experimental - i.e. may have poor performance)
+- force refresh of subrecord list when record selection is changed
+
 v 3.3
 - Miscellaneous fixes where subrecord parentage was lost when copy/paste of record. Fixes EDID refresh issues.
 - Fix refresh of main text panel when subrecord changed
@@ -156,6 +160,7 @@ Credits:
 * Dave Humphrey - Maintainer of http://www.uesp.net/wiki a source ESM layout
                 - Tes5Lib (http://github.com/uesp/tes5lib)
 * Ails - Icons - http://ails.deviantart.com/art/420-Pixel-Art-Icons-for-RPG-129892453
+* Crystal Project - Icons released under LGPL
 
 License:
 * The TESsnip code is licensed under GPL so this is by extension also GPL

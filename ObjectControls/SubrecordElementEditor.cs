@@ -24,6 +24,7 @@ namespace TESVSnip.Forms
         public SubrecordEditor()
         {
             InitializeComponent();
+            if (DesignMode) return;
             ClearControl();
         }
 

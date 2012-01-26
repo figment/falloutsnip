@@ -1795,28 +1795,31 @@
       <Element name="Animation timescale" type="float" />
       <Element name="Unknown animation float" type="float" />
       <Element name="Fire trigger" type="short" />
-      <Element name="unknown byte" type="short" />
-      <Element name="unknown byte" type="float" />
+      <Element name="unknown short 1" type="short" />
+      <Element name="unknown float 1" type="float" />
       <Element name="Reload Animation" type="int" />
-      <Element name="unknown form" type="formid" reftype="REFR" />
-      <Element name="unknown " type="float" />
-      <Element name="unknown float" type="float" />
+      <Element name="Unknown byte 1" type="byte"/>
+      <Element name="Ammo Used Per Shot" type="byte"/>
+      <Element name="Unknown byte 2" type="byte"/>
+      <Element name="Unknown byte 3" type="byte"/>
+      <Element name="unknown float 2" type="float" />
+      <Element name="unknown float 3" type="float" />
       <Element name="Zoom FOV" type="int" />
       <Element name="unused float ??" type="int" />
       <Element name="Projectile Form ID" type="float" />
-      <Element name="unknown byte" type="float" />
+      <Element name="unknown float 4" type="float" />
       <Element name="Weapon Firing Animation" type="float" />
       <Element name="Damage Multiplier?" type="float" />
-      <Element name="unknown byte" type="float" />
+      <Element name="unknown float 5" type="float" />
       <Element name="Projectile Velocity ??" type="int" />
       <Element name="Max Range" type="int" />
       <Element name="Projectile Behavior (arcing, etc)" type="int" />
-      <Element name="unknown byte" type="int" />
-      <Element name="unknown byte" type="int" />
-      <Element name="unknown byte" type="int" />
-      <Element name="unknown byte" type="int" />
+      <Element name="unknown int 1" type="int" />
+      <Element name="unknown int 2" type="int" />
+      <Element name="unknown int 3" type="int" />
+      <Element name="unknown int 4" type="int" />
       <Element name="Reload Time" type="int" />
-      <Element name="Ammo Used Per Shot" type="float" />
+      <Element name="unknown float (ammo used?)" type="float" />
     </Subrecord>
     <Subrecord name="CRDT" desc="Critical Damage Data" optional="1" size="16">
       <Element name="Critical Damage Bonus ??" type="int" />
@@ -5331,9 +5334,8 @@
         <Element name="Unknown" type="int" />
       </Subrecord>
       <Subrecord name="XLOC" desc="Lock Information" optional="1" size="20">
-        <Element name="Unknown" type="int" />
-        <Element name="Unknown 1" type="short" />
-        <Element name="Unknown 1" type="short" />
+        <Element name="Unknown Flags" type="uint" />
+        <Element name="Unknown 1" type="formid" reftype="KEYM"/>
         <Element name="Unknown 2" type="int" />
         <Element name="Unknown 3" type="int" />
         <Element name="Unknown 4" type="int" />

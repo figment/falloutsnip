@@ -24,6 +24,10 @@ namespace TESVSnip.Collections.Generic
         public AdvancedList(IList<T> list) : base(list ?? new T[0])
         {
         }
+        public AdvancedList(IEnumerable<T> list)
+            : base(list != null ? (IList<T>)list.ToList() : new T[0])
+        {
+        }
 
         /// <summary>
         ///	Deserialization constructor

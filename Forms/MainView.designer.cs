@@ -53,6 +53,7 @@ namespace TESVSnip {
             this.collapseAllToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.expandBranchToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.collapseBranchToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.findInRecordsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.findToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.optionsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.hexModeToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -137,7 +138,9 @@ namespace TESVSnip {
             this.toolStripIncrFind.SuspendLayout();
             this.toolStripIncrInvalidRec.SuspendLayout();
             this.recordPanel.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.PluginTree)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.dockingManagerExtender)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.subrecordPanel)).BeginInit();
             this.SuspendLayout();
             // 
             // menuStrip1
@@ -234,6 +237,7 @@ namespace TESVSnip {
             this.editHeaderToolStripMenuItem,
             this.addMasterToolStripMenuItem,
             this.expandCollapseToolStripMenuItem,
+            this.findInRecordsToolStripMenuItem,
             this.findToolStripMenuItem});
             this.editToolStripMenuItem.Name = "editToolStripMenuItem";
             resources.ApplyResources(this.editToolStripMenuItem, "editToolStripMenuItem");
@@ -326,6 +330,12 @@ namespace TESVSnip {
             this.collapseBranchToolStripMenuItem.Name = "collapseBranchToolStripMenuItem";
             resources.ApplyResources(this.collapseBranchToolStripMenuItem, "collapseBranchToolStripMenuItem");
             this.collapseBranchToolStripMenuItem.Click += new System.EventHandler(this.collapseBranchToolStripMenuItem_Click);
+            // 
+            // findInRecordsToolStripMenuItem
+            // 
+            this.findInRecordsToolStripMenuItem.Name = "findInRecordsToolStripMenuItem";
+            resources.ApplyResources(this.findInRecordsToolStripMenuItem, "findInRecordsToolStripMenuItem");
+            this.findInRecordsToolStripMenuItem.Click += new System.EventHandler(this.findInRecordsToolStripMenuItem_Click);
             // 
             // findToolStripMenuItem
             // 
@@ -962,7 +972,9 @@ namespace TESVSnip {
             this.toolStripIncrInvalidRec.ResumeLayout(false);
             this.toolStripIncrInvalidRec.PerformLayout();
             this.recordPanel.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.PluginTree)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.dockingManagerExtender)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.subrecordPanel)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -1076,5 +1088,6 @@ namespace TESVSnip {
         private System.Windows.Forms.ToolStripMenuItem polishToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem editSelectedToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem editHeaderToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem findInRecordsToolStripMenuItem;
     }
 }
