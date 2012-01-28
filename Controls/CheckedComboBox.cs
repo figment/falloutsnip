@@ -222,16 +222,7 @@ namespace TESVSnip.Windows.Controls
 
             public string GetCheckedItemsStringValue()
             {
-                var sb = new StringBuilder("");
-                for (int i = 0; i < cclb.CheckedItems.Count; i++)
-                {
-                    sb.Append(cclb.GetItemText(cclb.CheckedItems[i])).Append(ccbParent.ValueSeparator);
-                }
-                if (sb.Length > 0)
-                {
-                    sb.Remove(sb.Length - ccbParent.ValueSeparator.Length, ccbParent.ValueSeparator.Length);
-                }
-                return sb.ToString();
+                return ccbParent.GetCheckedItemsStringValue();
             }
 
             public bool IsClosed
@@ -305,7 +296,7 @@ namespace TESVSnip.Windows.Controls
         private readonly IContainer components = null;
 
         // A form-derived object representing the drop-down list of the checked combo box.
-        private readonly Dropdown dropdown;
+        internal readonly Dropdown dropdown;
 
         // The valueSeparator character(s) between the ticked elements as they appear in the 
         // text portion of the CheckedComboBox.
@@ -486,6 +477,18 @@ namespace TESVSnip.Windows.Controls
         public void UpdateText()
         {
             Text = dropdown.GetCheckedItemsStringValue();
+        }
+
+        public virtual string GetCheckedItemsStringValue()
+        {
+            var sb = new StringBuilder("");
+            var cclb = dropdown.List;
+            foreach (object t in cclb.CheckedItems)
+            {
+                if (sb.Length > 0) sb.Append(this.ValueSeparator);
+                sb.Append(cclb.GetItemText(t));
+            }
+            return sb.ToString();            
         }
     }
 

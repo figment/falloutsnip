@@ -92,5 +92,8 @@
     <Setting Name="SearchMRUFullList" Type="System.Collections.Specialized.StringCollection" Scope="User">
       <Value Profile="(Default)" />
     </Setting>
+    <Setting Name="MaxSearchResults" Type="System.UInt16" Scope="User">
+      <Value Profile="(Default)">1000</Value>
+    </Setting>
   </Settings>
 </SettingsFile>

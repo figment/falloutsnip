@@ -70,9 +70,6 @@
     <GenerateSerializationAssemblies>On</GenerateSerializationAssemblies>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="MagicLibrary">
-      <HintPath>thirdparty\MagicLibrary.dll</HintPath>
-    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core">
       <RequiredTargetFramework>3.5</RequiredTargetFramework>
@@ -83,6 +80,9 @@
     <Reference Include="System.Drawing" />
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml" />
+    <Reference Include="WeifenLuo.WinFormsUI.Docking">
+      <HintPath>thirdparty\WeifenLuo.WinFormsUI.Docking.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Collections\AdvancedList.cs" />
@@ -215,6 +215,24 @@
       <SubType>code</SubType>
     </Compile>
     <Compile Include="Data\serializationinfocachelist.cs" />
+    <Compile Include="Docking\BaseDockContent.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Docking\BaseDockContent.Designer.cs">
+      <DependentUpon>BaseDockContent.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Docking\RichTextView.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Docking\RichTextView.Designer.cs">
+      <DependentUpon>RichTextView.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Docking\SubrecordListContent.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Docking\SubrecordListContent.Designer.cs">
+      <DependentUpon>SubrecordListContent.cs</DependentUpon>
+    </Compile>
     <Compile Include="Forms\AddMasterForm.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -227,10 +245,10 @@
     <Compile Include="Forms\CompressSettings.Designer.cs">
       <DependentUpon>CompressSettings.cs</DependentUpon>
     </Compile>
-    <Compile Include="Forms\FullRecordEditor.cs">
+    <Compile Include="Docking\FullRecordEditor.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Forms\FullRecordEditor.Designer.cs">
+    <Compile Include="Docking\FullRecordEditor.Designer.cs">
       <DependentUpon>FullRecordEditor.cs</DependentUpon>
     </Compile>
     <Compile Include="Forms\MediumLevelRecordEditor.cs">
@@ -263,10 +281,16 @@
     <Compile Include="Forms\MultilineStringEditor.Designer.cs">
       <DependentUpon>MultilineStringEditor.cs</DependentUpon>
     </Compile>
-    <Compile Include="Forms\RecordSearchForm.cs">
+    <Compile Include="Docking\PluginTreeContent.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Forms\RecordSearchForm.Designer.cs">
+    <Compile Include="Docking\PluginTreeContent.Designer.cs">
+      <DependentUpon>PluginTreeContent.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Docking\RecordSearchForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Docking\RecordSearchForm.Designer.cs">
       <DependentUpon>RecordSearchForm.cs</DependentUpon>
     </Compile>
     <Compile Include="Model\BaseRecord.cs" />
@@ -384,13 +408,23 @@
     <EmbeddedResource Include="Controls\virtuallistview.resx">
       <DependentUpon>virtuallistview.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="Docking\BaseDockContent.resx">
+      <DependentUpon>BaseDockContent.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Docking\RichTextView.resx">
+      <DependentUpon>RichTextView.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Docking\SubrecordListContent.resx">
+      <DependentUpon>SubrecordListContent.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
     <EmbeddedResource Include="Forms\AddMasterForm.resx">
       <DependentUpon>AddMasterForm.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\CompressSettings.resx">
       <DependentUpon>CompressSettings.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Forms\FullRecordEditor.resx">
+    <EmbeddedResource Include="Docking\FullRecordEditor.resx">
       <DependentUpon>FullRecordEditor.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\MediumLevelRecordEditor.resx">
@@ -406,7 +440,11 @@
     <EmbeddedResource Include="Forms\MultilineStringEditor.resx">
       <DependentUpon>MultilineStringEditor.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Forms\RecordSearchForm.resx">
+    <EmbeddedResource Include="Docking\PluginTreeContent.resx">
+      <DependentUpon>PluginTreeContent.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Docking\RecordSearchForm.resx">
       <DependentUpon>RecordSearchForm.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="ObjectControls\RecordEditor.resx">
@@ -449,6 +487,7 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\MainView.resx">
       <DependentUpon>MainView.cs</DependentUpon>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="RecordControls\BaseElement.resx">
       <DependentUpon>BaseElement.cs</DependentUpon>
@@ -709,6 +748,7 @@
   </ItemGroup>
   <Target Name="Package">
     <MakeDir Directories="$(StageOutputDir)" />
+    <Delete Files="$(StageOutputDir)conf\DockPanel.config" />
     <Copy SourceFiles="@(CopyToStaging)" DestinationFolder="$(StageOutputDir)">
     </Copy>
     <Copy SourceFiles="@(CopyToStagingConf)" DestinationFolder="$(StageOutputDir)conf">

@@ -1,4 +1,6 @@
-﻿namespace TESVSnip.Forms
+﻿using TESVSnip.ObjectControls;
+
+namespace TESVSnip.Forms
 {
     partial class RecordEditor
     {
@@ -41,7 +43,7 @@
             this.label1 = new System.Windows.Forms.Label();
             this.label4 = new System.Windows.Forms.Label();
             this.tbName = new System.Windows.Forms.TextBox();
-            this.subrecordListEditor = new TESVSnip.Forms.SubrecordListEditor();
+            this.subrecordListEditor = new TESVSnip.ObjectControls.SubrecordListEditor();
             this.bCancel = new System.Windows.Forms.Button();
             this.bSave = new System.Windows.Forms.Button();
             this.elementEditor = new TESVSnip.Forms.SubrecordEditor();
@@ -51,6 +53,7 @@
             this.verticalSplitContainer.Panel1.SuspendLayout();
             this.verticalSplitContainer.Panel2.SuspendLayout();
             this.verticalSplitContainer.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.subrecordListEditor)).BeginInit();
             this.SuspendLayout();
             // 
             // horizontalSplitContainer
@@ -160,7 +163,8 @@
             // subrecordListEditor
             // 
             resources.ApplyResources(this.subrecordListEditor, "subrecordListEditor");
-            this.subrecordListEditor.MinimumSize = new System.Drawing.Size(267, 148);
+            this.subrecordListEditor.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.subrecordListEditor.MinimumSize = new System.Drawing.Size(200, 120);
             this.subrecordListEditor.Name = "subrecordListEditor";
             this.subrecordListEditor.SubRecords = null;
             // 
@@ -183,7 +187,8 @@
             // elementEditor
             // 
             resources.ApplyResources(this.elementEditor, "elementEditor");
-            this.elementEditor.MinimumSize = new System.Drawing.Size(400, 246);
+            this.elementEditor.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
+            this.elementEditor.MinimumSize = new System.Drawing.Size(300, 200);
             this.elementEditor.Name = "elementEditor";
             // 
             // RecordEditor
@@ -200,6 +205,7 @@
             this.verticalSplitContainer.Panel2.ResumeLayout(false);
             this.verticalSplitContainer.Panel2.PerformLayout();
             this.verticalSplitContainer.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.subrecordListEditor)).EndInit();
             this.ResumeLayout(false);
 
         }

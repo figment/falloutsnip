@@ -131,7 +131,7 @@ namespace TESVSnip.ObjectControls
 
         private ICollection<Record> IncrementalSearch(Predicate<BaseRecord> searchFunc)
         {
-            return PluginList.All.Enumerate(searchFunc).OfType<Record>().ToList();
+            return PluginList.All.Enumerate(searchFunc).OfType<Record>().Take(Properties.Settings.Default.MaxSearchResults).ToList();
         }
 
         /// <summary>
@@ -332,16 +332,21 @@ namespace TESVSnip.ObjectControls
             searchTypeItem.MRU.Remove(searchText);
             searchTypeItem.MRU.Insert(0, searchText);
             toolStripIncrFindStatus.Text = "";
-
-            int currentCount = 0;
-            Predicate<BaseRecord> updateFunc = 
-                (n) =>
+            float totalNodes = PluginList.All.Enumerate(x => x != null).Count();
+            int currentCount = 0, prevCount = 0;
+            Predicate<BaseRecord> updateFunc = n =>
+            {
+                if (IsBackroundProcessCanceled()) // returning true will stop it
+                    return false;
+                var counter = (int)(++currentCount / totalNodes * 100.0f);
+                if (counter != prevCount)
                 {
-                    if (IsBackroundProcessCanceled()) // returning true will stop it
-                        return false;
-                    if (++currentCount % 10 == 0) UpdateBackgroundProgress(currentCount);
-                    return true;
-                };
+                    prevCount = counter;
+                    if (counter % 10 == 0) UpdateBackgroundProgress(counter);
+                }
+                return true;
+            };
+
             var searchContext = new SearchSettings();
             searchContext.Type = searchTypeItem.Key;
             searchContext.Text = toolStripIncrFindText.Text;
@@ -541,13 +546,18 @@ namespace TESVSnip.ObjectControls
 
         void backgroundWorker1_ProgressChanged(object sender, ProgressChangedEventArgs e)
         {
-            toolStripIncrFindStatus.Text = string.Format(Resources.SearchProgressChanged_Items_Found, e.ProgressPercentage) ;
+            toolStripIncrFindStatus.Text = string.Format("{0}% Complete", e.ProgressPercentage) ;
         }
 
         void backgroundWorker1_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
         {
             toolStripIncrFindCancel.Visible = false;
-            toolStripIncrFindStatus.Text = string.Format(Resources.SearchProgressChanged_Items_Found, this.listSearchView.GetItemCount()) ;
+            int nItems = this.listSearchView.GetItemCount();
+            bool maxResultsHit = (nItems == Properties.Settings.Default.MaxSearchResults);
+            string text = string.Format(Resources.SearchProgressChanged_Items_Found, nItems);
+            if (maxResultsHit) text += " (Max Limited)";
+            toolStripIncrFindStatus.Text = text;
+            toolStripIncrFindStatus.ForeColor = SystemColors.ControlText;
             if (e.Cancelled || e.Error != null)
                 return;
             var completedAction = e.Result as Action;
@@ -605,6 +615,14 @@ namespace TESVSnip.ObjectControls
         private void listSearchView_CellClick(object sender, CellClickEventArgs e)
         {
             if ( e.ClickCount > 1 )
+            {
+                SynchronizeSelection();
+            }
+        }
+
+        private void listSearchView_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.KeyCode == Keys.Enter && e.Control && !e.Alt && !e.Shift)
             {
                 SynchronizeSelection();
             }

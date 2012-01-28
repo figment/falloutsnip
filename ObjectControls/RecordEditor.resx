@@ -125,17 +125,11 @@
   <data name="horizontalSplitContainer.Location" type="System.Drawing.Point, System.Drawing">
     <value>0, 0</value>
   </data>
-  <data name="horizontalSplitContainer.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
-    <value>4, 4, 4, 4</value>
-  </data>
   <data name="verticalSplitContainer.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
     <value>Fill</value>
   </data>
   <data name="verticalSplitContainer.Location" type="System.Drawing.Point, System.Drawing">
     <value>0, 0</value>
-  </data>
-  <data name="verticalSplitContainer.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
-    <value>4, 4, 4, 4</value>
   </data>
   <data name="verticalSplitContainer.Orientation" type="System.Windows.Forms.Orientation, System.Windows.Forms">
     <value>Horizontal</value>
@@ -144,13 +138,10 @@
     <value>Top, Left, Right</value>
   </data>
   <data name="comboBox1.Location" type="System.Drawing.Point, System.Drawing">
-    <value>140, 30</value>
-  </data>
-  <data name="comboBox1.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
-    <value>4, 4, 4, 4</value>
+    <value>105, 24</value>
   </data>
   <data name="comboBox1.Size" type="System.Drawing.Size, System.Drawing">
-    <value>142, 23</value>
+    <value>185, 21</value>
   </data>
   <assembly alias="mscorlib" name="mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
   <data name="comboBox1.TabIndex" type="System.Int32, mscorlib">
@@ -160,7 +151,7 @@
     <value>comboBox1</value>
   </data>
   <data name="&gt;&gt;comboBox1.Type" xml:space="preserve">
-    <value>TESVSnip.Windows.Controls.FlagComboBox, TESVSnip, Version=3.0.4404.5, Culture=neutral, PublicKeyToken=null</value>
+    <value>TESVSnip.Windows.Controls.FlagComboBox, TESVSnip, Version=3.4.4408.1, Culture=neutral, PublicKeyToken=null</value>
   </data>
   <data name="&gt;&gt;comboBox1.Parent" xml:space="preserve">
     <value>verticalSplitContainer.Panel1</value>
@@ -169,16 +160,13 @@
     <value>0</value>
   </data>
   <data name="tbFlags3.Location" type="System.Drawing.Point, System.Drawing">
-    <value>192, 55</value>
-  </data>
-  <data name="tbFlags3.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
-    <value>4, 4, 4, 4</value>
+    <value>144, 45</value>
   </data>
   <data name="tbFlags3.MaxLength" type="System.Int32, mscorlib">
     <value>8</value>
   </data>
   <data name="tbFlags3.Size" type="System.Drawing.Size, System.Drawing">
-    <value>91, 22</value>
+    <value>69, 20</value>
   </data>
   <data name="tbFlags3.TabIndex" type="System.Int32, mscorlib">
     <value>9</value>
@@ -199,16 +187,13 @@
     <value>1</value>
   </data>
   <data name="textBox1.Location" type="System.Drawing.Point, System.Drawing">
-    <value>56, 30</value>
-  </data>
-  <data name="textBox1.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
-    <value>4, 4, 4, 4</value>
+    <value>42, 24</value>
   </data>
   <data name="textBox1.MaxLength" type="System.Int32, mscorlib">
     <value>8</value>
   </data>
   <data name="textBox1.Size" type="System.Drawing.Size, System.Drawing">
-    <value>75, 22</value>
+    <value>57, 20</value>
   </data>
   <data name="textBox1.TabIndex" type="System.Int32, mscorlib">
     <value>4</value>
@@ -229,16 +214,13 @@
     <value>2</value>
   </data>
   <data name="tbFlags2.Location" type="System.Drawing.Point, System.Drawing">
-    <value>56, 57</value>
-  </data>
-  <data name="tbFlags2.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
-    <value>4, 4, 4, 4</value>
+    <value>42, 46</value>
   </data>
   <data name="tbFlags2.MaxLength" type="System.Int32, mscorlib">
     <value>8</value>
   </data>
   <data name="tbFlags2.Size" type="System.Drawing.Size, System.Drawing">
-    <value>75, 22</value>
+    <value>57, 20</value>
   </data>
   <data name="tbFlags2.TabIndex" type="System.Int32, mscorlib">
     <value>7</value>
@@ -262,16 +244,13 @@
     <value>Top, Right</value>
   </data>
   <data name="tbFormID.Location" type="System.Drawing.Point, System.Drawing">
-    <value>191, 4</value>
-  </data>
-  <data name="tbFormID.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
-    <value>4, 4, 4, 4</value>
+    <value>220, 3</value>
   </data>
   <data name="tbFormID.MaxLength" type="System.Int32, mscorlib">
     <value>8</value>
   </data>
   <data name="tbFormID.Size" type="System.Drawing.Size, System.Drawing">
-    <value>91, 22</value>
+    <value>69, 20</value>
   </data>
   <data name="tbFormID.TabIndex" type="System.Int32, mscorlib">
     <value>2</value>
@@ -295,13 +274,10 @@
     <value>True</value>
   </data>
   <data name="label3.Location" type="System.Drawing.Point, System.Drawing">
-    <value>141, 59</value>
-  </data>
-  <data name="label3.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
-    <value>4, 0, 4, 0</value>
+    <value>106, 48</value>
   </data>
   <data name="label3.Size" type="System.Drawing.Size, System.Drawing">
-    <value>50, 17</value>
+    <value>38, 13</value>
   </data>
   <data name="label3.TabIndex" type="System.Int32, mscorlib">
     <value>8</value>
@@ -325,13 +301,10 @@
     <value>True</value>
   </data>
   <data name="label2.Location" type="System.Drawing.Point, System.Drawing">
-    <value>1, 60</value>
-  </data>
-  <data name="label2.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
-    <value>4, 0, 4, 0</value>
+    <value>1, 49</value>
   </data>
   <data name="label2.Size" type="System.Drawing.Size, System.Drawing">
-    <value>50, 17</value>
+    <value>38, 13</value>
   </data>
   <data name="label2.TabIndex" type="System.Int32, mscorlib">
     <value>6</value>
@@ -355,13 +328,10 @@
     <value>True</value>
   </data>
   <data name="label1.Location" type="System.Drawing.Point, System.Drawing">
-    <value>1, 34</value>
-  </data>
-  <data name="label1.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
-    <value>4, 0, 4, 0</value>
+    <value>1, 28</value>
   </data>
   <data name="label1.Size" type="System.Drawing.Size, System.Drawing">
-    <value>50, 17</value>
+    <value>38, 13</value>
   </data>
   <data name="label1.TabIndex" type="System.Int32, mscorlib">
     <value>3</value>
@@ -385,13 +355,10 @@
     <value>True</value>
   </data>
   <data name="label4.Location" type="System.Drawing.Point, System.Drawing">
-    <value>1, 7</value>
-  </data>
-  <data name="label4.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
-    <value>4, 0, 4, 0</value>
+    <value>1, 6</value>
   </data>
   <data name="label4.Size" type="System.Drawing.Size, System.Drawing">
-    <value>45, 17</value>
+    <value>35, 13</value>
   </data>
   <data name="label4.TabIndex" type="System.Int32, mscorlib">
     <value>0</value>
@@ -415,16 +382,13 @@
     <value>Top, Left, Right</value>
   </data>
   <data name="tbName.Location" type="System.Drawing.Point, System.Drawing">
-    <value>56, 4</value>
-  </data>
-  <data name="tbName.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
-    <value>4, 4, 4, 4</value>
+    <value>42, 3</value>
   </data>
   <data name="tbName.MaxLength" type="System.Int32, mscorlib">
     <value>4</value>
   </data>
   <data name="tbName.Size" type="System.Drawing.Size, System.Drawing">
-    <value>134, 22</value>
+    <value>179, 20</value>
   </data>
   <data name="tbName.TabIndex" type="System.Int32, mscorlib">
     <value>1</value>
@@ -463,10 +427,10 @@
     <value>0, 0</value>
   </data>
   <data name="subrecordListEditor.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
-    <value>5, 5, 5, 5</value>
+    <value>4, 4, 4, 4</value>
   </data>
   <data name="subrecordListEditor.Size" type="System.Drawing.Size, System.Drawing">
-    <value>287, 346</value>
+    <value>292, 266</value>
   </data>
   <data name="subrecordListEditor.TabIndex" type="System.Int32, mscorlib">
     <value>0</value>
@@ -475,7 +439,7 @@
     <value>subrecordListEditor</value>
   </data>
   <data name="&gt;&gt;subrecordListEditor.Type" xml:space="preserve">
-    <value>TESVSnip.Forms.SubrecordListEditor, TESVSnip, Version=3.0.4404.5, Culture=neutral, PublicKeyToken=null</value>
+    <value>TESVSnip.ObjectControls.SubrecordListEditor, TESVSnip, Version=3.4.4408.1, Culture=neutral, PublicKeyToken=null</value>
   </data>
   <data name="&gt;&gt;subrecordListEditor.Parent" xml:space="preserve">
     <value>verticalSplitContainer.Panel2</value>
@@ -496,13 +460,10 @@
     <value>1</value>
   </data>
   <data name="verticalSplitContainer.Size" type="System.Drawing.Size, System.Drawing">
-    <value>287, 432</value>
+    <value>292, 351</value>
   </data>
   <data name="verticalSplitContainer.SplitterDistance" type="System.Int32, mscorlib">
     <value>81</value>
-  </data>
-  <data name="verticalSplitContainer.SplitterWidth" type="System.Int32, mscorlib">
-    <value>5</value>
   </data>
   <data name="verticalSplitContainer.TabIndex" type="System.Int32, mscorlib">
     <value>0</value>
@@ -538,13 +499,10 @@
     <value>NoControl</value>
   </data>
   <data name="bCancel.Location" type="System.Drawing.Point, System.Drawing">
-    <value>581, 400</value>
-  </data>
-  <data name="bCancel.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
-    <value>4, 4, 4, 4</value>
+    <value>359, 325</value>
   </data>
   <data name="bCancel.Size" type="System.Drawing.Size, System.Drawing">
-    <value>100, 28</value>
+    <value>75, 23</value>
   </data>
   <data name="bCancel.TabIndex" type="System.Int32, mscorlib">
     <value>2</value>
@@ -571,13 +529,10 @@
     <value>NoControl</value>
   </data>
   <data name="bSave.Location" type="System.Drawing.Point, System.Drawing">
-    <value>473, 400</value>
-  </data>
-  <data name="bSave.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
-    <value>4, 4, 4, 4</value>
+    <value>278, 325</value>
   </data>
   <data name="bSave.Size" type="System.Drawing.Size, System.Drawing">
-    <value>100, 28</value>
+    <value>75, 23</value>
   </data>
   <data name="bSave.TabIndex" type="System.Int32, mscorlib">
     <value>1</value>
@@ -610,10 +565,10 @@
     <value>0, 0</value>
   </data>
   <data name="elementEditor.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
-    <value>5, 5, 5, 5</value>
+    <value>4, 4, 4, 4</value>
   </data>
   <data name="elementEditor.Size" type="System.Drawing.Size, System.Drawing">
-    <value>685, 393</value>
+    <value>437, 319</value>
   </data>
   <data name="elementEditor.TabIndex" type="System.Int32, mscorlib">
     <value>0</value>
@@ -622,7 +577,7 @@
     <value>elementEditor</value>
   </data>
   <data name="&gt;&gt;elementEditor.Type" xml:space="preserve">
-    <value>TESVSnip.Forms.SubrecordEditor, TESVSnip, Version=3.0.4404.5, Culture=neutral, PublicKeyToken=null</value>
+    <value>TESVSnip.Forms.SubrecordEditor, TESVSnip, Version=3.4.4408.1, Culture=neutral, PublicKeyToken=null</value>
   </data>
   <data name="&gt;&gt;elementEditor.Parent" xml:space="preserve">
     <value>horizontalSplitContainer.Panel2</value>
@@ -643,13 +598,10 @@
     <value>1</value>
   </data>
   <data name="horizontalSplitContainer.Size" type="System.Drawing.Size, System.Drawing">
-    <value>977, 432</value>
+    <value>733, 351</value>
   </data>
   <data name="horizontalSplitContainer.SplitterDistance" type="System.Int32, mscorlib">
-    <value>287</value>
-  </data>
-  <data name="horizontalSplitContainer.SplitterWidth" type="System.Int32, mscorlib">
-    <value>5</value>
+    <value>292</value>
   </data>
   <data name="horizontalSplitContainer.TabIndex" type="System.Int32, mscorlib">
     <value>0</value>
@@ -670,13 +622,10 @@
     <value>True</value>
   </metadata>
   <data name="$this.AutoScaleDimensions" type="System.Drawing.SizeF, System.Drawing">
-    <value>8, 16</value>
-  </data>
-  <data name="$this.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
-    <value>4, 4, 4, 4</value>
+    <value>6, 13</value>
   </data>
   <data name="$this.Size" type="System.Drawing.Size, System.Drawing">
-    <value>977, 432</value>
+    <value>733, 351</value>
   </data>
   <data name="&gt;&gt;$this.Name" xml:space="preserve">
     <value>RecordEditor</value>

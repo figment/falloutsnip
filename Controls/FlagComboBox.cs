@@ -10,6 +10,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Text;
 using System.Windows.Forms;
 
 namespace TESVSnip.Windows.Controls
@@ -27,14 +28,22 @@ namespace TESVSnip.Windows.Controls
             {
                 Name = name;
                 Value = val;
+                this.IsRaw = false;
+            }
+            public CCBoxItem(string name, uint val, bool isRaw)
+            {
+                Name = name;
+                Value = val;
+                this.IsRaw = isRaw;
             }
 
             public string Name { get; set; }
             public uint Value { get; set; }
+            internal bool IsRaw { get; set; }
 
             public override string ToString()
             {
-                return string.Format("'{0}' : {1}", Name, Value);
+                return string.Format(string.IsNullOrEmpty(Name) ? "{1}" : "'{0}' : {1}", Name, Value);
             }
         }
 
@@ -75,18 +84,37 @@ namespace TESVSnip.Windows.Controls
                 return;
             }
             items.Clear();
+            uint maxValue = 0;
             for (int i = 0; i < names.Length; ++i)
             {
                 string s = names[i];
-                if (string.IsNullOrEmpty(s))
-                    continue;
+                if (values[i] > maxValue) maxValue = values[i];
+                if (string.IsNullOrEmpty(s)) continue;
                 items.Add(new CCBoxItem(s, values[i]));
             }
+            //int bits = (int)Math.Ceiling(Math.Log(maxValue)/Math.Log(2.0f));
+            //int bytes = (bits/4) + (((bits%4)!=0) ? 1 : 0);
+            //bytes = ((bytes/2) + ((bytes%2 != 0) ? 1 : 0))*2;
+            //string format = "X" + bytes.ToString();
+            string format = "X8";
+            for (int i = 0; i < names.Length; ++i)
+            {
+                string s = names[i];
+                if (!string.IsNullOrEmpty(s)) continue;
+                items.Add(new CCBoxItem(values[i].ToString(format), values[i], true));
+            }
+            for (int i = names.Length; i < 32; ++i) // add missing items
+            {
+                var value = (uint) 1 << i;
+                items.Add(new CCBoxItem(value.ToString(format), value, true));
+            }
+
             MaxDropDownItems = Math.Min(values.Length, 16);
             DisplayMember = "Name";
             ValueSeparator = ",";
             //this.ValueMember = "Value";
 
+            Items.Clear();
             foreach (var item in items) Items.Add(item);
         }
 
@@ -109,6 +137,35 @@ namespace TESVSnip.Windows.Controls
                     value |= items[i].Value;
             }
             return value;
+        }
+        public override string GetCheckedItemsStringValue()
+        {
+            var sb = new StringBuilder("");
+            var cclb = dropdown.List;
+            uint raw = 0;
+            foreach (CCBoxItem t in cclb.CheckedItems)
+            {
+                if (t.IsRaw)
+                {
+                    raw |= t.Value;
+                }
+                else
+                {
+                    if (sb.Length > 0) sb.Append(this.ValueSeparator);
+                    sb.Append(cclb.GetItemText(t));                    
+                }
+            }
+            if (raw != 0)
+            {
+                int bits = (int)Math.Ceiling(Math.Log(raw) / Math.Log(2.0f));
+                int bytes = (bits / 4) + (((bits % 4) != 0) ? 1 : 0);
+                bytes = ((bytes / 2) + ((bytes % 2 != 0) ? 1 : 0)) * 2;
+                string format = "X" + bytes.ToString();
+
+                if (sb.Length > 0) sb.Append(this.ValueSeparator);
+                sb.Append(raw.ToString(format));                
+            }
+            return sb.ToString();
         }
     }
 

@@ -1798,10 +1798,10 @@
       <Element name="unknown short 1" type="short" />
       <Element name="unknown float 1" type="float" />
       <Element name="Reload Animation" type="int" />
-      <Element name="Unknown byte 1" type="byte"/>
-      <Element name="Ammo Used Per Shot" type="byte"/>
-      <Element name="Unknown byte 2" type="byte"/>
-      <Element name="Unknown byte 3" type="byte"/>
+      <Element name="unknown byte 1" type="byte" />
+      <Element name="unknown byte 2" type="byte" />
+      <Element name="Ammo used per shot?" type="byte" />
+      <Element name="unknown byte 4" type="byte" />
       <Element name="unknown float 2" type="float" />
       <Element name="unknown float 3" type="float" />
       <Element name="Zoom FOV" type="int" />
@@ -1818,8 +1818,8 @@
       <Element name="unknown int 2" type="int" />
       <Element name="unknown int 3" type="int" />
       <Element name="unknown int 4" type="int" />
-      <Element name="Reload Time" type="int" />
-      <Element name="unknown float (ammo used?)" type="float" />
+      <Element name="unknown int 5" type="int" />
+      <Element name="unknown float 6" type="float" />
     </Subrecord>
     <Subrecord name="CRDT" desc="Critical Damage Data" optional="1" size="16">
       <Element name="Critical Damage Bonus ??" type="int" />

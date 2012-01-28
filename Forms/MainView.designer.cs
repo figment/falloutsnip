@@ -25,8 +25,22 @@ namespace TESVSnip {
         /// the contents of this method with the code editor.
         /// </summary>
         private void InitializeComponent() {
-            this.components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MainView));
+            WeifenLuo.WinFormsUI.Docking.DockPanelSkin dockPanelSkin1 = new WeifenLuo.WinFormsUI.Docking.DockPanelSkin();
+            WeifenLuo.WinFormsUI.Docking.AutoHideStripSkin autoHideStripSkin1 = new WeifenLuo.WinFormsUI.Docking.AutoHideStripSkin();
+            WeifenLuo.WinFormsUI.Docking.DockPanelGradient dockPanelGradient1 = new WeifenLuo.WinFormsUI.Docking.DockPanelGradient();
+            WeifenLuo.WinFormsUI.Docking.TabGradient tabGradient1 = new WeifenLuo.WinFormsUI.Docking.TabGradient();
+            WeifenLuo.WinFormsUI.Docking.DockPaneStripSkin dockPaneStripSkin1 = new WeifenLuo.WinFormsUI.Docking.DockPaneStripSkin();
+            WeifenLuo.WinFormsUI.Docking.DockPaneStripGradient dockPaneStripGradient1 = new WeifenLuo.WinFormsUI.Docking.DockPaneStripGradient();
+            WeifenLuo.WinFormsUI.Docking.TabGradient tabGradient2 = new WeifenLuo.WinFormsUI.Docking.TabGradient();
+            WeifenLuo.WinFormsUI.Docking.DockPanelGradient dockPanelGradient2 = new WeifenLuo.WinFormsUI.Docking.DockPanelGradient();
+            WeifenLuo.WinFormsUI.Docking.TabGradient tabGradient3 = new WeifenLuo.WinFormsUI.Docking.TabGradient();
+            WeifenLuo.WinFormsUI.Docking.DockPaneStripToolWindowGradient dockPaneStripToolWindowGradient1 = new WeifenLuo.WinFormsUI.Docking.DockPaneStripToolWindowGradient();
+            WeifenLuo.WinFormsUI.Docking.TabGradient tabGradient4 = new WeifenLuo.WinFormsUI.Docking.TabGradient();
+            WeifenLuo.WinFormsUI.Docking.TabGradient tabGradient5 = new WeifenLuo.WinFormsUI.Docking.TabGradient();
+            WeifenLuo.WinFormsUI.Docking.DockPanelGradient dockPanelGradient3 = new WeifenLuo.WinFormsUI.Docking.DockPanelGradient();
+            WeifenLuo.WinFormsUI.Docking.TabGradient tabGradient6 = new WeifenLuo.WinFormsUI.Docking.TabGradient();
+            WeifenLuo.WinFormsUI.Docking.TabGradient tabGradient7 = new WeifenLuo.WinFormsUI.Docking.TabGradient();
             this.menuStrip1 = new System.Windows.Forms.MenuStrip();
             this.fileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.newToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -128,24 +142,15 @@ namespace TESVSnip {
             this.toolStripIncrInvalidRecWrapAround = new System.Windows.Forms.ToolStripButton();
             this.toolStripSeparator5 = new System.Windows.Forms.ToolStripSeparator();
             this.toolStripIncrInvalidRecStatus = new System.Windows.Forms.ToolStripLabel();
-            this.recordPanel = new System.Windows.Forms.Panel();
-            this.PluginTree = new TESVSnip.ObjectControls.PluginTreeView();
-            this.rtfInfo = new RichTextBoxLinks.RichTextBoxEx();
-            this.dockingManagerExtender = new DockingManagerExtender.DockingManagerExtender(this.components);
-            this.subrecordPanel = new TESVSnip.Forms.SubrecordListEditor();
+            this.dockPanel = new WeifenLuo.WinFormsUI.Docking.DockPanel();
             this.menuStrip1.SuspendLayout();
             this.statusStrip1.SuspendLayout();
             this.toolStripIncrFind.SuspendLayout();
             this.toolStripIncrInvalidRec.SuspendLayout();
-            this.recordPanel.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.PluginTree)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.dockingManagerExtender)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.subrecordPanel)).BeginInit();
             this.SuspendLayout();
             // 
             // menuStrip1
             // 
-            this.dockingManagerExtender.SetCloseButton(this.menuStrip1, false);
             this.menuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.fileToolStripMenuItem,
             this.editToolStripMenuItem,
@@ -154,8 +159,6 @@ namespace TESVSnip {
             this.spellsToolStripMenuItem});
             resources.ApplyResources(this.menuStrip1, "menuStrip1");
             this.menuStrip1.Name = "menuStrip1";
-            this.dockingManagerExtender.SetPreferredSize(this.menuStrip1, new System.Drawing.Size(0, 0));
-            this.dockingManagerExtender.SetTabbedMode(this.menuStrip1, true);
             // 
             // fileToolStripMenuItem
             // 
@@ -637,15 +640,12 @@ namespace TESVSnip {
             // 
             // statusStrip1
             // 
-            this.dockingManagerExtender.SetCloseButton(this.statusStrip1, false);
             this.statusStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.toolStripStatusLabel,
             this.toolStripStatusProgressBar,
             this.toolStripStopProgress});
             resources.ApplyResources(this.statusStrip1, "statusStrip1");
             this.statusStrip1.Name = "statusStrip1";
-            this.dockingManagerExtender.SetPreferredSize(this.statusStrip1, new System.Drawing.Size(0, 0));
-            this.dockingManagerExtender.SetTabbedMode(this.statusStrip1, true);
             // 
             // toolStripStatusLabel
             // 
@@ -686,7 +686,6 @@ namespace TESVSnip {
             // 
             // toolStripIncrFind
             // 
-            this.dockingManagerExtender.SetCloseButton(this.toolStripIncrFind, false);
             resources.ApplyResources(this.toolStripIncrFind, "toolStripIncrFind");
             this.toolStripIncrFind.GripStyle = System.Windows.Forms.ToolStripGripStyle.Hidden;
             this.toolStripIncrFind.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
@@ -703,8 +702,6 @@ namespace TESVSnip {
             this.toolStripSeparator7,
             this.toolStripIncrFindStatus});
             this.toolStripIncrFind.Name = "toolStripIncrFind";
-            this.dockingManagerExtender.SetPreferredSize(this.toolStripIncrFind, new System.Drawing.Size(0, 0));
-            this.dockingManagerExtender.SetTabbedMode(this.toolStripIncrFind, true);
             this.toolStripIncrFind.VisibleChanged += new System.EventHandler(this.toolStripIncrFind_VisibleChanged);
             // 
             // toolStripIncrFindCancel
@@ -808,7 +805,6 @@ namespace TESVSnip {
             // 
             // toolStripIncrInvalidRec
             // 
-            this.dockingManagerExtender.SetCloseButton(this.toolStripIncrInvalidRec, false);
             resources.ApplyResources(this.toolStripIncrInvalidRec, "toolStripIncrInvalidRec");
             this.toolStripIncrInvalidRec.GripStyle = System.Windows.Forms.ToolStripGripStyle.Hidden;
             this.toolStripIncrInvalidRec.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
@@ -823,8 +819,6 @@ namespace TESVSnip {
             this.toolStripSeparator5,
             this.toolStripIncrInvalidRecStatus});
             this.toolStripIncrInvalidRec.Name = "toolStripIncrInvalidRec";
-            this.dockingManagerExtender.SetPreferredSize(this.toolStripIncrInvalidRec, new System.Drawing.Size(0, 0));
-            this.dockingManagerExtender.SetTabbedMode(this.toolStripIncrInvalidRec, true);
             this.toolStripIncrInvalidRec.ItemClicked += new System.Windows.Forms.ToolStripItemClickedEventHandler(this.toolStripIncrInvalidRec_ItemClicked);
             this.toolStripIncrInvalidRec.VisibleChanged += new System.EventHandler(this.toolStripIncrInvalidRec_VisibleChanged);
             // 
@@ -891,68 +885,69 @@ namespace TESVSnip {
             this.toolStripIncrInvalidRecStatus.Name = "toolStripIncrInvalidRecStatus";
             resources.ApplyResources(this.toolStripIncrInvalidRecStatus, "toolStripIncrInvalidRecStatus");
             // 
-            // recordPanel
+            // dockPanel
             // 
-            this.dockingManagerExtender.SetADockingEnable(this.recordPanel, true);
-            this.dockingManagerExtender.SetCloseButton(this.recordPanel, false);
-            this.recordPanel.Controls.Add(this.PluginTree);
-            this.dockingManagerExtender.SetFullTitle(this.recordPanel, "Record Panel");
-            resources.ApplyResources(this.recordPanel, "recordPanel");
-            this.recordPanel.MinimumSize = new System.Drawing.Size(225, 100);
-            this.recordPanel.Name = "recordPanel";
-            this.dockingManagerExtender.SetPreferredSize(this.recordPanel, new System.Drawing.Size(200, 100));
-            this.dockingManagerExtender.SetTabbedMode(this.recordPanel, true);
-            this.dockingManagerExtender.SetTitle(this.recordPanel, "Record Panel");
-            // 
-            // PluginTree
-            // 
-            this.dockingManagerExtender.SetCloseButton(this.PluginTree, false);
-            resources.ApplyResources(this.PluginTree, "PluginTree");
-            this.PluginTree.Name = "PluginTree";
-            this.dockingManagerExtender.SetPreferredSize(this.PluginTree, new System.Drawing.Size(0, 0));
-            this.PluginTree.SelectedRecord = null;
-            this.dockingManagerExtender.SetTabbedMode(this.PluginTree, true);
-            // 
-            // rtfInfo
-            // 
-            this.rtfInfo.AutoWordSelection = true;
-            this.dockingManagerExtender.SetCloseButton(this.rtfInfo, false);
-            resources.ApplyResources(this.rtfInfo, "rtfInfo");
-            this.rtfInfo.Name = "rtfInfo";
-            this.dockingManagerExtender.SetPreferredSize(this.rtfInfo, new System.Drawing.Size(0, 0));
-            this.rtfInfo.ReadOnly = true;
-            this.rtfInfo.ShortcutsEnabled = false;
-            this.dockingManagerExtender.SetTabbedMode(this.rtfInfo, true);
-            this.rtfInfo.LinkClicked += new System.Windows.Forms.LinkClickedEventHandler(this.rtfInfo_LinkClicked);
-            this.rtfInfo.PreviewKeyDown += new System.Windows.Forms.PreviewKeyDownEventHandler(this.tbInfo_PreviewKeyDown);
-            // 
-            // dockingManagerExtender
-            // 
-            this.dockingManagerExtender.ContainerControl = this;
-            this.dockingManagerExtender.InnerControl = this.rtfInfo;
-            this.dockingManagerExtender.OuterControl = this.menuStrip1;
-            // 
-            // subrecordPanel
-            // 
-            this.dockingManagerExtender.SetADockingEnable(this.subrecordPanel, true);
-            this.dockingManagerExtender.SetCloseButton(this.subrecordPanel, false);
-            this.dockingManagerExtender.SetFullTitle(this.subrecordPanel, "Subrecord Panel");
-            resources.ApplyResources(this.subrecordPanel, "subrecordPanel");
-            this.subrecordPanel.MinimumSize = new System.Drawing.Size(200, 120);
-            this.subrecordPanel.Name = "subrecordPanel";
-            this.dockingManagerExtender.SetPreferredSize(this.subrecordPanel, new System.Drawing.Size(204, 100));
-            this.subrecordPanel.SubRecords = null;
-            this.dockingManagerExtender.SetTabbedMode(this.subrecordPanel, true);
-            this.dockingManagerExtender.SetTitle(this.subrecordPanel, "Subrecord Panel");
-            this.dockingManagerExtender.SetZoneIndex(this.subrecordPanel, 1);
+            this.dockPanel.ActiveAutoHideContent = null;
+            resources.ApplyResources(this.dockPanel, "dockPanel");
+            this.dockPanel.DockBackColor = System.Drawing.SystemColors.AppWorkspace;
+            this.dockPanel.DockBottomPortion = 150D;
+            this.dockPanel.DockLeftPortion = 200D;
+            this.dockPanel.DockRightPortion = 200D;
+            this.dockPanel.DockTopPortion = 150D;
+            this.dockPanel.Name = "dockPanel";
+            this.dockPanel.RightToLeftLayout = true;
+            dockPanelGradient1.EndColor = System.Drawing.SystemColors.ControlLight;
+            dockPanelGradient1.StartColor = System.Drawing.SystemColors.ControlLight;
+            autoHideStripSkin1.DockStripGradient = dockPanelGradient1;
+            tabGradient1.EndColor = System.Drawing.SystemColors.Control;
+            tabGradient1.StartColor = System.Drawing.SystemColors.Control;
+            tabGradient1.TextColor = System.Drawing.SystemColors.ControlDarkDark;
+            autoHideStripSkin1.TabGradient = tabGradient1;
+            autoHideStripSkin1.TextFont = new System.Drawing.Font("Segoe UI", 9F);
+            dockPanelSkin1.AutoHideStripSkin = autoHideStripSkin1;
+            tabGradient2.EndColor = System.Drawing.SystemColors.ControlLightLight;
+            tabGradient2.StartColor = System.Drawing.SystemColors.ControlLightLight;
+            tabGradient2.TextColor = System.Drawing.SystemColors.ControlText;
+            dockPaneStripGradient1.ActiveTabGradient = tabGradient2;
+            dockPanelGradient2.EndColor = System.Drawing.SystemColors.Control;
+            dockPanelGradient2.StartColor = System.Drawing.SystemColors.Control;
+            dockPaneStripGradient1.DockStripGradient = dockPanelGradient2;
+            tabGradient3.EndColor = System.Drawing.SystemColors.ControlLight;
+            tabGradient3.StartColor = System.Drawing.SystemColors.ControlLight;
+            tabGradient3.TextColor = System.Drawing.SystemColors.ControlText;
+            dockPaneStripGradient1.InactiveTabGradient = tabGradient3;
+            dockPaneStripSkin1.DocumentGradient = dockPaneStripGradient1;
+            dockPaneStripSkin1.TextFont = new System.Drawing.Font("Segoe UI", 9F);
+            tabGradient4.EndColor = System.Drawing.SystemColors.ActiveCaption;
+            tabGradient4.LinearGradientMode = System.Drawing.Drawing2D.LinearGradientMode.Vertical;
+            tabGradient4.StartColor = System.Drawing.SystemColors.GradientActiveCaption;
+            tabGradient4.TextColor = System.Drawing.SystemColors.ActiveCaptionText;
+            dockPaneStripToolWindowGradient1.ActiveCaptionGradient = tabGradient4;
+            tabGradient5.EndColor = System.Drawing.SystemColors.Control;
+            tabGradient5.StartColor = System.Drawing.SystemColors.Control;
+            tabGradient5.TextColor = System.Drawing.SystemColors.ControlText;
+            dockPaneStripToolWindowGradient1.ActiveTabGradient = tabGradient5;
+            dockPanelGradient3.EndColor = System.Drawing.SystemColors.ControlLight;
+            dockPanelGradient3.StartColor = System.Drawing.SystemColors.ControlLight;
+            dockPaneStripToolWindowGradient1.DockStripGradient = dockPanelGradient3;
+            tabGradient6.EndColor = System.Drawing.SystemColors.GradientInactiveCaption;
+            tabGradient6.LinearGradientMode = System.Drawing.Drawing2D.LinearGradientMode.Vertical;
+            tabGradient6.StartColor = System.Drawing.SystemColors.GradientInactiveCaption;
+            tabGradient6.TextColor = System.Drawing.SystemColors.ControlText;
+            dockPaneStripToolWindowGradient1.InactiveCaptionGradient = tabGradient6;
+            tabGradient7.EndColor = System.Drawing.Color.Transparent;
+            tabGradient7.StartColor = System.Drawing.Color.Transparent;
+            tabGradient7.TextColor = System.Drawing.SystemColors.ControlDarkDark;
+            dockPaneStripToolWindowGradient1.InactiveTabGradient = tabGradient7;
+            dockPaneStripSkin1.ToolWindowGradient = dockPaneStripToolWindowGradient1;
+            dockPanelSkin1.DockPaneStripSkin = dockPaneStripSkin1;
+            this.dockPanel.Skin = dockPanelSkin1;
             // 
             // MainView
             // 
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
             resources.ApplyResources(this, "$this");
-            this.Controls.Add(this.subrecordPanel);
-            this.Controls.Add(this.recordPanel);
-            this.Controls.Add(this.rtfInfo);
+            this.Controls.Add(this.dockPanel);
             this.Controls.Add(this.menuStrip1);
             this.Controls.Add(this.toolStripIncrFind);
             this.Controls.Add(this.toolStripIncrInvalidRec);
@@ -971,10 +966,6 @@ namespace TESVSnip {
             this.toolStripIncrFind.PerformLayout();
             this.toolStripIncrInvalidRec.ResumeLayout(false);
             this.toolStripIncrInvalidRec.PerformLayout();
-            this.recordPanel.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)(this.PluginTree)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.dockingManagerExtender)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.subrecordPanel)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -1057,7 +1048,6 @@ namespace TESVSnip {
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator7;
         private System.Windows.Forms.ToolStripLabel toolStripIncrFindStatus;
         private System.Windows.Forms.ToolStripComboBox toolStripIncrFindTypeFilter;
-        private RichTextBoxLinks.RichTextBoxEx rtfInfo;
         private System.Windows.Forms.ToolStripMenuItem noWindowsSoundsToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem disableHyperlinksToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem toolsToolStripMenuItem;
@@ -1079,15 +1069,12 @@ namespace TESVSnip {
         private System.Windows.Forms.ToolStripMenuItem expandBranchToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem collapseBranchToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem addMasterToolStripMenuItem;
-        private System.Windows.Forms.Panel recordPanel;
         private System.Windows.Forms.ToolStripMenuItem resetDockingWindowsToolStripMenuItem;
-        private DockingManagerExtender.DockingManagerExtender dockingManagerExtender;
         private System.Windows.Forms.ToolStripMenuItem compressionSettingsToolStripMenuItem;
-        private PluginTreeView PluginTree;
-        private SubrecordListEditor subrecordPanel;
         private System.Windows.Forms.ToolStripMenuItem polishToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem editSelectedToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem editHeaderToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem findInRecordsToolStripMenuItem;
+        private WeifenLuo.WinFormsUI.Docking.DockPanel dockPanel;
     }
 }

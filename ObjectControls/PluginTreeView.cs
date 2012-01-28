@@ -7,8 +7,10 @@ using System.Linq;
 using System.Windows.Forms;
 using BrightIdeasSoftware;
 using OC.Windows.Forms;
+using TESVSnip.Docking;
 using TESVSnip.Forms;
 using TESVSnip.Properties;
+using WeifenLuo.WinFormsUI.Docking;
 
 namespace TESVSnip.ObjectControls
 {
@@ -812,11 +814,26 @@ namespace TESVSnip.ObjectControls
             }
             else if (selRecord is Record)
             {
+                
                 var r = selRecord as Record;
                 var form = new FullRecordEditor(r);
                 form.StartPosition = FormStartPosition.CenterScreen;
-                form.Show(this);
+
+                var dockParent = FindDockContent(this);
+                if (dockParent != null)
+                    form.Show(dockParent.DockHandler.DockPanel);
+                else
+                    form.Show(this);
             }
+        }
+
+        IDockContent FindDockContent(Control c)
+        {
+            if (c is IDockContent)
+                return c as IDockContent;
+            else if (c.Parent != null)
+                return FindDockContent(c.Parent);
+            return null;
         }
 
         private void PluginTree_KeyDown(object sender, KeyEventArgs e)

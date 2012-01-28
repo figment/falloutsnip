@@ -370,7 +370,7 @@ namespace TESVSnip
             string errors;
             if (Selection.SelectedSubrecord && Selection.Record.Name != "SCPT")
             {
-                var sr = subrecordPanel.SubRecord;
+                var sr = SubrecordList.SubRecord;
                 if (sr == null) return;
                 if (sr.Name != "SCTX")
                 {

@@ -113,63 +113,70 @@ namespace BrightIdeasSoftware
             mdiOwner = null;
 
             // NOTE: If you listen to any events here, you *must* stop listening in Unbind()
-            objectListView.Disposed += objectListView_Disposed;
-            objectListView.LocationChanged += objectListView_LocationChanged;
-            objectListView.SizeChanged += objectListView_SizeChanged;
-            objectListView.VisibleChanged += objectListView_VisibleChanged;
-            objectListView.ParentChanged += objectListView_ParentChanged;
-
-            Control parent = objectListView.Parent;
-            while (parent != null)
+            if (objectListView == null)
             {
-                parent.ParentChanged += objectListView_ParentChanged;
-                var tabControl = parent as TabControl;
-                if (tabControl != null)
-                {
-                    tabControl.Selected += tabControl_Selected;
-                }
-                parent = parent.Parent;
+                myOwner = null;
             }
-            Owner = objectListView.FindForm();
-            myOwner = Owner;
-            if (Owner != null)
+            else
             {
-                Owner.LocationChanged += Owner_LocationChanged;
-                Owner.SizeChanged += Owner_SizeChanged;
-                Owner.ResizeBegin += Owner_ResizeBegin;
-                Owner.ResizeEnd += Owner_ResizeEnd;
-                if (Owner.TopMost)
-                {
-                    // We can't do this.TopMost = true; since that will activate the panel,
-                    // taking focus away from the owner of the listview
-                    NativeMethods.MakeTopMost(this);
-                }
+                objectListView.Disposed += objectListView_Disposed;
+                objectListView.LocationChanged += objectListView_LocationChanged;
+                objectListView.SizeChanged += objectListView_SizeChanged;
+                objectListView.VisibleChanged += objectListView_VisibleChanged;
+                objectListView.ParentChanged += objectListView_ParentChanged;
 
-                // We need special code to handle MDI
-                mdiOwner = Owner.MdiParent;
-                if (mdiOwner != null)
+                Control parent = objectListView.Parent;
+                while (parent != null)
                 {
-                    mdiOwner.LocationChanged += Owner_LocationChanged;
-                    mdiOwner.SizeChanged += Owner_SizeChanged;
-                    mdiOwner.ResizeBegin += Owner_ResizeBegin;
-                    mdiOwner.ResizeEnd += Owner_ResizeEnd;
-
-                    // Find the MDIClient control, which houses all MDI children
-                    foreach (Control c in mdiOwner.Controls)
+                    parent.ParentChanged += objectListView_ParentChanged;
+                    var tabControl = parent as TabControl;
+                    if (tabControl != null)
                     {
-                        mdiClient = c as MdiClient;
+                        tabControl.Selected += tabControl_Selected;
+                    }
+                    parent = parent.Parent;
+                }
+                Owner = objectListView.FindForm();
+                myOwner = Owner;
+                if (Owner != null)
+                {
+                    Owner.LocationChanged += Owner_LocationChanged;
+                    Owner.SizeChanged += Owner_SizeChanged;
+                    Owner.ResizeBegin += Owner_ResizeBegin;
+                    Owner.ResizeEnd += Owner_ResizeEnd;
+                    if (Owner.TopMost)
+                    {
+                        // We can't do this.TopMost = true; since that will activate the panel,
+                        // taking focus away from the owner of the listview
+                        NativeMethods.MakeTopMost(this);
+                    }
+
+                    // We need special code to handle MDI
+                    mdiOwner = Owner.MdiParent;
+                    if (mdiOwner != null)
+                    {
+                        mdiOwner.LocationChanged += Owner_LocationChanged;
+                        mdiOwner.SizeChanged += Owner_SizeChanged;
+                        mdiOwner.ResizeBegin += Owner_ResizeBegin;
+                        mdiOwner.ResizeEnd += Owner_ResizeEnd;
+
+                        // Find the MDIClient control, which houses all MDI children
+                        foreach (Control c in mdiOwner.Controls)
+                        {
+                            mdiClient = c as MdiClient;
+                            if (mdiClient != null)
+                            {
+                                break;
+                            }
+                        }
                         if (mdiClient != null)
                         {
-                            break;
+                            mdiClient.ClientSizeChanged += myMdiClient_ClientSizeChanged;
                         }
-                    }
-                    if (mdiClient != null)
-                    {
-                        mdiClient.ClientSizeChanged += myMdiClient_ClientSizeChanged;
                     }
                 }
             }
-
+            
             UpdateTransparency();
         }
 

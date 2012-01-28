@@ -65,10 +65,6 @@ namespace TESVSnip
             if (idx < 0 || idx > records.Count)
                 idx = records.Count;
 
-#if DEBUG
-            Trace.TraceInformation("Insert '{0}' at {1}", r, idx);
-#endif
-
             records.Insert(idx, r);
             FireRecordListUpdate(this, this);
         }
@@ -173,14 +169,8 @@ namespace TESVSnip
             uint amountRead = 0;
             while (amountRead < Size - (Oblivion ? 20 : 24))
             {
-#if DEBUG
-                long szPos = br.BaseStream.Position;
-#endif
                 string s = ReadRecName(br);
                 uint recsize = br.ReadUInt32();
-#if DEBUG
-                Trace.TraceInformation("{0} {1}", s, recsize);
-#endif
                 if (s == "GRUP")
                 {
                     bool skip = filterAll || (recFilter != null && Array.IndexOf(recFilter, contentType) >= 0);
@@ -188,9 +178,6 @@ namespace TESVSnip
                     amountRead += recsize;
 
                     if (!filterAll) AddRecord(gr);
-#if DEBUG
-                    Debug.Assert((br.BaseStream.Position - szPos) == recsize);
-#endif
                 }
                 else
                 {
@@ -208,9 +195,6 @@ namespace TESVSnip
                         amountRead += (uint) (recsize + (Oblivion ? 20 : 24));
                         AddRecord(r);
                     }
-#if DEBUG
-                    Debug.Assert((br.BaseStream.Position - szPos) - (Oblivion ? 20 : 24) == recsize);
-#endif
                 }
             }
             if (amountRead > (Size - (Oblivion ? 20 : 24)))

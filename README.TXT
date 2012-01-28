@@ -9,6 +9,11 @@ Requirements:
   .NET 3.5
 
 Change Log:
+v 3.5
+- New docking windows manager with better usability.  (Still some bugs in it)
+- Fixed most performance issues with search (also capped at 1000 results via config)
+- Swapped Ctrl+F and Ctrl+Shift+F so Ctrl+F opens search panel and Ctrl+Shift+F is incremental
+
 v 3.4
 - Add search results form (experimental - i.e. may have poor performance)
 - force refresh of subrecord list when record selection is changed

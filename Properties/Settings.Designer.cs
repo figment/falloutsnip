@@ -379,5 +379,17 @@ namespace TESVSnip.Properties {
                 this["SearchMRUFullList"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("1000")]
+        public ushort MaxSearchResults {
+            get {
+                return ((ushort)(this["MaxSearchResults"]));
+            }
+            set {
+                this["MaxSearchResults"] = value;
+            }
+        }
     }
 }

@@ -584,18 +584,18 @@ namespace TESVSnip
             if (start == null)
                 start = PluginTree.SelectedRecord != null ? PluginTree.SelectedRecord : PluginTree.TopRecord;
 
-            Predicate<BaseRecord> updateFunc = (BaseRecord n) =>
-                                                   {
-                                                       if (IsBackroundProcessCanceled()) // returning true will stop it
-                                                           return true;
-                                                       var counter = (int)(++currentCount / totalNodes * 100.0f);
-                                                       if (counter != prevCount)
-                                                       {
-                                                           prevCount = counter;
-                                                           if (counter % 10 == 0) UpdateBackgroundProgress(counter);
-                                                       }
-                                                       return false;
-                                                   };
+            Predicate<BaseRecord> updateFunc = n =>
+                {
+                    if (IsBackroundProcessCanceled()) // returning true will stop it
+                        return true;
+                    var counter = (int)(++currentCount / totalNodes * 100.0f);
+                    if (counter != prevCount)
+                    {
+                        prevCount = counter;
+                        if (counter % 10 == 0) UpdateBackgroundProgress(counter);
+                    }
+                    return false;
+                };
 
             var searchContext = new SearchSettings();
 
@@ -621,37 +621,38 @@ namespace TESVSnip
                 return;
             }
 
-            StartBackgroundWork(() => { foundNode = PerformSearch(searchContext); }
-                                , () =>
-                                      {
-                                          if (IsBackroundProcessCanceled())
-                                          {
-                                              toolStripIncrFindStatus.Text = "Search Canceled";
-                                              toolStripIncrFindStatus.ForeColor = Color.Black;
-                                          }
-                                          else
-                                          {
-                                              if (foundNode != null)
-                                              {
-                                                  toolStripIncrFindStatus.Text = "Match Found";
-                                                  toolStripIncrFindStatus.ForeColor = Color.Black;
-                                                  PluginTree.SelectedRecord = foundNode;
-                                                  toolStripIncrFindText.Tag = false;
-                                              }
-                                              else
-                                              {
-                                                  toolStripIncrFindText.Tag = true;
+            StartBackgroundWork(
+                () => { foundNode = PerformSearch(searchContext); }
+                , () =>
+                        {
+                            if (IsBackroundProcessCanceled())
+                            {
+                                toolStripIncrFindStatus.Text = "Search Canceled";
+                                toolStripIncrFindStatus.ForeColor = Color.Black;
+                            }
+                            else
+                            {
+                                if (foundNode != null)
+                                {
+                                    toolStripIncrFindStatus.Text = "Match Found";
+                                    toolStripIncrFindStatus.ForeColor = Color.Black;
+                                    PluginTree.SelectedRecord = foundNode;
+                                    toolStripIncrFindText.Tag = false;
+                                }
+                                else
+                                {
+                                    toolStripIncrFindText.Tag = true;
 
-                                                  toolStripIncrFindStatus.Text = "No Matches Found";
-                                                  toolStripIncrFindStatus.ForeColor = Color.Maroon;
-                                                  if (!Properties.Settings.Default.NoWindowsSounds)
-                                                      SystemSounds.Beep.Play();
-                                              }
-                                              toolStripIncrFind.Focus();
-                                              toolStripIncrFindText.Select();
-                                              toolStripIncrFindText.Focus();
-                                          }
-                                      }
+                                    toolStripIncrFindStatus.Text = "No Matches Found";
+                                    toolStripIncrFindStatus.ForeColor = Color.Maroon;
+                                    if (!Properties.Settings.Default.NoWindowsSounds)
+                                        SystemSounds.Beep.Play();
+                                }
+                                toolStripIncrFind.Focus();
+                                toolStripIncrFindText.Select();
+                                toolStripIncrFindText.Focus();
+                            }
+                        }
                 );
         }
 

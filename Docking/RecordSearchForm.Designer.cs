@@ -1,6 +1,4 @@
-﻿using TESVSnip.ObjectControls;
-
-namespace TESVSnip.Forms
+﻿namespace TESVSnip.Docking
 {
     partial class RecordSearchForm
     {
@@ -49,8 +47,10 @@ namespace TESVSnip.Forms
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(633, 282);
             this.Controls.Add(this.subrecordPanel);
+            this.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.SizableToolWindow;
             this.Name = "RecordSearchForm";
+            this.ShowHint = WeifenLuo.WinFormsUI.Docking.DockState.DockBottomAutoHide;
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "Search Records";
             this.Shown += new System.EventHandler(this.RecordSearchForm_Shown);

@@ -9,12 +9,12 @@ using BrightIdeasSoftware;
 using TESVSnip.Collections.Generic;
 using TESVSnip.Properties;
 
-namespace TESVSnip.Forms
+namespace TESVSnip.ObjectControls
 {
     public partial class SubrecordListEditor : UserControl, ISupportInitialize
     {
-        private SelectionContext _context;
-        private AdvancedList<SubRecord> _subrecords;
+        private SelectionContext context;
+        private AdvancedList<SubRecord> subrecords;
 
         public SubrecordListEditor()
         {
@@ -41,29 +41,29 @@ namespace TESVSnip.Forms
         public void SetContext(SelectionContext context)
         {
             //this.context = context.Clone();
-            if (_context != context)
+            if (this.context != context)
             {
-                if (_context != null)
+                if (this.context != null)
                 {
-                    _context.RecordChanged -= context_RecordChanged;
-                    _context.SubRecordChanged -= context_SubRecordChanged;
+                    this.context.RecordChanged -= context_RecordChanged;
+                    this.context.SubRecordChanged -= context_SubRecordChanged;
                 }
-                _context = context;
-                if (_context != null)
+                this.context = context;
+                if (this.context != null)
                 {
-                    _context.SubRecordChanged += context_SubRecordChanged;
-                    _context.RecordChanged += context_RecordChanged;
+                    this.context.SubRecordChanged += context_SubRecordChanged;
+                    this.context.RecordChanged += context_RecordChanged;
                 }
             }
         }
 
         public AdvancedList<SubRecord> SubRecords
         {
-            get { return _subrecords; }
+            get { return subrecords; }
             set
             {
-                _subrecords = value;
-                listSubrecord.DataSource = _subrecords;
+                subrecords = value;
+                listSubrecord.DataSource = subrecords;
             }
         }
 
@@ -79,10 +79,10 @@ namespace TESVSnip.Forms
 
         private void OnRecordChanged()
         {
-            _context.SubRecord = null;
-            var r = _context.Record as Record;
-            _subrecords = r != null ? r.SubRecords : null;
-            listSubrecord.DataSource = _subrecords;
+            context.SubRecord = null;
+            var r = context.Record as Record;
+            subrecords = r != null ? r.SubRecords : null;
+            listSubrecord.DataSource = subrecords;
             listSubrecord.Refresh();
         }
 
@@ -91,7 +91,7 @@ namespace TESVSnip.Forms
             var selection = GetSelectedSubrecord();
             if (selection != null)
             {
-                if (selection.Equals(_context.SubRecord))
+                if (selection.Equals(context.SubRecord))
                     return;
             }
             listSubrecord.ClearSelection();
@@ -108,21 +108,21 @@ namespace TESVSnip.Forms
         [Browsable(false), DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
         protected SelectionContext Selection
         {
-            get { return _context; }
+            get { return context; }
         }
 
         [Browsable(false), DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
         public Record Record
         {
-            get { return _context.Record as Record; }
-            set { _context.Record = value; }
+            get { return context.Record as Record; }
+            set { context.Record = value; }
         }
 
         [Browsable(false), DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
         public SubRecord SubRecord
         {
-            get { return _context.SubRecord; }
-            set { _context.SubRecord = value; }
+            get { return context.SubRecord; }
+            set { context.SubRecord = value; }
         }
 
         public event EventHandler SelectionChanged;
@@ -347,7 +347,7 @@ namespace TESVSnip.Forms
             if (rec != null)
             {
                 if (listSubrecord.SelectedIndices.Count < 1) return;
-                _subrecords.RemoveAt(listSubrecord.SelectedIndices[0]);
+                subrecords.RemoveAt(listSubrecord.SelectedIndices[0]);
                 rec.MatchRecordStructureToRecord(SubRecords.ToArray());
             }
             Selection.SubRecord = GetSelectedSubrecord();
@@ -364,9 +364,9 @@ namespace TESVSnip.Forms
             var rec = Selection.Record as Record;
             if (rec != null)
             {
-                SubRecord sr = _subrecords[idx];
-                _subrecords.RemoveAt(idx);
-                _subrecords.Insert(idx - 1, sr);
+                SubRecord sr = subrecords[idx];
+                subrecords.RemoveAt(idx);
+                subrecords.Insert(idx - 1, sr);
 
                 listSubrecord.ClearSelection();
                 listSubrecord.SelectItem(idx - 1);
@@ -387,9 +387,9 @@ namespace TESVSnip.Forms
                 return;
 
             var rec = Selection.Record as Record;
-            SubRecord sr = _subrecords[idx];
-            _subrecords.RemoveAt(idx);
-            _subrecords.Insert(idx + 1, sr);
+            SubRecord sr = subrecords[idx];
+            subrecords.RemoveAt(idx);
+            subrecords.Insert(idx + 1, sr);
 
             listSubrecord.ClearSelection();
             listSubrecord.SelectItem(idx + 1);
@@ -730,18 +730,18 @@ namespace TESVSnip.Forms
             int toswap = (int) e.Data.GetData(typeof (int)) - 1;
             if (toswap == -1) return;
             var rec = Selection.Record as Record;
-            SubRecord sr = _subrecords[toswap];
+            SubRecord sr = subrecords[toswap];
             if (listSubrecord.SelectedIndices.Count == 0)
             {
-                _subrecords.RemoveAt(toswap);
-                _subrecords.Add(sr);
+                subrecords.RemoveAt(toswap);
+                subrecords.Add(sr);
             }
             else if (listSubrecord.SelectedIndices.Count >= 1)
             {
                 int moveto = listSubrecord.SelectedIndices[0];
                 if (toswap == moveto) return;
-                _subrecords.RemoveAt(toswap);
-                _subrecords.Insert(moveto, sr);
+                subrecords.RemoveAt(toswap);
+                subrecords.Insert(moveto, sr);
             }
             else return;
             RebuildSelection();
@@ -777,7 +777,7 @@ namespace TESVSnip.Forms
         {
             var objects = GetSelectedSubrecords();
             if (!objects.Any()) return;
-            _subrecords.RemoveRange(objects);
+            subrecords.RemoveRange(objects);
             FireSelectionChanged();
             UpdateToolStripSelection();
             foreach (var sr in objects.Where(sr => sr.Parent is Record).Select(sr=>sr.Parent).Distinct())

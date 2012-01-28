@@ -1,4 +1,4 @@
-﻿namespace TESVSnip.Forms
+﻿namespace TESVSnip.ObjectControls
 {
     partial class SubrecordListEditor
     {

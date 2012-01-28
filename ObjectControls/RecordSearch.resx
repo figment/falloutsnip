@@ -301,7 +301,7 @@
     <value>listSearchView</value>
   </data>
   <data name="&gt;&gt;listSearchView.Type" xml:space="preserve">
-    <value>BrightIdeasSoftware.ObjectListView, TESVSnip, Version=3.3.4406.2, Culture=neutral, PublicKeyToken=null</value>
+    <value>BrightIdeasSoftware.ObjectListView, TESVSnip, Version=3.5.4409.6, Culture=neutral, PublicKeyToken=null</value>
   </data>
   <data name="&gt;&gt;listSearchView.Parent" xml:space="preserve">
     <value>$this</value>

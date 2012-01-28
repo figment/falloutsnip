@@ -1,4 +1,6 @@
-﻿namespace TESVSnip.Forms
+﻿using TESVSnip.Forms;
+
+namespace TESVSnip.Docking
 {
     partial class FullRecordEditor
     {
@@ -36,6 +38,7 @@
             this.panelRecordEditor.Dock = System.Windows.Forms.DockStyle.Fill;
             this.panelRecordEditor.Location = new System.Drawing.Point(0, 0);
             this.panelRecordEditor.Name = "panelRecordEditor";
+            this.panelRecordEditor.Record = null;
             this.panelRecordEditor.Size = new System.Drawing.Size(692, 384);
             this.panelRecordEditor.TabIndex = 0;
             // 
@@ -45,10 +48,12 @@
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(692, 384);
             this.Controls.Add(this.panelRecordEditor);
+            this.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.SizableToolWindow;
             this.Name = "FullRecordEditor";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
             this.Text = "Full Record Editor";
+            this.DockStateChanged += new System.EventHandler(this.FullRecordEditor_DockStateChanged);
             this.ResumeLayout(false);
 
         }

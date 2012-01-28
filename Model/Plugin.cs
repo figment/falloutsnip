@@ -241,14 +241,8 @@ namespace TESVSnip
                 {
                     while (br.PeekChar() != -1)
                     {
-#if DEBUG
-                        long szPos = br.BaseStream.Position;
-#endif
                         s = ReadRecName(br);
                         recsize = br.ReadUInt32();
-#if DEBUG
-                        Trace.TraceInformation("{0} {1}", s, recsize);
-#endif
                         if (s == "GRUP")
                         {
                             AddRecord(new GroupRecord(recsize, br, IsOblivion, recFilter, false));
@@ -265,9 +259,6 @@ namespace TESVSnip
                             else
                                 AddRecord(new Record(s, recsize, br, IsOblivion));
                         }
-#if DEBUG
-                        Debug.Assert((br.BaseStream.Position - szPos) == recsize);
-#endif
                     }
                 }
             }

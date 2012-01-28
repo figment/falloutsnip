@@ -1,6 +1,6 @@
-﻿namespace TESVSnip.Views
+﻿namespace TESVSnip.Docking
 {
-    partial class RichTextView
+    partial class RichTextContent
     {
         /// <summary>
         /// Required designer variable.
@@ -43,18 +43,20 @@
             this.rtfInfo.TabIndex = 4;
             this.rtfInfo.Text = "";
             // 
-            // RichTextView
+            // RichTextContent
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(376, 504);
             this.ControlBox = false;
             this.Controls.Add(this.rtfInfo);
+            this.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.MaximizeBox = false;
             this.MinimizeBox = false;
-            this.Name = "RichTextView";
+            this.Name = "RichTextContent";
+            this.ShowHint = WeifenLuo.WinFormsUI.Docking.DockState.Document;
             this.ShowInTaskbar = false;
-            this.Text = "RichTextView";
+            this.Text = "Report";
             this.ResumeLayout(false);
 
         }

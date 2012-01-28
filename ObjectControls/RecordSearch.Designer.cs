@@ -187,6 +187,7 @@ namespace TESVSnip.ObjectControls
             this.listSearchView.UseCompatibleStateImageBehavior = false;
             this.listSearchView.View = System.Windows.Forms.View.Details;
             this.listSearchView.CellClick += new System.EventHandler<BrightIdeasSoftware.CellClickEventArgs>(this.listSearchView_CellClick);
+            this.listSearchView.KeyDown += new System.Windows.Forms.KeyEventHandler(this.listSearchView_KeyDown);
             // 
             // RecordSearch
             // 
