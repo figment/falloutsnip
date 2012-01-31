@@ -118,7 +118,7 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <metadata name="menuStrip1.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
-    <value>489, 17</value>
+    <value>298, 17</value>
   </metadata>
   <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
   <data name="newToolStripMenuItem.ShortcutKeys" type="System.Windows.Forms.Keys, System.Windows.Forms">
@@ -604,10 +604,10 @@
     <value>$this</value>
   </data>
   <data name="&gt;&gt;menuStrip1.ZOrder" xml:space="preserve">
-    <value>2</value>
+    <value>5</value>
   </data>
   <metadata name="OpenModDialog.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
-    <value>346, 17</value>
+    <value>155, 17</value>
   </metadata>
   <data name="OpenModDialog.Filter" xml:space="preserve">
     <value>Skyrim plugin (*.esm, *.esp)|*.esm;*.esp</value>
@@ -616,7 +616,7 @@
     <value>Select plugin(s) to open</value>
   </data>
   <metadata name="SaveModDialog.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
-    <value>208, 17</value>
+    <value>17, 17</value>
   </metadata>
   <data name="SaveModDialog.Filter" xml:space="preserve">
     <value>Skyrim plugin (*.esp)|*.esp|Master file|*.esm</value>
@@ -625,7 +625,7 @@
     <value>Select path to save to</value>
   </data>
   <metadata name="SaveEdidListDialog.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
-    <value>604, 17</value>
+    <value>413, 17</value>
   </metadata>
   <data name="SaveEdidListDialog.Filter" xml:space="preserve">
     <value>Text file (*.txt)|*.txt</value>
@@ -634,7 +634,7 @@
     <value>Save file as</value>
   </data>
   <metadata name="statusStrip1.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
-    <value>758, 17</value>
+    <value>567, 17</value>
   </metadata>
   <data name="toolStripStatusLabel.Size" type="System.Drawing.Size, System.Drawing">
     <value>750, 17</value>
@@ -682,10 +682,10 @@
     <value>$this</value>
   </data>
   <data name="&gt;&gt;statusStrip1.ZOrder" xml:space="preserve">
-    <value>5</value>
+    <value>4</value>
   </data>
   <metadata name="backgroundWorker1.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
-    <value>874, 17</value>
+    <value>683, 17</value>
   </metadata>
   <data name="columnHeader1.Text" xml:space="preserve">
     <value>Name</value>
@@ -694,7 +694,7 @@
     <value>Size</value>
   </data>
   <metadata name="toolStripIncrFind.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
-    <value>17, 56</value>
+    <value>847, 17</value>
   </metadata>
   <data name="toolStripIncrFind.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
     <value>Bottom</value>
@@ -721,7 +721,7 @@
     <value>Form ID</value>
   </data>
   <data name="toolStripIncrFindTypeFilter.Size" type="System.Drawing.Size, System.Drawing">
-    <value>80, 23</value>
+    <value>80, 25</value>
   </data>
   <data name="toolStripIncrFindTypeFilter.ToolTipText" xml:space="preserve">
     <value>Search Type</value>
@@ -826,7 +826,7 @@
     <value>Status Text</value>
   </data>
   <data name="toolStripIncrFind.Location" type="System.Drawing.Point, System.Drawing">
-    <value>0, 499</value>
+    <value>0, 474</value>
   </data>
   <data name="toolStripIncrFind.Padding" type="System.Windows.Forms.Padding, System.Windows.Forms">
     <value>0, 0, 0, 0</value>
@@ -840,9 +840,6 @@
   <data name="toolStripIncrFind.Text" xml:space="preserve">
     <value>Incremental Find</value>
   </data>
-  <data name="toolStripIncrFind.Visible" type="System.Boolean, mscorlib">
-    <value>False</value>
-  </data>
   <data name="&gt;&gt;toolStripIncrFind.Name" xml:space="preserve">
     <value>toolStripIncrFind</value>
   </data>
@@ -853,10 +850,10 @@
     <value>$this</value>
   </data>
   <data name="&gt;&gt;toolStripIncrFind.ZOrder" xml:space="preserve">
-    <value>3</value>
+    <value>2</value>
   </data>
   <metadata name="toolStripIncrInvalidRec.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
-    <value>159, 56</value>
+    <value>989, 17</value>
   </metadata>
   <data name="toolStripIncrInvalidRec.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
     <value>Bottom</value>
@@ -951,9 +948,6 @@
   <data name="toolStripIncrInvalidRec.Text" xml:space="preserve">
     <value>Incremental Invalid Record Search</value>
   </data>
-  <data name="toolStripIncrInvalidRec.Visible" type="System.Boolean, mscorlib">
-    <value>False</value>
-  </data>
   <data name="&gt;&gt;toolStripIncrInvalidRec.Name" xml:space="preserve">
     <value>toolStripIncrInvalidRec</value>
   </data>
@@ -964,7 +958,7 @@
     <value>$this</value>
   </data>
   <data name="&gt;&gt;toolStripIncrInvalidRec.ZOrder" xml:space="preserve">
-    <value>4</value>
+    <value>3</value>
   </data>
   <data name="dockPanel.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
     <value>Fill</value>
@@ -976,7 +970,7 @@
     <value>0, 24</value>
   </data>
   <data name="dockPanel.Size" type="System.Drawing.Size, System.Drawing">
-    <value>765, 500</value>
+    <value>765, 450</value>
   </data>
   <data name="dockPanel.TabIndex" type="System.Int32, mscorlib">
     <value>107</value>
@@ -997,7 +991,7 @@
     <value>True</value>
   </metadata>
   <metadata name="$this.TrayHeight" type="System.Int32, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
-    <value>112</value>
+    <value>39</value>
   </metadata>
   <data name="$this.ClientSize" type="System.Drawing.Size, System.Drawing">
     <value>765, 546</value>

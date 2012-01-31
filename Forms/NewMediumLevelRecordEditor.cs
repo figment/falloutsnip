@@ -179,23 +179,8 @@ namespace TESVSnip
                     }
                 }
                 byte[] newData = str.ToArray();
-#if DEBUG
-                byte[] originalData = sr.GetReadonlyData();
-                if (!ByteArrayCompare(originalData, newData))
-                    MessageBox.Show("Data Changed", "Debug", MessageBoxButtons.OK);
-#endif
                 sr.SetData(newData);
             }
-        }
-
-        [DllImport("msvcrt.dll")]
-        private static extern int memcmp(byte[] b1, byte[] b2, long count);
-
-        private static bool ByteArrayCompare(byte[] b1, byte[] b2)
-        {
-            // Validate buffers are the same length.
-            // This also ensures that the count does not exceed the length of either buffer.  
-            return b1.Length == b2.Length && memcmp(b1, b2, b1.Length) == 0;
         }
 
         private void bCancel_Click(object sender, EventArgs e)

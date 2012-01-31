@@ -9,6 +9,23 @@ Requirements:
   .NET 3.5
 
 Change Log:
+v 3.8
+- Fix subrecord parent reference when using Full Record Editor to avoid issues with report
+- Map Numpad-*,/,+,- to ExpandAll, CollapseAll, ExpandSelection, CollapseSelection
+- Map Ctrl+Numpad-*,/ to ExpandAllSelection, CollapseAllSelection
+- Fix hyperlinks so that multimaster esp/esm links resolve correctly
+
+v 3.7
+- Change default answer for deleting items to Yes.
+- Change main view ordering to fix status bar being above incremental find
+- Alter "Copy To" to include parent groups when copying loose records like ACHR
+- Add "Report..." to tree context menu for opening standalone report for selected record
+
+v 3.6
+- Fix quick links in "Add Master..."
+- Ask when closing plugin if user is sure
+- Add F6 keyboard hooks for switching between windows
+
 v 3.5
 - New docking windows manager with better usability.  (Still some bugs in it)
 - Fixed most performance issues with search (also capped at 1000 results via config)

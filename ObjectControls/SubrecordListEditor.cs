@@ -279,35 +279,26 @@ namespace TESVSnip.ObjectControls
                                 continue;
 
                             usedNames.Add(s.name, s.name);
-
-                            var item = new ToolStripMenuItem(s.name, null,
-                                                             new CallbackAction<SubrecordStructure>(s,
-                                                                                                    delegate(
-                                                                                                        SubrecordStructure
-                                                                                                        subItem)
-                                                                                                        {
-                                                                                                            if (idx ==
-                                                                                                                -1)
-                                                                                                                br.
-                                                                                                                    AddRecord
-                                                                                                                    (new SubRecord
-                                                                                                                         (subItem));
-                                                                                                            else
-                                                                                                                br.
-                                                                                                                    InsertRecord
-                                                                                                                    (idx,
-                                                                                                                     new SubRecord
-                                                                                                                         (subItem));
-                                                                                                            br.
-                                                                                                                MatchRecordStructureToRecord
-                                                                                                                (SubRecords
-                                                                                                                     .
-                                                                                                                     ToArray
-                                                                                                                     ());
-                                                                                                            FireDataChanged
-                                                                                                                ();
-                                                                                                        }
-                                                                 ).ExecuteEvent);
+                            var callback = new CallbackAction<SubrecordStructure>(
+                                s, subItem =>
+                                       {
+                                           var srnew = new SubRecord(subItem);
+                                           if (idx == -1)
+                                           {
+                                               br.AddRecord(srnew);
+                                               idx = br.SubRecords.Count - 1;
+                                           }
+                                           else
+                                           {
+                                               br.InsertRecord(idx + 1, srnew);
+                                               idx = idx + 1;
+                                           }
+                                           br.MatchRecordStructureToRecord(SubRecords.ToArray());
+                                           FireDataChanged();
+                                           SelectIndex(idx);
+                                       }
+                                );
+                            var item = new ToolStripMenuItem(s.name, null, callback.ExecuteEvent);
                             item.Tag = s;
                             if (found)
                                 toolStripInsertRecord.DropDownItems.Add(item);
@@ -331,6 +322,15 @@ namespace TESVSnip.ObjectControls
             {
                 MessageBox.Show(ex.ToString(), "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
+        }
+
+        private void SelectIndex(int idx)
+        {
+            this.listSubrecord.ClearSelection();
+            this.listSubrecord.SelectItem(idx);
+            this.listSubrecord.FocusItem(idx);
+            this.listSubrecord.EnsureVisible(idx);
+            this.listSubrecord.Refresh();
         }
 
         private void toolStripInsertRecord_DropDownClosed(object sender, EventArgs e)
@@ -368,10 +368,7 @@ namespace TESVSnip.ObjectControls
                 subrecords.RemoveAt(idx);
                 subrecords.Insert(idx - 1, sr);
 
-                listSubrecord.ClearSelection();
-                listSubrecord.SelectItem(idx - 1);
-                listSubrecord.FocusItem(idx - 1);
-                listSubrecord.EnsureVisible(idx - 1);
+                SelectIndex(idx - 1);
 
                 Selection.SubRecord = GetSelectedSubrecord();
                 rec.MatchRecordStructureToRecord(SubRecords.ToArray());
@@ -390,13 +387,7 @@ namespace TESVSnip.ObjectControls
             SubRecord sr = subrecords[idx];
             subrecords.RemoveAt(idx);
             subrecords.Insert(idx + 1, sr);
-
-            listSubrecord.ClearSelection();
-            listSubrecord.SelectItem(idx + 1);
-            listSubrecord.FocusItem(idx + 1);
-            listSubrecord.EnsureVisible(idx + 1);
-
-
+            SelectIndex(idx+1);
             Selection.SubRecord = GetSelectedSubrecord();
             rec.MatchRecordStructureToRecord(SubRecords.ToArray());
             FireDataChanged();

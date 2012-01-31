@@ -56,6 +56,7 @@ namespace TESVSnip
             if (sr == null)
                 throw new TESParserException("Record to add was not of the correct type." +
                                              Environment.NewLine + "Records can only hold Subrecords.");
+            sr.Parent = this;
             SubRecords.Add(sr);
         }
 
@@ -65,6 +66,7 @@ namespace TESVSnip
             if (sr == null)
                 throw new TESParserException("Record to add was not of the correct type." +
                                              Environment.NewLine + "Records can only hold Subrecords.");
+            sr.Parent = this;
             SubRecords.Insert(idx, sr);
         }
 
@@ -175,6 +177,15 @@ namespace TESVSnip
                 sr.Parent = this;
         }
 
+        public Plugin GetPlugin()
+        {
+            BaseRecord tn = this.Parent;
+            while (!(tn is Plugin) && tn != null) tn = tn.Parent;
+            if (tn != null) return tn as Plugin;
+            return null;
+        }
+
+
         public override BaseRecord Clone()
         {
             return new Record(this);
@@ -271,7 +282,7 @@ namespace TESVSnip
             return "[Record]" + Environment.NewLine + GetBaseDesc();
         }
 
-        public override void GetFormattedHeader(RTFBuilder rb, SelectionContext context)
+        public override void GetFormattedHeader(RTFBuilder rb)
         {
             rb.FontStyle(FontStyle.Bold).FontSize(rb.DefaultFontSize + 4).ForeColor(KnownColor.DarkGray).AppendLine(
                 "[Record]");
@@ -290,7 +301,7 @@ namespace TESVSnip
             rb.AppendPara();
         }
 
-        public override void GetFormattedData(RTFBuilder rb, SelectionContext context)
+        public override void GetFormattedData(RTFBuilder rb)
         {
             try
             {
@@ -298,8 +309,6 @@ namespace TESVSnip
                     "[Formatted information]");
                 rb.Reset();
 
-                context = context.Clone();
-                context.Record = this;
                 RecordStructure rec;
                 if (!RecordStructure.Records.TryGetValue(Name, out rec))
                     return;
@@ -309,9 +318,8 @@ namespace TESVSnip
                 {
                     if (subrec.Structure == null || subrec.Structure.elements == null || subrec.Structure.notininfo)
                         continue;
-                    context.SubRecord = subrec;
                     rb.AppendLine();
-                    subrec.GetFormattedData(rb, context);
+                    subrec.GetFormattedData(rb);
                 }
             }
             catch
@@ -361,10 +369,8 @@ namespace TESVSnip
                         return s.ToString();
                     if (subrec.Structure.notininfo)
                         continue;
-
-                    context.SubRecord = subrec;
                     s.AppendLine();
-                    s.Append(subrec.GetFormattedData(context));
+                    s.Append(subrec.GetFormattedData());
                 }
                 return s.ToString();
             }
@@ -716,5 +722,22 @@ namespace TESVSnip
         }
 
         #endregion
+
+
+        /// <summary>
+        /// Generate hyperlink for a given identifier of form [plugin]@[type]:[recid]
+        /// </summary>
+        /// <param name="value"></param>
+        /// <returns></returns>
+        public string GetLink()
+        {
+            var p = GetPlugin();
+            //uint pidx = value >> 24;
+            if (p != null)
+            {
+                return string.Format("{0}@{1}:{2:X8}", p.Name, this.Name, this.FormID);
+            }
+            return string.Format("{0}:{1:X8}", this.Name, this.FormID);
+        }
     }
 }

@@ -55,7 +55,7 @@ namespace TESVSnip
                         break;
                     case ElementValueType.Byte:
                         len = maxlen >= sizeof (byte) ? sizeof (byte) : maxlen;
-                        elem = new Element(es, ElementValueType.SByte, new ArraySegment<byte>(data, offset, len));
+                        elem = new Element(es, ElementValueType.Byte, new ArraySegment<byte>(data, offset, len));
                         offset += len;
                         break;
                     case ElementValueType.String:

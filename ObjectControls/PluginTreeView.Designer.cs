@@ -50,6 +50,7 @@
             this.toolStripMenuItem5 = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripMenuItem6 = new System.Windows.Forms.ToolStripMenuItem();
             this.PluginTree = new TESVSnip.Controls.CustomTreeView();
+            this.reportToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripRecord.SuspendLayout();
             this.contextMenuRecord.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.PluginTree)).BeginInit();
@@ -72,6 +73,7 @@
             this.toolStripRecordText});
             resources.ApplyResources(this.toolStripRecord, "toolStripRecord");
             this.toolStripRecord.Name = "toolStripRecord";
+            this.toolStripRecord.TabStop = true;
             // 
             // toolStripRecordBack
             // 
@@ -115,6 +117,7 @@
             this.contextMenuRecord.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.contextMenuRecordAddMaster,
             this.contextMenuRecordEdit,
+            this.reportToolStripMenuItem,
             this.contextMenuRecordCopy,
             this.contextMenuRecordCopyTo,
             this.contextMenuRecordDelete,
@@ -226,6 +229,8 @@
             this.PluginTree.UnfocusedHighlightBackgroundColor = System.Drawing.SystemColors.Highlight;
             this.PluginTree.UnfocusedHighlightForegroundColor = System.Drawing.SystemColors.HighlightText;
             this.PluginTree.UseCompatibleStateImageBehavior = false;
+            this.PluginTree.UseCustomSelectionColors = true;
+            this.PluginTree.UseExplorerTheme = true;
             this.PluginTree.UseFiltering = true;
             this.PluginTree.UseHotItem = true;
             this.PluginTree.View = System.Windows.Forms.View.Details;
@@ -238,6 +243,12 @@
             this.PluginTree.Enter += new System.EventHandler(this.PluginTree_Enter);
             this.PluginTree.KeyDown += new System.Windows.Forms.KeyEventHandler(this.PluginTree_KeyDown);
             this.PluginTree.MouseDoubleClick += new System.Windows.Forms.MouseEventHandler(this.PluginTree_MouseDoubleClick);
+            // 
+            // reportToolStripMenuItem
+            // 
+            this.reportToolStripMenuItem.Name = "reportToolStripMenuItem";
+            resources.ApplyResources(this.reportToolStripMenuItem, "reportToolStripMenuItem");
+            this.reportToolStripMenuItem.Click += new System.EventHandler(this.reportToolStripMenuItem_Click);
             // 
             // PluginTreeView
             // 
@@ -277,5 +288,6 @@
         private System.Windows.Forms.ToolStripMenuItem toolStripMenuItem6;
         private System.Windows.Forms.ImageList imageSmallTreeList;
         private System.Windows.Forms.ToolStripMenuItem contextMenuRecordEdit;
+        private System.Windows.Forms.ToolStripMenuItem reportToolStripMenuItem;
     }
 }

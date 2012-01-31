@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Runtime.Serialization;
 using TESVSnip.Data;
 
@@ -12,7 +13,7 @@ namespace TESVSnip
     [Persistable(Flags = PersistType.DeclaredOnly), Serializable]
     public sealed class GroupRecord : Rec, IDeserializationCallback, IGroupRecord
     {
-        [Persistable] private readonly List<Rec> records = new List<Rec>();
+        [Persistable] private readonly List<Rec> records = new List<Rec>(1);
 
         public override IList Records
         {
@@ -212,15 +213,18 @@ namespace TESVSnip
             UpdateShortDescription();
         }
 
-        private GroupRecord(GroupRecord gr)
+        private GroupRecord(GroupRecord gr, bool recursive)
         {
             Name = "GRUP";
             data = (byte[]) gr.data.Clone();
             groupType = gr.groupType;
             dateStamp = gr.dateStamp;
             flags = gr.flags;
-            records = new List<Rec>(gr.records.Count);
-            for (int i = 0; i < gr.records.Count; i++) AddRecord(gr.records[i].Clone());
+            if (recursive)
+            {
+                records = new List<Rec>(gr.records.Count);
+                for (int i = 0; i < gr.records.Count; i++) AddRecord(gr.records[i].Clone());                
+            }
             Name = gr.Name;
             UpdateShortDescription();
         }
@@ -329,7 +333,7 @@ namespace TESVSnip
 
         public override BaseRecord Clone()
         {
-            return new GroupRecord(this);
+            return new GroupRecord(this, recursive: true);
         }
 
         public byte[] GetData()
@@ -371,6 +375,11 @@ namespace TESVSnip
             }
         }
 
+        public uint GroupType
+        {
+            get { return this.groupType; }
+        }
+
         #region IDeserializationCallback Members
 
         void IDeserializationCallback.OnDeserialization(object sender)
@@ -380,5 +389,25 @@ namespace TESVSnip
         }
 
         #endregion
+
+        public override BaseRecord Clone(bool recursive)
+        {
+            return new GroupRecord(this, recursive);
+        }
+
+        public bool IsEquivalent(GroupRecord other)
+        {
+            return this.GroupType == other.GroupType && ByteArrayCompare(this.GetReadonlyData(), other.GetReadonlyData());
+        }
+
+        [DllImport("msvcrt.dll")]
+        private static extern int memcmp(byte[] b1, byte[] b2, long count);
+        private static bool ByteArrayCompare(byte[] b1, byte[] b2)
+        {
+            // Validate buffers are the same length.
+            // This also ensures that the count does not exceed the length of either buffer.  
+            return b1.Length == b2.Length && memcmp(b1, b2, b1.Length) == 0;
+        }
+
     }
 }

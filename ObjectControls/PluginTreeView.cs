@@ -362,7 +362,7 @@ namespace TESVSnip.ObjectControls
                         continue;
 
                     var tsi = new ToolStripButton(plugin.Name);
-                    tsi.Tag = new object[] {records.ToArray(), plugin};
+                    tsi.Tag = new object[] { srcRecord, plugin };
                     var sz = TextRenderer.MeasureText(plugin.Name, contextMenuRecordCopyTo.Font);
                     if (sz.Width > tsi.Width)
                         tsi.Width = sz.Width;
@@ -383,39 +383,73 @@ namespace TESVSnip.ObjectControls
                     var src = nodes[0] as BaseRecord[];
                     var dst = nodes[1] as IGroupRecord;
                     if (src != null && dst != null)
-                    {
-                        var dstRec = src.Select(x => x.Clone()).ToArray();
-
-                        if (dst is Plugin && dstRec.All(x => x is Record))
+                    {                       
+                        if (dst is Plugin)
                         {
-                            var looseGroups = new[] {"CELL", "WRLD", "REFR", "ACRE", "ACHR", "NAVM", "DIAL", "INFO"};
-
-                            // put records into appropriate groups
-                            var groups = dst.Records.OfType<GroupRecord>();
-                            var lookup =
-                                (from r in dstRec group r by r.Name into g select new {key = g.Key, value = g.ToArray()})
-                                    .ToLookup(k => k.key, v => v.value);
-                            foreach (var kvp in lookup)
+                            var looseGroups = new[] { "CELL", "WRLD", "REFR", "ACRE", "ACHR", "NAVM", "DIAL", "INFO" };
+                            var dstRec = src.Where(x => !looseGroups.Contains(x.Name)).Select(x => x.Clone()).ToArray();
+                            if ( dstRec.All(x => x is Record) )
                             {
-                                if (looseGroups.Contains(kvp.Key))
+                                // put records into appropriate groups
+                                var groups = dst.Records.OfType<GroupRecord>();
+                                var lookup =
+                                    (from r in dstRec
+                                     group r by r.Name
+                                     into g select new {key = g.Key, value = g.ToArray()})
+                                        .ToLookup(k => k.key, v => v.value);
+                                foreach (var kvp in lookup)
                                 {
-                                    dst.AddRecords(dstRec);
-                                }
-                                else
-                                {
-                                    var gr = groups.FirstOrDefault(x => x.ContentsType == kvp.Key);
-                                    if (gr == null)
+                                    if (looseGroups.Contains(kvp.Key))
                                     {
-                                        gr = new GroupRecord(kvp.Key);
-                                        dst.AddRecord(gr);
+
+                                        dst.AddRecords(dstRec);
                                     }
-                                    foreach (var list in kvp)
-                                        gr.AddRecords(list);
+                                    else
+                                    {
+                                        var gr = groups.FirstOrDefault(x => x.ContentsType == kvp.Key);
+                                        if (gr == null)
+                                        {
+                                            gr = new GroupRecord(kvp.Key);
+                                            dst.AddRecord(gr);
+                                        }
+                                        foreach (var list in kvp)
+                                            gr.AddRecords(list);
+                                    }
+                                }
+                            }
+                            else
+                            {
+                                dst.AddRecords(dstRec);
+                            }
+                            // handle loose groups by creating copy of parent groups
+                            foreach (var srcRec in src.Where(x => looseGroups.Contains(x.Name)))
+                            {
+                                var dstnodes = new Stack<BaseRecord>();
+                                dstnodes.Push(srcRec.Clone(recursive: true));
+                                for (var n = srcRec.Parent; n is GroupRecord; n = n.Parent)
+                                    dstnodes.Push(n.Clone(recursive: false));
+                                var par = dst as IGroupRecord;
+                                foreach (var baseRecord in dstnodes)
+                                {
+                                    if (par == null) break;
+                                    if (baseRecord is GroupRecord)
+                                    {
+                                        var gr = baseRecord as GroupRecord;
+                                        var pargr = par.Records.OfType<GroupRecord>().FirstOrDefault(x => x.IsEquivalent(gr));
+                                        if (pargr != null)
+                                        {
+                                            par = pargr;
+                                            continue;
+                                        }
+                                    }
+                                    par.AddRecord(baseRecord);
+                                    par = baseRecord as IGroupRecord;
                                 }
                             }
                         }
                         else
                         {
+                            var dstRec = src.Select(x => x.Clone()).ToArray();
                             dst.AddRecords(dstRec);
                         }
                     }
@@ -449,16 +483,16 @@ namespace TESVSnip.ObjectControls
 
         private void contextMenuRecordDelete_Click(object sender, EventArgs e)
         {
-            if (DialogResult.Yes ==
-                MessageBox.Show(Resources.AreYouSureInquiry, Resources.DeleteNode, MessageBoxButtons.YesNo,
-                                MessageBoxIcon.Question, MessageBoxDefaultButton.Button2))
-            {
-                DeleteSelection();
-            }
+            DeleteSelection();
         }
 
         public void DeleteSelection()
         {
+            if (DialogResult.Yes !=
+                MessageBox.Show(Resources.AreYouSureInquiry, Resources.DeleteNode, MessageBoxButtons.YesNo,
+                                MessageBoxIcon.Question, MessageBoxDefaultButton.Button1))
+                return;
+
             foreach (var node in PluginTree.SelectedRecords)
             {
                 GetPluginFromNode(node).InvalidateCache();
@@ -729,10 +763,11 @@ namespace TESVSnip.ObjectControls
 
         private void BaseRecord_ChildListChanged(object sender, RecordChangeEventArgs e)
         {
-            if (e.Record == null) // use null record as hint to reset the roots
+            if (e.Record == null || e.Record == PluginList.All) // use null record as hint to reset the roots
             {
                 UpdateRoots();
                 //PluginTree.RebuildAll(true);
+                GC.Collect(); // clean up memory after releasing plugins
             }
             else
             {
@@ -821,7 +856,11 @@ namespace TESVSnip.ObjectControls
 
                 var dockParent = FindDockContent(this);
                 if (dockParent != null)
-                    form.Show(dockParent.DockHandler.DockPanel);
+                {
+                    var sz = form.Size;
+                    form.Show(dockParent.DockHandler.DockPanel, DockState.Float);
+                    form.Pane.FloatWindow.Size = sz;
+                }
                 else
                     form.Show(this);
             }
@@ -838,10 +877,74 @@ namespace TESVSnip.ObjectControls
 
         private void PluginTree_KeyDown(object sender, KeyEventArgs e)
         {
-            if (!e.Control && !e.Alt && !e.Shift && e.KeyCode == Keys.Delete)
+            if (!e.Control && !e.Alt && !e.Shift)
             {
-                DeleteSelection();
+                switch (e.KeyCode)
+                {
+                    case Keys.Delete:
+                        DeleteSelection();
+                        break;
+                    case Keys.Divide:
+                        CollapseAll();
+                        break;
+                    case Keys.Multiply:
+                        ExpandAll();
+                        break;
+                    case Keys.Add:
+                        foreach ( var item in PluginTree.SelectedRecords )
+                            this.PluginTree.Expand(item);
+                        break;
+                    case Keys.Subtract:
+                        foreach (var item in PluginTree.SelectedRecords)
+                            this.PluginTree.Collapse(item);
+                        break;
+                }                
             }
+            else if (e.Shift && !e.Control && !e.Alt)
+            {
+                switch (e.KeyCode)
+                {
+                    case Keys.Divide:
+                        foreach (var item in PluginTree.SelectedRecords)
+                            CollapseAll(item);
+                        break;
+                    case Keys.Multiply:
+                        foreach (var item in PluginTree.SelectedRecords)
+                            ExpandAll(item);
+                        break;
+                    case Keys.Add:
+                        foreach (var item in PluginTree.SelectedRecords)
+                            this.PluginTree.Expand(item);
+                        break;
+                    case Keys.Subtract:
+                        foreach (var item in PluginTree.SelectedRecords)
+                            this.PluginTree.Collapse(item);
+                        break;
+                }
+            }
+        }
+
+        private void reportToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            var selRecord = PluginTree.SelectedRecord;
+
+            var r = selRecord as Record;
+            var form = new RichTextContent();
+            form.UpdateRecord(selRecord);
+            form.StartPosition = FormStartPosition.CenterScreen;
+
+            var dockParent = FindDockContent(this);
+            if (dockParent != null)
+            {
+                var sz = form.Size;
+                form.Show(dockParent.DockHandler.DockPanel, DockState.Float);
+                form.Pane.FloatWindow.Size = sz;
+            }
+            else
+            {
+                form.Show(this);
+            }
+
         }
     }
 }

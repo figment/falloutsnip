@@ -847,5 +847,5 @@ namespace TESVSnip
         }
 
         #endregion
-    }
+   }
 }

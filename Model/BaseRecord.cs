@@ -52,16 +52,16 @@ namespace TESVSnip
 
         public abstract string GetDesc();
 
-        public virtual void GetFormattedHeader(RTFBuilder rb, SelectionContext context)
+        public virtual void GetFormattedHeader(RTFBuilder rb)
         {
         }
 
-        public virtual void GetFormattedData(RTFBuilder rb, SelectionContext context)
+        public virtual void GetFormattedData(RTFBuilder rb)
         {
             rb.Append(GetDesc());
         }
 
-        public virtual void GetFormattedData(StringBuilder sb, SelectionContext context)
+        public virtual void GetFormattedData(StringBuilder sb)
         {
             sb.Append(GetDesc());
         }
@@ -140,9 +140,11 @@ namespace TESVSnip
 
         public abstract BaseRecord Clone();
 
+        public virtual BaseRecord Clone(bool recursive) { return Clone(); }
+
         object ICloneable.Clone()
         {
-            return Clone();
+            return Clone(recursive: true);
         }
 
         public override string ToString()

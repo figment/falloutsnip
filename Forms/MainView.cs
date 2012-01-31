@@ -61,6 +61,7 @@ namespace TESVSnip
             InitializeComponent();
             InitializeToolStripFind();
             InitializeDockingWindows();
+            RegisterMessageFilter();
 
             PluginTree.SelectionChanged += (o, e) => RebuildSelection();
 
@@ -649,6 +650,9 @@ namespace TESVSnip
                 MessageBox.Show(Resources.NoPluginSelectedToSave, Resources.ErrorText);
                 return;
             }
+            if (MessageBox.Show(Resources.CloseActivePluginInquiry, Resources.WarningText, MessageBoxButtons.YesNo) !=
+                DialogResult.Yes) return;
+
             var p = GetPluginFromNode(PluginTree.SelectedRecord);
             PluginList.All.DeleteRecord(p);
             UpdateStringEditor();
@@ -1072,9 +1076,8 @@ namespace TESVSnip
                     defLang = new FontLangInfo(1252, 1033, 0);
 
                 var rb = new RTFBuilder(RTFFont.Arial, 16, defLang.lcid, defLang.charset);
-                var sc = GetSelectedContext();
-                rec.GetFormattedHeader(rb, sc);
-                rec.GetFormattedData(rb, sc);
+                rec.GetFormattedHeader(rb);
+                rec.GetFormattedData(rb);
                 SelectedText.Rtf = rb.ToString();
             }
         }
@@ -1087,7 +1090,7 @@ namespace TESVSnip
 
         private static readonly Regex linkRegex =
             new Regex(
-                "^(?:(?<text>[^#]*)#)?(?<type>[0-z][A-Z][A-Z][A-Z_]):(?<id>[0-9a-zA-Z]+)$"
+                "^(?:(?<text>[^#]*)#)?(?:(?<plugin>[^\\/:*?\"<>|@]*)@)?(?<type>[0-z][A-Z][A-Z][A-Z_]):(?<id>[0-9a-zA-Z]+)$"
                 , RegexOptions.None);
 
         private void rtfInfo_LinkClicked(object sender, LinkClickedEventArgs e)
@@ -1097,7 +1100,11 @@ namespace TESVSnip
                 var m = linkRegex.Match(e.LinkText);
                 if (m.Success)
                 {
-                    var n = PluginTree.SelectedRecord ?? PluginTree.TopRecord;
+                    BaseRecord startNode = null;
+                    var pluginName = m.Groups["plugin"].Value;
+                    if (!string.IsNullOrEmpty(pluginName))
+                        startNode = PluginList.All.Records.OfType<BaseRecord>().FirstOrDefault(x => x.Name == pluginName);
+                    startNode = startNode ?? PluginTree.SelectedRecord ?? PluginTree.TopRecord;
 
                     // Search current plugin and then wrap around.  
                     //   Should do it based on master plugin list first.
@@ -1106,7 +1113,7 @@ namespace TESVSnip
                     searchContext.rectype = type == "XXXX" ? null : type;
                     searchContext.text = m.Groups["id"].Value;
                     searchContext.type = SearchType.FormID;
-                    searchContext.startNode = n;
+                    searchContext.startNode = startNode;
                     searchContext.wrapAround = true;
                     searchContext.partial = false;
                     searchContext.forward = true;
@@ -1372,6 +1379,8 @@ namespace TESVSnip
             //    delegate(Content c, CancelEventArgs cea) { cea.Cancel = true; };
             //dockingManagerExtender.DockingManager.ShowAllContents();
             ShowDockingWindows();
+            toolStripIncrFind.Visible = false;
+            toolStripIncrInvalidRec.Visible = false;
 
             if (!DesignMode)
             {
@@ -1586,6 +1595,131 @@ namespace TESVSnip
             pluginTreeContent.DockPanel = null;
             subrecordListContent.DockPanel = null;
         }
+
+
+        private void RegisterMessageFilter()
+        {
+            // Register message filter.
+            try
+            {
+                var msgFilter = new MainViewMessageFilter(this);
+                Application.AddMessageFilter(msgFilter);
+            }
+            catch
+            {
+
+            }            
+        }
+
+        #region Key Intercept Hack so Del does not override text box in find
+        public class MainViewMessageFilter : IMessageFilter
+        {
+            public const int WM_CHAR = 0x102;
+            public const int WM_KEYDOWN = 0x100;
+            public const int WM_KEYUP = 0x101;
+
+
+            private readonly MainView owner = null;
+
+            public MainViewMessageFilter(MainView owner)
+            {
+                this.owner = owner;
+            }
+
+            public bool PreFilterMessage(ref Message m)
+            {
+                try { return this.owner.PreFilterMessage(ref m); }
+                catch { }
+                return true;
+            }
+            [System.Runtime.InteropServices.DllImport("user32.dll")]
+            public static extern ushort GetKeyState(VirtualKeyStates nVirtKey);
+
+            [System.Runtime.InteropServices.DllImport("user32.dll")]
+            public static extern ushort GetAsyncKeyState(VirtualKeyStates nVirtKey);
+
+            internal enum VirtualKeyStates : int
+            {
+                VK_LBUTTON = 0x01,
+                VK_RBUTTON = 0x02,
+                VK_CANCEL = 0x03,
+                VK_MBUTTON = 0x04,
+                VK_LSHIFT = 0xA0,
+                VK_RSHIFT = 0xA1,
+                VK_LCONTROL = 0xA2,
+                VK_RCONTROL = 0xA3,
+                VK_LMENU = 0xA4,
+                VK_RMENU = 0xA5,
+                VK_LEFT = 0x25,
+                VK_UP = 0x26,
+                VK_RIGHT = 0x27,
+                VK_DOWN = 0x28,
+                VK_SHIFT = 0x10,
+                VK_CONTROL = 0x11,
+                VK_MENU = 0x12,
+            }
+            const ushort KEY_PRESSED = 0x8000;
+
+            public static bool IsControlDown()
+            {
+                return 1 == GetKeyState(VirtualKeyStates.VK_CONTROL);
+            }
+            public static bool IsAltDown()
+            {
+                return 1 == GetKeyState(VirtualKeyStates.VK_MENU);
+            }
+            public static bool IsShiftDown()
+            {
+                return 1 == GetKeyState(VirtualKeyStates.VK_SHIFT);
+            }
+        }
+
+        internal bool PreFilterMessage(ref Message m)
+        {
+            // Intercept the left mouse button down message.
+            if (m.Msg == MainViewMessageFilter.WM_KEYDOWN)
+            {
+                if (m.WParam == new IntPtr((int)Keys.F6))
+                {
+                    var current = this.dockPanel.ActiveContent;
+                    if (current != null)
+                    {
+                        var next = current.DockHandler.NextActive;
+                        if (next != null)
+                        {
+                            next.DockHandler.Activate();
+                            return true;
+                        }
+                    }
+
+
+                    bool forward = !MainViewMessageFilter.IsShiftDown();
+                    var formList = Application.OpenForms.OfType<IDockContent>().ToList();
+                    var first = formList.Where(x =>
+                                                            {
+                                                                var f = x as Control;
+                                                                return f != null && f.ContainsFocus;
+                                                            }).FirstOrDefault();
+                    if (first != null)
+                    {
+                        int idx = formList.IndexOf(first);
+
+                        if (idx >= 0) idx = (++idx % formList.Count);
+                        var c = formList[idx];
+                        if (c != null)
+                        {
+                            c.DockHandler.Activate();
+                        }
+                        else
+                            first.DockHandler.GiveUpFocus();
+                        return true;
+                    }
+                }
+            }
+            return false;
+        }
+        #endregion
+
         #endregion
 
     }

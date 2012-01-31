@@ -68,6 +68,7 @@ namespace TESVSnip.ObjectControls
             this.toolStripSeparator7,
             this.toolStripIncrFindStatus});
             this.toolStripIncrFind.Name = "toolStripIncrFind";
+            this.toolStripIncrFind.TabStop = true;
             // 
             // toolStripSearchLabel
             // 

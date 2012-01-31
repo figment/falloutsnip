@@ -193,8 +193,18 @@ namespace TESVSnip.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to This will close the active plugin, and you will lose any unsaved changes.
+        ///Are you sure you wish to continue?.
+        /// </summary>
+        internal static string CloseActivePluginInquiry {
+            get {
+                return ResourceManager.GetString("CloseActivePluginInquiry", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to This will close all open plugins, and you will lose any unsaved changes.
-        ///Are you sure you wish to continue.
+        ///Are you sure you wish to continue?.
         /// </summary>
         internal static string CloseAllLoseChangesInquiry {
             get {

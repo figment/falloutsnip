@@ -218,6 +218,12 @@
   <data name="contextMenuRecordEdit.Text" xml:space="preserve">
     <value>Edit...</value>
   </data>
+  <data name="reportToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
+    <value>162, 22</value>
+  </data>
+  <data name="reportToolStripMenuItem.Text" xml:space="preserve">
+    <value>Report...</value>
+  </data>
   <data name="contextMenuRecordCopy.Size" type="System.Drawing.Size, System.Drawing">
     <value>162, 22</value>
   </data>
@@ -267,7 +273,7 @@
     <value>&amp;Expand/Collapse</value>
   </data>
   <data name="contextMenuRecord.Size" type="System.Drawing.Size, System.Drawing">
-    <value>163, 136</value>
+    <value>163, 180</value>
   </data>
   <data name="&gt;&gt;contextMenuRecord.Name" xml:space="preserve">
     <value>contextMenuRecord</value>
@@ -295,7 +301,7 @@
     <value>PluginTree</value>
   </data>
   <data name="&gt;&gt;PluginTree.Type" xml:space="preserve">
-    <value>TESVSnip.Controls.CustomTreeView, TESVSnip, Version=3.2.4406.0, Culture=neutral, PublicKeyToken=null</value>
+    <value>TESVSnip.Controls.CustomTreeView, TESVSnip, Version=3.7.4411.1, Culture=neutral, PublicKeyToken=null</value>
   </data>
   <data name="&gt;&gt;PluginTree.Parent" xml:space="preserve">
     <value>$this</value>
@@ -412,6 +418,12 @@
     <value>toolStripMenuItem6</value>
   </data>
   <data name="&gt;&gt;toolStripMenuItem6.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;reportToolStripMenuItem.Name" xml:space="preserve">
+    <value>reportToolStripMenuItem</value>
+  </data>
+  <data name="&gt;&gt;reportToolStripMenuItem.Type" xml:space="preserve">
     <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="&gt;&gt;$this.Name" xml:space="preserve">

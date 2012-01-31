@@ -702,6 +702,7 @@ namespace TESVSnip {
             this.toolStripSeparator7,
             this.toolStripIncrFindStatus});
             this.toolStripIncrFind.Name = "toolStripIncrFind";
+            this.toolStripIncrFind.TabStop = true;
             this.toolStripIncrFind.VisibleChanged += new System.EventHandler(this.toolStripIncrFind_VisibleChanged);
             // 
             // toolStripIncrFindCancel
@@ -819,6 +820,7 @@ namespace TESVSnip {
             this.toolStripSeparator5,
             this.toolStripIncrInvalidRecStatus});
             this.toolStripIncrInvalidRec.Name = "toolStripIncrInvalidRec";
+            this.toolStripIncrInvalidRec.TabStop = true;
             this.toolStripIncrInvalidRec.ItemClicked += new System.Windows.Forms.ToolStripItemClickedEventHandler(this.toolStripIncrInvalidRec_ItemClicked);
             this.toolStripIncrInvalidRec.VisibleChanged += new System.EventHandler(this.toolStripIncrInvalidRec_VisibleChanged);
             // 
@@ -948,10 +950,10 @@ namespace TESVSnip {
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
             resources.ApplyResources(this, "$this");
             this.Controls.Add(this.dockPanel);
-            this.Controls.Add(this.menuStrip1);
             this.Controls.Add(this.toolStripIncrFind);
             this.Controls.Add(this.toolStripIncrInvalidRec);
             this.Controls.Add(this.statusStrip1);
+            this.Controls.Add(this.menuStrip1);
             this.IsMdiContainer = true;
             this.MainMenuStrip = this.menuStrip1;
             this.Name = "MainView";

@@ -136,7 +136,7 @@
     <value>listSubrecord</value>
   </data>
   <data name="&gt;&gt;listSubrecord.Type" xml:space="preserve">
-    <value>TESVSnip.Windows.Controls.ObjectBindingListView, TESVSnip, Version=3.2.4406.0, Culture=neutral, PublicKeyToken=null</value>
+    <value>TESVSnip.Windows.Controls.ObjectBindingListView, TESVSnip, Version=3.6.4410.1, Culture=neutral, PublicKeyToken=null</value>
   </data>
   <data name="&gt;&gt;listSubrecord.Parent" xml:space="preserve">
     <value>subrecordPanel</value>
@@ -147,54 +147,6 @@
   <metadata name="toolStripSubRecord.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
     <value>17, 17</value>
   </metadata>
-  <data name="toolStripSubRecord.Location" type="System.Drawing.Point, System.Drawing">
-    <value>0, 0</value>
-  </data>
-  <data name="toolStripSubRecord.Padding" type="System.Windows.Forms.Padding, System.Windows.Forms">
-    <value>0, 0, 10, 0</value>
-  </data>
-  <data name="toolStripSubRecord.Size" type="System.Drawing.Size, System.Drawing">
-    <value>230, 25</value>
-  </data>
-  <data name="toolStripSubRecord.TabIndex" type="System.Int32, mscorlib">
-    <value>1</value>
-  </data>
-  <data name="&gt;&gt;toolStripSubRecord.Name" xml:space="preserve">
-    <value>toolStripSubRecord</value>
-  </data>
-  <data name="&gt;&gt;toolStripSubRecord.Type" xml:space="preserve">
-    <value>System.Windows.Forms.ToolStrip, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;toolStripSubRecord.Parent" xml:space="preserve">
-    <value>subrecordPanel</value>
-  </data>
-  <data name="&gt;&gt;toolStripSubRecord.ZOrder" xml:space="preserve">
-    <value>1</value>
-  </data>
-  <data name="subrecordPanel.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
-    <value>Fill</value>
-  </data>
-  <data name="subrecordPanel.Location" type="System.Drawing.Point, System.Drawing">
-    <value>0, 0</value>
-  </data>
-  <data name="subrecordPanel.Size" type="System.Drawing.Size, System.Drawing">
-    <value>230, 257</value>
-  </data>
-  <data name="subrecordPanel.TabIndex" type="System.Int32, mscorlib">
-    <value>7</value>
-  </data>
-  <data name="&gt;&gt;subrecordPanel.Name" xml:space="preserve">
-    <value>subrecordPanel</value>
-  </data>
-  <data name="&gt;&gt;subrecordPanel.Type" xml:space="preserve">
-    <value>System.Windows.Forms.Panel, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;subrecordPanel.Parent" xml:space="preserve">
-    <value>$this</value>
-  </data>
-  <data name="&gt;&gt;subrecordPanel.ZOrder" xml:space="preserve">
-    <value>0</value>
-  </data>
   <data name="toolStripInsertRecord.ImageTransparentColor" type="System.Drawing.Color, System.Drawing">
     <value>Magenta</value>
   </data>
@@ -275,6 +227,54 @@
   </data>
   <data name="toolStripSeparator2.Size" type="System.Drawing.Size, System.Drawing">
     <value>6, 25</value>
+  </data>
+  <data name="toolStripSubRecord.Location" type="System.Drawing.Point, System.Drawing">
+    <value>0, 0</value>
+  </data>
+  <data name="toolStripSubRecord.Padding" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>0, 0, 10, 0</value>
+  </data>
+  <data name="toolStripSubRecord.Size" type="System.Drawing.Size, System.Drawing">
+    <value>230, 25</value>
+  </data>
+  <data name="toolStripSubRecord.TabIndex" type="System.Int32, mscorlib">
+    <value>1</value>
+  </data>
+  <data name="&gt;&gt;toolStripSubRecord.Name" xml:space="preserve">
+    <value>toolStripSubRecord</value>
+  </data>
+  <data name="&gt;&gt;toolStripSubRecord.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ToolStrip, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;toolStripSubRecord.Parent" xml:space="preserve">
+    <value>subrecordPanel</value>
+  </data>
+  <data name="&gt;&gt;toolStripSubRecord.ZOrder" xml:space="preserve">
+    <value>1</value>
+  </data>
+  <data name="subrecordPanel.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
+    <value>Fill</value>
+  </data>
+  <data name="subrecordPanel.Location" type="System.Drawing.Point, System.Drawing">
+    <value>0, 0</value>
+  </data>
+  <data name="subrecordPanel.Size" type="System.Drawing.Size, System.Drawing">
+    <value>230, 257</value>
+  </data>
+  <data name="subrecordPanel.TabIndex" type="System.Int32, mscorlib">
+    <value>7</value>
+  </data>
+  <data name="&gt;&gt;subrecordPanel.Name" xml:space="preserve">
+    <value>subrecordPanel</value>
+  </data>
+  <data name="&gt;&gt;subrecordPanel.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Panel, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;subrecordPanel.Parent" xml:space="preserve">
+    <value>$this</value>
+  </data>
+  <data name="&gt;&gt;subrecordPanel.ZOrder" xml:space="preserve">
+    <value>0</value>
   </data>
   <metadata name="$this.Localizable" type="System.Boolean, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
     <value>True</value>

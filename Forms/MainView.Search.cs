@@ -293,6 +293,7 @@ namespace TESVSnip
                         break;
                     itr.Push(PluginList.All.Records[0] as BaseRecord);
                     itr.Reset();
+                    wrapAround = false;// multipass protection
                 } while (itr.MoveNext());
             }
             return null;

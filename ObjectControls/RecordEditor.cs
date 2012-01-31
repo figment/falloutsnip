@@ -158,7 +158,7 @@ namespace TESVSnip.Forms
             _record.UpdateShortDescription();
             _record.SubRecords.Clear();
             elementEditor.Save();
-            _record.SubRecords.AddRange(subrecordListEditor.SubRecords);
+            _record.AddRecords(subrecordListEditor.SubRecords.OfType<BaseRecord>());
         }
 
         private void comboBox1_ItemCheck(object sender, ItemCheckEventArgs e)
