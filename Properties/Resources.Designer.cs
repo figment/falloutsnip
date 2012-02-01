@@ -219,6 +219,13 @@ namespace TESVSnip.Properties {
             }
         }
         
+        internal static System.Drawing.Bitmap configure_toolbars {
+            get {
+                object obj = ResourceManager.GetObject("configure_toolbars", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
         internal static System.Drawing.Bitmap Copy {
             get {
                 object obj = ResourceManager.GetObject("Copy", resourceCulture);
@@ -279,9 +286,23 @@ namespace TESVSnip.Properties {
             }
         }
         
+        internal static System.Drawing.Bitmap Edit_UndoHS {
+            get {
+                object obj = ResourceManager.GetObject("Edit_UndoHS", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
         internal static System.Drawing.Bitmap editclear {
             get {
                 object obj = ResourceManager.GetObject("editclear", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        internal static System.Drawing.Bitmap EditTable {
+            get {
+                object obj = ResourceManager.GetObject("EditTable", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -522,6 +543,20 @@ namespace TESVSnip.Properties {
         internal static System.Drawing.Bitmap reload_all_tabs {
             get {
                 object obj = ResourceManager.GetObject("reload_all_tabs", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        internal static System.Drawing.Bitmap Revert {
+            get {
+                object obj = ResourceManager.GetObject("Revert", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        internal static System.Drawing.Bitmap RolledBack {
+            get {
+                object obj = ResourceManager.GetObject("RolledBack", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }

@@ -35,10 +35,13 @@ namespace TESVSnip.ObjectControls
             this.toolStripIncrFind = new System.Windows.Forms.ToolStrip();
             this.toolStripSearchLabel = new System.Windows.Forms.ToolStripLabel();
             this.toolStripIncrFindText = new System.Windows.Forms.ToolStripComboBox();
+            this.toolStripIncrSelectCriteria = new System.Windows.Forms.ToolStripButton();
             this.toolStripIncrFindTypeFilter = new System.Windows.Forms.ToolStripComboBox();
             this.toolStripIncrFindGo = new System.Windows.Forms.ToolStripButton();
             this.toolStripSynchronize = new System.Windows.Forms.ToolStripButton();
             this.toolStripIncrFindCancel = new System.Windows.Forms.ToolStripButton();
+            this.toolStripIncrFindClear = new System.Windows.Forms.ToolStripButton();
+            this.toolStripSelectColumns = new System.Windows.Forms.ToolStripButton();
             this.toolStripIncrFindType = new System.Windows.Forms.ToolStripComboBox();
             this.toolStripIncrFindMatch = new System.Windows.Forms.ToolStripButton();
             this.toolStripIncrFindExact = new System.Windows.Forms.ToolStripButton();
@@ -58,10 +61,13 @@ namespace TESVSnip.ObjectControls
             this.toolStripIncrFind.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.toolStripSearchLabel,
             this.toolStripIncrFindText,
+            this.toolStripIncrSelectCriteria,
             this.toolStripIncrFindTypeFilter,
             this.toolStripIncrFindGo,
             this.toolStripSynchronize,
             this.toolStripIncrFindCancel,
+            this.toolStripIncrFindClear,
+            this.toolStripSelectColumns,
             this.toolStripIncrFindType,
             this.toolStripIncrFindMatch,
             this.toolStripIncrFindExact,
@@ -82,6 +88,13 @@ namespace TESVSnip.ObjectControls
             this.toolStripIncrFindText.Overflow = System.Windows.Forms.ToolStripItemOverflow.Never;
             this.toolStripIncrFindText.KeyDown += new System.Windows.Forms.KeyEventHandler(this.toolStripIncrFindText_KeyDown);
             this.toolStripIncrFindText.TextChanged += new System.EventHandler(this.toolStripIncrFindText_TextChanged);
+            // 
+            // toolStripIncrSelectCriteria
+            // 
+            this.toolStripIncrSelectCriteria.Image = global::TESVSnip.Properties.Resources.configure_toolbars;
+            resources.ApplyResources(this.toolStripIncrSelectCriteria, "toolStripIncrSelectCriteria");
+            this.toolStripIncrSelectCriteria.Name = "toolStripIncrSelectCriteria";
+            this.toolStripIncrSelectCriteria.Click += new System.EventHandler(this.toolStripIncrSelectCriteria_Click);
             // 
             // toolStripIncrFindTypeFilter
             // 
@@ -118,6 +131,22 @@ namespace TESVSnip.ObjectControls
             resources.ApplyResources(this.toolStripIncrFindCancel, "toolStripIncrFindCancel");
             this.toolStripIncrFindCancel.Name = "toolStripIncrFindCancel";
             this.toolStripIncrFindCancel.Click += new System.EventHandler(this.toolStripIncrFindCancel_Click);
+            // 
+            // toolStripIncrFindClear
+            // 
+            this.toolStripIncrFindClear.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.toolStripIncrFindClear.Image = global::TESVSnip.Properties.Resources.RolledBack;
+            resources.ApplyResources(this.toolStripIncrFindClear, "toolStripIncrFindClear");
+            this.toolStripIncrFindClear.Name = "toolStripIncrFindClear";
+            this.toolStripIncrFindClear.Click += new System.EventHandler(this.toolStripIncrFindClear_Click);
+            // 
+            // toolStripSelectColumns
+            // 
+            this.toolStripSelectColumns.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.toolStripSelectColumns.Image = global::TESVSnip.Properties.Resources.EditTable;
+            resources.ApplyResources(this.toolStripSelectColumns, "toolStripSelectColumns");
+            this.toolStripSelectColumns.Name = "toolStripSelectColumns";
+            this.toolStripSelectColumns.Click += new System.EventHandler(this.toolStripSelectColumns_Click);
             // 
             // toolStripIncrFindType
             // 
@@ -223,5 +252,8 @@ namespace TESVSnip.ObjectControls
         private System.Windows.Forms.ToolStripComboBox toolStripIncrFindText;
         private System.Windows.Forms.ToolStripLabel toolStripSearchLabel;
         private System.Windows.Forms.ToolStripButton toolStripSynchronize;
+        private System.Windows.Forms.ToolStripButton toolStripIncrSelectCriteria;
+        private System.Windows.Forms.ToolStripButton toolStripIncrFindClear;
+        private System.Windows.Forms.ToolStripButton toolStripSelectColumns;
     }
 }

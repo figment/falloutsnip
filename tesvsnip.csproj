@@ -86,6 +86,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Collections\AdvancedList.cs" />
+    <Compile Include="Collections\ValueComparer.cs" />
     <Compile Include="Controls\ballontooltip.cs">
       <SubType>Component</SubType>
     </Compile>
@@ -251,6 +252,18 @@
     <Compile Include="Docking\FullRecordEditor.Designer.cs">
       <DependentUpon>FullRecordEditor.cs</DependentUpon>
     </Compile>
+    <Compile Include="Forms\RecordColumnSelect.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\RecordColumnSelect.Designer.cs">
+      <DependentUpon>RecordColumnSelect.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\SearchFilterBasic.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\SearchFilterBasic.Designer.cs">
+      <DependentUpon>SearchFilterBasic.cs</DependentUpon>
+    </Compile>
     <Compile Include="Forms\MediumLevelRecordEditor.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -293,7 +306,14 @@
     <Compile Include="Docking\RecordSearchForm.Designer.cs">
       <DependentUpon>RecordSearchForm.cs</DependentUpon>
     </Compile>
+    <Compile Include="Forms\SearchFilterAdvanced.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\SearchFilterAdvanced.Designer.cs">
+      <DependentUpon>SearchFilterAdvanced.cs</DependentUpon>
+    </Compile>
     <Compile Include="Model\BaseRecord.cs" />
+    <Compile Include="Model\ColumnElement.cs" />
     <Compile Include="Model\Element.cs" />
     <Compile Include="Model\GroupRecord.cs" />
     <Compile Include="Model\IGroupRecord.cs" />
@@ -302,6 +322,7 @@
     <Compile Include="Model\PluginList.cs" />
     <Compile Include="Model\Rec.cs" />
     <Compile Include="Model\Record.cs" />
+    <Compile Include="Model\SearchElement.cs" />
     <Compile Include="Model\SubRecord.cs" />
     <Compile Include="ObjectControls\RecordEditor.cs">
       <SubType>UserControl</SubType>
@@ -427,6 +448,12 @@
     <EmbeddedResource Include="Docking\FullRecordEditor.resx">
       <DependentUpon>FullRecordEditor.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="Forms\RecordColumnSelect.resx">
+      <DependentUpon>RecordColumnSelect.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\SearchFilterBasic.resx">
+      <DependentUpon>SearchFilterBasic.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Forms\MediumLevelRecordEditor.resx">
       <DependentUpon>MediumLevelRecordEditor.cs</DependentUpon>
     </EmbeddedResource>
@@ -446,6 +473,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Docking\RecordSearchForm.resx">
       <DependentUpon>RecordSearchForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\SearchFilterAdvanced.resx">
+      <DependentUpon>SearchFilterAdvanced.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="ObjectControls\RecordEditor.resx">
       <DependentUpon>RecordEditor.cs</DependentUpon>
@@ -674,11 +704,16 @@
     </Content>
     <Content Include="Controls\ObjectListView\CustomDictionary.xml" />
     <Content Include="Resources\clear-filter.png" />
+    <None Include="Resources\configure_toolbars.png" />
+    <None Include="Resources\Edit_UndoHS.bmp" />
+    <None Include="Resources\EditTable.bmp" />
     <Content Include="Resources\filter-icons3.png" />
     <Content Include="Resources\filter.png" />
     <None Include="Resources\search.png" />
     <None Include="Resources\Find.bmp" />
     <None Include="Resources\reload_all_tabs.png" />
+    <None Include="Resources\Revert.png" />
+    <None Include="Resources\RolledBack.bmp" />
     <Content Include="Resources\sort-ascending.png" />
     <Content Include="Resources\sort-descending.png" />
     <None Include="Resources\warning.ico" />

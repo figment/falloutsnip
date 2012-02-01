@@ -9,6 +9,11 @@ Requirements:
   .NET 3.5
 
 Change Log:
+v 3.9
+- Introduce "Basic Search" to the find dialog drop down
+- Add basic ability to select elements to filter on via Basic Search
+- Add limited column customization during search
+  
 v 3.8
 - Fix subrecord parent reference when using Full Record Editor to avoid issues with report
 - Map Numpad-*,/,+,- to ExpandAll, CollapseAll, ExpandSelection, CollapseSelection

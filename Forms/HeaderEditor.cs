@@ -39,7 +39,7 @@ namespace TESVSnip
                     if ((Flags1 & GetInt(c.Tag)) > 0) ((CheckBox) c).Checked = true;
                 }
             }
-            //cb18.Enabled=false; // Allow compression
+            //cb18.Checked=false; // Allow compression
         }
 
         public static DialogResult Display(Record r)

@@ -11,15 +11,18 @@ using System.Media;
 using System.Windows.Forms;
 using BrightIdeasSoftware;
 using TESVSnip.Collections.Generic;
+using TESVSnip.Forms;
+using TESVSnip.Model;
 using TESVSnip.Properties;
 
 namespace TESVSnip.ObjectControls
 {
     public partial class RecordSearch : UserControl, ISupportInitialize
     {
+        private OLVColumn[] baseColumns=null;
         public RecordSearch()
         {
-            InitializeComponent();               
+            InitializeComponent();
         }
 
         #region Search Helpers
@@ -32,6 +35,7 @@ namespace TESVSnip.ObjectControls
             TypeEditorIdSearch,
             TypeFullSearch,
             FormIDRef,
+            BasicCriteriaRef,
         }
 
         private class ComboHelper<T, U>
@@ -54,7 +58,7 @@ namespace TESVSnip.ObjectControls
         private class MRUComboHelper<T, U> : ComboHelper<T, U>
         {
             private System.Collections.Specialized.StringCollection mru;
-            public MRUComboHelper(T key, U value, System.Collections.Specialized.StringCollection mru) 
+            public MRUComboHelper(T key, U value, System.Collections.Specialized.StringCollection mru)
                 : base(key, value)
             {
                 this.mru = mru;
@@ -87,6 +91,7 @@ namespace TESVSnip.ObjectControls
                 new MRUComboHelper<SearchType, string>(SearchType.TypeEditorIdSearch, "Name w/Type", TESVSnip.Properties.Settings.Default.SearchMRUNameList),
                 new MRUComboHelper<SearchType, string>(SearchType.TypeFullSearch, "Full w/Type", TESVSnip.Properties.Settings.Default.SearchMRUFullList),
                 new MRUComboHelper<SearchType, string>(SearchType.FormIDRef, "Form ID Ref.", TESVSnip.Properties.Settings.Default.SearchMRUFormIDList),
+                new MRUComboHelper<SearchType, string>(SearchType.BasicCriteriaRef, "Basic Search", new StringCollection()),
             };
             toolStripIncrFindType.Items.Clear();
             toolStripIncrFindType.Items.AddRange(items);
@@ -122,10 +127,24 @@ namespace TESVSnip.ObjectControls
                 toolStripIncrFindTypeFilter.Visible = false;
                 toolStripIncrFindExact.Visible = true;
             }
-            toolStripIncrFindText.Items.Clear();
-            if (item != null && item.MRU != null && item.MRU.Count > 0)
+
+            if (item != null && item.Key == SearchType.BasicCriteriaRef)
             {
-                toolStripIncrFindText.Items.AddRange(item.MRU.OfType<object>().Take(15).ToArray());
+                toolStripIncrSelectCriteria.Visible = true;
+                toolStripIncrFindText.Visible = false;
+                toolStripIncrFindText.Items.Clear();
+                toolStripIncrFindGo.Enabled = toolStripIncrSelectCriteria.Tag != null;
+            }
+            else
+            {
+                toolStripIncrFindGo.Enabled = true;
+                toolStripIncrSelectCriteria.Visible = false;
+                toolStripIncrFindText.Visible = true;
+                toolStripIncrFindText.Items.Clear();
+                if (item != null && item.MRU != null && item.MRU.Count > 0)
+                {
+                    toolStripIncrFindText.Items.AddRange(item.MRU.OfType<object>().Take(15).ToArray());
+                }
             }
         }
 
@@ -147,6 +166,7 @@ namespace TESVSnip.ObjectControls
             public string Text;
             public string Rectype;
             public bool Partial;
+            public SearchCriteriaSettings Criteria;
             public Predicate<BaseRecord> UpdateFunc;
 
             public SearchSettings()
@@ -154,6 +174,7 @@ namespace TESVSnip.ObjectControls
                 Type = SearchType.EditorID;
                 Text = null;
                 Partial = true;
+                Criteria = null;
                 UpdateFunc = null;
                 Rectype = null;
             }
@@ -232,7 +253,7 @@ namespace TESVSnip.ObjectControls
                                     else
                                     {
                                         var val = rec.DescriptiveName.ToLowerInvariant()
-                                            .Substring(2,rec.DescriptiveName.Length - 3);
+                                            .Substring(2, rec.DescriptiveName.Length - 3);
 
                                         if (val == searchString)
                                             return true;
@@ -308,10 +329,36 @@ namespace TESVSnip.ObjectControls
                             };
                     }
                     break;
+
+                case SearchType.BasicCriteriaRef:
+                    {
+                        if (ctx.Criteria == null || !ctx.Criteria.Items.Any())
+                        {
+                            MainView.PostStatusWarning("No search criteria selected!");
+                            return null;
+                        }
+                        searchFunction = node =>
+                        {
+                            if (ctx.UpdateFunc != null && !ctx.UpdateFunc(node)) return false;
+                            var rec = node as Record;
+                            if (rec == null) return node is IGroupRecord;
+                            rec.MatchRecordStructureToRecord();
+
+                            bool all = false;
+                            foreach (var m in ctx.Criteria.Items)
+                            {
+                                bool ok = m.Match(rec);
+                                if (!ok) return false;
+                                all = true;
+                            }
+                            return all;
+                        };
+                    }
+                    break;
             }
             return IncrementalSearch(searchFunction);
         }
-        
+
         #region Increment Record Search
 
         private void BackgroundIncrementalSearch()
@@ -352,10 +399,20 @@ namespace TESVSnip.ObjectControls
             searchContext.Text = toolStripIncrFindText.Text;
             searchContext.Partial = !toolStripIncrFindExact.Checked;
             searchContext.Rectype = toolStripIncrFindTypeFilter.SelectedItem as string;
+            searchContext.Criteria = toolStripIncrSelectCriteria.Tag as SearchCriteriaSettings;
             searchContext.UpdateFunc = updateFunc;
 
             // exclude null Text searches except for when type is specified
-            if (searchContext.Type != SearchType.TypeEditorIdSearch && string.IsNullOrEmpty(searchContext.Text))
+            if (searchContext.Type == SearchType.BasicCriteriaRef)
+            {
+                if (searchContext.Criteria == null || !searchContext.Criteria.Items.Any())
+                {
+                    if (!Properties.Settings.Default.NoWindowsSounds)
+                        SystemSounds.Beep.Play();
+                    MainView.PostStatusWarning("No search criteria selected!");
+                }
+            }
+            else if (searchContext.Type != SearchType.TypeEditorIdSearch && string.IsNullOrEmpty(searchContext.Text))
             {
                 if (!Properties.Settings.Default.NoWindowsSounds)
                     SystemSounds.Beep.Play();
@@ -427,11 +484,8 @@ namespace TESVSnip.ObjectControls
             this.listSearchView.Clear();
             if (results == null) return;
             foreach (var rec in results.Records) rec.MatchRecordStructureToRecord();
-            switch (results.Type)
-            {
-                case SearchType.EditorID:
-                default:
-                    var columns = new OLVColumn[]
+
+            baseColumns = new OLVColumn[]
                     {
                         new OLVColumn{ Text = "Plugin", Name = "Plugin", AspectName = "Plugin", Width = 5, IsVisible = true
                             , AspectGetter = x => GetPluginFromNode(x as Record) }, 
@@ -454,11 +508,41 @@ namespace TESVSnip.ObjectControls
                                 return elem ?? "";
                             } },
                     };
-                    this.listSearchView.AllColumns.AddRange(columns);
-                    this.listSearchView.AutoResizeColumns(ColumnHeaderAutoResizeStyle.ColumnContent);
-                    this.listSearchView.Objects = results.Records;
-                    break;
+            this.listSearchView.AllColumns.AddRange(baseColumns);
+
+            // Get custom columns
+            if (results.Type == SearchType.BasicCriteriaRef)
+            {
+                var columnSettings = this.toolStripSelectColumns.Tag as ColumnSettings;
+                if (columnSettings != null)
+                {
+                    foreach (var setting in columnSettings.Items.OfType<ColumnElement>())
+                    {
+                        string type = setting.ParentType;
+                        string name = setting.Name;
+                        var column = new OLVColumn
+                        {
+                            Text = setting.Name,
+                            Name = setting.Name,
+                            AspectName = setting.Name,
+                            Width = 80,
+                            IsVisible = true,
+                            AspectGetter =
+                                x =>
+                                {
+                                    var rec = (x as Record);
+                                    var sr = rec != null ? rec.SubRecords.FirstOrDefault(r => r.Name == type) : null;
+                                    var se = sr != null ? sr.EnumerateElements().FirstOrDefault(e => e.Structure.name == name) : null;
+                                    return se != null ? se.Value : null;
+                                }
+                        };
+                        this.listSearchView.AllColumns.Add(column);
+                    }
+                }                
             }
+            this.listSearchView.AutoResizeColumns(ColumnHeaderAutoResizeStyle.ColumnContent);
+
+            this.listSearchView.Objects = results.Records;
             this.listSearchView.RebuildColumns();
             this.listSearchView.Refresh();
         }
@@ -546,7 +630,7 @@ namespace TESVSnip.ObjectControls
 
         void backgroundWorker1_ProgressChanged(object sender, ProgressChangedEventArgs e)
         {
-            toolStripIncrFindStatus.Text = string.Format("{0}% Complete", e.ProgressPercentage) ;
+            toolStripIncrFindStatus.Text = string.Format("{0}% Complete", e.ProgressPercentage);
         }
 
         void backgroundWorker1_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
@@ -564,7 +648,7 @@ namespace TESVSnip.ObjectControls
             if (completedAction != null) completedAction();
         }
 
-        
+
         #endregion
 
         private void toolStripIncrFindGo_Click(object sender, EventArgs e)
@@ -593,28 +677,28 @@ namespace TESVSnip.ObjectControls
 
         private void RecordSearch_Load(object sender, EventArgs e)
         {
-            
+
         }
 
         public void FocusText()
         {
-            toolStripIncrFindText.Focus();            
+            toolStripIncrFindText.Focus();
         }
 
         private void toolStripSynchronize_Click(object sender, EventArgs e)
         {
             SynchronizeSelection();
-            
+
         }
 
         private void SynchronizeSelection()
         {
-	        MainView.SynchronizeSelection(this.listSearchView.SelectedObjects.OfType<BaseRecord>());
+            MainView.SynchronizeSelection(this.listSearchView.SelectedObjects.OfType<BaseRecord>());
         }
 
         private void listSearchView_CellClick(object sender, CellClickEventArgs e)
         {
-            if ( e.ClickCount > 1 )
+            if (e.ClickCount > 1)
             {
                 SynchronizeSelection();
             }
@@ -626,6 +710,55 @@ namespace TESVSnip.ObjectControls
             {
                 SynchronizeSelection();
             }
+        }
+
+        private void toolStripIncrSelectCriteria_Click(object sender, EventArgs e)
+        {
+            using (var dlg = new SearchFilterBasic())
+            {
+                dlg.Criteria = toolStripIncrSelectCriteria.Tag as SearchCriteriaSettings;
+                var result = dlg.ShowDialog(this);
+                if (DialogResult.Cancel != result)
+                {
+                    toolStripIncrSelectCriteria.Tag = dlg.Criteria;
+                    toolStripIncrFindGo.Enabled = dlg.Criteria != null && dlg.Criteria.Items.Any();
+
+                    // sync columns with the column tag
+                    var colSettings = this.toolStripSelectColumns.Tag as ColumnSettings;
+                    if (colSettings == null && dlg.Criteria != null)
+                    {
+                        colSettings = new ColumnSettings {Type = dlg.Criteria.Type, Items = new ColumnCriteria[0]};
+
+                        var items = colSettings.Items != null  ? new List<ColumnCriteria>(colSettings.Items) : new List<ColumnCriteria>();
+                        foreach (var item in dlg.Criteria.Items.OfType<SearchElement>())
+                        {
+                            var modelItem = colSettings.Items.OfType<ColumnElement>().FirstOrDefault(
+                                x => x.ParentType == item.Record.name && x.Name == item.Name);
+                            if (modelItem == null)
+                            {
+                                items.Add(new ColumnElement { Checked = true, Name = item.Name, ParentType = item.Parent.Record.name, Record = item.Record });
+                            }
+                        }
+                        colSettings.Items = items.ToArray();
+                    }
+                    this.toolStripSelectColumns.Tag = colSettings;
+
+                    if (result == DialogResult.Yes)
+                    {
+                        BackgroundIncrementalSearch();
+                    }
+                }
+            }
+        }
+
+        private void toolStripIncrFindClear_Click(object sender, EventArgs e)
+        {
+            this.listSearchView.ClearObjects();
+        }
+
+        private void toolStripSelectColumns_Click(object sender, EventArgs e)
+        {
+
         }
     }
 }

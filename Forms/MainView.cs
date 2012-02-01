@@ -599,6 +599,7 @@ namespace TESVSnip
         {
             if (!toolStripIncrFind.Visible)
             {
+                toolStripIncrFind.Enabled = true;
                 toolStripIncrFind.Visible = true;
                 toolStripIncrFind.Focus();
                 toolStripIncrFindText.Select();
@@ -608,6 +609,7 @@ namespace TESVSnip
             else
             {
                 toolStripIncrFind.Visible = false;
+                toolStripIncrFind.Enabled = false;
             }
         }
 
@@ -774,6 +776,10 @@ namespace TESVSnip
         {
             LoadDockingWindows();
             FixMasters();
+            toolStripIncrFind.Visible = false;
+            toolStripIncrFind.Enabled = false;
+            toolStripIncrInvalidRec.Visible = false;
+            toolStripIncrInvalidRec.Enabled = false;
         }
 
         #region Enable Disable User Interface
@@ -1036,6 +1042,7 @@ namespace TESVSnip
         private void toolStripIncrInvalidRecCancel_Click(object sender, EventArgs e)
         {
             toolStripIncrInvalidRec.Visible = false;
+            toolStripIncrInvalidRec.Enabled = false;
         }
 
         private void toolStripIncrInvalidRec_VisibleChanged(object sender, EventArgs e)
@@ -1229,7 +1236,7 @@ namespace TESVSnip
         private void toolsToolStripMenuItem_DropDownOpening(object sender, EventArgs e)
         {
             bool found = false;
-            //stringLocalizerToolStripMenuItem.Enabled = false;
+            //stringLocalizerToolStripMenuItem.Checked = false;
             if (!string.IsNullOrEmpty(Properties.Settings.Default.SkyrimLocalizerPath))
             {
                 if (File.Exists(Properties.Settings.Default.SkyrimLocalizerPath))
@@ -1379,8 +1386,6 @@ namespace TESVSnip
             //    delegate(Content c, CancelEventArgs cea) { cea.Cancel = true; };
             //dockingManagerExtender.DockingManager.ShowAllContents();
             ShowDockingWindows();
-            toolStripIncrFind.Visible = false;
-            toolStripIncrInvalidRec.Visible = false;
 
             if (!DesignMode)
             {
@@ -1721,6 +1726,45 @@ namespace TESVSnip
         #endregion
 
         #endregion
+
+        private void searchToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            RecordStructure recStruct = null;
+            var rec = this.PluginTree.SelectedRecord;
+            if (rec is Record)
+            {
+                RecordStructure.Records.TryGetValue(rec.Name, out recStruct);
+            }
+            if (recStruct == null)
+                recStruct = RecordStructure.Records.Values.Random(RecordStructure.Records.Count).First();
+            using (var dlg = new SearchFilterBasic(recStruct))
+            {
+                if (DialogResult.OK == dlg.ShowDialog(this))
+                {
+                    var criteria = dlg.Criteria;
+                    if (criteria != null)
+                    {
+                        
+                    }
+                }
+            }
+        }
+
+        private void searchAdvancedToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            RecordStructure recStruct = null;
+            var rec = this.PluginTree.SelectedRecord;
+            if (rec is Record)
+            {
+                RecordStructure.Records.TryGetValue(rec.Name, out recStruct);
+            }
+            if (recStruct == null)
+                recStruct = RecordStructure.Records.Values.Random(RecordStructure.Records.Count).First();
+            using (var dlg = new SearchFilterAdvanced(recStruct))
+            {
+                dlg.ShowDialog(this);
+            }
+        }
 
     }
 }

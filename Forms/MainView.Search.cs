@@ -474,6 +474,7 @@ namespace TESVSnip
                 toolStripIncrInvalidRec.Focus();
                 toolStripIncrInvalidRecNext.Select();
             }
+            toolStripIncrInvalidRec.Enabled = toolStripIncrInvalidRec.Visible;
         }
 
         private void BackgroundNonConformingRecordIncrementalSearch(BaseRecord tn, bool forward, bool wrapAround)
@@ -671,6 +672,7 @@ namespace TESVSnip
         private void toolStripIncrFindCancel_Click(object sender, EventArgs e)
         {
             toolStripIncrFind.Visible = false;
+            toolStripIncrFind.Enabled = false;
         }
 
         private void toolStripIncrFind_VisibleChanged(object sender, EventArgs e)
