@@ -185,6 +185,7 @@ namespace TESVSnip.ObjectControls
             public string Text;
             public string Rectype;
             public bool Partial;
+            public SearchCriteriaSettings Criteria;
             public AdvancedList<Record> Records = new AdvancedList<Record>();
         }
 
@@ -342,8 +343,8 @@ namespace TESVSnip.ObjectControls
                             if (ctx.UpdateFunc != null && !ctx.UpdateFunc(node)) return false;
                             var rec = node as Record;
                             if (rec == null) return node is IGroupRecord;
+                            if (ctx.Criteria.Type != rec.Name) return false;
                             rec.MatchRecordStructureToRecord();
-
                             bool all = false;
                             foreach (var m in ctx.Criteria.Items)
                             {
@@ -422,8 +423,8 @@ namespace TESVSnip.ObjectControls
                 return;
             }
 
-            this.listSearchView.Clear();
-
+            this.listSearchView.ClearObjects();
+            
             SearchResults results = null;
             StartBackgroundWork(() =>
                 {
@@ -433,6 +434,7 @@ namespace TESVSnip.ObjectControls
                         Partial = searchContext.Partial,
                         Rectype = searchContext.Rectype,
                         Text = searchContext.Text,
+                        Criteria = searchContext.Criteria,
                         Records = new AdvancedList<Record>(PerformSearch(searchContext))
                     };
                 }
@@ -481,65 +483,89 @@ namespace TESVSnip.ObjectControls
         {
             this.listSearchView.Columns.Clear();
             this.listSearchView.AllColumns.Clear();
-            this.listSearchView.Clear();
+            this.listSearchView.ClearObjects();
             if (results == null) return;
             foreach (var rec in results.Records) rec.MatchRecordStructureToRecord();
 
-            baseColumns = new OLVColumn[]
+            var fixedColumns = new List<OLVColumn>(new[]
                     {
-                        new OLVColumn{ Text = "Plugin", Name = "Plugin", AspectName = "Plugin", Width = 5, IsVisible = true
+                        new OLVColumn{ Text = "Plugin", Name = "Plugin", AspectName = "Plugin", Width = 5, IsVisible = true, Groupable = true
                             , AspectGetter = x => GetPluginFromNode(x as Record) }, 
-                        new OLVColumn{ Text = "Type", Name = "Type", AspectName = "Type", Width = 100, IsVisible = true, AspectGetter = 
-                            x => { var rec = (x as Record); return rec != null ? rec.Name : ""; } },
-                        new OLVColumn{ Text = "Name", Name = "Name", AspectName = "Name", Width = 200, IsVisible = true, AspectGetter = 
-                            x => { 
+                        new OLVColumn{ Text = "Type", Name = "Type", AspectName = "Type", Width = 100, IsVisible = true
+                            , AspectGetter = x => { var rec = (x as Record); return rec != null ? rec.Name : ""; } },
+                        new OLVColumn{ Text = "Name", Name = "Name", AspectName = "Name", Width = 200, IsVisible = true, Groupable = false
+                            , AspectGetter = x => { 
                                 var rec = (x as Record); 
                                 var sr = rec != null ? rec.SubRecords.FirstOrDefault(r=>r.Name == "EDID") : null;
                                 var elem = sr != null ? sr.GetStrData() : null;
                                 return elem ?? "";
                             } },
-                        new OLVColumn{ Text = "FormID", Name = "FormID", AspectName = "FormID", Width = 80, IsVisible = true, AspectGetter = 
-                            x => { var rec = (x as Record); return rec != null ? rec.FormID.ToString("X8") : ""; } },
-                        new OLVColumn{ Text = "Full Name", Name = "FullName", AspectName = "FullName", Width = 200, IsVisible = true, AspectGetter = 
+                        new OLVColumn{ Text = "FormID", Name = "FormID", AspectName = "FormID", Width = 80, IsVisible = true, Groupable = false
+                            , AspectGetter = x => { var rec = (x as Record); return rec != null ? rec.FormID.ToString("X8") : ""; } },
+                        new OLVColumn{ Text = "Full Name", Name = "FullName", AspectName = "FullName", Width = 200, IsVisible = true, Groupable = false
+                            , AspectGetter = 
                             x => { 
                                 var rec = (x as Record); 
                                 var sr = rec != null ? rec.SubRecords.FirstOrDefault(r=>r.Name == "FULL") : null;
                                 var elem = sr != null ? sr.GetLString() : null;
                                 return elem ?? "";
                             } },
-                    };
-            this.listSearchView.AllColumns.AddRange(baseColumns);
+                    }
+                    );
 
+            var columns = new List<ColumnCriteria>();
             // Get custom columns
             if (results.Type == SearchType.BasicCriteriaRef)
             {
-                var columnSettings = this.toolStripSelectColumns.Tag as ColumnSettings;
-                if (columnSettings != null)
+                if (results.Criteria != null)
                 {
-                    foreach (var setting in columnSettings.Items.OfType<ColumnElement>())
-                    {
-                        string type = setting.ParentType;
-                        string name = setting.Name;
-                        var column = new OLVColumn
+                    fixedColumns.AddRange(
+                        from item in results.Criteria.Items.OfType<SearchElement>()
+                        let type = item.Parent.Record.name
+                        let name = item.Name
+                        let colName = type + "." + name
+                        let dispName = type + ": " + name
+                        select new OLVColumn
                         {
-                            Text = setting.Name,
-                            Name = setting.Name,
-                            AspectName = setting.Name,
-                            Width = 80,
-                            IsVisible = true,
-                            AspectGetter =
-                                x =>
-                                {
-                                    var rec = (x as Record);
-                                    var sr = rec != null ? rec.SubRecords.FirstOrDefault(r => r.Name == type) : null;
-                                    var se = sr != null ? sr.EnumerateElements().FirstOrDefault(e => e.Structure.name == name) : null;
-                                    return se != null ? se.Value : null;
-                                }
-                        };
-                        this.listSearchView.AllColumns.Add(column);
-                    }
-                }                
+                            Text = dispName, Name = colName, AspectName = name, Width = 80, IsVisible = true, Groupable = false
+                            , AspectGetter = x =>
+                            {
+                                var rec = (x as Record);
+                                var sr = rec != null ? rec.SubRecords.FirstOrDefault(r => r.Name == type) : null;
+                                var se = sr != null ? sr.EnumerateElements().FirstOrDefault(e => e.Structure.name == name) : null;
+                                return se != null ? sr.GetDisplayValue(se) : null;
+                            }
+                        }
+                        );
+                }
             }
+            baseColumns = fixedColumns.ToArray();
+            this.listSearchView.AllColumns.AddRange(baseColumns);
+            
+            var columnSettings = this.toolStripSelectColumns.Tag as ColumnSettings;
+            if (columnSettings != null)
+            {
+                foreach (var setting in columnSettings.Items.OfType<ColumnElement>())
+                {
+                    string type = setting.ParentType;
+                    string name = setting.Name;
+                    string colName = type + "." + name;
+                    string dispName = type + ": " + name;
+                    if (Enumerable.OfType<OLVColumn>(baseColumns).Any(x => x.Name == colName)) continue;
+                    var column = new OLVColumn
+                    {
+                        Text = dispName, Name = colName, AspectName = setting.Name, Width = 80, IsVisible = true, Groupable = false
+                        , AspectGetter = x =>
+                            {
+                                var rec = (x as Record);
+                                var sr = rec != null ? rec.SubRecords.FirstOrDefault(r => r.Name == type) : null;
+                                var se = sr != null ? sr.EnumerateElements().FirstOrDefault(e => e.Structure.name == name) : null;
+                                return se != null ? sr.GetDisplayValue(se) : null;
+                            }
+                    };
+                    this.listSearchView.AllColumns.Add(column);
+                }
+            }                
             this.listSearchView.AutoResizeColumns(ColumnHeaderAutoResizeStyle.ColumnContent);
 
             this.listSearchView.Objects = results.Records;
@@ -722,27 +748,6 @@ namespace TESVSnip.ObjectControls
                 {
                     toolStripIncrSelectCriteria.Tag = dlg.Criteria;
                     toolStripIncrFindGo.Enabled = dlg.Criteria != null && dlg.Criteria.Items.Any();
-
-                    // sync columns with the column tag
-                    var colSettings = this.toolStripSelectColumns.Tag as ColumnSettings;
-                    if (colSettings == null && dlg.Criteria != null)
-                    {
-                        colSettings = new ColumnSettings {Type = dlg.Criteria.Type, Items = new ColumnCriteria[0]};
-
-                        var items = colSettings.Items != null  ? new List<ColumnCriteria>(colSettings.Items) : new List<ColumnCriteria>();
-                        foreach (var item in dlg.Criteria.Items.OfType<SearchElement>())
-                        {
-                            var modelItem = colSettings.Items.OfType<ColumnElement>().FirstOrDefault(
-                                x => x.ParentType == item.Record.name && x.Name == item.Name);
-                            if (modelItem == null)
-                            {
-                                items.Add(new ColumnElement { Checked = true, Name = item.Name, ParentType = item.Parent.Record.name, Record = item.Record });
-                            }
-                        }
-                        colSettings.Items = items.ToArray();
-                    }
-                    this.toolStripSelectColumns.Tag = colSettings;
-
                     if (result == DialogResult.Yes)
                     {
                         BackgroundIncrementalSearch();

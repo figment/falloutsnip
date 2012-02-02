@@ -11,8 +11,8 @@ Requirements:
 Change Log:
 v 3.9
 - Introduce "Basic Search" to the find dialog drop down
-- Add basic ability to select elements to filter on via Basic Search
-- Add limited column customization during search
+- Add basic ability to select elements to search on via Basic Search
+- Auto display columns involved in Basic Search
   
 v 3.8
 - Fix subrecord parent reference when using Full Record Editor to avoid issues with report

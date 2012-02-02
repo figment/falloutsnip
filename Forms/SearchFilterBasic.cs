@@ -161,7 +161,7 @@ namespace TESVSnip.Forms
             {
                 var srs = (from sr in rec.subrecords
                            let children = sr.elements.Select(
-                                se => new SearchElement() { Checked = false, Name = se.name, Parent = null, Record = se }
+                                se => new SearchElement() { Checked = false, Name = se.name, Parent = null, Record = se, Type = SearchCondElementType.Exists }
                            ).ToList()
                            select new SearchSubrecord()
                            {

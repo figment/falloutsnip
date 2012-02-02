@@ -126,7 +126,7 @@
   </data>
   <assembly alias="System.Drawing" name="System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
   <data name="toolStripSearchLabel.Size" type="System.Drawing.Size, System.Drawing">
-    <value>45, 24</value>
+    <value>45, 22</value>
   </data>
   <data name="toolStripSearchLabel.Text" xml:space="preserve">
     <value>Search:</value>
@@ -136,13 +136,13 @@
     <value>128</value>
   </data>
   <data name="toolStripIncrFindText.Size" type="System.Drawing.Size, System.Drawing">
-    <value>200, 27</value>
+    <value>200, 25</value>
   </data>
   <data name="toolStripIncrSelectCriteria.ImageTransparentColor" type="System.Drawing.Color, System.Drawing">
     <value>Magenta</value>
   </data>
   <data name="toolStripIncrSelectCriteria.Size" type="System.Drawing.Size, System.Drawing">
-    <value>103, 24</value>
+    <value>94, 22</value>
   </data>
   <data name="toolStripIncrSelectCriteria.Text" xml:space="preserve">
     <value>Search Items</value>
@@ -160,7 +160,7 @@
     <value>Form ID</value>
   </data>
   <data name="toolStripIncrFindTypeFilter.Size" type="System.Drawing.Size, System.Drawing">
-    <value>80, 27</value>
+    <value>80, 25</value>
   </data>
   <data name="toolStripIncrFindTypeFilter.ToolTipText" xml:space="preserve">
     <value>Search Type</value>
@@ -172,7 +172,7 @@
     <value>Magenta</value>
   </data>
   <data name="toolStripIncrFindGo.Size" type="System.Drawing.Size, System.Drawing">
-    <value>50, 24</value>
+    <value>50, 22</value>
   </data>
   <data name="toolStripIncrFindGo.Text" xml:space="preserve">
     <value>&amp;Find</value>
@@ -181,7 +181,7 @@
     <value>Magenta</value>
   </data>
   <data name="toolStripSynchronize.Size" type="System.Drawing.Size, System.Drawing">
-    <value>23, 24</value>
+    <value>23, 22</value>
   </data>
   <data name="toolStripSynchronize.Text" xml:space="preserve">
     <value>Synchronize</value>
@@ -193,7 +193,7 @@
     <value>Magenta</value>
   </data>
   <data name="toolStripIncrFindCancel.Size" type="System.Drawing.Size, System.Drawing">
-    <value>23, 24</value>
+    <value>23, 22</value>
   </data>
   <data name="toolStripIncrFindCancel.Text" xml:space="preserve">
     <value>Close Search</value>
@@ -205,7 +205,7 @@
     <value>Fuchsia</value>
   </data>
   <data name="toolStripIncrFindClear.Size" type="System.Drawing.Size, System.Drawing">
-    <value>23, 24</value>
+    <value>23, 22</value>
   </data>
   <data name="toolStripIncrFindClear.Text" xml:space="preserve">
     <value>Clear</value>
@@ -214,10 +214,13 @@
     <value>Magenta</value>
   </data>
   <data name="toolStripSelectColumns.Size" type="System.Drawing.Size, System.Drawing">
-    <value>23, 24</value>
+    <value>23, 22</value>
   </data>
   <data name="toolStripSelectColumns.Text" xml:space="preserve">
     <value>Select Columns</value>
+  </data>
+  <data name="toolStripSelectColumns.Visible" type="System.Boolean, mscorlib">
+    <value>False</value>
   </data>
   <data name="toolStripIncrFindType.Items" xml:space="preserve">
     <value>Editor ID</value>
@@ -226,7 +229,7 @@
     <value>Form ID</value>
   </data>
   <data name="toolStripIncrFindType.Size" type="System.Drawing.Size, System.Drawing">
-    <value>110, 23</value>
+    <value>110, 25</value>
   </data>
   <data name="toolStripIncrFindType.ToolTipText" xml:space="preserve">
     <value>Search Type</value>
@@ -265,22 +268,22 @@
     <value>Match Case</value>
   </data>
   <data name="toolStripSeparator7.Size" type="System.Drawing.Size, System.Drawing">
-    <value>6, 27</value>
+    <value>6, 25</value>
   </data>
   <data name="toolStripIncrFindStatus.Size" type="System.Drawing.Size, System.Drawing">
-    <value>64, 24</value>
+    <value>64, 22</value>
   </data>
   <data name="toolStripIncrFindStatus.Text" xml:space="preserve">
     <value>Status Text</value>
   </data>
   <data name="toolStripIncrFind.Location" type="System.Drawing.Point, System.Drawing">
-    <value>0, 351</value>
+    <value>0, 353</value>
   </data>
   <data name="toolStripIncrFind.Padding" type="System.Windows.Forms.Padding, System.Windows.Forms">
     <value>0, 0, 0, 0</value>
   </data>
   <data name="toolStripIncrFind.Size" type="System.Drawing.Size, System.Drawing">
-    <value>769, 27</value>
+    <value>769, 25</value>
   </data>
   <data name="toolStripIncrFind.TabIndex" type="System.Int32, mscorlib">
     <value>6</value>
@@ -325,7 +328,7 @@
     <value>0, 0</value>
   </data>
   <data name="listSearchView.Size" type="System.Drawing.Size, System.Drawing">
-    <value>769, 351</value>
+    <value>769, 353</value>
   </data>
   <data name="listSearchView.TabIndex" type="System.Int32, mscorlib">
     <value>7</value>

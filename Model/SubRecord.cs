@@ -934,6 +934,110 @@ namespace TESVSnip
             return value;
         }
 
+        internal object GetCompareValue(Element se)
+        {
+            object value = se.Value;
+            switch (se.Structure.type)
+            {
+                case ElementValueType.LString:
+                    if (value is uint)
+                    {
+                        var p = this.GetPlugin();
+                        if (p != null)
+                            value = p.LookupFormStrings((uint)value) ?? value;
+                    }
+                    break;
+            }
+            return value;
+        }
+        internal object GetDisplayValue(Element elem)
+        {
+            object value = elem.Value;
+
+            var sselem = elem.Structure;
+            Record rec = null;
+            string strValue = null; // value to display
+            bool hasOptions = (sselem.options != null && sselem.options.Length > 0);
+            bool hasFlags = (sselem.flags != null && sselem.flags.Length > 1);
+            var p = this.GetPlugin();
+
+            switch (elem.Structure.type)
+            {
+                case ElementValueType.FormID:
+                    {
+                        var id = (uint) value;
+                        strValue = id.ToString("X8");
+                        if (id != 0)
+                        {
+                            rec = p.GetRecordByID(id);
+                            if (rec != null)
+                                strValue = string.Format("{0}: {1}", strValue, rec.DescriptiveName);
+                        }
+                        value = strValue;
+                    }
+                    break;
+                case ElementValueType.LString:
+                    if (value is uint)
+                    {
+                        if (p != null)
+                            value = p.LookupFormStrings((uint)value) ?? value;
+                    }
+                    break;
+                case ElementValueType.Blob:
+                    value = TypeConverter.GetHexData(elem.Data);
+                    break;
+                case ElementValueType.Int:
+                case ElementValueType.UInt:
+                case ElementValueType.Byte:
+                case ElementValueType.SByte:
+                case ElementValueType.Short:
+                case ElementValueType.UShort:
+                    {
+                        if (sselem.hexview || hasFlags)
+                            value = string.Format(string.Format("{{0:X{0}}}", elem.Data.Count*2), value);
+                        else
+                            value = value == null ? "" : value.ToString();
+                        if (hasOptions)
+                        {
+                            int intVal = Convert.ToInt32(value);
+                            for (int k = 0; k < sselem.options.Length; k += 2)
+                            {
+                                if (intVal == int.Parse(sselem.options[k + 1]))
+                                {
+                                    value = sselem.options[k];                                    
+                                }
+                            }
+                        }
+                        else if (hasFlags)
+                        {
+                            uint intVal = Convert.ToUInt32(value);
+                            var tmp2 = new StringBuilder();
+                            for (int k = 0; k < sselem.flags.Length; k++)
+                            {
+                                if ((intVal & (1 << k)) != 0)
+                                {
+                                    if (tmp2.Length > 0) tmp2.Append(", ");
+                                    tmp2.Append(sselem.flags[k]);
+                                }
+                            }
+                            tmp2.Insert(0, ": ");
+                            tmp2.Insert(0, value.ToString());
+                            value = tmp2.ToString();
+                        }
+                    }
+                    break;
+                case ElementValueType.Str4:
+                    strValue = TypeConverter.GetString(elem.Data);
+                    break;
+                case ElementValueType.BString:
+                    strValue = TypeConverter.GetBString(elem.Data);
+                    break;
+                default:
+                    strValue = value == null ? "" : value.ToString();
+                    break;
+            }
+            return value;
+        }
 
         internal override List<string> GetIDs(bool lower)
         {

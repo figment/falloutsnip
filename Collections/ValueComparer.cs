@@ -48,7 +48,13 @@ namespace TESVSnip.Collections
                 if ((IsNumeric(x) && IsNumericOrString(y)) || (IsNumeric(y) && IsNumericOrString(x)))
                 {
                     Type tt = IsNumeric(x) ? x.GetType() : y.GetType();
-                    if (tt == typeof(double))
+                    if (tt == typeof(int))
+                    {
+                        int dx = Convert.ToInt32(x);
+                        int dy = Convert.ToInt32(y);
+                        return dx == dy ? 0 : dx < dy ? -1 : 1;
+                    }
+                    else if (tt == typeof(double))
                     {
                         double dx = Convert.ToDouble(x);
                         double dy = Convert.ToDouble(y);
@@ -57,24 +63,6 @@ namespace TESVSnip.Collections
                             return 0;
                         if ((double.IsNaN(dx) && double.IsNaN(dy))
                             || (double.IsInfinity(dx) && double.IsInfinity(dy)))
-                            return 0;
-                        return (diff < 0 ? -1 : 1);
-                    }
-                    else if (tt == typeof(int))
-                    {
-                        int dx = Convert.ToInt32(x);
-                        int dy = Convert.ToInt32(y);
-                        int diff = dx - dy;
-                        if (diff == 0)
-                            return 0;
-                        return (diff < 0 ? -1 : 1);
-                    }
-                    else if (tt == typeof(decimal))
-                    {
-                        decimal dx = Convert.ToDecimal(x);
-                        decimal dy = Convert.ToDecimal(y);
-                        decimal diff = dx - dy;
-                        if (diff == 0)
                             return 0;
                         return (diff < 0 ? -1 : 1);
                     }
@@ -92,12 +80,39 @@ namespace TESVSnip.Collections
                     }
                     else if (tt == typeof(uint))
                     {
-                        uint dx = Convert.ToUInt32(x);
-                        uint dy = Convert.ToUInt32(y);
-                        uint diff = dx - dy;
-                        if (diff == 0)
-                            return 0;
-                        return (diff < 0 ? -1 : 1);
+                        var dx = Convert.ToUInt32(x);
+                        var dy = Convert.ToUInt32(y);
+                        return dx == dy ? 0 : dx < dy ? -1 : 1;
+                    }
+                    else if (tt == typeof(byte))
+                    {
+                        var dx = Convert.ToByte(x);
+                        var dy = Convert.ToByte(y);
+                        return dx == dy ? 0 : dx < dy ? -1 : 1;
+                    }
+                    else if (tt == typeof(sbyte))
+                    {
+                        var dx = Convert.ToSByte(x);
+                        var dy = Convert.ToSByte(y);
+                        return dx == dy ? 0 : dx < dy ? -1 : 1;
+                    }
+                    else if (tt == typeof(short))
+                    {
+                        var dx = Convert.ToInt16(x);
+                        var dy = Convert.ToInt16(y);
+                        return dx == dy ? 0 : dx < dy ? -1 : 1;
+                    }
+                    else if (tt == typeof(ushort))
+                    {
+                        var dx = Convert.ToUInt16(x);
+                        var dy = Convert.ToUInt16(y);
+                        return dx == dy ? 0 : dx < dy ? -1 : 1;
+                    }
+                    else if (tt == typeof(decimal))
+                    {
+                        var dx = Convert.ToDecimal(x);
+                        var dy = Convert.ToDecimal(y);
+                        return dx == dy ? 0 : dx < dy ? -1 : 1;
                     }
                 }
 

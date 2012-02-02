@@ -4068,10 +4068,10 @@
       <Subrecord name="EPF3" desc="==&gt; Script Data 3 ?? Always 00 00" optional="1" repeat="1" size="4">
         <Element name="??" type="formid" reftype="SPEL" />
       </Subrecord>
-      <Subrecord name="EPFD" desc="==&gt; Float Value" optional="1" repeat="1" notininfo="1">
+      <Subrecord name="EPFD" desc="==&gt; Float Value" optional="1" repeat="1">
         <Element name="float value" type="float" />
       </Subrecord>
-      <Subrecord name="PRKF" desc=" -------------------- Rank Effect Footer --------------------" optional="1" repeat="1" size="0" />
+      <Subrecord name="PRKF" desc=" Rank Effect Footer " optional="1" repeat="1" size="0" />
     </Group>
   </Record>
   <Record name="BPTD" desc="Body Part">
