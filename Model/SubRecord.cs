@@ -807,10 +807,10 @@ namespace TESVSnip
                                     strValue = value == null ? "" : value.ToString();
                                 if (hasOptions)
                                 {
-                                    int intVal = Convert.ToInt32(value);
+                                    uint intVal = Convert.ToUInt32(value);
                                     for (int k = 0; k < sselem.options.Length; k += 2)
                                     {
-                                        if (intVal == int.Parse(sselem.options[k + 1]))
+                                        if (intVal == uint.Parse(sselem.options[k + 1]))
                                             strDesc = sselem.options[k];
                                     }
                                 }

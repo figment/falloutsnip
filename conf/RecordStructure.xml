@@ -747,7 +747,7 @@
       <Element name="flags" type="int" flags="Hostile;Recover;Detrimental;3;No Hit Event;5;6;7;Dispel Events;No Duration;No Magnitude;No Area;FX Persist;No Recast;Gory Visual;Hide in UI;16;Power Affects Magnitude;Power Affects Duration;19;20;21;22;23;24;25;Painless;No Hit Effect;No Death Dispel;29;Ward?;31"/>
       <Element name="Base Cost" type="float" />
       <Element name="Targeted ID" type="formid"/>
-      <Element name="Primary Skill" type="int" options="OneHanded;6;TwoHanded;7;Marksman;8;Block;9;Smithing;10;HeavyArmor;11;LightArmor;12;Pickpocket;13;Lockpicking;14;Sneak;15;Alchemy;16;Speechcraft;17;Alteration;18;Conjuration;19;Destruction;20;Illusion;21;Restoration;22;Enchanting;23;Fame;60;Infamy;61;"/>
+      <Element name="Primary Skill" type="int" options="OneHanded;6;TwoHanded;7;Marksman;8;Block;9;Smithing;10;HeavyArmor;11;LightArmor;12;Pickpocket;13;Lockpicking;14;Sneak;15;Alchemy;16;Speechcraft;17;Alteration;18;Conjuration;19;Destruction;20;Illusion;21;Restoration;22;Enchanting;23;Fame;60;Infamy;61"/>
       <Element name="Resistance" type="int" options="DamageResist;39;PoisonResist;40;FireResist;41;ElectricResist;42;FrostResist;43;MagicResist;44;DiseaseResist;45;NormalWeaponsResist;164;None;4294967295;Zero;0;"/>
       <Element name="Unknown1" type="uint" hexview="1" desc="Mask of 0xffff0000 (lower 2 bytes always 0)"/>
       <Element name="LightID" type="formid" reftype="LIGH" />
@@ -829,7 +829,7 @@
     <Subrecord name="ENIT" desc="Enchantment Info and Type ??" optional="1">
       <Element name="BaseCost" type="int" />
       <Element name="Flags" type="int" flags="Manual Cost Calc;PC Start Spell;ExtendDurationOnRecast?;Area Effect Ignores Line of Sight;Ignore Resistance;No Absorb/Reflect;6;No Dual Cast Modification;8;9;10;11;12;13;14;15;16;"/>
-      <Element name="CastType" type="int" options="ConstantEffect;;ProjectileFire;1;Concentration;2;"/>
+      <Element name="CastType" type="int" options="ConstantEffect;0;ProjectileFire;1;Concentration;2;"/>
       <Element name="ChargeAmount" type="int" desc="Fully charged value (same if no charges)"/>
       <Element name="TargetType" type="int" />
       <Element name="EnchantType" type="int" />

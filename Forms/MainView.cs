@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Drawing;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Reflection;
@@ -1114,6 +1115,7 @@ namespace TESVSnip
                         startNode = PluginList.All.Records.OfType<BaseRecord>().FirstOrDefault(x => x.Name == pluginName);
                     startNode = startNode ?? PluginTree.SelectedRecord ?? PluginTree.TopRecord;
 
+                    //System.Windows.Forms.Application.
                     // Search current plugin and then wrap around.  
                     //   Should do it based on master plugin list first.
                     var type = m.Groups["type"].Value;
@@ -1126,9 +1128,27 @@ namespace TESVSnip
                     searchContext.partial = false;
                     searchContext.forward = true;
                     searchContext.first = true;
-                    var node = PerformSearch(searchContext);
-                    if (node != null)
-                        PluginTree.SelectedRecord = node;
+                    uint formID = 0;
+                    uint.TryParse(m.Groups["id"].Value, NumberStyles.HexNumber, null, out formID);
+
+                    if (Control.ModifierKeys == Keys.Control)
+                    {
+                        //Cursor.Position
+                        var contextMenu = new ContextMenu();
+                        contextMenu.MenuItems.Add("&Find In Tree", 
+                            (o, args) =>{
+                                var node = PerformSearch(searchContext);
+                                if (node != null) PluginTree.SelectedRecord = node;
+                            });
+                        contextMenu.MenuItems.Add("Find &References", (o, args) => this.ReferenceSearch(formID));
+                        contextMenu.Show(this, this.PointToClient(Control.MousePosition));
+                    }
+                    else
+                    {
+                        var node = PerformSearch(searchContext);
+                        if (node != null)
+                            PluginTree.SelectedRecord = node;                        
+                    }
                 }
             }
             catch
@@ -1390,8 +1410,9 @@ namespace TESVSnip
 
         public static void PostStatusText(string text, Color color)
         {
-            foreach (MainView form in Application.OpenForms.OfType<MainView>())
-                (form).SendStatusText(text, color);
+            var form = Application.OpenForms.OfType<MainView>().FirstOrDefault();
+            if (form != null)
+                form.SendStatusText(text, color);
         }
 
         private void MainView_Shown(object sender, EventArgs e)
@@ -1502,11 +1523,9 @@ namespace TESVSnip
         }
         internal static void SynchronizeSelection(IEnumerable<BaseRecord> selection)
         {
-            foreach (MainView form in Application.OpenForms.OfType<MainView>())
-            {
+            var form = Application.OpenForms.OfType<MainView>().FirstOrDefault();
+            if (form != null)
                 (form).PluginTree.SetSelectedRecords(selection);
-            }
-
         }
 
 
@@ -1812,5 +1831,18 @@ namespace TESVSnip
             }
         }
 
+
+        internal static void PostReferenceSearch(uint formid)
+        {
+            var form = Application.OpenForms.OfType<MainView>().FirstOrDefault();
+            if (form != null)
+                form.ReferenceSearch(formid);
+        }
+
+        private void ReferenceSearch(uint formid)
+        {
+            var search = CreateSearchWindow();
+            search.ReferenceSearch(formid);
+        }
     }
 }

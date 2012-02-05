@@ -10,7 +10,12 @@ Requirements:
 
 Change Log:
 v 4.0
-- Introduce "Batch Edit" on 
+- Introduce "Batch Edit" on Search Window
+- Introduce "Column Selector" when using Basic Search or Search with "Type"
+- Add Favorite Searches to Basic Search dialog
+- Add Find References to Tree Context menu and Ctrl+LeftMouse on report links
+- Fixes to RecordStructure.xml from thirdparties
+
 v 3.9
 - Introduce "Basic Search" to the find dialog drop down
 - Add basic ability to select elements to search on via Basic Search

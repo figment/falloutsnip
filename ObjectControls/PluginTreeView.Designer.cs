@@ -41,6 +41,7 @@
             this.contextMenuRecordAddMaster = new System.Windows.Forms.ToolStripMenuItem();
             this.browseToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.contextMenuRecordEdit = new System.Windows.Forms.ToolStripMenuItem();
+            this.reportToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.contextMenuRecordCopy = new System.Windows.Forms.ToolStripMenuItem();
             this.contextMenuRecordCopyTo = new System.Windows.Forms.ToolStripMenuItem();
             this.contextMenuRecordDelete = new System.Windows.Forms.ToolStripMenuItem();
@@ -49,8 +50,8 @@
             this.toolStripMenuItem4 = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripMenuItem5 = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripMenuItem6 = new System.Windows.Forms.ToolStripMenuItem();
+            this.referenceSearchToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.PluginTree = new TESVSnip.Controls.CustomTreeView();
-            this.reportToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripRecord.SuspendLayout();
             this.contextMenuRecord.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.PluginTree)).BeginInit();
@@ -121,7 +122,8 @@
             this.contextMenuRecordCopy,
             this.contextMenuRecordCopyTo,
             this.contextMenuRecordDelete,
-            this.toolStripMenuItem2});
+            this.toolStripMenuItem2,
+            this.referenceSearchToolStripMenuItem});
             this.contextMenuRecord.Name = "contextMenuRecord";
             resources.ApplyResources(this.contextMenuRecord, "contextMenuRecord");
             this.contextMenuRecord.Closing += new System.Windows.Forms.ToolStripDropDownClosingEventHandler(this.contextMenuRecord_Closing);
@@ -146,6 +148,12 @@
             this.contextMenuRecordEdit.Name = "contextMenuRecordEdit";
             resources.ApplyResources(this.contextMenuRecordEdit, "contextMenuRecordEdit");
             this.contextMenuRecordEdit.Click += new System.EventHandler(this.editToolStripMenuItem_Click);
+            // 
+            // reportToolStripMenuItem
+            // 
+            this.reportToolStripMenuItem.Name = "reportToolStripMenuItem";
+            resources.ApplyResources(this.reportToolStripMenuItem, "reportToolStripMenuItem");
+            this.reportToolStripMenuItem.Click += new System.EventHandler(this.reportToolStripMenuItem_Click);
             // 
             // contextMenuRecordCopy
             // 
@@ -199,6 +207,12 @@
             resources.ApplyResources(this.toolStripMenuItem6, "toolStripMenuItem6");
             this.toolStripMenuItem6.Click += new System.EventHandler(this.collapseBranchToolStripMenuItem_Click);
             // 
+            // referenceSearchToolStripMenuItem
+            // 
+            this.referenceSearchToolStripMenuItem.Name = "referenceSearchToolStripMenuItem";
+            resources.ApplyResources(this.referenceSearchToolStripMenuItem, "referenceSearchToolStripMenuItem");
+            this.referenceSearchToolStripMenuItem.Click += new System.EventHandler(this.referenceSearchToolStripMenuItem_Click);
+            // 
             // PluginTree
             // 
             this.PluginTree.AllowColumnReorder = true;
@@ -244,12 +258,6 @@
             this.PluginTree.KeyDown += new System.Windows.Forms.KeyEventHandler(this.PluginTree_KeyDown);
             this.PluginTree.MouseDoubleClick += new System.Windows.Forms.MouseEventHandler(this.PluginTree_MouseDoubleClick);
             // 
-            // reportToolStripMenuItem
-            // 
-            this.reportToolStripMenuItem.Name = "reportToolStripMenuItem";
-            resources.ApplyResources(this.reportToolStripMenuItem, "reportToolStripMenuItem");
-            this.reportToolStripMenuItem.Click += new System.EventHandler(this.reportToolStripMenuItem_Click);
-            // 
             // PluginTreeView
             // 
             resources.ApplyResources(this, "$this");
@@ -289,5 +297,6 @@
         private System.Windows.Forms.ImageList imageSmallTreeList;
         private System.Windows.Forms.ToolStripMenuItem contextMenuRecordEdit;
         private System.Windows.Forms.ToolStripMenuItem reportToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem referenceSearchToolStripMenuItem;
     }
 }

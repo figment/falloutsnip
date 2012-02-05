@@ -26,5 +26,10 @@ namespace TESVSnip.Docking
         {
             this.subrecordPanel.SetSearchCriteria(settings, doSearch);
         }
+
+        internal void ReferenceSearch(uint formid)
+        {
+            this.subrecordPanel.ReferenceSearch(formid);
+        }
     }
 }

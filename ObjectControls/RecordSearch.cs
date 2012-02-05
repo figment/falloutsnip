@@ -933,5 +933,14 @@ namespace TESVSnip.ObjectControls
         {
 
         }
+
+        internal void ReferenceSearch(uint formid)
+        {
+            var cboItem = toolStripIncrFindType.Items.OfType<MRUComboHelper<SearchType, string>>().FirstOrDefault(
+                x => x.Key == SearchType.FormIDRef);
+            toolStripIncrFindType.SelectedItem = cboItem;
+            toolStripIncrFindText.Text = formid.ToString("X8");
+            BackgroundIncrementalSearch();
+        }
     }
 }

@@ -222,7 +222,7 @@
     <value>162, 22</value>
   </data>
   <data name="reportToolStripMenuItem.Text" xml:space="preserve">
-    <value>Report...</value>
+    <value>&amp;Report...</value>
   </data>
   <data name="contextMenuRecordCopy.Size" type="System.Drawing.Size, System.Drawing">
     <value>162, 22</value>
@@ -272,8 +272,14 @@
   <data name="toolStripMenuItem2.Text" xml:space="preserve">
     <value>&amp;Expand/Collapse</value>
   </data>
+  <data name="referenceSearchToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
+    <value>162, 22</value>
+  </data>
+  <data name="referenceSearchToolStripMenuItem.Text" xml:space="preserve">
+    <value>&amp;Find References</value>
+  </data>
   <data name="contextMenuRecord.Size" type="System.Drawing.Size, System.Drawing">
-    <value>163, 180</value>
+    <value>163, 202</value>
   </data>
   <data name="&gt;&gt;contextMenuRecord.Name" xml:space="preserve">
     <value>contextMenuRecord</value>
@@ -301,7 +307,7 @@
     <value>PluginTree</value>
   </data>
   <data name="&gt;&gt;PluginTree.Type" xml:space="preserve">
-    <value>TESVSnip.Controls.CustomTreeView, TESVSnip, Version=3.7.4411.1, Culture=neutral, PublicKeyToken=null</value>
+    <value>TESVSnip.Controls.CustomTreeView, TESVSnip, Version=4.0.4417.1, Culture=neutral, PublicKeyToken=null</value>
   </data>
   <data name="&gt;&gt;PluginTree.Parent" xml:space="preserve">
     <value>$this</value>
@@ -372,6 +378,12 @@
   <data name="&gt;&gt;contextMenuRecordEdit.Type" xml:space="preserve">
     <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
+  <data name="&gt;&gt;reportToolStripMenuItem.Name" xml:space="preserve">
+    <value>reportToolStripMenuItem</value>
+  </data>
+  <data name="&gt;&gt;reportToolStripMenuItem.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
   <data name="&gt;&gt;contextMenuRecordCopy.Name" xml:space="preserve">
     <value>contextMenuRecordCopy</value>
   </data>
@@ -420,10 +432,10 @@
   <data name="&gt;&gt;toolStripMenuItem6.Type" xml:space="preserve">
     <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
-  <data name="&gt;&gt;reportToolStripMenuItem.Name" xml:space="preserve">
-    <value>reportToolStripMenuItem</value>
+  <data name="&gt;&gt;referenceSearchToolStripMenuItem.Name" xml:space="preserve">
+    <value>referenceSearchToolStripMenuItem</value>
   </data>
-  <data name="&gt;&gt;reportToolStripMenuItem.Type" xml:space="preserve">
+  <data name="&gt;&gt;referenceSearchToolStripMenuItem.Type" xml:space="preserve">
     <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="&gt;&gt;$this.Name" xml:space="preserve">

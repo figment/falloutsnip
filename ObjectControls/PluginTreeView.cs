@@ -946,5 +946,14 @@ namespace TESVSnip.ObjectControls
             }
 
         }
+
+        private void referenceSearchToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            var rec = this.PluginTree.SelectedRecords.OfType<Record>().FirstOrDefault();
+            if (rec != null)
+            {
+                MainView.PostReferenceSearch(rec.FormID);
+            }
+        }
     }
 }
