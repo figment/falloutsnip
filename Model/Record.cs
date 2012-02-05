@@ -616,7 +616,6 @@ namespace TESVSnip
                         }
                     }
                 case ElementValueType.Str4:
-                case ElementValueType.fstring:
                 case ElementValueType.BString:
                 case ElementValueType.String:
                     {

@@ -24,7 +24,6 @@ namespace TESVSnip
         Short,
         Byte,
         FormID,
-        fstring,
         Blob,
         LString,
         BString,
@@ -260,12 +259,7 @@ namespace TESVSnip
                 case ElementValueType.Blob:
                     if (repeat > 0 || optional)
                         throw new RecordXmlException(
-                            "blob or fstring type elements can't be marked with repeat or optional");
-                    break;
-                case ElementValueType.fstring:
-                    if (repeat > 0 || optional)
-                        throw new RecordXmlException(
-                            "blob or fstring type elements can't be marked with repeat or optional");
+                            "blob type elements can't be marked with repeat or optional");
                     break;
             }
         }

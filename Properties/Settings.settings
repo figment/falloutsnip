@@ -95,5 +95,8 @@
     <Setting Name="MaxSearchResults" Type="System.UInt16" Scope="User">
       <Value Profile="(Default)">1000</Value>
     </Setting>
+    <Setting Name="LastSearchType" Type="System.String" Scope="User">
+      <Value Profile="(Default)" />
+    </Setting>
   </Settings>
 </SettingsFile>

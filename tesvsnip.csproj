@@ -252,6 +252,18 @@
     <Compile Include="Docking\FullRecordEditor.Designer.cs">
       <DependentUpon>FullRecordEditor.cs</DependentUpon>
     </Compile>
+    <Compile Include="Forms\BatchEditRecords.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\BatchEditRecords.Designer.cs">
+      <DependentUpon>BatchEditRecords.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\InputBox.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\InputBox.Designer.cs">
+      <DependentUpon>InputBox.cs</DependentUpon>
+    </Compile>
     <Compile Include="Forms\RecordColumnSelect.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -312,8 +324,10 @@
     <Compile Include="Forms\SearchFilterAdvanced.Designer.cs">
       <DependentUpon>SearchFilterAdvanced.cs</DependentUpon>
     </Compile>
+    <Compile Include="Main\CastValue.cs" />
     <Compile Include="Model\BaseRecord.cs" />
     <Compile Include="Model\ColumnElement.cs" />
+    <Compile Include="Model\BatchElement.cs" />
     <Compile Include="Model\Element.cs" />
     <Compile Include="Model\GroupRecord.cs" />
     <Compile Include="Model\IGroupRecord.cs" />
@@ -447,6 +461,12 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Docking\FullRecordEditor.resx">
       <DependentUpon>FullRecordEditor.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\BatchEditRecords.resx">
+      <DependentUpon>BatchEditRecords.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\InputBox.resx">
+      <DependentUpon>InputBox.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\RecordColumnSelect.resx">
       <DependentUpon>RecordColumnSelect.cs</DependentUpon>
@@ -703,6 +723,8 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="Controls\ObjectListView\CustomDictionary.xml" />
+    <None Include="Resources\bookmark_add.png" />
+    <None Include="Resources\14_layer_deletelayer.png" />
     <Content Include="Resources\clear-filter.png" />
     <None Include="Resources\configure_toolbars.png" />
     <None Include="Resources\Edit_UndoHS.bmp" />
@@ -714,6 +736,8 @@
     <None Include="Resources\reload_all_tabs.png" />
     <None Include="Resources\Revert.png" />
     <None Include="Resources\RolledBack.bmp" />
+    <None Include="Resources\Save.bmp" />
+    <None Include="Resources\Open.bmp" />
     <Content Include="Resources\sort-ascending.png" />
     <Content Include="Resources\sort-descending.png" />
     <None Include="Resources\warning.ico" />

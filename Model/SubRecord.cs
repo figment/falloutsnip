@@ -90,7 +90,6 @@ namespace TESVSnip
                                     size += 2;
                                     break;
                                 case ElementValueType.String:
-                                case ElementValueType.fstring:
                                 case ElementValueType.Byte:
                                 case ElementValueType.SByte:
                                     size += 1;
@@ -510,12 +509,7 @@ namespace TESVSnip
                                     }
                                     offset++;
                                     break;
-                                case ElementValueType.fstring:
-                                    if (!sselem.notininfo) s.Append(GetStrData());
-                                    offset += Data.Length - offset;
-                                    break;
-                                case ElementValueType.Blob:
-                                    if (!sselem.notininfo)
+                                case ElementValueType.Blob:if (!sselem.notininfo)
                                         s.Append(TypeConverter.GetHexData(Data, offset, Data.Length - offset));
                                     offset += Data.Length - offset;
                                     break;
@@ -665,7 +659,6 @@ namespace TESVSnip
 
                         case ElementValueType.BString:
                         case ElementValueType.String:
-                        case ElementValueType.fstring:
                             row.Add(new RTFCellDefinition(42, RTFAlignment.MiddleLeft, RTFBorderSide.Default, 15,
                                                           Color.DarkGray, Padding.Empty));
                             break;
@@ -996,7 +989,7 @@ namespace TESVSnip
                         if (sselem.hexview || hasFlags)
                             value = string.Format(string.Format("{{0:X{0}}}", elem.Data.Count*2), value);
                         else
-                            value = value == null ? "" : value.ToString();
+                            value = value ?? "";
                         if (hasOptions)
                         {
                             int intVal = Convert.ToInt32(value);

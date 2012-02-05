@@ -29,6 +29,5 @@ namespace TESVSnip.Model
     {
         public ElementStructure Record { get; set; }
         public ColumnSubrecord Parent { get; set; }
-        public string ParentType { get; set; }
     }
 }

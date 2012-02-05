@@ -328,13 +328,16 @@
     <value>235, 22</value>
   </data>
   <data name="searchToolStripMenuItem.Text" xml:space="preserve">
-    <value>Search Basic...</value>
+    <value>&amp;Basic Search...</value>
   </data>
   <data name="searchAdvancedToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
     <value>235, 22</value>
   </data>
   <data name="searchAdvancedToolStripMenuItem.Text" xml:space="preserve">
     <value>Search Advanced...</value>
+  </data>
+  <data name="searchAdvancedToolStripMenuItem.Visible" type="System.Boolean, mscorlib">
+    <value>False</value>
   </data>
   <data name="editToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
     <value>39, 20</value>

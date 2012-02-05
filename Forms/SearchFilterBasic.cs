@@ -4,9 +4,12 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Drawing;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Windows.Forms;
+using System.Xml.Serialization;
+
 using BrightIdeasSoftware;
 using TESVSnip.Model;
 
@@ -14,10 +17,10 @@ namespace TESVSnip.Forms
 {
     internal partial class SearchFilterBasic : Form
     {
-        private RecordStructure rec;
         private OLVColumn olvColumnName;
         private OLVColumn olvColumnCond;
         private OLVColumn olvColumnValue;
+        private bool initialized;
 
         public SearchFilterBasic()
         {
@@ -25,16 +28,38 @@ namespace TESVSnip.Forms
             this.Icon = TESVSnip.Properties.Resources.tesv_ico;
         }
 
-        internal SearchFilterBasic(RecordStructure rec)
-            : this()
+        //internal SearchFilterBasic(RecordStructure rec)
+        //    : this()
+        //{
+        //    this.filterTree.Roots = ConfigureRecord(rec);
+        //}
+
+        public void EnableFindAll(bool value)
         {
-            ConfigureRecord(rec);
+            this.bSave.Visible = value;
         }
 
+
+        public SearchCriteriaSettings Criteria { get; set; }
+ 
         private void SearchFilter_Load(object sender, EventArgs e)
         {
-            InitializeComboBox();
-            InitializeTreeList();
+            Initialize();
+            if (cboRecordType.SelectedIndex == -1 && cboSavedSearches.Items.Count > 0)
+            {
+                cboSavedSearches.SelectedIndex = 0;
+            }
+        }
+
+        public void Initialize()
+        {
+            if (!initialized)
+            {
+                InitializeSearches();
+                InitializeComboBox();
+                InitializeTreeList();
+                initialized = true;
+            }            
         }
 
         class ComboBoxItem<T> where T:class 
@@ -54,6 +79,12 @@ namespace TESVSnip.Forms
             }
         }
 
+        public void SetRecordStructure(RecordStructure rec)
+        {
+            Initialize();
+            this.filterTree.Roots = ConfigureRecord(rec);
+        }
+
         private void InitializeComboBox()
         {
             var records = RecordStructure.Records.Values.Select(x =>
@@ -64,10 +95,6 @@ namespace TESVSnip.Forms
             if (this.Criteria != null && !string.IsNullOrEmpty(this.Criteria.Type))
             {
                 this.cboRecordType.SelectedItem = RecordStructure.Records[this.Criteria.Type];
-            }
-            else if (this.rec != null)
-            {
-                this.cboRecordType.SelectedItem = this.rec;
             }
         }
 
@@ -114,14 +141,17 @@ namespace TESVSnip.Forms
             filterTree.CellEditActivation = ObjectListView.CellEditActivateMode.SingleClick;
 
             filterTree.Roots = filterTree.Roots;
+            AssignCriteria(this.Criteria);
+        }
 
-            var checkedItems = new ArrayList();
-            var recStruct = this.cboRecordType.SelectedItem as ComboBoxItem<RecordStructure>;
-            if (this.Criteria != null && recStruct != null && this.Criteria.Type == recStruct.Value.name)
+        private void AssignCriteria(SearchCriteriaSettings settings)
+        {
+            if (settings != null)
             {
+                var checkedItems = new ArrayList();
                 var modelItems = filterTree.Roots.OfType<SearchSubrecord>();
 
-                foreach (var item in this.Criteria.Items.OfType<SearchSubrecord>())
+                foreach (var item in settings.Items.OfType<SearchSubrecord>())
                 {
                     var modelItem = modelItems.FirstOrDefault(x => x.Name == item.Name);
                     if (modelItem != null)
@@ -131,7 +161,7 @@ namespace TESVSnip.Forms
                         checkedItems.Add(modelItem);
                     }
                 }
-                foreach (var item in this.Criteria.Items.OfType<SearchElement>())
+                foreach (var item in settings.Items.OfType<SearchElement>())
                 {
                     var modelItem = modelItems.FirstOrDefault(x => x.Name == item.Parent.Name);
                     if (modelItem != null)
@@ -143,7 +173,43 @@ namespace TESVSnip.Forms
                             modelElem.Checked = true;
                             modelElem.Type = item.Type;
                             modelElem.Value = item.Value;
-                            checkedItems.Add(modelItem);
+                            checkedItems.Add(modelElem);
+                        }
+                    }
+                }
+                this.filterTree.CheckObjects(checkedItems);
+            }
+        }
+        private void AssignCriteria(SearchCriteriaXmlSettings settings)
+        {
+            if (settings != null)
+            {
+                var checkedItems = new ArrayList();
+                var modelItems = filterTree.Roots.OfType<SearchSubrecord>();
+
+                foreach (var item in settings.Items.OfType<SearchSubrecordXml>())
+                {
+                    var modelItem = modelItems.FirstOrDefault(x => x.Record.name == item.SubRecord);
+                    if (modelItem != null)
+                    {
+                        modelItem.Checked = true;
+                        modelItem.Type = item.Type;
+                        checkedItems.Add(modelItem);
+                    }
+                }
+                foreach (var item in settings.Items.OfType<SearchElementXml>())
+                {
+                    var modelItem = modelItems.FirstOrDefault(x => x.Record.name == item.SubRecord);
+                    if (modelItem != null)
+                    {
+                        filterTree.Expand(modelItem);
+                        var modelElem = modelItem.Children.FirstOrDefault(x => x.Name == item.Element);
+                        if (modelElem != null)
+                        {
+                            modelElem.Checked = true;
+                            modelElem.Type = item.Type;
+                            modelElem.Value = item.Value;
+                            checkedItems.Add(modelElem);
                         }
                     }
                 }
@@ -151,17 +217,17 @@ namespace TESVSnip.Forms
             }
         }
 
-        public void ConfigureRecord(RecordStructure rec)
+
+        public IEnumerable<SearchSubrecord> ConfigureRecord(RecordStructure rec)
         {
-            this.rec = rec;
-            this.cboRecordType.SelectedItem = this.rec;
+            this.cboRecordType.SelectedItem = rec;
             if (rec == null)
-                filterTree.Roots = null;
+                return null;
             else
             {
                 var srs = (from sr in rec.subrecords
                            let children = sr.elements.Select(
-                                se => new SearchElement() { Checked = false, Name = se.name, Parent = null, Record = se, Type = SearchCondElementType.Exists }
+                                se => new SearchElement() { Name = se.name, Parent = null, Record = se, Type = SearchCondElementType.Exists, Checked = false}
                            ).ToList()
                            select new SearchSubrecord()
                            {
@@ -174,9 +240,7 @@ namespace TESVSnip.Forms
                 foreach (var sr in srs)
                     foreach (var se in sr.Children)
                         se.Parent = sr;
-
-                filterTree.Roots = srs;
-
+                return srs;
             }
         }
 
@@ -224,12 +288,10 @@ namespace TESVSnip.Forms
 
         private void cboRecordType_SelectedIndexChanged(object sender, EventArgs e)
         {
+            this.cboSavedSearches.SelectedIndex = -1;
             var recStruct = this.cboRecordType.SelectedItem as ComboBoxItem<RecordStructure>;
-            ConfigureRecord(recStruct != null ? recStruct.Value : null);
+            this.filterTree.Roots = ConfigureRecord(recStruct != null ? recStruct.Value : null);
         }
-
-        public SearchCriteriaSettings Criteria { get; set; }
- 
 
         private bool ApplySettings()
         {
@@ -274,6 +336,167 @@ namespace TESVSnip.Forms
             {
                 this.DialogResult = DialogResult.Yes; // Search.  Yes to search immediately
             }
+        }
+
+
+        private void InitializeSearches()
+        {
+            this.cboSavedSearches.Items.Clear();
+            LoadSearches();
+        }
+
+        private void LoadSearches()
+        {
+            try
+            {
+                var configFile = Path.Combine(Path.GetDirectoryName(Application.ExecutablePath)
+                    , Path.Combine("conf", "SearchSettings.xml"));
+                if (File.Exists(configFile))
+                {
+                    using (FileStream fs = File.OpenRead(configFile))
+                    {
+                        var scl = SearchCriteriaList.Deserialize(fs);
+                        if (scl != null)
+                        {
+                            this.cboSavedSearches.Items.Clear();
+                            this.cboSavedSearches.Items.AddRange(scl.Settings.OfType<object>().ToArray());
+                        }
+                    }
+                }
+            }
+            catch
+            {
+            }            
+        }
+
+        private void SaveSearches()
+        {
+            try
+            {
+                var elements = this.cboSavedSearches.Items.OfType<SearchCriteriaXmlSettings>();
+                var configFile = Path.Combine(Path.GetDirectoryName(Application.ExecutablePath)
+                    , Path.Combine("conf", "SearchSettings.xml"));
+
+                var configDir = Path.GetDirectoryName(configFile);
+                if (elements.Any())
+                {
+                    if (Directory.Exists(configDir))
+                        Directory.CreateDirectory(configDir);
+                    using (FileStream fs = File.Create(configFile))
+                    {
+                        SearchCriteriaList.Serialize(fs, elements);
+                    }                    
+                }
+                else
+                {
+                    File.Delete(configFile);
+                }
+            }
+            catch (Exception)
+            {
+            }
+        }
+
+        private void cboSavedSearches_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            var settings = cboSavedSearches.SelectedItem as SearchCriteriaXmlSettings;
+            if (settings != null && !string.IsNullOrEmpty(settings.Type))
+            {
+                cboRecordType.SelectedIndexChanged -= cboRecordType_SelectedIndexChanged;
+                cboSavedSearches.SelectedIndexChanged -= cboSavedSearches_SelectedIndexChanged;
+                filterTree.ItemsChanging -= filterTree_ItemsChanging;
+                filterTree.CellEditValidating -= filterTree_CellEditValidating;
+                filterTree.ItemChecked -= filterTree_ItemChecked;
+                try
+                {
+                    RecordStructure rec;
+                    if (RecordStructure.Records.TryGetValue(settings.Type, out rec))
+                    {
+                        this.filterTree.Roots = ConfigureRecord(rec);
+                        AssignCriteria(settings);
+                        this.filterTree.RebuildAll(true);
+                    }
+                }
+                finally
+                {
+                    cboRecordType.SelectedIndexChanged += cboRecordType_SelectedIndexChanged;
+                    cboSavedSearches.SelectedIndexChanged += cboSavedSearches_SelectedIndexChanged;
+                    filterTree.ItemsChanging += filterTree_ItemsChanging;
+                    filterTree.CellEditValidating += filterTree_CellEditValidating;
+                    filterTree.ItemChecked += filterTree_ItemChecked;
+                }
+            }
+        }
+
+
+        private void btnAddSearch_Click(object sender, EventArgs e)
+        {
+            var settings = new SearchCriteriaSettings();
+            var recStruct = this.cboRecordType.SelectedItem as ComboBoxItem<RecordStructure>;
+            if (recStruct != null)
+            {
+                settings.Type = recStruct.Value.name;
+                var checkeditems = this.filterTree.CheckedObjectsEnumerable;
+                var items = checkeditems.OfType<SearchCriteria>().ToArray();
+                if (items.Any())
+                {
+                    settings.Items = items;
+                    var xmlSetting = SearchCriteriaList.ToXml(settings);
+
+                    var dlg = new InputBox("Enter Search Description:", xmlSetting.Name, "Search Description");
+                    if ( DialogResult.OK == dlg.ShowDialog(this)  && !string.IsNullOrEmpty(dlg.Value))
+                    {
+                        this.cboSavedSearches.Items.Insert(0, xmlSetting);
+                        xmlSetting.Name = dlg.Value;
+                        SaveSearches();
+                    }
+                }
+            }
+        }
+
+        private void btnRemoveSearch_Click(object sender, EventArgs e)
+        {
+            var settings = cboSavedSearches.SelectedItem as SearchCriteriaXmlSettings;
+            if (settings != null)
+            {
+                this.cboSavedSearches.Items.Remove(settings);
+                SaveSearches();
+            }
+        }
+
+        private void filterTree_ItemsChanging(object sender, ItemsChangingEventArgs e)
+        {
+            this.cboSavedSearches.SelectedIndex = -1;
+        }
+
+        private void filterTree_CellEditValidating(object sender, CellEditEventArgs e)
+        {
+            if (e.Column.Equals(olvColumnValue))
+            {
+                if ( e.RowObject is SearchSubrecord )
+                    e.Cancel = true;
+                if (e.RowObject is SearchElement)
+                {
+                    var se = e.RowObject as SearchElement;
+                    if ( se.Record == null)
+                        e.Cancel = true;
+                    else
+                    {
+                        e.Cancel = !se.ValidateValue(e.NewValue);
+                    }
+                }
+                    
+            }
+            this.cboSavedSearches.SelectedIndex = -1;
+        }
+        void filterTree_ItemChecked(object sender, ItemCheckedEventArgs e)
+        {
+            this.cboSavedSearches.SelectedIndex = -1;
+        }
+
+        private void SearchFilterBasic_Shown(object sender, EventArgs e)
+        {
+            filterTree_SizeChanged(sender, e);
         }
     }
 }

@@ -110,10 +110,6 @@ namespace TESVSnip.RecordControls
                         tb.Text = TypeConverter.GetBString(data);
                         fitTextBoxToWidth = true;
                         break;
-                    case ElementValueType.fstring:
-                        tb.Text = TypeConverter.GetString(data);
-                        fitTextBoxToWidth = true;
-                        break;
                     case ElementValueType.LString:
                         {
                             uint id = TypeConverter.IsLikelyString(data) ? 0 : TypeConverter.h2i(data);
@@ -269,9 +265,6 @@ namespace TESVSnip.RecordControls
                     break;
                 case ElementValueType.BString:
                     SetCurrentData(new ArraySegment<byte>(TypeConverter.bstr2h(textBox.Text)));
-                    break;
-                case ElementValueType.fstring:
-                    SetCurrentData(new ArraySegment<byte>(TypeConverter.str2h(textBox.Text)));
                     break;
                 case ElementValueType.LString:
                     {

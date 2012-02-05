@@ -391,5 +391,17 @@ namespace TESVSnip.Properties {
                 this["MaxSearchResults"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string LastSearchType {
+            get {
+                return ((string)(this["LastSearchType"]));
+            }
+            set {
+                this["LastSearchType"] = value;
+            }
+        }
     }
 }

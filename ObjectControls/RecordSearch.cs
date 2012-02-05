@@ -11,9 +11,11 @@ using System.Media;
 using System.Windows.Forms;
 using BrightIdeasSoftware;
 using TESVSnip.Collections.Generic;
+using TESVSnip.Docking;
 using TESVSnip.Forms;
 using TESVSnip.Model;
 using TESVSnip.Properties;
+using WeifenLuo.WinFormsUI.Docking;
 
 namespace TESVSnip.ObjectControls
 {
@@ -95,7 +97,15 @@ namespace TESVSnip.ObjectControls
             };
             toolStripIncrFindType.Items.Clear();
             toolStripIncrFindType.Items.AddRange(items);
-            toolStripIncrFindType.SelectedIndex = 0;
+
+            int idx = 0;
+            if ( !string.IsNullOrEmpty(Properties.Settings.Default.LastSearchType) )
+            {
+                idx = toolStripIncrFindType.FindStringExact(Properties.Settings.Default.LastSearchType);
+            }
+            idx = idx >= 0 ? idx : 0;
+            toolStripIncrFindType.SelectedIndex = idx;        
+
             ResetSearch();
             toolStripIncrFindStatus.Text = "";
             if (!RecordStructure.Loaded)
@@ -117,15 +127,22 @@ namespace TESVSnip.ObjectControls
         private void toolStripIncrFindType_SelectedIndexChanged(object sender, EventArgs e)
         {
             var item = toolStripIncrFindType.SelectedItem as MRUComboHelper<SearchType, string>;
+            if (item != null)
+            {
+                Properties.Settings.Default.LastSearchType = toolStripIncrFindType.Text;
+            }
+            
             if (item != null && (item.Key == SearchType.TypeEditorIdSearch || item.Key == SearchType.TypeFullSearch))
             {
                 toolStripIncrFindTypeFilter.Visible = true;
                 toolStripIncrFindExact.Visible = false;
+                toolStripSelectColumns.Visible = true;
             }
             else
             {
                 toolStripIncrFindTypeFilter.Visible = false;
                 toolStripIncrFindExact.Visible = true;
+                toolStripSelectColumns.Visible = false;
             }
 
             if (item != null && item.Key == SearchType.BasicCriteriaRef)
@@ -134,6 +151,7 @@ namespace TESVSnip.ObjectControls
                 toolStripIncrFindText.Visible = false;
                 toolStripIncrFindText.Items.Clear();
                 toolStripIncrFindGo.Enabled = toolStripIncrSelectCriteria.Tag != null;
+                toolStripSelectColumns.Visible = true;
             }
             else
             {
@@ -493,16 +511,16 @@ namespace TESVSnip.ObjectControls
                             , AspectGetter = x => GetPluginFromNode(x as Record) }, 
                         new OLVColumn{ Text = "Type", Name = "Type", AspectName = "Type", Width = 100, IsVisible = true
                             , AspectGetter = x => { var rec = (x as Record); return rec != null ? rec.Name : ""; } },
-                        new OLVColumn{ Text = "Name", Name = "Name", AspectName = "Name", Width = 200, IsVisible = true, Groupable = false
+                        new OLVColumn{ Text = "Name", Name = "Name", AspectName = "Name", Width = 200, IsVisible = true, Groupable = true
                             , AspectGetter = x => { 
                                 var rec = (x as Record); 
                                 var sr = rec != null ? rec.SubRecords.FirstOrDefault(r=>r.Name == "EDID") : null;
                                 var elem = sr != null ? sr.GetStrData() : null;
                                 return elem ?? "";
                             } },
-                        new OLVColumn{ Text = "FormID", Name = "FormID", AspectName = "FormID", Width = 80, IsVisible = true, Groupable = false
+                        new OLVColumn{ Text = "FormID", Name = "FormID", AspectName = "FormID", Width = 80, IsVisible = true, Groupable = true
                             , AspectGetter = x => { var rec = (x as Record); return rec != null ? rec.FormID.ToString("X8") : ""; } },
-                        new OLVColumn{ Text = "Full Name", Name = "FullName", AspectName = "FullName", Width = 200, IsVisible = true, Groupable = false
+                        new OLVColumn{ Text = "Full Name", Name = "FullName", AspectName = "FullName", Width = 200, IsVisible = true, Groupable = true
                             , AspectGetter = 
                             x => { 
                                 var rec = (x as Record); 
@@ -527,7 +545,7 @@ namespace TESVSnip.ObjectControls
                         let dispName = type + ": " + name
                         select new OLVColumn
                         {
-                            Text = dispName, Name = colName, AspectName = name, Width = 80, IsVisible = true, Groupable = false
+                            Text = dispName, Name = colName, AspectName = name, Width = 80, IsVisible = true, Groupable = true
                             , AspectGetter = x =>
                             {
                                 var rec = (x as Record);
@@ -543,29 +561,7 @@ namespace TESVSnip.ObjectControls
             this.listSearchView.AllColumns.AddRange(baseColumns);
             
             var columnSettings = this.toolStripSelectColumns.Tag as ColumnSettings;
-            if (columnSettings != null)
-            {
-                foreach (var setting in columnSettings.Items.OfType<ColumnElement>())
-                {
-                    string type = setting.ParentType;
-                    string name = setting.Name;
-                    string colName = type + "." + name;
-                    string dispName = type + ": " + name;
-                    if (Enumerable.OfType<OLVColumn>(baseColumns).Any(x => x.Name == colName)) continue;
-                    var column = new OLVColumn
-                    {
-                        Text = dispName, Name = colName, AspectName = setting.Name, Width = 80, IsVisible = true, Groupable = false
-                        , AspectGetter = x =>
-                            {
-                                var rec = (x as Record);
-                                var sr = rec != null ? rec.SubRecords.FirstOrDefault(r => r.Name == type) : null;
-                                var se = sr != null ? sr.EnumerateElements().FirstOrDefault(e => e.Structure.name == name) : null;
-                                return se != null ? sr.GetDisplayValue(se) : null;
-                            }
-                    };
-                    this.listSearchView.AllColumns.Add(column);
-                }
-            }                
+            ApplyColumnSettings(columnSettings, rebuild: false);                
             this.listSearchView.AutoResizeColumns(ColumnHeaderAutoResizeStyle.ColumnContent);
 
             this.listSearchView.Objects = results.Records;
@@ -761,7 +757,179 @@ namespace TESVSnip.ObjectControls
             this.listSearchView.ClearObjects();
         }
 
+        IDockContent FindDockContent(Control c)
+        {
+            if (c is IDockContent)
+                return c as IDockContent;
+            else if (c.Parent != null)
+                return FindDockContent(c.Parent);
+            return null;
+        }
+
+        private void EditSelectedRecords()
+        {
+            var dockParent = FindDockContent(this);
+            var dockPanel = dockParent != null ? dockParent.DockHandler.DockPanel : null;
+            bool first = true;
+            foreach (var r in this.listSearchView.SelectedObjects.OfType<Record>())
+            {
+                var form = new FullRecordEditor(r);
+                if (dockParent != null)
+                {
+                    var sz = form.Size;
+                    if (first)
+                    {
+                        form.StartPosition = FormStartPosition.CenterScreen;
+                        form.Show(dockPanel, DockState.Float);
+                        form.Pane.FloatWindow.Size = sz;
+                        first = false;
+                    }
+                    else
+                    {
+                        form.Show(dockPanel);
+                    }
+                }
+                else
+                {
+                    form.Show(this);
+                }
+            }
+        }
+
+        private void BatchEditSelectedRecords()
+        {
+            var selRec = this.listSearchView.SelectedObjects.OfType<Record>();
+            using (var dlg = new BatchEditRecords(selRec) )
+            {
+                if (DialogResult.OK == dlg.ShowDialog(this) )
+                {
+                    BatchEditRecords.EditRecords(selRec, dlg.Criteria); // generate report of changes?
+                    this.listSearchView.RebuildColumns();
+                }
+            }            
+        }
+
         private void toolStripSelectColumns_Click(object sender, EventArgs e)
+        {
+            RecordStructure rec = null;
+
+            var searchTypeItem = toolStripIncrFindType.SelectedItem as MRUComboHelper<SearchType, string>;
+            if (searchTypeItem == null) return;
+            if (searchTypeItem.Key == SearchType.BasicCriteriaRef)
+            {
+                var scs = toolStripIncrSelectCriteria.Tag as SearchCriteriaSettings;
+                if ( scs != null && !string.IsNullOrEmpty(scs.Type))
+                    RecordStructure.Records.TryGetValue(scs.Type, out rec);
+            }
+            else
+            {
+                var recType = toolStripIncrFindTypeFilter.SelectedItem as string;
+                if (!string.IsNullOrEmpty(recType))
+                    RecordStructure.Records.TryGetValue(recType, out rec);
+            }
+            using (var dlg = new RecordColumnSelect(rec))
+            {
+                dlg.Criteria = toolStripSelectColumns.Tag as ColumnSettings;
+                if (DialogResult.OK == dlg.ShowDialog(this))
+                {
+                    var settings = dlg.Criteria;
+                    ApplyColumnSettings(settings, rebuild:true);
+                    toolStripSelectColumns.Tag = dlg.Criteria;
+                }
+            }
+        }
+
+        private void synchronizeToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            SynchronizeSelection();
+        }
+
+        private void resetToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            ResetSearch();
+        }
+
+        private void editToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            EditSelectedRecords();
+        }
+
+        private void batchEditToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            BatchEditSelectedRecords();
+        }
+
+        internal void SetSearchCriteria(SearchCriteriaSettings settings, bool doSearch)
+        {
+            toolStripIncrSelectCriteria.Tag = settings;
+
+            var cboItem = toolStripIncrFindType.Items.OfType<MRUComboHelper<SearchType, string>>().FirstOrDefault(
+                x => x.Key == SearchType.BasicCriteriaRef);
+            toolStripIncrFindType.SelectedItem = cboItem;
+            if (doSearch) BackgroundIncrementalSearch();
+        }
+
+        private void ApplyColumnSettings(ColumnSettings columnSettings, bool rebuild)
+        {
+            // remove all of the old columns
+            bool changed = false;
+            foreach (var oldColumn in this.listSearchView.AllColumns.Where(x => (x.Tag is ColumnElement)).ToList())
+            {
+                this.listSearchView.AllColumns.Remove(oldColumn);
+                changed = true;
+            }
+            if (columnSettings != null)
+            {
+                foreach (var setting in columnSettings.Items.OfType<ColumnElement>())
+                {
+                    string type = setting.Parent.Record.name;
+                    string name = setting.Name;
+                    string colName = type + "." + name;
+                    string dispName = type + ": " + name;
+                    if (Enumerable.OfType<OLVColumn>(baseColumns).Any(x => x.Name == colName)) continue;
+                    var column = new OLVColumn
+                    {
+                        Text = dispName, Name = colName, AspectName = setting.Name,
+                        Width = 80, IsVisible = true, Groupable = true, Tag = setting,
+                        AspectGetter = x =>
+                        {
+                            var rec = (x as Record);
+                            var sr = rec != null ? rec.SubRecords.FirstOrDefault(r => r.Name == type) : null;
+                            var se = sr != null ? sr.EnumerateElements().FirstOrDefault(e => e.Structure.name == name) : null;
+                            return se != null ? sr.GetDisplayValue(se) : null;
+                        }
+                    };
+                    this.listSearchView.AllColumns.Add(column);
+                    changed = true;
+                }
+            }
+            if (changed && rebuild) this.listSearchView.RebuildColumns();
+        }
+
+        static readonly string[] groupingColumns = new string[] { "Type", "Plugin" };
+        private void listSearchView_BeforeCreatingGroups(object sender, CreateGroupsEventArgs e)
+        {
+            try
+            {
+                if (e.Parameters.GroupByColumn != null)
+                {
+                    if (!groupingColumns.Contains(e.Parameters.GroupByColumn.Name))
+                    {
+                        var column = listSearchView.AllColumns.FirstOrDefault(x => x.Name == "Plugin");
+                        if (column != null)
+                        {
+                            e.Parameters.GroupByColumn = column;
+                            e.Parameters.SortItemsByPrimaryColumn = false;
+                        }
+                    }
+                }
+            }
+            catch
+            {
+            }
+        }
+
+        private void listSearchView_BeforeSorting(object sender, BeforeSortingEventArgs e)
         {
 
         }

@@ -60,6 +60,13 @@ namespace TESVSnip.Properties {
             }
         }
         
+        internal static System.Drawing.Bitmap _14_layer_deletelayer {
+            get {
+                object obj = ResourceManager.GetObject("14_layer_deletelayer", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
         internal static System.Drawing.Bitmap agt_back {
             get {
                 object obj = ResourceManager.GetObject("agt_back", resourceCulture);
@@ -87,6 +94,13 @@ namespace TESVSnip.Properties {
         internal static string AreYouSureInquiry {
             get {
                 return ResourceManager.GetString("AreYouSureInquiry", resourceCulture);
+            }
+        }
+        
+        internal static System.Drawing.Bitmap bookmark_add {
+            get {
+                object obj = ResourceManager.GetObject("bookmark_add", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
             }
         }
         
@@ -517,6 +531,13 @@ namespace TESVSnip.Properties {
             }
         }
         
+        internal static System.Drawing.Bitmap Open {
+            get {
+                object obj = ResourceManager.GetObject("Open", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
         internal static System.Drawing.Bitmap Paste {
             get {
                 object obj = ResourceManager.GetObject("Paste", resourceCulture);
@@ -557,6 +578,13 @@ namespace TESVSnip.Properties {
         internal static System.Drawing.Bitmap RolledBack {
             get {
                 object obj = ResourceManager.GetObject("RolledBack", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        internal static System.Drawing.Bitmap Save {
+            get {
+                object obj = ResourceManager.GetObject("Save", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }

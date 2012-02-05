@@ -248,10 +248,6 @@ namespace TESVSnip
                             tb.Width += 200;
                         }
                         break;
-                    case ElementValueType.fstring:
-                        tb.Text = sr.GetStrData();
-                        tb.Width += 200;
-                        break;
                     case ElementValueType.LString:
                         {
                             int left = data.Length - offset;
@@ -293,7 +289,7 @@ namespace TESVSnip
             else
             {
                 if (es.type == ElementValueType.String || es.type == ElementValueType.BString
-                    || es.type == ElementValueType.fstring || es.type == ElementValueType.LString)
+                    || es.type == ElementValueType.LString)
                     tb.Width += 200;
                 if (removedStrings.ContainsKey(boxes.Count - 1)) tb.Text = removedStrings[boxes.Count - 1];
             }
@@ -656,12 +652,6 @@ namespace TESVSnip
                         {
                             bytes.AddRange(TypeConverter.s2h((ushort) tbText.Length));
                             bytes.AddRange(System.Text.Encoding.Default.GetBytes(tbText));
-                            break;
-                        }
-                    case ElementValueType.fstring:
-                        {
-                            byte[] conv = System.Text.Encoding.Default.GetBytes(tbText);
-                            bytes.AddRange(conv);
                             break;
                         }
                     case ElementValueType.LString:

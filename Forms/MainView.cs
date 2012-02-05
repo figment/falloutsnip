@@ -19,6 +19,7 @@ using TESVSnip.Properties;
 using WeifenLuo.WinFormsUI.Docking;
 using Timer = System.Threading.Timer;
 using TESVSnip.ObjectControls;
+using TESVSnip.Model;
 
 namespace TESVSnip
 {
@@ -1346,20 +1347,34 @@ namespace TESVSnip
             SendStatusText(text, SystemColors.ControlText);
         }
 
+        
         public void SendStatusText(string text, Color color)
         {
-            toolStripStatusLabel.ForeColor = color;
-            toolStripStatusLabel.Text = text;
-            if (statusTimer == null)
+            try
             {
-                statusTimer = new Timer(
-                    o =>
-                    Invoke(new TimerCallback(o2 => { toolStripStatusLabel.Text = ""; }), new object[] {""})
-                    , "", TimeSpan.FromSeconds(3), TimeSpan.FromMilliseconds(-1));
+                if (this.InvokeRequired)
+                {
+                    this.Invoke(new Action<string, Color>(SendStatusText), new object[] {text, color});
+                }
+                else
+                {
+                    toolStripStatusLabel.ForeColor = color;
+                    toolStripStatusLabel.Text = text;
+                    if (statusTimer == null)
+                    {
+                        statusTimer = new Timer(
+                            o =>
+                            Invoke(new TimerCallback(o2 => { toolStripStatusLabel.Text = ""; }), new object[] { "" })
+                            , "", TimeSpan.FromSeconds(3), TimeSpan.FromMilliseconds(-1));
+                    }
+                    else
+                    {
+                        statusTimer.Change(TimeSpan.FromSeconds(3), TimeSpan.FromMilliseconds(-1));
+                    }                    
+                }
             }
-            else
+            catch (Exception)
             {
-                statusTimer.Change(TimeSpan.FromSeconds(3), TimeSpan.FromMilliseconds(-1));
             }
         }
 
@@ -1456,6 +1471,12 @@ namespace TESVSnip
 
         private void findInRecordsToolStripMenuItem_Click(object sender, EventArgs e)
         {
+            CreateSearchWindow();
+
+        }
+
+        public RecordSearchForm CreateSearchWindow()
+        {
             int id = Application.OpenForms.OfType<RecordSearchForm>().Count() + 1;
             var form = new RecordSearchForm();
             form.Text = string.Format("Search {0}", id);
@@ -1463,13 +1484,21 @@ namespace TESVSnip
             var searchform = Application.OpenForms.OfType<RecordSearchForm>().LastOrDefault(x => x.Visible);
             if (searchform != null)
             {
-                if (searchform.Pane!= null) // second item in list
+                if (searchform.Pane != null) // second item in list
                     form.Show(searchform.Pane, null);
                 else if (searchform.PanelPane != null)
                     form.Show(searchform.PanelPane, null);
             }
             else
-                form.Show(dockPanel.ActiveDocumentPane, DockAlignment.Bottom, 0.33);            
+            {
+                if (dockPanel.ActiveDocumentPane != null)
+                    form.Show(dockPanel.ActiveDocumentPane, DockAlignment.Bottom, 0.33);
+                else
+                {
+                    form.Show(dockPanel, DockState.Document);
+                }
+            }
+            return form;
         }
         internal static void SynchronizeSelection(IEnumerable<BaseRecord> selection)
         {
@@ -1729,23 +1758,40 @@ namespace TESVSnip
 
         private void searchToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            RecordStructure recStruct = null;
-            var rec = this.PluginTree.SelectedRecord;
-            if (rec is Record)
+            var settings = searchToolStripMenuItem.Tag as SearchCriteriaSettings;
+            using (var dlg = new SearchFilterBasic())
             {
-                RecordStructure.Records.TryGetValue(rec.Name, out recStruct);
-            }
-            if (recStruct == null)
-                recStruct = RecordStructure.Records.Values.Random(RecordStructure.Records.Count).First();
-            using (var dlg = new SearchFilterBasic(recStruct))
-            {
-                if (DialogResult.OK == dlg.ShowDialog(this))
+                RecordStructure recStruct = null;
+                if (settings != null)
                 {
-                    var criteria = dlg.Criteria;
-                    if (criteria != null)
+                    if (RecordStructure.Records.TryGetValue(settings.Type, out recStruct))
                     {
-                        
+                        dlg.SetRecordStructure(recStruct);
+                        dlg.Criteria = settings;
                     }
+                }
+                if (recStruct == null)
+                {
+                    var rec = this.PluginTree.SelectedRecord;
+                    if (rec is GroupRecord)
+                    {
+                        var gr = rec as GroupRecord;
+                        var ct = gr.ContentsType;
+                        if (!string.IsNullOrEmpty(ct))
+                            RecordStructure.Records.TryGetValue(ct, out recStruct);
+                    }
+                    else if (rec is Record)
+                    {
+                        RecordStructure.Records.TryGetValue(rec.Name, out recStruct);
+                    }
+                    dlg.SetRecordStructure(recStruct);
+                }
+                dlg.EnableFindAll(false); // hide final all since we will open 
+                if (DialogResult.Cancel != dlg.ShowDialog(this))
+                {
+                    searchToolStripMenuItem.Tag = dlg.Criteria;
+                    var window = CreateSearchWindow();
+                    window.SetSearchCriteria(dlg.Criteria, doSearch: true);
                 }
             }
         }

@@ -241,7 +241,7 @@
     <value>Magenta</value>
   </data>
   <data name="toolStripIncrFindMatch.Size" type="System.Drawing.Size, System.Drawing">
-    <value>93, 19</value>
+    <value>93, 22</value>
   </data>
   <data name="toolStripIncrFindMatch.Text" xml:space="preserve">
     <value>Match Case</value>
@@ -259,7 +259,7 @@
     <value>Magenta</value>
   </data>
   <data name="toolStripIncrFindExact.Size" type="System.Drawing.Size, System.Drawing">
-    <value>58, 19</value>
+    <value>58, 22</value>
   </data>
   <data name="toolStripIncrFindExact.Text" xml:space="preserve">
     <value>Exact</value>
@@ -304,10 +304,34 @@
     <value>2</value>
   </data>
   <metadata name="contextMenuStripList.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
-    <value>301, 21</value>
+    <value>323, 17</value>
   </metadata>
+  <data name="synchronizeToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
+    <value>138, 22</value>
+  </data>
+  <data name="synchronizeToolStripMenuItem.Text" xml:space="preserve">
+    <value>&amp;Synchronize</value>
+  </data>
+  <data name="editToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
+    <value>138, 22</value>
+  </data>
+  <data name="editToolStripMenuItem.Text" xml:space="preserve">
+    <value>&amp;Edit...</value>
+  </data>
+  <data name="batchEditToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
+    <value>138, 22</value>
+  </data>
+  <data name="batchEditToolStripMenuItem.Text" xml:space="preserve">
+    <value>&amp;Batch Edit...</value>
+  </data>
+  <data name="resetToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
+    <value>138, 22</value>
+  </data>
+  <data name="resetToolStripMenuItem.Text" xml:space="preserve">
+    <value>&amp;Reset</value>
+  </data>
   <data name="contextMenuStripList.Size" type="System.Drawing.Size, System.Drawing">
-    <value>61, 4</value>
+    <value>139, 92</value>
   </data>
   <data name="&gt;&gt;contextMenuStripList.Name" xml:space="preserve">
     <value>contextMenuStripList</value>
@@ -316,7 +340,7 @@
     <value>System.Windows.Forms.ContextMenuStrip, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <metadata name="backgroundWorker1.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
-    <value>137, 21</value>
+    <value>159, 17</value>
   </metadata>
   <data name="listSearchView.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
     <value>Fill</value>
@@ -337,7 +361,7 @@
     <value>listSearchView</value>
   </data>
   <data name="&gt;&gt;listSearchView.Type" xml:space="preserve">
-    <value>BrightIdeasSoftware.ObjectListView, TESVSnip, Version=3.9.4413.0, Culture=neutral, PublicKeyToken=null</value>
+    <value>BrightIdeasSoftware.ObjectListView, TESVSnip, Version=3.9.4414.2, Culture=neutral, PublicKeyToken=null</value>
   </data>
   <data name="&gt;&gt;listSearchView.Parent" xml:space="preserve">
     <value>$this</value>
@@ -437,6 +461,30 @@
   </data>
   <data name="&gt;&gt;toolStripIncrFindStatus.Type" xml:space="preserve">
     <value>System.Windows.Forms.ToolStripLabel, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;synchronizeToolStripMenuItem.Name" xml:space="preserve">
+    <value>synchronizeToolStripMenuItem</value>
+  </data>
+  <data name="&gt;&gt;synchronizeToolStripMenuItem.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;editToolStripMenuItem.Name" xml:space="preserve">
+    <value>editToolStripMenuItem</value>
+  </data>
+  <data name="&gt;&gt;editToolStripMenuItem.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;batchEditToolStripMenuItem.Name" xml:space="preserve">
+    <value>batchEditToolStripMenuItem</value>
+  </data>
+  <data name="&gt;&gt;batchEditToolStripMenuItem.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;resetToolStripMenuItem.Name" xml:space="preserve">
+    <value>resetToolStripMenuItem</value>
+  </data>
+  <data name="&gt;&gt;resetToolStripMenuItem.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="&gt;&gt;backgroundWorker1.Name" xml:space="preserve">
     <value>backgroundWorker1</value>

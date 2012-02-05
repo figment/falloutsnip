@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Windows.Forms;
+using TESVSnip.Model;
 using WeifenLuo.WinFormsUI.Docking;
 
 namespace TESVSnip.Docking
@@ -14,6 +15,16 @@ namespace TESVSnip.Docking
         private void RecordSearchForm_Shown(object sender, EventArgs e)
         {
             this.subrecordPanel.FocusText();
+        }
+
+        private void RecordSearchForm_Load(object sender, EventArgs e)
+        {
+
+        }
+
+        internal void SetSearchCriteria(SearchCriteriaSettings settings, bool doSearch)
+        {
+            this.subrecordPanel.SetSearchCriteria(settings, doSearch);
         }
     }
 }

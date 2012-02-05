@@ -9,6 +9,8 @@ Requirements:
   .NET 3.5
 
 Change Log:
+v 4.0
+- Introduce "Batch Edit" on 
 v 3.9
 - Introduce "Basic Search" to the find dialog drop down
 - Add basic ability to select elements to search on via Basic Search

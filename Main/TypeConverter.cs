@@ -41,20 +41,54 @@ namespace TESVSnip
 
         public static object GetObject<T>(byte[] data, int offset)
         {
+            return (T)GetObject<T>(new ArraySegment<byte>(data, offset, data.Length - offset));
+        }
+        
+        public static object GetObject<T>(ArraySegment<byte> data)
+        {
             T result = default(T);
-            if (result is float)
-                return h2f(data, offset);
-            else if (result is int)
-                return h2si(data, offset);
+            if (result is float) return h2f(data);
+            if (result is int) return h2si(data);
+            if (result is uint) return h2i(data);
+            if (result is short) return h2ss(data);
+            if (result is ushort) return h2s(data);
+            if (result is sbyte) return h2sb(data);
+            if (result is byte) return h2b(data);
+            if (result is string) return GetString(data);
             return default(T);
+        }
+
+        public static object GetValue<T>(ArraySegment<byte> data)
+        {
+            return (T) GetObject<T>(data);
         }
 
         public static bool TryGetObject<T>(byte[] data, int offset, out object result)
         {
-            result = default(T);
-            if (result is float)
+            result = GetObject<T>(new ArraySegment<byte>(data, offset, data.Length - offset));
+            return true;
+        }
+
+        public static ArraySegment<byte> GetData<T>(object value)
+        {
+            Type t = typeof (T);
+            if (t == typeof(float)) return new ArraySegment<byte>(f2h(TESVSnip.Extensions.CastValue<float>(value)), 0, 4);
+            if (t == typeof(int)) return new ArraySegment<byte>(si2h(TESVSnip.Extensions.CastValue<int>(value)), 0, 4);
+            if (t == typeof(uint)) return new ArraySegment<byte>(i2h(TESVSnip.Extensions.CastValue<uint>(value)), 0, 4);
+            if (t == typeof(short)) return new ArraySegment<byte>(ss2h(TESVSnip.Extensions.CastValue<short>(value)), 0, 2);
+            if (t == typeof(ushort)) return new ArraySegment<byte>(s2h(TESVSnip.Extensions.CastValue<ushort>(value)), 0, 2);
+            if (t == typeof(sbyte)) return new ArraySegment<byte>(sb2h(TESVSnip.Extensions.CastValue<sbyte>(value)), 0, 1);
+            if (t == typeof(byte)) return new ArraySegment<byte>(si2h(TESVSnip.Extensions.CastValue<byte>(value)), 0, 1);
+            if (t == typeof(string)) return new ArraySegment<byte>(str2h(TESVSnip.Extensions.CastValue<string>(value))); 
+            return new ArraySegment<byte>(new byte[0]);
+        }
+
+        public static bool TrySetValue<T>(ArraySegment<byte> data, object value)
+        {
+            var seg = GetData<T>(value);
+            if (seg.Count == data.Count)
             {
-                result = h2f(data, offset);
+                Array.Copy(seg.Array, seg.Offset, data.Array, data.Offset, data.Count);
                 return true;
             }
             return false;

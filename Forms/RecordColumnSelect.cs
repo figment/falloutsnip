@@ -84,7 +84,7 @@ namespace TESVSnip.Forms
                         if (modelElem != null)
                         {
                             modelElem.Checked = true;
-                            checkedItems.Add(modelItem);
+                            checkedItems.Add(modelElem);
                         }
                     }
                 }

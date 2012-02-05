@@ -48,9 +48,14 @@ namespace TESVSnip.ObjectControls
             this.toolStripSeparator7 = new System.Windows.Forms.ToolStripSeparator();
             this.toolStripIncrFindStatus = new System.Windows.Forms.ToolStripLabel();
             this.contextMenuStripList = new System.Windows.Forms.ContextMenuStrip(this.components);
+            this.synchronizeToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.editToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.batchEditToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.resetToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.backgroundWorker1 = new System.ComponentModel.BackgroundWorker();
             this.listSearchView = new BrightIdeasSoftware.ObjectListView();
             this.toolStripIncrFind.SuspendLayout();
+            this.contextMenuStripList.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.listSearchView)).BeginInit();
             this.SuspendLayout();
             // 
@@ -94,6 +99,7 @@ namespace TESVSnip.ObjectControls
             this.toolStripIncrSelectCriteria.Image = global::TESVSnip.Properties.Resources.configure_toolbars;
             resources.ApplyResources(this.toolStripIncrSelectCriteria, "toolStripIncrSelectCriteria");
             this.toolStripIncrSelectCriteria.Name = "toolStripIncrSelectCriteria";
+            this.toolStripIncrSelectCriteria.Overflow = System.Windows.Forms.ToolStripItemOverflow.Never;
             this.toolStripIncrSelectCriteria.Click += new System.EventHandler(this.toolStripIncrSelectCriteria_Click);
             // 
             // toolStripIncrFindTypeFilter
@@ -155,6 +161,7 @@ namespace TESVSnip.ObjectControls
             resources.GetString("toolStripIncrFindType.Items"),
             resources.GetString("toolStripIncrFindType.Items1")});
             this.toolStripIncrFindType.Name = "toolStripIncrFindType";
+            this.toolStripIncrFindType.Overflow = System.Windows.Forms.ToolStripItemOverflow.Never;
             resources.ApplyResources(this.toolStripIncrFindType, "toolStripIncrFindType");
             this.toolStripIncrFindType.SelectedIndexChanged += new System.EventHandler(this.toolStripIncrFindType_SelectedIndexChanged);
             // 
@@ -189,8 +196,37 @@ namespace TESVSnip.ObjectControls
             // 
             // contextMenuStripList
             // 
+            this.contextMenuStripList.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.synchronizeToolStripMenuItem,
+            this.editToolStripMenuItem,
+            this.batchEditToolStripMenuItem,
+            this.resetToolStripMenuItem});
             this.contextMenuStripList.Name = "contextMenuStripList";
             resources.ApplyResources(this.contextMenuStripList, "contextMenuStripList");
+            // 
+            // synchronizeToolStripMenuItem
+            // 
+            this.synchronizeToolStripMenuItem.Name = "synchronizeToolStripMenuItem";
+            resources.ApplyResources(this.synchronizeToolStripMenuItem, "synchronizeToolStripMenuItem");
+            this.synchronizeToolStripMenuItem.Click += new System.EventHandler(this.synchronizeToolStripMenuItem_Click);
+            // 
+            // editToolStripMenuItem
+            // 
+            this.editToolStripMenuItem.Name = "editToolStripMenuItem";
+            resources.ApplyResources(this.editToolStripMenuItem, "editToolStripMenuItem");
+            this.editToolStripMenuItem.Click += new System.EventHandler(this.editToolStripMenuItem_Click);
+            // 
+            // batchEditToolStripMenuItem
+            // 
+            this.batchEditToolStripMenuItem.Name = "batchEditToolStripMenuItem";
+            resources.ApplyResources(this.batchEditToolStripMenuItem, "batchEditToolStripMenuItem");
+            this.batchEditToolStripMenuItem.Click += new System.EventHandler(this.batchEditToolStripMenuItem_Click);
+            // 
+            // resetToolStripMenuItem
+            // 
+            this.resetToolStripMenuItem.Name = "resetToolStripMenuItem";
+            resources.ApplyResources(this.resetToolStripMenuItem, "resetToolStripMenuItem");
+            this.resetToolStripMenuItem.Click += new System.EventHandler(this.resetToolStripMenuItem_Click);
             // 
             // backgroundWorker1
             // 
@@ -216,6 +252,8 @@ namespace TESVSnip.ObjectControls
             this.listSearchView.UseAlternatingBackColors = true;
             this.listSearchView.UseCompatibleStateImageBehavior = false;
             this.listSearchView.View = System.Windows.Forms.View.Details;
+            this.listSearchView.BeforeSorting += new System.EventHandler<BrightIdeasSoftware.BeforeSortingEventArgs>(this.listSearchView_BeforeSorting);
+            this.listSearchView.BeforeCreatingGroups += new System.EventHandler<BrightIdeasSoftware.CreateGroupsEventArgs>(this.listSearchView_BeforeCreatingGroups);
             this.listSearchView.CellClick += new System.EventHandler<BrightIdeasSoftware.CellClickEventArgs>(this.listSearchView_CellClick);
             this.listSearchView.KeyDown += new System.Windows.Forms.KeyEventHandler(this.listSearchView_KeyDown);
             // 
@@ -229,6 +267,7 @@ namespace TESVSnip.ObjectControls
             this.Load += new System.EventHandler(this.RecordSearch_Load);
             this.toolStripIncrFind.ResumeLayout(false);
             this.toolStripIncrFind.PerformLayout();
+            this.contextMenuStripList.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.listSearchView)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
@@ -255,5 +294,9 @@ namespace TESVSnip.ObjectControls
         private System.Windows.Forms.ToolStripButton toolStripIncrSelectCriteria;
         private System.Windows.Forms.ToolStripButton toolStripIncrFindClear;
         private System.Windows.Forms.ToolStripButton toolStripSelectColumns;
+        private System.Windows.Forms.ToolStripMenuItem synchronizeToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem editToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem batchEditToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem resetToolStripMenuItem;
     }
 }
