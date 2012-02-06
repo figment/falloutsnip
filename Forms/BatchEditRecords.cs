@@ -24,6 +24,7 @@ namespace TESVSnip.Forms
         public BatchEditRecords()
         {
             InitializeComponent();
+            this.filterTree.CheckBoxes = true;
             this.Icon = TESVSnip.Properties.Resources.tesv_ico;
         }
 
@@ -140,7 +141,7 @@ namespace TESVSnip.Forms
                            }).ToList();
 
                 // Construct specialized editors for FormID and related headers
-                if (false) // disable for now
+#if false
                 {
                     var elems = new List<TESVSnip.Data.SubrecordElement>
                     {
@@ -162,6 +163,7 @@ namespace TESVSnip.Forms
                         Checked = false,
                     });
                 }
+#endif
 
                 // fix parents after assignments
                 foreach (var sr in srs)
