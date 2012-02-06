@@ -105,6 +105,11 @@ namespace TESVSnip
             action(this);
         }
 
+        public virtual IEnumerable<BaseRecord> Enumerate()
+        {
+            return Enumerate(x => true);
+        }
+
         public virtual IEnumerable<BaseRecord> Enumerate(Predicate<BaseRecord> match)
         {
             if (match(this)) yield return this;

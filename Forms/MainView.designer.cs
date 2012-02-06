@@ -93,8 +93,17 @@ namespace TESVSnip {
             this.polishToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.editStringsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.saveStringsFilesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.saveStringsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.stringLocalizerToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.reloadStringsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripMenuItem2 = new System.Windows.Forms.ToolStripSeparator();
+            this.internalizeStringReferencesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.extractInternalStringsToTableToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.copyReferencedStringsFromMastersToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.cleanUnusedStringsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.createStubsForMissingStringsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.exportStringsToFileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.importStringsToFileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.spellsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.sanitizeToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.stripEDIDsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -446,8 +455,17 @@ namespace TESVSnip {
             this.languageToolStripMenuItem,
             this.editStringsToolStripMenuItem,
             this.saveStringsFilesToolStripMenuItem,
+            this.saveStringsToolStripMenuItem,
             this.stringLocalizerToolStripMenuItem,
-            this.reloadStringsToolStripMenuItem});
+            this.reloadStringsToolStripMenuItem,
+            this.toolStripMenuItem2,
+            this.internalizeStringReferencesToolStripMenuItem,
+            this.extractInternalStringsToTableToolStripMenuItem,
+            this.copyReferencedStringsFromMastersToolStripMenuItem,
+            this.cleanUnusedStringsToolStripMenuItem,
+            this.createStubsForMissingStringsToolStripMenuItem,
+            this.exportStringsToFileToolStripMenuItem,
+            this.importStringsToFileToolStripMenuItem});
             this.toolsToolStripMenuItem.Name = "toolsToolStripMenuItem";
             resources.ApplyResources(this.toolsToolStripMenuItem, "toolsToolStripMenuItem");
             this.toolsToolStripMenuItem.DropDownOpening += new System.EventHandler(this.toolsToolStripMenuItem_DropDownOpening);
@@ -520,6 +538,12 @@ namespace TESVSnip {
             resources.ApplyResources(this.saveStringsFilesToolStripMenuItem, "saveStringsFilesToolStripMenuItem");
             this.saveStringsFilesToolStripMenuItem.Click += new System.EventHandler(this.saveStringsFilesToolStripMenuItem_Click);
             // 
+            // saveStringsToolStripMenuItem
+            // 
+            this.saveStringsToolStripMenuItem.Name = "saveStringsToolStripMenuItem";
+            resources.ApplyResources(this.saveStringsToolStripMenuItem, "saveStringsToolStripMenuItem");
+            this.saveStringsToolStripMenuItem.Click += new System.EventHandler(this.saveStringsToolStripMenuItem_Click);
+            // 
             // stringLocalizerToolStripMenuItem
             // 
             this.stringLocalizerToolStripMenuItem.Name = "stringLocalizerToolStripMenuItem";
@@ -531,6 +555,53 @@ namespace TESVSnip {
             this.reloadStringsToolStripMenuItem.Name = "reloadStringsToolStripMenuItem";
             resources.ApplyResources(this.reloadStringsToolStripMenuItem, "reloadStringsToolStripMenuItem");
             this.reloadStringsToolStripMenuItem.Click += new System.EventHandler(this.reloadStringsToolStripMenuItem_Click);
+            // 
+            // toolStripMenuItem2
+            // 
+            this.toolStripMenuItem2.Name = "toolStripMenuItem2";
+            resources.ApplyResources(this.toolStripMenuItem2, "toolStripMenuItem2");
+            // 
+            // internalizeStringReferencesToolStripMenuItem
+            // 
+            this.internalizeStringReferencesToolStripMenuItem.Name = "internalizeStringReferencesToolStripMenuItem";
+            resources.ApplyResources(this.internalizeStringReferencesToolStripMenuItem, "internalizeStringReferencesToolStripMenuItem");
+            this.internalizeStringReferencesToolStripMenuItem.Click += new System.EventHandler(this.internalizeStringReferencesToolStripMenuItem_Click);
+            // 
+            // extractInternalStringsToTableToolStripMenuItem
+            // 
+            this.extractInternalStringsToTableToolStripMenuItem.Name = "extractInternalStringsToTableToolStripMenuItem";
+            resources.ApplyResources(this.extractInternalStringsToTableToolStripMenuItem, "extractInternalStringsToTableToolStripMenuItem");
+            this.extractInternalStringsToTableToolStripMenuItem.Click += new System.EventHandler(this.extractInternalStringsToTableToolStripMenuItem_Click);
+            // 
+            // copyReferencedStringsFromMastersToolStripMenuItem
+            // 
+            this.copyReferencedStringsFromMastersToolStripMenuItem.Name = "copyReferencedStringsFromMastersToolStripMenuItem";
+            resources.ApplyResources(this.copyReferencedStringsFromMastersToolStripMenuItem, "copyReferencedStringsFromMastersToolStripMenuItem");
+            this.copyReferencedStringsFromMastersToolStripMenuItem.Click += new System.EventHandler(this.copyReferencedStringsFromMastersToolStripMenuItem_Click);
+            // 
+            // cleanUnusedStringsToolStripMenuItem
+            // 
+            this.cleanUnusedStringsToolStripMenuItem.Name = "cleanUnusedStringsToolStripMenuItem";
+            resources.ApplyResources(this.cleanUnusedStringsToolStripMenuItem, "cleanUnusedStringsToolStripMenuItem");
+            this.cleanUnusedStringsToolStripMenuItem.Click += new System.EventHandler(this.cleanUnusedStringsToolStripMenuItem_Click);
+            // 
+            // createStubsForMissingStringsToolStripMenuItem
+            // 
+            this.createStubsForMissingStringsToolStripMenuItem.Name = "createStubsForMissingStringsToolStripMenuItem";
+            resources.ApplyResources(this.createStubsForMissingStringsToolStripMenuItem, "createStubsForMissingStringsToolStripMenuItem");
+            this.createStubsForMissingStringsToolStripMenuItem.Click += new System.EventHandler(this.createStubsForMissingStringsToolStripMenuItem_Click);
+            // 
+            // exportStringsToFileToolStripMenuItem
+            // 
+            this.exportStringsToFileToolStripMenuItem.Name = "exportStringsToFileToolStripMenuItem";
+            resources.ApplyResources(this.exportStringsToFileToolStripMenuItem, "exportStringsToFileToolStripMenuItem");
+            this.exportStringsToFileToolStripMenuItem.Click += new System.EventHandler(this.exportStringsToFileToolStripMenuItem_Click);
+            // 
+            // importStringsToFileToolStripMenuItem
+            // 
+            this.importStringsToFileToolStripMenuItem.Name = "importStringsToFileToolStripMenuItem";
+            resources.ApplyResources(this.importStringsToFileToolStripMenuItem, "importStringsToFileToolStripMenuItem");
+            this.importStringsToFileToolStripMenuItem.Click += new System.EventHandler(this.importStringsToFileToolStripMenuItem_Click);
             // 
             // spellsToolStripMenuItem
             // 
@@ -1096,5 +1167,14 @@ namespace TESVSnip {
         private WeifenLuo.WinFormsUI.Docking.DockPanel dockPanel;
         private System.Windows.Forms.ToolStripMenuItem searchToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem searchAdvancedToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem extractInternalStringsToTableToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem copyReferencedStringsFromMastersToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem cleanUnusedStringsToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem createStubsForMissingStringsToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem saveStringsToolStripMenuItem;
+        private System.Windows.Forms.ToolStripSeparator toolStripMenuItem2;
+        private System.Windows.Forms.ToolStripMenuItem exportStringsToFileToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem importStringsToFileToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem internalizeStringReferencesToolStripMenuItem;
     }
 }

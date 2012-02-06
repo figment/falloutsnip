@@ -37,7 +37,7 @@ namespace TESVSnip
                 {
                     case ElementValueType.Int:
                         len = maxlen >= sizeof (int) ? sizeof (int) : maxlen;
-                        elem = new Element(es, ElementValueType.UInt, new ArraySegment<byte>(data, offset, len));
+                        elem = new Element(es, ElementValueType.Int, new ArraySegment<byte>(data, offset, len));
                         offset += len;
                         break;
                     case ElementValueType.UInt:
@@ -241,7 +241,7 @@ namespace TESVSnip
             }
         }
         #region Assign Value
-        private bool AssignValue<T>(object val)
+        internal bool AssignValue<T>(object val)
         {
             if (TypeConverter.TrySetValue<T>(this.Data, val))
             {

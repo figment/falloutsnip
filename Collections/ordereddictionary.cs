@@ -28,7 +28,7 @@ namespace TESVSnip.Collections.Generic
             return ~(_kvp.Count);
         }
 
-        private int FindValue(TItem value)
+        public int FindValue(TItem value)
         {
             for (int idx = 0; idx < _kvp.Count; ++idx)
             {

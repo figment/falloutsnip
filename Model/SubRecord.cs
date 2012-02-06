@@ -794,11 +794,43 @@ namespace TESVSnip
                         case ElementValueType.Blob:
                             strValue = TypeConverter.GetHexData(elem.Data);
                             break;
+                        case ElementValueType.SByte:
                         case ElementValueType.Int:
+                        case ElementValueType.Short:
+                            {
+                                if (sselem.hexview || hasFlags)
+                                    strValue = string.Format(string.Format("{{0:X{0}}}", elem.Data.Count * 2), value);
+                                else
+                                    strValue = value == null ? "" : value.ToString();
+                                if (hasOptions)
+                                {
+                                    int intVal = Convert.ToInt32(value);
+                                    for (int k = 0; k < sselem.options.Length; k += 2)
+                                    {
+                                        int intValOption;
+                                        if (int.TryParse(sselem.options[k + 1], out intValOption) &&
+                                            intVal == intValOption) strDesc = sselem.options[k];
+                                    }
+                                }
+                                else if (hasFlags)
+                                {
+                                    int intVal = Convert.ToInt32(value);
+                                    var tmp2 = new StringBuilder();
+                                    for (int k = 0; k < sselem.flags.Length; k++)
+                                    {
+                                        if ((intVal & (1 << k)) != 0)
+                                        {
+                                            if (tmp2.Length > 0) tmp2.Append(", ");
+                                            tmp2.Append(sselem.flags[k]);
+                                        }
+                                    }
+                                    strDesc = tmp2.ToString();
+                                }
+                            }
+                            break;
+
                         case ElementValueType.UInt:
                         case ElementValueType.Byte:
-                        case ElementValueType.SByte:
-                        case ElementValueType.Short:
                         case ElementValueType.UShort:
                             {
                                 if (sselem.hexview || hasFlags)
@@ -979,15 +1011,12 @@ namespace TESVSnip
                 case ElementValueType.Blob:
                     value = TypeConverter.GetHexData(elem.Data);
                     break;
-                case ElementValueType.Int:
-                case ElementValueType.UInt:
-                case ElementValueType.Byte:
                 case ElementValueType.SByte:
+                case ElementValueType.Int:
                 case ElementValueType.Short:
-                case ElementValueType.UShort:
                     {
                         if (sselem.hexview || hasFlags)
-                            value = string.Format(string.Format("{{0:X{0}}}", elem.Data.Count*2), value);
+                            value = string.Format(string.Format("{{0:X{0}}}", elem.Data.Count * 2), value);
                         else
                             value = value ?? "";
                         if (hasOptions)
@@ -996,6 +1025,43 @@ namespace TESVSnip
                             for (int k = 0; k < sselem.options.Length; k += 2)
                             {
                                 if (intVal == int.Parse(sselem.options[k + 1]))
+                                {
+                                    value = sselem.options[k];
+                                }
+                            }
+                        }
+                        else if (hasFlags)
+                        {
+                            int intVal = Convert.ToInt32(value);
+                            var tmp2 = new StringBuilder();
+                            for (int k = 0; k < sselem.flags.Length; k++)
+                            {
+                                if ((intVal & (1 << k)) != 0)
+                                {
+                                    if (tmp2.Length > 0) tmp2.Append(", ");
+                                    tmp2.Append(sselem.flags[k]);
+                                }
+                            }
+                            tmp2.Insert(0, ": ");
+                            tmp2.Insert(0, value.ToString());
+                            value = tmp2.ToString();
+                        }
+                    }
+                    break;
+                case ElementValueType.UInt:
+                case ElementValueType.Byte:
+                case ElementValueType.UShort:
+                    {
+                        if (sselem.hexview || hasFlags)
+                            value = string.Format(string.Format("{{0:X{0}}}", elem.Data.Count*2), value);
+                        else
+                            value = value ?? "";
+                        if (hasOptions)
+                        {
+                            uint intVal = Convert.ToUInt32(value);
+                            for (int k = 0; k < sselem.options.Length; k += 2)
+                            {
+                                if (intVal == uint.Parse(sselem.options[k + 1]))
                                 {
                                     value = sselem.options[k];                                    
                                 }

@@ -9,6 +9,20 @@ Requirements:
   .NET 3.5
 
 Change Log:
+v 4.1
+- Fixed issues with MGEF (signed vs unsigned values)
+- Added Copy & "Copy To" to search window
+- Renamed Tools menu to Strings
+- Edit Reorder Subrecords to work on multiple select or group or plugin
+- Added several menu commands for manipulating strings
+  - Explicitly save string table files seperate from plugin save
+  - Export string table to Xml file
+  - Import string table from Xml file
+  - Import strings from master string tables
+  - Internalize strings
+  - Prune unused strings from table
+  - Move Internalized strings to string table
+  
 v 4.0
 - Introduce "Batch Edit" on Search Window
 - Introduce "Column Selector" when using Basic Search or Search with "Type"

@@ -463,40 +463,94 @@
     <value>&amp;Polish</value>
   </data>
   <data name="languageToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>212, 22</value>
+    <value>241, 22</value>
   </data>
   <data name="languageToolStripMenuItem.Text" xml:space="preserve">
     <value>String &amp;Language</value>
   </data>
   <data name="editStringsToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>212, 22</value>
+    <value>241, 22</value>
   </data>
   <data name="editStringsToolStripMenuItem.Text" xml:space="preserve">
     <value>&amp;Edit Strings...</value>
   </data>
   <data name="saveStringsFilesToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>212, 22</value>
+    <value>241, 22</value>
   </data>
   <data name="saveStringsFilesToolStripMenuItem.Text" xml:space="preserve">
     <value>Enable Saving Strings Files</value>
   </data>
+  <data name="saveStringsToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
+    <value>241, 22</value>
+  </data>
+  <data name="saveStringsToolStripMenuItem.Text" xml:space="preserve">
+    <value>Save Plugin Strings</value>
+  </data>
   <data name="stringLocalizerToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>212, 22</value>
+    <value>241, 22</value>
   </data>
   <data name="stringLocalizerToolStripMenuItem.Text" xml:space="preserve">
     <value>&amp;String Localizer...</value>
   </data>
   <data name="reloadStringsToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>212, 22</value>
+    <value>241, 22</value>
   </data>
   <data name="reloadStringsToolStripMenuItem.Text" xml:space="preserve">
     <value>&amp;Reload Strings</value>
   </data>
+  <data name="toolStripMenuItem2.Size" type="System.Drawing.Size, System.Drawing">
+    <value>238, 6</value>
+  </data>
+  <data name="internalizeStringReferencesToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
+    <value>241, 22</value>
+  </data>
+  <data name="internalizeStringReferencesToolStripMenuItem.Text" xml:space="preserve">
+    <value>Internalize String References</value>
+  </data>
+  <data name="extractInternalStringsToTableToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
+    <value>241, 22</value>
+  </data>
+  <data name="extractInternalStringsToTableToolStripMenuItem.Text" xml:space="preserve">
+    <value>E&amp;xtract Internal Strings To Table</value>
+  </data>
+  <data name="copyReferencedStringsFromMastersToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
+    <value>241, 22</value>
+  </data>
+  <data name="copyReferencedStringsFromMastersToolStripMenuItem.Text" xml:space="preserve">
+    <value>Copy Master String References</value>
+  </data>
+  <data name="copyReferencedStringsFromMastersToolStripMenuItem.ToolTipText" xml:space="preserve">
+    <value>Copy any localized string references from the masters to selected plugin</value>
+  </data>
+  <data name="cleanUnusedStringsToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
+    <value>241, 22</value>
+  </data>
+  <data name="cleanUnusedStringsToolStripMenuItem.Text" xml:space="preserve">
+    <value>Clean Unused Strings</value>
+  </data>
+  <data name="createStubsForMissingStringsToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
+    <value>241, 22</value>
+  </data>
+  <data name="createStubsForMissingStringsToolStripMenuItem.Text" xml:space="preserve">
+    <value>Create Stubs for Missing Strings</value>
+  </data>
+  <data name="exportStringsToFileToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
+    <value>241, 22</value>
+  </data>
+  <data name="exportStringsToFileToolStripMenuItem.Text" xml:space="preserve">
+    <value>Export Strings to File</value>
+  </data>
+  <data name="importStringsToFileToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
+    <value>241, 22</value>
+  </data>
+  <data name="importStringsToFileToolStripMenuItem.Text" xml:space="preserve">
+    <value>&amp;Import Strings from File</value>
+  </data>
   <data name="toolsToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>48, 20</value>
+    <value>55, 20</value>
   </data>
   <data name="toolsToolStripMenuItem.Text" xml:space="preserve">
-    <value>&amp;Tools</value>
+    <value>S&amp;trings</value>
   </data>
   <data name="sanitizeToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
     <value>264, 22</value>
@@ -589,7 +643,7 @@
     <value>264, 22</value>
   </data>
   <data name="reorderSubrecordsToolStripMenuItem.Text" xml:space="preserve">
-    <value>Reorder Subrecords</value>
+    <value>&amp;Reorder Subrecords</value>
   </data>
   <data name="reorderSubrecordsToolStripMenuItem.ToolTipText" xml:space="preserve">
     <value>Attempt to restucture the Current Subrecord to match XML</value>
@@ -868,7 +922,7 @@
     <value>2</value>
   </data>
   <metadata name="toolStripIncrInvalidRec.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
-    <value>989, 17</value>
+    <value>17, 56</value>
   </metadata>
   <data name="toolStripIncrInvalidRec.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
     <value>Bottom</value>
@@ -1006,7 +1060,7 @@
     <value>True</value>
   </metadata>
   <metadata name="$this.TrayHeight" type="System.Int32, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
-    <value>39</value>
+    <value>96</value>
   </metadata>
   <data name="$this.ClientSize" type="System.Drawing.Size, System.Drawing">
     <value>765, 546</value>
@@ -1604,6 +1658,12 @@
   <data name="&gt;&gt;saveStringsFilesToolStripMenuItem.Type" xml:space="preserve">
     <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
+  <data name="&gt;&gt;saveStringsToolStripMenuItem.Name" xml:space="preserve">
+    <value>saveStringsToolStripMenuItem</value>
+  </data>
+  <data name="&gt;&gt;saveStringsToolStripMenuItem.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
   <data name="&gt;&gt;stringLocalizerToolStripMenuItem.Name" xml:space="preserve">
     <value>stringLocalizerToolStripMenuItem</value>
   </data>
@@ -1614,6 +1674,54 @@
     <value>reloadStringsToolStripMenuItem</value>
   </data>
   <data name="&gt;&gt;reloadStringsToolStripMenuItem.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;toolStripMenuItem2.Name" xml:space="preserve">
+    <value>toolStripMenuItem2</value>
+  </data>
+  <data name="&gt;&gt;toolStripMenuItem2.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ToolStripSeparator, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;internalizeStringReferencesToolStripMenuItem.Name" xml:space="preserve">
+    <value>internalizeStringReferencesToolStripMenuItem</value>
+  </data>
+  <data name="&gt;&gt;internalizeStringReferencesToolStripMenuItem.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;extractInternalStringsToTableToolStripMenuItem.Name" xml:space="preserve">
+    <value>extractInternalStringsToTableToolStripMenuItem</value>
+  </data>
+  <data name="&gt;&gt;extractInternalStringsToTableToolStripMenuItem.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;copyReferencedStringsFromMastersToolStripMenuItem.Name" xml:space="preserve">
+    <value>copyReferencedStringsFromMastersToolStripMenuItem</value>
+  </data>
+  <data name="&gt;&gt;copyReferencedStringsFromMastersToolStripMenuItem.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;cleanUnusedStringsToolStripMenuItem.Name" xml:space="preserve">
+    <value>cleanUnusedStringsToolStripMenuItem</value>
+  </data>
+  <data name="&gt;&gt;cleanUnusedStringsToolStripMenuItem.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;createStubsForMissingStringsToolStripMenuItem.Name" xml:space="preserve">
+    <value>createStubsForMissingStringsToolStripMenuItem</value>
+  </data>
+  <data name="&gt;&gt;createStubsForMissingStringsToolStripMenuItem.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;exportStringsToFileToolStripMenuItem.Name" xml:space="preserve">
+    <value>exportStringsToFileToolStripMenuItem</value>
+  </data>
+  <data name="&gt;&gt;exportStringsToFileToolStripMenuItem.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;importStringsToFileToolStripMenuItem.Name" xml:space="preserve">
+    <value>importStringsToFileToolStripMenuItem</value>
+  </data>
+  <data name="&gt;&gt;importStringsToFileToolStripMenuItem.Type" xml:space="preserve">
     <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="&gt;&gt;spellsToolStripMenuItem.Name" xml:space="preserve">

@@ -57,6 +57,11 @@ namespace TESVSnip.ObjectControls
             get { return PluginTree.SelectedRecord; }
             set { PluginTree.SelectedRecord = value; }
         }
+        public IEnumerable<BaseRecord> SelectedRecords
+        {
+            get { return PluginTree.SelectedRecords; }
+            set { PluginTree.SelectedRecords = value; }            
+        }
 
         public event EventHandler SelectionChanged;
 
@@ -382,83 +387,15 @@ namespace TESVSnip.ObjectControls
                 {
                     var src = nodes[0] as BaseRecord[];
                     var dst = nodes[1] as IGroupRecord;
-                    if (src != null && dst != null)
-                    {                       
-                        if (dst is Plugin)
-                        {
-                            var looseGroups = new[] { "CELL", "WRLD", "REFR", "ACRE", "ACHR", "NAVM", "DIAL", "INFO" };
-                            var dstRec = src.Where(x => !looseGroups.Contains(x.Name)).Select(x => x.Clone()).ToArray();
-                            if ( dstRec.All(x => x is Record) )
-                            {
-                                // put records into appropriate groups
-                                var groups = dst.Records.OfType<GroupRecord>();
-                                var lookup =
-                                    (from r in dstRec
-                                     group r by r.Name
-                                     into g select new {key = g.Key, value = g.ToArray()})
-                                        .ToLookup(k => k.key, v => v.value);
-                                foreach (var kvp in lookup)
-                                {
-                                    if (looseGroups.Contains(kvp.Key))
-                                    {
-
-                                        dst.AddRecords(dstRec);
-                                    }
-                                    else
-                                    {
-                                        var gr = groups.FirstOrDefault(x => x.ContentsType == kvp.Key);
-                                        if (gr == null)
-                                        {
-                                            gr = new GroupRecord(kvp.Key);
-                                            dst.AddRecord(gr);
-                                        }
-                                        foreach (var list in kvp)
-                                            gr.AddRecords(list);
-                                    }
-                                }
-                            }
-                            else
-                            {
-                                dst.AddRecords(dstRec);
-                            }
-                            // handle loose groups by creating copy of parent groups
-                            foreach (var srcRec in src.Where(x => looseGroups.Contains(x.Name)))
-                            {
-                                var dstnodes = new Stack<BaseRecord>();
-                                dstnodes.Push(srcRec.Clone(recursive: true));
-                                for (var n = srcRec.Parent; n is GroupRecord; n = n.Parent)
-                                    dstnodes.Push(n.Clone(recursive: false));
-                                var par = dst as IGroupRecord;
-                                foreach (var baseRecord in dstnodes)
-                                {
-                                    if (par == null) break;
-                                    if (baseRecord is GroupRecord)
-                                    {
-                                        var gr = baseRecord as GroupRecord;
-                                        var pargr = par.Records.OfType<GroupRecord>().FirstOrDefault(x => x.IsEquivalent(gr));
-                                        if (pargr != null)
-                                        {
-                                            par = pargr;
-                                            continue;
-                                        }
-                                    }
-                                    par.AddRecord(baseRecord);
-                                    par = baseRecord as IGroupRecord;
-                                }
-                            }
-                        }
-                        else
-                        {
-                            var dstRec = src.Select(x => x.Clone()).ToArray();
-                            dst.AddRecords(dstRec);
-                        }
-                    }
+                    Spells.CopyRecordsTo(src, dst);
                 }
             }
             catch
             {
             }
         }
+
+        
 
         private void contextMenuRecordAddMaster_DropDownItemClicked(object sender, ToolStripItemClickedEventArgs e)
         {

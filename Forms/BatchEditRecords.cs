@@ -138,6 +138,31 @@ namespace TESVSnip.Forms
                                Children = children,
                                Checked = false,
                            }).ToList();
+
+                // Construct specialized editors for FormID and related headers
+                if (false) // disable for now
+                {
+                    var elems = new List<TESVSnip.Data.SubrecordElement>
+                    {
+                        new TESVSnip.Data.SubrecordElement{name = "FormID", desc = "Form ID", hexview = true, type = "uint"},
+                        new TESVSnip.Data.SubrecordElement{name = "Flags1", desc = "Flags 1", hexview = true, type = "uint"},
+                        new TESVSnip.Data.SubrecordElement{name = "Flags2", desc = "Flags 2", hexview = true, type = "uint"},
+                        new TESVSnip.Data.SubrecordElement{name = "Flags3", desc = "Flags 3", hexview = true, type = "uint"},
+                    };
+                    var frmHdr = new TESVSnip.Data.Subrecord { name = "Header", desc = "Record Header", Elements = elems };
+                    var hdr = new SubrecordStructure(frmHdr);
+                    var hdrElems = hdr.elements.Select(se =>
+                        new BatchElement { Name = se.name, Parent = null, Record = se, Type = BatchCondElementType.Set, Checked = false }
+                        ).ToList();
+                    srs.Insert(0, new BatchSubrecord
+                    {
+                        Name = string.Format("{0}: {1}", hdr.name, hdr.desc),
+                        Record = hdr,
+                        Children = hdrElems,
+                        Checked = false,
+                    });
+                }
+
                 // fix parents after assignments
                 foreach (var sr in srs)
                     foreach (var se in sr.Children)

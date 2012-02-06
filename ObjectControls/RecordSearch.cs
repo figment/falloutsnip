@@ -942,5 +942,70 @@ namespace TESVSnip.ObjectControls
             toolStripIncrFindText.Text = formid.ToString("X8");
             BackgroundIncrementalSearch();
         }
+
+        private void copyToToolStripMenuItem_DropDownItemClicked(object sender, ToolStripItemClickedEventArgs e)
+        {
+            var array = e.ClickedItem.Tag as object[];
+            if (array != null && array.Length == 2)
+            {
+                int count = Spells.CopyRecordsTo(array[0] as BaseRecord[], array[1] as IGroupRecord);
+            }
+
+        }
+
+        private void contextMenuStripList_Opening(object sender, CancelEventArgs e)
+        {
+            var searchTypeItem = toolStripIncrFindType.SelectedItem as MRUComboHelper<SearchType, string>;
+            if (searchTypeItem == null) return;
+
+            var records = listSearchView.SelectedObjects.OfType<Record>().ToList();
+            var hasDistictRecordsType = (records.Select(x => x.Name).Distinct().Count() == 1);
+            bool anyRecords = records.Any();
+
+            if (hasDistictRecordsType)
+            {
+                batchEditToolStripMenuItem.Enabled = true;
+                batchEditToolStripMenuItem.ToolTipText = "";
+            }
+            else
+            {
+                batchEditToolStripMenuItem.Enabled = false;
+                batchEditToolStripMenuItem.ToolTipText = string.Format("Batch Edit not allowed when multiple record types are selected");
+            }
+
+            copyToToolStripMenuItem.Enabled = anyRecords;
+            editToolStripMenuItem.Enabled = anyRecords;
+            synchronizeToolStripMenuItem.Enabled = anyRecords;
+            batchEditToolStripMenuItem.Enabled &= anyRecords;
+            copyToolStripMenuItem.Enabled = anyRecords;
+
+            if (copyToToolStripMenuItem.Enabled)
+            {
+                foreach (var plugin in PluginList.All.Records.OfType<Plugin>())
+                {
+                    Plugin curplugin = plugin;
+                    var copyRecs = records.Where(x => x.GetPlugin() != curplugin);
+                    if (!copyRecs.Any()) continue;
+
+                    var tsi = new ToolStripButton(plugin.Name);
+                    tsi.Tag = new object[] { copyRecs.OfType<BaseRecord>().ToArray(), curplugin };
+                    var sz = TextRenderer.MeasureText(plugin.Name, copyToToolStripMenuItem.Font);
+                    if (sz.Width > tsi.Width)
+                        tsi.Width = sz.Width;
+                    tsi.AutoSize = true;
+                    copyToToolStripMenuItem.DropDownItems.Add(tsi);
+                }
+            }
+        }
+
+        private void contextMenuStripList_Closing(object sender, ToolStripDropDownClosingEventArgs e)
+        {
+            copyToToolStripMenuItem.DropDownItems.Clear();
+        }
+
+        private void copyToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            MainView.Clipboard = listSearchView.SelectedObjects.OfType<BaseRecord>().ToArray();
+        }
     }
 }

@@ -448,20 +448,24 @@ namespace TESVSnip
                     string prefix = Path.Combine(Path.Combine(Path.GetDirectoryName(FilePath), "Strings"),
                                                  Path.GetFileNameWithoutExtension(FilePath));
                     prefix += "_" + Properties.Settings.Default.LocalizationName;
-
-                    System.Text.Encoding enc = Encoding.CP1252;
-                    FontLangInfo fontInfo;
-                    if (Encoding.TryGetFontInfo(Properties.Settings.Default.LocalizationName, out fontInfo))
-                    {
-                        if (fontInfo.CodePage != 1252)
-                            enc = System.Text.Encoding.GetEncoding(fontInfo.CodePage);
-                    }
-                    SavePluginStrings(enc, LocalizedStringFormat.Base, Strings, prefix + ".STRINGS");
-                    SavePluginStrings(enc, LocalizedStringFormat.IL, ILStrings, prefix + ".ILSTRINGS");
-                    SavePluginStrings(enc, LocalizedStringFormat.DL, DLStrings, prefix + ".DLSTRINGS");
+                    SaveStrings(FilePath);
                 }
             }
             StringsDirty = false;
+        }
+
+        internal void SaveStrings(string FilePath)
+        {
+            System.Text.Encoding enc = Encoding.CP1252;
+            FontLangInfo fontInfo;
+            if (Encoding.TryGetFontInfo(Properties.Settings.Default.LocalizationName, out fontInfo))
+            {
+                if (fontInfo.CodePage != 1252)
+                    enc = System.Text.Encoding.GetEncoding(fontInfo.CodePage);
+            }
+            SavePluginStrings(enc, LocalizedStringFormat.Base, Strings, FilePath + ".STRINGS");
+            SavePluginStrings(enc, LocalizedStringFormat.IL, ILStrings, FilePath + ".ILSTRINGS");
+            SavePluginStrings(enc, LocalizedStringFormat.DL, DLStrings, FilePath + ".DLSTRINGS");
         }
 
         internal override void SaveData(BinaryWriter bw)
@@ -751,7 +755,7 @@ namespace TESVSnip
         internal string LookupFormStrings(uint id)
         {
             string value = default(string);
-            foreach (var plugin in Masters)
+            foreach (var plugin in Masters.Reverse())
             {
                 if (plugin == null) continue;
 

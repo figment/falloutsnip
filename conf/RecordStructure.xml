@@ -724,7 +724,9 @@
           <Element name="PropertySize" type="byte" desc="Size of Property"/>
           <Element name="NullByte" type="byte" desc="always 0"/>
           <Element name="PropertyName+PropertyType+Unknown3" type="string"/>
-          --><!--<Element name="PropertyType" type="byte" desc="Size of Property"/>--><!--
+          -->
+    <!--<Element name="PropertyType" type="byte" desc="Size of Property"/>-->
+    <!--
           <Element name="unknown3" type="byte" condition="greaterthanequal" condid="1" condvalue="4" desc="Defaults to 1 for earlier versions."/>
           <Element name="Byte" type="byte" />
           <Element name="Byte" type="byte" />
@@ -732,7 +734,7 @@
           <Element name="ObjectReference" type="formid"/>
         </ElementGroup>
       </ElementGroup>
-    </Subrecord>-->    
+    </Subrecord>-->
     <Subrecord name="VMAD" desc="VM Data" optional="1" notininfo="1">
       <Element name="Unknown" type="blob" notininfo="1"/>
     </Subrecord>
@@ -748,7 +750,7 @@
       <Element name="Base Cost" type="float" />
       <Element name="Targeted ID" type="formid"/>
       <Element name="Primary Skill" type="int" options="OneHanded;6;TwoHanded;7;Marksman;8;Block;9;Smithing;10;HeavyArmor;11;LightArmor;12;Pickpocket;13;Lockpicking;14;Sneak;15;Alchemy;16;Speechcraft;17;Alteration;18;Conjuration;19;Destruction;20;Illusion;21;Restoration;22;Enchanting;23;Fame;60;Infamy;61"/>
-      <Element name="Resistance" type="int" options="DamageResist;39;PoisonResist;40;FireResist;41;ElectricResist;42;FrostResist;43;MagicResist;44;DiseaseResist;45;NormalWeaponsResist;164;None;4294967295;Zero;0;"/>
+      <Element name="Resistance" type="int" options="DamageResist;39;PoisonResist;40;FireResist;41;ElectricResist;42;FrostResist;43;MagicResist;44;DiseaseResist;45;NormalWeaponsResist;164;None;-1;Zero;0;"/>
       <Element name="Unknown1" type="uint" hexview="1" desc="Mask of 0xffff0000 (lower 2 bytes always 0)"/>
       <Element name="LightID" type="formid" reftype="LIGH" />
       <Element name="TaperWeight" type="float" desc="Somehow controls the tapering of the spell over time, 0-1 typically"/>
@@ -761,12 +763,12 @@
       <Element name="TaperDuration" type="float" desc="Controls how fast the duration tapers off assumably, 0-5 typically"/>
       <Element name="SecondAVWeight" type="float" desc="Only valid if SecondAV is set, typical values of 0-2"/>
       <Element name="EffectType" type="int" desc="The basic type of effect to apply (0-44)." options="Value Mod;0;Script;1;Dispel;2;Cure Disease;3;Absorb(PrimaryAV);4;Dual Value Mod;5;Calm;6;Demoralize(Confidence);7;Frenzy;8;Disarm;9;Command Summoned;10;Invisibility;11;Light;12;13;13;14;14;Lock;15;Open;16;Bound Weapon;17;SummonCreature;18;DetectLife;19;Telekinesis;20;Paralysis;21;Reanimate;22;Soul Trap;23;Turn Undead(Confidence);24;Guide(Hazard:Used only by Clairvoyance);25;Werewolf Feed;26;Cure Paralysis;27;Cure Addiction;28;Cure Poison;29;Concussion;30;Value and Parts(PrimaryAV is used, not used in game);31;Accumulate Magnitude;32;Stagger;33;Peak Value Mod(PrimaryAV and SecondAV select which actor value to modify, note that SecondAVWeight is not used);34;Cloak(RelatedID is a spell (only some spells supported, either/both hand?));35;Werewolf(DisablesCharacterMenus)(RelatedID is a race);36;Slow Time;37;Rally;38;Enhance Weapon(RelatedID is an enchantment);39;SpawnHazard;40;Etherealize;41;Banish(Confidence);42;Spawn Scripted Ref;43;Disguise;44;"/>
-      <Element name="Primary AVIF affected" type="int" options="Health;24;Magicka;25;Stamina;26;HealRate;27;MagickaRate;28;StaminaRate;29;SpeedMult;30;InventoryWeight;31;CarryWeight;32;MeleeDamage;34;UnarmedDamage;35;Mass;36;VoiceRate;38;OneHanded;6;TwoHanded;7;Marksman;8;Block;9;Smithing;10;HeavyArmor;11;LightArmor;12;Pickpocket;13;Lockpicking;14;Sneak;15;Alchemy;16;Speechcraft;17;Alteration;18;Conjuration;19;Destruction;20;Illusion;21;Restoration;22;Enchanting;23;Fame;60;Infamy;61;Aggression;0;Confidence;1;Energy;2;Morality;3;Mood;4;Assistance;5;DragonRend;33;VoicePoints;37;DamageResist;39;PoisonResist;40;FireResist;41;ElectricResist;42;FrostResist;43;MagicResist;44;DiseaseResist;45;NormalWeaponsResist;164;None;4294967295;WeaponSpeedMult;85;ShoutRecoveryMult;86;BowStaggerBonus;87;AbsorbChance;83;	Slow Time Variable - (0.5 = slow time 25%) (0.25 = slow time 50%);78;Blindness;84;MovementNoiseMult;92;OneHandedMod;96;TwoHandedMod;97;MarksmanMod;98;BlockMod;99;SmithingMod;100;HeavyArmorMod;101;LightArmorMod;102;PickPocketMod;103;LockpickingMod;104;SneakMod;105;AlchemyMod;106;SpeechcraftMod;107;AlterationMod;108;ConjurationMod;109;DestructionMod;110;IllusionMod;111;RestorationMod;112;EnchantingMod;113;LeftWeaponSpeedMult;132;ReflectDamage;163;AttackDamageMult;154;WaterWalking;58;WaterBreathing;57;DetectLifeRange;56;NightEye;55;Invisibility;54;Paralysis;53;"/>
+      <Element name="Primary AVIF affected" type="int" options="Health;24;Magicka;25;Stamina;26;HealRate;27;MagickaRate;28;StaminaRate;29;SpeedMult;30;InventoryWeight;31;CarryWeight;32;MeleeDamage;34;UnarmedDamage;35;Mass;36;VoiceRate;38;OneHanded;6;TwoHanded;7;Marksman;8;Block;9;Smithing;10;HeavyArmor;11;LightArmor;12;Pickpocket;13;Lockpicking;14;Sneak;15;Alchemy;16;Speechcraft;17;Alteration;18;Conjuration;19;Destruction;20;Illusion;21;Restoration;22;Enchanting;23;Fame;60;Infamy;61;Aggression;0;Confidence;1;Energy;2;Morality;3;Mood;4;Assistance;5;DragonRend;33;VoicePoints;37;DamageResist;39;PoisonResist;40;FireResist;41;ElectricResist;42;FrostResist;43;MagicResist;44;DiseaseResist;45;NormalWeaponsResist;164;None;-1;WeaponSpeedMult;85;ShoutRecoveryMult;86;BowStaggerBonus;87;AbsorbChance;83;	Slow Time Variable - (0.5 = slow time 25%) (0.25 = slow time 50%);78;Blindness;84;MovementNoiseMult;92;OneHandedMod;96;TwoHandedMod;97;MarksmanMod;98;BlockMod;99;SmithingMod;100;HeavyArmorMod;101;LightArmorMod;102;PickPocketMod;103;LockpickingMod;104;SneakMod;105;AlchemyMod;106;SpeechcraftMod;107;AlterationMod;108;ConjurationMod;109;DestructionMod;110;IllusionMod;111;RestorationMod;112;EnchantingMod;113;LeftWeaponSpeedMult;132;ReflectDamage;163;AttackDamageMult;154;WaterWalking;58;WaterBreathing;57;DetectLifeRange;56;NightEye;55;Invisibility;54;Paralysis;53;"/>
       <Element name="ProjectileID" type="formid" reftype="PROJ"/>
       <Element name="ExplosionID" type="formid" reftype="EXPL" />
       <Element name="CastType" type="int" options="Constant Effect;0;ProjectileFire;1;Channeled;2"/>
       <Element name="AimType" type="int" options="Self;0;Touch;1;Aimed;2;Targeted Actor;3;Targeted Location;4"/>
-      <Element name="Secondary AVIF affected" type="int" options="Health;24;Magicka;25;Stamina;26;HealRate;27;MagickaRate;28;StaminaRate;29;SpeedMult;30;InventoryWeight;31;CarryWeight;32;MeleeDamage;34;UnarmedDamage;35;Mass;36;VoiceRate;38;OneHanded;6;TwoHanded;7;Marksman;8;Block;9;Smithing;10;HeavyArmor;11;LightArmor;12;Pickpocket;13;Lockpicking;14;Sneak;15;Alchemy;16;Speechcraft;17;Alteration;18;Conjuration;19;Destruction;20;Illusion;21;Restoration;22;Enchanting;23;Fame;60;Infamy;61;Aggression;0;Confidence;1;Energy;2;Morality;3;Mood;4;Assistance;5;DragonRend;33;VoicePoints;37;DamageResist;39;PoisonResist;40;FireResist;41;ElectricResist;42;FrostResist;43;MagicResist;44;DiseaseResist;45;NormalWeaponsResist;164;None;4294967295;WeaponSpeedMult;85;ShoutRecoveryMult;86;BowStaggerBonus;87;AbsorbChance;83;	Slow Time Variable - (0.5 = slow time 25%) (0.25 = slow time 50%);78;Blindness;84;MovementNoiseMult;92;OneHandedMod;96;TwoHandedMod;97;MarksmanMod;98;BlockMod;99;SmithingMod;100;HeavyArmorMod;101;LightArmorMod;102;PickPocketMod;103;LockpickingMod;104;SneakMod;105;AlchemyMod;106;SpeechcraftMod;107;AlterationMod;108;ConjurationMod;109;DestructionMod;110;IllusionMod;111;RestorationMod;112;EnchantingMod;113;LeftWeaponSpeedMult;132;ReflectDamage;163;AttackDamageMult;154;WaterWalking;58;WaterBreathing;57;DetectLifeRange;56;NightEye;55;Invisibility;54;Paralysis;53;"/>
+      <Element name="Secondary AVIF affected" type="int" options="Health;24;Magicka;25;Stamina;26;HealRate;27;MagickaRate;28;StaminaRate;29;SpeedMult;30;InventoryWeight;31;CarryWeight;32;MeleeDamage;34;UnarmedDamage;35;Mass;36;VoiceRate;38;OneHanded;6;TwoHanded;7;Marksman;8;Block;9;Smithing;10;HeavyArmor;11;LightArmor;12;Pickpocket;13;Lockpicking;14;Sneak;15;Alchemy;16;Speechcraft;17;Alteration;18;Conjuration;19;Destruction;20;Illusion;21;Restoration;22;Enchanting;23;Fame;60;Infamy;61;Aggression;0;Confidence;1;Energy;2;Morality;3;Mood;4;Assistance;5;DragonRend;33;VoicePoints;37;DamageResist;39;PoisonResist;40;FireResist;41;ElectricResist;42;FrostResist;43;MagicResist;44;DiseaseResist;45;NormalWeaponsResist;164;None;-1;WeaponSpeedMult;85;ShoutRecoveryMult;86;BowStaggerBonus;87;AbsorbChance;83;	Slow Time Variable - (0.5 = slow time 25%) (0.25 = slow time 50%);78;Blindness;84;MovementNoiseMult;92;OneHandedMod;96;TwoHandedMod;97;MarksmanMod;98;BlockMod;99;SmithingMod;100;HeavyArmorMod;101;LightArmorMod;102;PickPocketMod;103;LockpickingMod;104;SneakMod;105;AlchemyMod;106;SpeechcraftMod;107;AlterationMod;108;ConjurationMod;109;DestructionMod;110;IllusionMod;111;RestorationMod;112;EnchantingMod;113;LeftWeaponSpeedMult;132;ReflectDamage;163;AttackDamageMult;154;WaterWalking;58;WaterBreathing;57;DetectLifeRange;56;NightEye;55;Invisibility;54;Paralysis;53;"/>
       <Element name="Wielded Object" type="formid" reftype="ARTO" />
       <Element name="ImpactedObject" type="formid" reftype="ARTO" />
       <Element name="Impact Data 1" type="formid" reftype="IPDS" />
@@ -4038,20 +4040,36 @@
       <Element name="Description" type="lstring" />
     </Subrecord>
     <Group id="CONDITIONAL" optional="1" repeat="1"/>
-    <Subrecord name="DATA" desc="Perk Data" optional="1" repeat="1" notininfo="1">
-      <Element name="??" type="blob" />
+    <Subrecord name="DATA" desc="Perk Data" optional="1" size="5">
+      <Element name="IsTrait" type="byte" />
+      <Element name="Level" type="byte" />
+      <Element name="NumRanks" type="byte" />
+      <Element name="IsPlayable" type="byte" />
+      <Element name="IsHidden" type="byte" />
     </Subrecord>
     <Subrecord name="NNAM" desc="NNAM" optional="1" size="4">
       <Element name="ID" type="formid" reftype="PERK" />
     </Subrecord>
     <Group optional="1" repeat="1">
       <Subrecord name="PRKE" desc="Rank Effect Header" optional="1" repeat="1" size="3">
-        <Element name="Effect Type" type="byte" condid="1" options="Linked Quest Stage;0;Linked SPEL;1;Complex;2"/>
+        <Element name="Effect Type" type="byte" options="Linked Quest Stage;0;Linked SPEL;1;Complex;2" condid="1" />
         <Element name="Rank Index" type="byte" />
         <Element name="?? -- always 0" type="byte" notininfo="true"/>
       </Subrecord>
-      <Subrecord name="DATA" desc="Perk Data" optional="1" notininfo="1">
-        <Element name="??" type="blob" />
+      <Subrecord name="DATA" desc="Perk Effect Data" optional="1" size="8" condid="1" condition="equal" condvalue="0" >
+        <Element name="QuestID" type="formid" reftype="QUST" />
+        <Element name="Stage" type="byte" />
+        <Element name="unused" type="byte" notininfo="1" />
+        <Element name="unused" type="byte" notininfo="1" />
+        <Element name="unused" type="byte" notininfo="1" />
+      </Subrecord>
+      <Subrecord name="DATA" desc="Perk Effect Data" optional="1" size="4" condid="1" condition="equal" condvalue="1" >
+        <Element name="Spell" type="formid" reftype="SPEL" />
+      </Subrecord>
+      <Subrecord name="DATA" desc="Perk Effect Data" optional="1" size="3" condid="1" condition="equal" condvalue="2" >
+        <Element name="EffectType" type="byte" />
+        <Element name="FunctionType" type="byte" />
+        <Element name="CondTypeCount" type="byte" />
       </Subrecord>
       <Group optional="1" repeat="1">
         <Subrecord name="PRKC" desc="Conditional Info" optional="1" repeat="1" size="1">
@@ -4060,16 +4078,34 @@
         <Group id="CONDITIONAL" optional="1" repeat="1"/>
       </Group>
       <Subrecord name="EPFT" desc="Extra Data Type" optional="1" repeat="1" size="1">
-        <Element name="Extra Data Type - 1=float  3=FormID  4=script   -&gt;" type="byte" options="float;1;formid;3;script;4" />
+        <Element name="EFP Type - 1=float 2=8 byte struct 3=FormID 4=script? 5=Spell 6=ZString 7=lString->" type="byte" options="float;1;8bytestruct;2;formid;3;script;4;spell;5;string;6;lstring;7" condid="2" />
       </Subrecord>
-      <Subrecord name="EPF2" desc="==&gt; Script Data 2 ??" optional="1" repeat="1" size="4">
-        <Element name="??" type="lstring" />
+      <Subrecord name="EPF2" desc="==> Script Data 2 ??" optional="1" repeat="1" size="4">
+        <Element name="EPF2" type="lstring" />
       </Subrecord>
-      <Subrecord name="EPF3" desc="==&gt; Script Data 3 ?? Always 00 00" optional="1" repeat="1" size="4">
-        <Element name="??" type="formid" reftype="SPEL" />
+      <Subrecord name="EPF3" desc="==> Script Data 3 ?? Always 00 00" optional="1" repeat="1" size="4">
+        <Element name="EPF3" type="int" />
       </Subrecord>
-      <Subrecord name="EPFD" desc="==&gt; Float Value" optional="1" repeat="1">
+      <Subrecord name="EPFD" desc="==> Float Value" optional="1" size="4" repeat="1" condid="2" condition="equal" condvalue="1">
         <Element name="float value" type="float" />
+      </Subrecord>
+      <Subrecord name="EPFD" desc="==> 8 Byte Struct" optional="1" size="8" repeat="1" condid="2" condition="equal" condvalue="2">
+        <Element name="8 byte struct" type="blob" />
+      </Subrecord>
+      <Subrecord name="EPFD" desc="==> FormID" optional="1" size="4" repeat="1" condid="2" condition="equal" condvalue="3">
+        <Element name="formid" type="formid" />
+      </Subrecord>
+      <Subrecord name="EPFD" desc="==> FormID" optional="1" size="4" repeat="1" condid="2" condition="equal" condvalue="4">
+        <Element name="formid" type="formid" />
+      </Subrecord>
+      <Subrecord name="EPFD" desc="==> Spell" optional="1" size="4" repeat="1" condid="2" condition="equal" condvalue="5">
+        <Element name="Spell" type="formid" reftype="SPEL" />
+      </Subrecord>
+      <Subrecord name="EPFD" desc="==> zString" optional="1" repeat="1" condid="2" condition="equal" condvalue="6">
+        <Element name="String" type="string" />
+      </Subrecord>
+      <Subrecord name="EPFD" desc="==> lString" optional="1" repeat="1" condid="2" condition="equal" condvalue="7">
+        <Element name="String" type="lstring" />
       </Subrecord>
       <Subrecord name="PRKF" desc=" Rank Effect Footer " optional="1" repeat="1" size="0" />
     </Group>

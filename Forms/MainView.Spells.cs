@@ -2,11 +2,14 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Security.AccessControl;
 using System.Text;
 using System.Windows.Forms;
+using System.Xml;
 using System.Xml.Serialization;
 using TESVSnip.Data;
 using TESVSnip.Properties;
+using System.Drawing;
 
 namespace TESVSnip
 {
@@ -15,28 +18,6 @@ namespace TESVSnip
     /// </summary>
     internal partial class MainView
     {
-        private readonly string[] SanitizeOrder = new string[] {
-            "GMST", "KYWD", "LCRT", "AACT", "TXST", "GLOB", "CLAS", "FACT", "HDPT", "HAIR", "EYES", "RACE", "SOUN", "ASPC", "MGEF", 
-            "SCPT", "LTEX", "ENCH", "SPEL", "SCRL", "ACTI", "TACT", "ARMO", "BOOK", "CONT", "DOOR", "INGR", "LIGH", "MISC", "APPA", 
-            "STAT", "SCOL", "MSTT", "PWAT", "GRAS", "TREE", "CLDC", "FLOR", "FURN", "WEAP", "AMMO", "NPC_", "LVLN", "KEYM", "ALCH", 
-            "IDLM", "COBJ", "PROJ", "HAZD", "SLGM", "LVLI", "WTHR", "CLMT", "SPGD", "RFCT", "REGN", "NAVI", "CELL", "WRLD", "DIAL", 
-            "QUST", "IDLE", "PACK", "CSTY", "LSCR", "LVSP", "ANIO", "WATR", "EFSH", "EXPL", "DEBR", "IMGS", "IMAD", "FLST", "PERK",
-            "BPTD", "ADDN", "AVIF", "CAMS", "CPTH", "VTYP", "MATT", "IPCT", "IPDS", "ARMA", "ECZN", "LCTN", "MESG", "RGDL", "DOBJ", 
-            "LGTM", "MUSC", "FSTP", "FSTS", "SMBN", "SMQN", "SMEN", "DLBR", "MUST", "DLVW", "WOOP", "SHOU", "EQUP", "RELA", "SCEN", 
-            "ASTP", "OTFT", "ARTO", "MATO", "MOVT", "SNDR", "DUAL", "SNCT", "SOPM", "COLL", "CLFM", "REVB"
-                                                      };
-
-        private int sanitizeCountRecords(Rec r)
-        {
-            if (r is Record) return 1;
-            else
-            {
-                int i = 1;
-                foreach (Rec r2 in (r).Records) i += sanitizeCountRecords(r2);
-                return i;
-            }
-        }
-
         private void sanitizeToolStripMenuItem_Click(object sender, EventArgs e)
         {
             if (PluginTree.SelectedRecord == null)
@@ -44,125 +25,24 @@ namespace TESVSnip
                 MessageBox.Show(Resources.NoPluginSelected, Resources.ErrorText);
                 return;
             }
-            var p = GetPluginFromNode(PluginTree.SelectedRecord);
-
-            var hdr = p.Records.OfType<Rec>().FirstOrDefault(x => x.Name == "TES4");
-            if (hdr == null)
-            {
-                MessageBox.Show(Resources.PluginLacksAValidTes4RecordCannotContinue);
-                return;
-            }
-
-            // performance update to prevent lists from updating currently selected record
-            bool oldHoldUpdates = BaseRecord.HoldUpdates;
             try
             {
-                BaseRecord.HoldUpdates = true;
-
-                var toParse = new Queue<BaseRecord>(p.Records.OfType<BaseRecord>().Where(x => !x.Equals(hdr)));
-                p.Clear();
-                p.AddRecord(hdr);
-
-                var groups = new Dictionary<string, GroupRecord>();
-
-                foreach (string s in SanitizeOrder)
-                {
-                    var gr = new GroupRecord(s);
-                    p.AddRecord(gr);
-                    groups[s] = gr;
-                }
-
-                bool looseGroupsWarning = false;
-                bool unknownRecordsWarning = false;
-                while (toParse.Count > 0)
-                {
-                    var r = toParse.Dequeue();
-                    if (r is GroupRecord)
-                    {
-                        var gr = (GroupRecord) r;
-                        if (gr.ContentsType == "CELL" || gr.ContentsType == "WRLD" || gr.ContentsType == "DIAL")
-                        {
-                            var gr2 = groups[gr.ContentsType];
-                            foreach (BaseRecord r2 in gr.Records) gr2.AddRecord(r2);
-                            gr.Clear();
-                        }
-                        else
-                        {
-                            foreach (BaseRecord r2 in gr.Records) toParse.Enqueue(r2);
-                            gr.Clear();
-                        }
-                    }
-                    else if (r is Record)
-                    {
-                        var r2 = (Record) r;
-                        if (r2.Name == "CELL" || r2.Name == "WRLD" || r2.Name == "REFR" || r2.Name == "ACRE" ||
-                            r2.Name == "ACHR" || r2.Name == "NAVM" || r2.Name == "DIAL" || r2.Name == "INFO")
-                        {
-                            looseGroupsWarning = true;
-                            p.AddRecord(r2);
-                        }
-                        else
-                        {
-                            if (groups.ContainsKey(r2.Name)) groups[r2.Name].AddRecord(r2);
-                            else
-                            {
-                                unknownRecordsWarning = true;
-                                p.AddRecord(r2);
-                            }
-                        }
-                    }
-                }
-
-                foreach (GroupRecord gr2 in groups.Values)
-                {
-                    if (gr2.Records.Count == 0) p.DeleteRecord(gr2);
-                }
-
-                if (looseGroupsWarning)
-                {
-                    MessageBox.Show(Resources.CannotSanitizeLooseGroups, Resources.WarningText);
-                }
-                if (unknownRecordsWarning)
-                {
-                    MessageBox.Show(Resources.CannotSanitizeUnknownRecords, Resources.WarningText);
-                }
-                p.InvalidateCache();
-
-                int reccount = -1 + p.Records.Cast<Rec>().Sum(r => sanitizeCountRecords(r));
-                var tes4 = p.Records.OfType<Record>().FirstOrDefault(x => x.Name == "TES4");
-                if (tes4 != null)
-                {
-                    if (tes4.SubRecords.Count > 0 && tes4.SubRecords[0].Name == "HEDR" && tes4.SubRecords[0].Size >= 8)
-                    {
-                        byte[] data = tes4.SubRecords[0].GetData();
-                        byte[] reccountbytes = TypeConverter.si2h(reccount);
-                        for (int i = 0; i < 4; i++) data[4 + i] = reccountbytes[i];
-                        tes4.SubRecords[0].SetData(data);
-                    }
-                }
+                var rec = PluginTree.SelectedRecord as Record;
+                var p = rec != null ? rec.GetPlugin() : null;
+                TESVSnip.Spells.SanitizePlugin(p);
+            }
+            catch (ApplicationException ex)
+            {
+                MessageBox.Show(ex.Message, Resources.ErrorText);
+            }
+            catch
+            {
+                MessageBox.Show("Unknown Exception", Resources.ErrorText);
             }
             finally
             {
-                BaseRecord.HoldUpdates = oldHoldUpdates;
                 PluginTree.RebuildObjects();
-            }
-        }
-
-        private void StripEDIDspublic(Rec r)
-        {
-            if (r is Record)
-            {
-                var r2 = (Record) r;
-                if (r2.Name != "GMST" && r2.SubRecords.Count > 0 && r2.SubRecords[0].Name == "EDID")
-                    r2.DeleteRecord(r2.SubRecords[0]);
-                for (int i = 0; i < r2.SubRecords.Count; i++)
-                {
-                    if (r2.SubRecords[i].Name == "SCTX") r2.SubRecords.RemoveAt(i--);
-                }
-            }
-            else
-            {
-                foreach (Rec r2 in (r).Records) StripEDIDspublic(r2);
+                SendStatusText("Sanitization Complete", SystemColors.ControlText);
             }
         }
 
@@ -177,7 +57,7 @@ namespace TESVSnip
                 DialogResult.Yes)
                 return;
             var p = GetPluginFromNode(PluginTree.SelectedRecord);
-            foreach (Rec r in p.Records) StripEDIDspublic(r);
+            TESVSnip.Spells.StripEDIDs(p);
             PluginTree.RebuildObjects();
         }
 
@@ -185,7 +65,7 @@ namespace TESVSnip
         {
             if (tn is Record)
             {
-                var r2 = (Record) tn;
+                var r2 = (Record)tn;
                 if (ids.ContainsKey(r2.FormID))
                 {
                     PluginTree.SelectedRecord = tn;
@@ -220,7 +100,7 @@ namespace TESVSnip
         {
             if (r is Record)
             {
-                var r2 = (Record) r;
+                var r2 = (Record)r;
                 if (r2.SubRecords.Count > 0 && r2.SubRecords[0].Name == "EDID")
                     sw.WriteLine(r2.SubRecords[0].GetStrData());
             }
@@ -249,7 +129,7 @@ namespace TESVSnip
             }
             else
             {
-                DumpEdidsInternal((GroupRecord) PluginTree.SelectedRecord, sw);
+                DumpEdidsInternal((GroupRecord)PluginTree.SelectedRecord, sw);
             }
             sw.Close();
         }
@@ -300,7 +180,7 @@ namespace TESVSnip
             }
             else
             {
-                var gr = (GroupRecord) r;
+                var gr = (GroupRecord)r;
                 for (int i = 0; i < gr.Records.Count; i++)
                 {
                     if (cleanRecurse2(gr.Records[i] as Rec, ref count, lookup))
@@ -337,9 +217,9 @@ namespace TESVSnip
                 }
                 var tes4 = plugin.Records.OfType<Record>().FirstOrDefault(x => x.Name == "TES4");
                 if (plugin.Masters[i].Records.Count < 2 || tes4 == null) continue;
-                var match = (uint) plugin.Masters.Count(x => x.Name == "MAST");
+                var match = (uint)plugin.Masters.Count(x => x.Name == "MAST");
                 match <<= 24;
-                uint mask = (uint) i << 24;
+                uint mask = (uint)i << 24;
                 for (int j = 1; j < plugin.Masters[i].Records.Count; j++)
                     cleanRecurse(plugin.Masters[i].Records[j] as Rec, match, mask, lookup);
             }
@@ -446,7 +326,7 @@ namespace TESVSnip
                         {
                             if (sr.Name == "SCDA")
                             {
-                                size = (int) sr.Size;
+                                size = (int)sr.Size;
                                 break;
                             }
                         }
@@ -510,7 +390,7 @@ namespace TESVSnip
                 }
             }
 
-            uint mask = (uint) (plugin.Masters.Length - 1) << 24;
+            uint mask = (uint)(plugin.Masters.Length - 1) << 24;
             var recs = new Queue<Rec>(p.Records.OfType<Rec>());
 
             var sb2 = new StringBuilder();
@@ -520,7 +400,7 @@ namespace TESVSnip
                 Rec rec = recs.Dequeue();
                 if (rec is GroupRecord)
                 {
-                    var gr = (GroupRecord) rec;
+                    var gr = (GroupRecord)rec;
                     if (gr.ContentsType == "LVLI" || gr.ContentsType == "LVLN" || gr.ContentsType == "LVLC")
                     {
                         for (int i = 0; i < gr.Records.Count; i++) recs.Enqueue(gr.Records[i] as Rec);
@@ -528,7 +408,7 @@ namespace TESVSnip
                 }
                 else
                 {
-                    var r = (Record) rec;
+                    var r = (Record)rec;
                     if ((r.FormID & 0xff000000) != 0) continue;
                     switch (r.Name)
                     {
@@ -681,12 +561,12 @@ namespace TESVSnip
             {
                 if (recs.Peek() is GroupRecord)
                 {
-                    var gr = (GroupRecord) recs.Dequeue();
+                    var gr = (GroupRecord)recs.Dequeue();
                     for (int i = 0; i < gr.Records.Count; i++) recs.Enqueue(gr.Records[i] as Rec);
                 }
                 else
                 {
-                    var r = (Record) recs.Dequeue();
+                    var r = (Record)recs.Dequeue();
                     foreach (SubRecord sr in r.SubRecords)
                     {
                         if (sr.Name != "SCTX") continue;
@@ -715,47 +595,19 @@ namespace TESVSnip
         // try to reorder subrecords to match the structure file.
         private void reorderSubrecordsToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            var rec = Selection.Record as Record;
-            if (rec == null || RecordStructure.Records == null) return;
-            if (!RecordStructure.Records.ContainsKey(rec.Name)) return;
-
-            SubrecordStructure[] sss = RecordStructure.Records[rec.Name].subrecords;
-
-            var subs = new List<SubRecord>(rec.SubRecords);
-            foreach (var sub in subs) sub.DetachStructure();
-
-            var newsubs = new List<SubRecord>();
-            for (int ssidx = 0, sslen = 0; ssidx < sss.Length; ssidx += sslen)
+            var records = PluginTree.SelectedRecords.SelectMany(rec => rec.Enumerate(x => true).OfType<Record>().Distinct()).ToList();
+            bool oldHoldUpdates = BaseRecord.HoldUpdates;
+            try
             {
-                SubrecordStructure ss = sss[ssidx];
-                bool repeat = ss.repeat > 0;
-                sslen = Math.Max(1, ss.repeat);
-
-                bool found = false;
-                do
-                {
-                    found = false;
-                    for (int ssoff = 0; ssoff < sslen; ++ssoff)
-                    {
-                        ss = sss[ssidx + ssoff];
-                        for (int i = 0; i < subs.Count; ++i)
-                        {
-                            var sr = subs[i];
-                            if (sr.Name == ss.name)
-                            {
-                                newsubs.Add(sr);
-                                subs.RemoveAt(i);
-                                found = true;
-                                break;
-                            }
-                        }
-                    }
-                } while (found && repeat);
+                foreach (var rec in records)
+                    TESVSnip.Spells.ReorderSubrecords(rec);
             }
-            newsubs.AddRange(subs);
-            rec.SubRecords.Clear();
-            rec.SubRecords.AddRange(newsubs);
-            RebuildSelection();
+            finally
+            {
+                BaseRecord.HoldUpdates = oldHoldUpdates;
+                RebuildSelection();
+                SendStatusText(string.Format("Reordered SubRecords on {0} records", records.Count), SystemColors.ControlText);
+            }
         }
 
         #endregion
@@ -772,30 +624,269 @@ namespace TESVSnip
             builder.CancelAction = () => { return backgroundWorker1.CancellationPending; };
             builder.UpdateProgressAction = UpdateBackgroundProgress;
 
-            StartBackgroundWork(() => { builder.Start(p); }
-                                , () =>
-                                      {
-                                          if (!IsBackroundProcessCanceled())
-                                          {
-                                              using (var dlg = new SaveFileDialog())
-                                              {
-                                                  dlg.InitialDirectory = Path.GetTempPath();
-                                                  dlg.FileName = "RecordStructure.xml";
-                                                  dlg.OverwritePrompt = false;
-                                                  if (dlg.ShowDialog() == DialogResult.OK)
-                                                  {
-                                                      var xs = new XmlSerializer(typeof (Records));
-                                                      using (StreamWriter fs = File.CreateText(dlg.FileName))
-                                                      {
-                                                          xs.Serialize(fs, builder.Complete());
-                                                      }
-                                                  }
-                                              }
-                                          }
-                                      }
+            StartBackgroundWork(
+                () => { builder.Start(p); },
+                () =>
+                {
+                    if (!IsBackroundProcessCanceled())
+                    {
+                        using (var dlg = new SaveFileDialog())
+                        {
+                            dlg.InitialDirectory = Path.GetTempPath();
+                            dlg.FileName = "RecordStructure.xml";
+                            dlg.OverwritePrompt = false;
+                            if (dlg.ShowDialog() == DialogResult.OK)
+                            {
+                                var xs = new XmlSerializer(typeof(Records));
+                                using (StreamWriter fs = File.CreateText(dlg.FileName))
+                                {
+                                    xs.Serialize(fs, builder.Complete());
+                                }
+                            }
+                        }
+                    }
+                }
                 );
         }
 
         #endregion
+
+        private void extractInternalStringsToTableToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            // Find all lstring that are internalized and rewrite to 
+            var plugin = GetPluginFromNode(this.PluginTree.SelectedRecord);
+            if (plugin == null)
+            {
+                MessageBox.Show(Resources.NoPluginSelected, Resources.ErrorText);
+                return;
+            }
+            int count = Spells.ExtractInternalStrings(plugin);
+            if (count > 0)
+                SendStatusText(string.Format("Copied {0} strings to table", count), SystemColors.ControlText);
+            else
+                SendStatusText("No strings to copied to table", Color.OrangeRed);
+        }
+
+
+        private void copyReferencedStringsFromMastersToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            // Find all lstring that are internalized and rewrite to 
+            var plugin = GetPluginFromNode(this.PluginTree.SelectedRecord);
+            if (plugin == null)
+            {
+                MessageBox.Show(Resources.NoPluginSelected, Resources.ErrorText);
+                return;
+            }
+            if (plugin.Masters.Length <= 1)
+            {
+                MessageBox.Show("Plugin does not have any Masters. Use 'Add Masters...' to add references before running.", Resources.ErrorText);
+                return;
+            }
+            int count = Spells.CopyMasterStringReferences(plugin);
+            if (count > 0)
+                SendStatusText(string.Format("Copied {0} strings from master", count), SystemColors.ControlText);
+            else
+                SendStatusText("No strings to copy from master", Color.OrangeRed);
+        }
+
+        private void cleanUnusedStringsToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            // Find all lstring that are internalized and rewrite to 
+            var plugin = GetPluginFromNode(this.PluginTree.SelectedRecord);
+            if (plugin == null)
+            {
+                MessageBox.Show(Resources.NoPluginSelected, Resources.ErrorText);
+                return;
+            }
+            int count = Spells.CleanUnusedStrings(plugin);
+            if (count > 0)
+                SendStatusText(string.Format("Cleaned {0} unused strings from table", count), SystemColors.ControlText);
+            else
+                SendStatusText("No unused strings to clean", Color.OrangeRed);
+        }
+
+        private void createStubsForMissingStringsToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            // Find all lstring that are internalized and rewrite to 
+            var plugin = GetPluginFromNode(this.PluginTree.SelectedRecord);
+            if (plugin == null)
+            {
+                MessageBox.Show(Resources.NoPluginSelected, Resources.ErrorText);
+                return;
+            }
+            int count = Spells.CreateStringStubs(plugin);
+            if (count > 0)
+                SendStatusText(string.Format("Created {0} strings stubs", count), SystemColors.ControlText);
+            else
+                SendStatusText("No strings needed stubs", Color.OrangeRed);
+        }
+
+        private void saveStringsToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            // Find all lstring that are internalized and rewrite to 
+            var plugin = GetPluginFromNode(this.PluginTree.SelectedRecord);
+            if (plugin == null)
+            {
+                MessageBox.Show(Resources.NoPluginSelected, Resources.ErrorText);
+                return;
+            }
+
+            using (var dlg = new System.Windows.Forms.SaveFileDialog())
+            {
+                if (string.IsNullOrEmpty(Properties.Settings.Default.DefaultSaveFolder)
+                    || !Directory.Exists(Properties.Settings.Default.DefaultSaveFolder))
+                    dlg.InitialDirectory = Path.Combine(Program.gameDataDir, "Strings");
+                else
+                    dlg.InitialDirectory = Path.Combine(Properties.Settings.Default.DefaultSaveFolder, "Strings");
+
+                dlg.DefaultExt = ".STRINGS";
+                dlg.Filter = "String Table|*.STRINGS";
+                dlg.CheckPathExists = true;
+                dlg.AddExtension = true;
+                dlg.OverwritePrompt = true;
+                dlg.FileName = string.Format("{0}_{1}.STRINGS"
+                    , Path.GetFileNameWithoutExtension(plugin.Name)
+                    , Properties.Settings.Default.LocalizationName);
+                if (dlg.ShowDialog(this) == DialogResult.OK)
+                {
+                    plugin.SaveStrings(Path.Combine(Path.GetDirectoryName(dlg.FileName),
+                                                    Path.GetFileNameWithoutExtension(dlg.FileName)));
+                }
+            }
+        }
+
+        private void exportStringsToFileToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            // Find all lstring that are internalized and rewrite to 
+            var plugin = GetPluginFromNode(this.PluginTree.SelectedRecord);
+            if (plugin == null)
+            {
+                MessageBox.Show(Resources.NoPluginSelected, Resources.ErrorText);
+                return;
+            }
+
+            var lstrings = new LocalizedStrings
+            {
+                Strings = plugin.Strings.Select(x => new LocalizedString { ID = x.Key, Type = LocalizedStringFormat.Base, Value = x.Value })
+                .Union(plugin.DLStrings.Select(x => new LocalizedString { ID = x.Key, Type = LocalizedStringFormat.DL, Value = x.Value }))
+                .Union(plugin.ILStrings.Select(x => new LocalizedString { ID = x.Key, Type = LocalizedStringFormat.IL, Value = x.Value }))
+                .ToArray()
+            };
+            if ( lstrings.Strings.Length == 0 )
+            {
+                MessageBox.Show("No strings available to export.", Resources.ErrorText);
+                return;                
+            }
+
+            using (var dlg = new System.Windows.Forms.SaveFileDialog())
+            {
+                if (string.IsNullOrEmpty(Properties.Settings.Default.DefaultSaveFolder)
+                    || !Directory.Exists(Properties.Settings.Default.DefaultSaveFolder))
+                    dlg.InitialDirectory = Path.Combine(Program.gameDataDir, "Strings");
+                else
+                    dlg.InitialDirectory = Path.Combine(Properties.Settings.Default.DefaultSaveFolder, "Strings");
+                dlg.DefaultExt = ".xml";
+                dlg.Filter = "String Table|*.xml";
+                dlg.CheckPathExists = true;
+                dlg.AddExtension = true;
+                dlg.OverwritePrompt = true;
+                dlg.FileName = string.Format("{0}_{1}.xml"
+                    , Path.GetFileNameWithoutExtension(plugin.Name)
+                    , Properties.Settings.Default.LocalizationName);
+                if (dlg.ShowDialog(this) == DialogResult.OK)
+                {
+                    var xs = new XmlSerializer(typeof (LocalizedStrings));
+                    using ( var tw = new XmlTextWriter(dlg.FileName, System.Text.Encoding.Unicode))
+                    {
+                        tw.Formatting = Formatting.Indented;
+                        xs.Serialize(tw, lstrings);
+                    }
+                }
+            }
+        }
+
+        private void importStringsToFileToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            // Find all lstring that are internalized and rewrite to 
+            var plugin = GetPluginFromNode(this.PluginTree.SelectedRecord);
+            if (plugin == null)
+            {
+                MessageBox.Show(Resources.NoPluginSelected, Resources.ErrorText);
+                return;
+            }
+
+            try
+            {
+                using (var dlg = new System.Windows.Forms.OpenFileDialog())
+                {
+                    if (string.IsNullOrEmpty(Properties.Settings.Default.DefaultSaveFolder)
+                        || !Directory.Exists(Properties.Settings.Default.DefaultSaveFolder))
+                        dlg.InitialDirectory = Path.Combine(Program.gameDataDir, "Strings");
+                    else
+                        dlg.InitialDirectory = Path.Combine(Properties.Settings.Default.DefaultSaveFolder, "Strings");
+                    dlg.DefaultExt = ".xml";
+                    dlg.Filter = "String Table|*.xml";
+                    dlg.CheckPathExists = true;
+                    dlg.CheckFileExists = true;
+                    dlg.AddExtension = true;
+                    dlg.FileName = string.Format("{0}_{1}.xml"
+                        , Path.GetFileNameWithoutExtension(plugin.Name)
+                        , Properties.Settings.Default.LocalizationName);
+                    if (dlg.ShowDialog(this) == DialogResult.OK)
+                    {
+                        var xs = new XmlSerializer(typeof(LocalizedStrings));
+                        using (var fs = new FileStream(dlg.FileName, FileMode.Open, FileAccess.Read))
+                        {
+                            var lstrings = xs.Deserialize(fs) as LocalizedStrings;
+                            if (lstrings != null && lstrings.Strings != null && lstrings.Strings.Length > 0)
+                            {
+                                foreach (var lstring in lstrings.Strings)
+                                {
+                                    if (lstring.ID == 0 || string.IsNullOrEmpty(lstring.Value))
+                                        continue;
+                                    switch (lstring.Type)
+                                    {
+                                        case LocalizedStringFormat.Base: plugin.Strings[lstring.ID] = lstring.Value; break;
+                                        case LocalizedStringFormat.DL: plugin.DLStrings[lstring.ID] = lstring.Value; break;
+                                        case LocalizedStringFormat.IL: plugin.ILStrings[lstring.ID] = lstring.Value; break;
+                                    }
+                                }
+                                SendStatusText(string.Format("Imported {0} strings", lstrings.Strings.Length), SystemColors.ControlText);
+                            }
+                            else
+                            {
+                                SendStatusText("No strings internalized", Color.OrangeRed);
+                            }
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Error while reading string table:\n" + ex.Message, Resources.ErrorText);
+            }
+        }
+
+        private void internalizeStringReferencesToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            // Find all lstring that are internalized and rewrite to 
+            var plugin = GetPluginFromNode(this.PluginTree.SelectedRecord);
+            if (plugin == null)
+            {
+                MessageBox.Show(Resources.NoPluginSelected, Resources.ErrorText);
+                return;
+            }
+            if (plugin.Masters.Length <= 1)
+            {
+                MessageBox.Show("Plugin does not have any Masters. Use 'Add Masters...' to add references before running.", Resources.ErrorText);
+                return;
+            }
+            int count = Spells.InternalizeStrings(plugin);
+            if (count > 0)
+                SendStatusText(string.Format("Internalized {0} strings", count), SystemColors.ControlText);
+            else
+                SendStatusText("No strings internalized", Color.OrangeRed);
+
+        }
     }
 }

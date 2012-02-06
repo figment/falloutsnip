@@ -307,31 +307,43 @@
     <value>323, 17</value>
   </metadata>
   <data name="synchronizeToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>138, 22</value>
+    <value>152, 22</value>
   </data>
   <data name="synchronizeToolStripMenuItem.Text" xml:space="preserve">
     <value>&amp;Synchronize</value>
   </data>
   <data name="editToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>138, 22</value>
+    <value>152, 22</value>
   </data>
   <data name="editToolStripMenuItem.Text" xml:space="preserve">
     <value>&amp;Edit...</value>
   </data>
   <data name="batchEditToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>138, 22</value>
+    <value>152, 22</value>
   </data>
   <data name="batchEditToolStripMenuItem.Text" xml:space="preserve">
     <value>&amp;Batch Edit...</value>
   </data>
   <data name="resetToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>138, 22</value>
+    <value>152, 22</value>
   </data>
   <data name="resetToolStripMenuItem.Text" xml:space="preserve">
     <value>&amp;Reset</value>
   </data>
+  <data name="copyToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
+    <value>152, 22</value>
+  </data>
+  <data name="copyToolStripMenuItem.Text" xml:space="preserve">
+    <value>&amp;Copy</value>
+  </data>
+  <data name="copyToToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
+    <value>152, 22</value>
+  </data>
+  <data name="copyToToolStripMenuItem.Text" xml:space="preserve">
+    <value>Copy &amp;To</value>
+  </data>
   <data name="contextMenuStripList.Size" type="System.Drawing.Size, System.Drawing">
-    <value>139, 92</value>
+    <value>153, 158</value>
   </data>
   <data name="&gt;&gt;contextMenuStripList.Name" xml:space="preserve">
     <value>contextMenuStripList</value>
@@ -361,7 +373,7 @@
     <value>listSearchView</value>
   </data>
   <data name="&gt;&gt;listSearchView.Type" xml:space="preserve">
-    <value>BrightIdeasSoftware.ObjectListView, TESVSnip, Version=3.9.4414.2, Culture=neutral, PublicKeyToken=null</value>
+    <value>BrightIdeasSoftware.ObjectListView, TESVSnip, Version=4.0.4417.4, Culture=neutral, PublicKeyToken=null</value>
   </data>
   <data name="&gt;&gt;listSearchView.Parent" xml:space="preserve">
     <value>$this</value>
@@ -486,11 +498,23 @@
   <data name="&gt;&gt;resetToolStripMenuItem.Type" xml:space="preserve">
     <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
+  <data name="&gt;&gt;copyToToolStripMenuItem.Name" xml:space="preserve">
+    <value>copyToToolStripMenuItem</value>
+  </data>
+  <data name="&gt;&gt;copyToToolStripMenuItem.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
   <data name="&gt;&gt;backgroundWorker1.Name" xml:space="preserve">
     <value>backgroundWorker1</value>
   </data>
   <data name="&gt;&gt;backgroundWorker1.Type" xml:space="preserve">
     <value>System.ComponentModel.BackgroundWorker, System, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;copyToolStripMenuItem.Name" xml:space="preserve">
+    <value>copyToolStripMenuItem</value>
+  </data>
+  <data name="&gt;&gt;copyToolStripMenuItem.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="&gt;&gt;$this.Name" xml:space="preserve">
     <value>RecordSearch</value>

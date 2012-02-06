@@ -79,7 +79,8 @@ namespace TESVSnip
             if (t == typeof(ushort)) return new ArraySegment<byte>(s2h(TESVSnip.Extensions.CastValue<ushort>(value)), 0, 2);
             if (t == typeof(sbyte)) return new ArraySegment<byte>(sb2h(TESVSnip.Extensions.CastValue<sbyte>(value)), 0, 1);
             if (t == typeof(byte)) return new ArraySegment<byte>(si2h(TESVSnip.Extensions.CastValue<byte>(value)), 0, 1);
-            if (t == typeof(string)) return new ArraySegment<byte>(str2h(TESVSnip.Extensions.CastValue<string>(value))); 
+            if (t == typeof(string)) return new ArraySegment<byte>(str2h(TESVSnip.Extensions.CastValue<string>(value)));
+            if (t == typeof(ArraySegment<byte>)) return (ArraySegment<byte>)value; 
             return new ArraySegment<byte>(new byte[0]);
         }
 
