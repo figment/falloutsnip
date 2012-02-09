@@ -541,6 +541,7 @@ namespace TESVSnip.ObjectControls
             else if (!Properties.Settings.Default.UseHexSubRecordEditor
                 && sr.Structure != null
                 && sr.Structure.elements != null
+                && sr.Structure.elements.Length > 0
                 && sr.Structure.elements[0].type != ElementValueType.Blob && !sr.Structure.UseHexEditor)
             {
                 Form re;

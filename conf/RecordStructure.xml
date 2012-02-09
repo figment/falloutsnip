@@ -540,14 +540,14 @@
         <Element name="ID" type="formid" reftype="MOVT" />
       </Subrecord>
       <Subrecord name="SPED" desc="SPED" size="44">
-        <Element name="Strafe Walk Speed?" type="float" />
-        <Element name="Strafe Run Speed?" type="float" />
-        <Element name="Turn Walk Speed?" type="float" />
-        <Element name="Turn Run Speed?" type="float" />
-        <Element name="Walking Speed" type="float" />
-        <Element name="Running Speed" type="float" />
-        <Element name="Back Walk Speed?" type="float" />
-        <Element name="Back Run Speed?" type="float" />
+        <Element name="Strafe 1 Min Speed" type="float" />
+        <Element name="Strafe 1 Max Speed" type="float" />
+        <Element name="Strafe 2 Min Speed" type="float" />
+        <Element name="Strafe 2 Max Speed" type="float" />
+        <Element name="Forward Min Speed" type="float" />
+        <Element name="Forward Max Speed" type="float" />
+        <Element name="Back Min Speed" type="float" />
+        <Element name="Back Max Speed" type="float" />
         <Element name="Direction 1?" type="float" />
         <Element name="Direction 2?" type="float" />
         <Element name="Direction 3?" type="float" />
@@ -4078,7 +4078,7 @@
         <Group id="CONDITIONAL" optional="1" repeat="1"/>
       </Group>
       <Subrecord name="EPFT" desc="Extra Data Type" optional="1" repeat="1" size="1">
-        <Element name="EFP Type - 1=float 2=8 byte struct 3=FormID 4=script? 5=Spell 6=ZString 7=lString->" type="byte" options="float;1;8bytestruct;2;formid;3;script;4;spell;5;string;6;lstring;7" condid="2" />
+        <Element name="EFP Type" type="byte" options="float;1;8bytestruct;2;formid;3;script;4;spell;5;string;6;lstring;7" condid="2" desc="1=float 2=8 byte struct 3=FormID 4=script? 5=Spell 6=ZString 7=lString"/>
       </Subrecord>
       <Subrecord name="EPF2" desc="==> Script Data 2 ??" optional="1" repeat="1" size="4">
         <Element name="EPF2" type="lstring" />
@@ -4454,11 +4454,15 @@
     <Subrecord name="EDID" desc="Editor ID">
       <Element name="Name" type="string" />
     </Subrecord>
-    <Subrecord name="DATA" desc="DATA" optional="1" notininfo="1">
-      <Element name="Unknown" type="blob" />
+    <Subrecord name="DATA" desc="ECZN Data" optional="1">
+      <Element name="ID" type="formid" reftype="FACT" />
+      <Element name="ID" type="formid" reftype="LCTN" />
+      <Element name="Unknown" type="byte" />
+      <Element name="Zone Level" type="byte" />
+      <Element name="Unknown" type="byte" />
+      <Element name="Unknown" type="byte" />
     </Subrecord>
   </Record>
-
   <Record name="LCTN" desc="Location">
     <Subrecord name="EDID" desc="Editor ID">
       <Element name="Name" type="string" />
@@ -4985,15 +4989,15 @@
     <Subrecord name="MNAM" desc="MNAM" optional="1">
       <Element name="Name" type="string" />
     </Subrecord>
-    <Subrecord name="SPED" desc="SPED" optional="1">
-      <Element name="Strafe Walk Speed?" type="float" />
-      <Element name="Strafe Run Speed?" type="float" />
-      <Element name="Turn Walk Speed?" type="float" />
-      <Element name="Turn Run Speed?" type="float" />
-      <Element name="Walking Speed" type="float" />
-      <Element name="Running Speed" type="float" />
-      <Element name="Back Walk Speed?" type="float" />
-      <Element name="Back Run Speed?" type="float" />
+    <Subrecord name="SPED" desc="SPED" size="44">
+      <Element name="Strafe 1 Min Speed" type="float" />
+      <Element name="Strafe 1 Max Speed" type="float" />
+      <Element name="Strafe 2 Min Speed" type="float" />
+      <Element name="Strafe 2 Max Speed" type="float" />
+      <Element name="Forward Min Speed" type="float" />
+      <Element name="Forward Max Speed" type="float" />
+      <Element name="Back Min Speed" type="float" />
+      <Element name="Back Max Speed" type="float" />
       <Element name="Direction 1?" type="float" />
       <Element name="Direction 2?" type="float" />
       <Element name="Direction 3?" type="float" />

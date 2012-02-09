@@ -9,6 +9,11 @@ Requirements:
   .NET 3.5
 
 Change Log:
+v 4.2
+- Fix null pointer exception when editing a records with no subrecords
+- Various recordstructure.xml updates
+- Fix issue with duplicates in navigation history
+
 v 4.1
 - Fixed issues with MGEF (signed vs unsigned values)
 - Added Copy & "Copy To" to search window

@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
@@ -520,8 +521,13 @@ namespace TESVSnip.ObjectControls
 
         private void PluginTree_SelectedIndexChanged(object sender, EventArgs e)
         {
-            if (_historyHandler.CurrentItem != PluginTree.SelectedRecord)
-                _historyHandler.CurrentItem = PluginTree.SelectedRecord;
+            if (PluginTree.SelectedRecord != null)
+            {
+                if (_historyHandler.CurrentItem == null && !PluginTree.SelectedRecord.Equals(_historyHandler.CurrentItem))
+                {
+                    _historyHandler.CurrentItem = PluginTree.SelectedRecord;
+                }
+            }
             RebuildSelection();
         }
 
