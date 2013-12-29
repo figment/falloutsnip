@@ -118,8 +118,6 @@ namespace TESVSnip {
             this.dumpEDIDListToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.cleanEspToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.findNonconformingRecordToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.compileScriptToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.compileAllToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.generateLLXmlToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.makeEsmToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.martigensToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -673,8 +671,6 @@ namespace TESVSnip {
             this.dumpEDIDListToolStripMenuItem,
             this.cleanEspToolStripMenuItem,
             this.findNonconformingRecordToolStripMenuItem,
-            this.compileScriptToolStripMenuItem,
-            this.compileAllToolStripMenuItem,
             this.generateLLXmlToolStripMenuItem,
             this.makeEsmToolStripMenuItem,
             this.martigensToolStripMenuItem,
@@ -724,18 +720,6 @@ namespace TESVSnip {
             this.findNonconformingRecordToolStripMenuItem.Name = "findNonconformingRecordToolStripMenuItem";
             resources.ApplyResources(this.findNonconformingRecordToolStripMenuItem, "findNonconformingRecordToolStripMenuItem");
             this.findNonconformingRecordToolStripMenuItem.Click += new System.EventHandler(this.findNonconformingRecordToolStripMenuItem_Click);
-            // 
-            // compileScriptToolStripMenuItem
-            // 
-            this.compileScriptToolStripMenuItem.Name = "compileScriptToolStripMenuItem";
-            resources.ApplyResources(this.compileScriptToolStripMenuItem, "compileScriptToolStripMenuItem");
-            this.compileScriptToolStripMenuItem.Click += new System.EventHandler(this.compileScriptToolStripMenuItem_Click);
-            // 
-            // compileAllToolStripMenuItem
-            // 
-            this.compileAllToolStripMenuItem.Name = "compileAllToolStripMenuItem";
-            resources.ApplyResources(this.compileAllToolStripMenuItem, "compileAllToolStripMenuItem");
-            this.compileAllToolStripMenuItem.Click += new System.EventHandler(this.compileAllToolStripMenuItem_Click);
             // 
             // generateLLXmlToolStripMenuItem
             // 
@@ -1178,8 +1162,6 @@ namespace TESVSnip {
         private System.Windows.Forms.ToolStripMenuItem lookupFormidsToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem cleanEspToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem findNonconformingRecordToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem compileScriptToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem compileAllToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem generateLLXmlToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem makeEsmToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem martigensToolStripMenuItem;
