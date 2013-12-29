@@ -149,6 +149,12 @@
   <data name="saveToolStripMenuItem.Text" xml:space="preserve">
     <value>&amp;Save</value>
   </data>
+  <data name="saveAsToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
+    <value>146, 22</value>
+  </data>
+  <data name="saveAsToolStripMenuItem.Text" xml:space="preserve">
+    <value>Save &amp;As</value>
+  </data>
   <data name="closeToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
     <value>146, 22</value>
   </data>
@@ -160,6 +166,21 @@
   </data>
   <data name="closeAllToolStripMenuItem.Text" xml:space="preserve">
     <value>Close &amp;All</value>
+  </data>
+  <data name="toolStripSeparator1.Size" type="System.Drawing.Size, System.Drawing">
+    <value>143, 6</value>
+  </data>
+  <data name="openListToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
+    <value>146, 22</value>
+  </data>
+  <data name="openListToolStripMenuItem.Text" xml:space="preserve">
+    <value>&amp;Open List</value>
+  </data>
+  <data name="saveListToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
+    <value>146, 22</value>
+  </data>
+  <data name="saveListToolStripMenuItem.Text" xml:space="preserve">
+    <value>&amp;Save List</value>
   </data>
   <data name="toolStripSeparator3.Size" type="System.Drawing.Size, System.Drawing">
     <value>143, 6</value>
@@ -225,6 +246,9 @@
   <data name="pasteToolStripMenuItem.Text" xml:space="preserve">
     <value>&amp;Paste</value>
   </data>
+  <data name="pasteNewToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
+    <value>235, 22</value>
+  </data>
   <data name="deleteToolStripMenuItem.Enabled" type="System.Boolean, mscorlib">
     <value>False</value>
   </data>
@@ -233,6 +257,9 @@
   </data>
   <data name="deleteToolStripMenuItem.Text" xml:space="preserve">
     <value>&amp;Delete</value>
+  </data>
+  <data name="insertGroupToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
+    <value>235, 22</value>
   </data>
   <data name="insertRecordToolStripMenuItem.Enabled" type="System.Boolean, mscorlib">
     <value>False</value>
@@ -362,6 +389,12 @@
   </data>
   <data name="lookupFormidsToolStripMenuItem.Text" xml:space="preserve">
     <value>Lookup formids</value>
+  </data>
+  <data name="uTF8ModeToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
+    <value>208, 22</value>
+  </data>
+  <data name="uTF8ModeToolStripMenuItem.Text" xml:space="preserve">
+    <value>UTF-8 Mode</value>
   </data>
   <data name="useWindowsClipboardToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
     <value>208, 22</value>
@@ -597,11 +630,17 @@
   <data name="compileScriptToolStripMenuItem.Text" xml:space="preserve">
     <value>Compile script</value>
   </data>
+  <data name="compileScriptToolStripMenuItem.Visible" type="System.Boolean, mscorlib">
+    <value>False</value>
+  </data>
   <data name="compileAllToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
     <value>264, 22</value>
   </data>
   <data name="compileAllToolStripMenuItem.Text" xml:space="preserve">
     <value>Compile all</value>
+  </data>
+  <data name="compileAllToolStripMenuItem.Visible" type="System.Boolean, mscorlib">
+    <value>False</value>
   </data>
   <data name="generateLLXmlToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
     <value>264, 22</value>
@@ -647,6 +686,24 @@
   </data>
   <data name="reorderSubrecordsToolStripMenuItem.ToolTipText" xml:space="preserve">
     <value>Attempt to restucture the Current Subrecord to match XML</value>
+  </data>
+  <data name="newFormIDToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
+    <value>264, 22</value>
+  </data>
+  <data name="newFormIDToolStripMenuItem.Text" xml:space="preserve">
+    <value>New FormID</value>
+  </data>
+  <data name="newFormIDNoReferenceUpdateToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
+    <value>264, 22</value>
+  </data>
+  <data name="newFormIDNoReferenceUpdateToolStripMenuItem.Text" xml:space="preserve">
+    <value>New FormID (No Ref Update)</value>
+  </data>
+  <data name="addItemBatchScriptToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
+    <value>264, 22</value>
+  </data>
+  <data name="addItemBatchScriptToolStripMenuItem.Text" xml:space="preserve">
+    <value>AddItem Batch Script</value>
   </data>
   <data name="spellsToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
     <value>49, 20</value>
@@ -1376,6 +1433,12 @@
   <data name="&gt;&gt;saveToolStripMenuItem.Type" xml:space="preserve">
     <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
+  <data name="&gt;&gt;saveAsToolStripMenuItem.Name" xml:space="preserve">
+    <value>saveAsToolStripMenuItem</value>
+  </data>
+  <data name="&gt;&gt;saveAsToolStripMenuItem.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
   <data name="&gt;&gt;closeToolStripMenuItem.Name" xml:space="preserve">
     <value>closeToolStripMenuItem</value>
   </data>
@@ -1386,6 +1449,24 @@
     <value>closeAllToolStripMenuItem</value>
   </data>
   <data name="&gt;&gt;closeAllToolStripMenuItem.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;toolStripSeparator1.Name" xml:space="preserve">
+    <value>toolStripSeparator1</value>
+  </data>
+  <data name="&gt;&gt;toolStripSeparator1.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ToolStripSeparator, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;openListToolStripMenuItem.Name" xml:space="preserve">
+    <value>openListToolStripMenuItem</value>
+  </data>
+  <data name="&gt;&gt;openListToolStripMenuItem.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;saveListToolStripMenuItem.Name" xml:space="preserve">
+    <value>saveListToolStripMenuItem</value>
+  </data>
+  <data name="&gt;&gt;saveListToolStripMenuItem.Type" xml:space="preserve">
     <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="&gt;&gt;toolStripSeparator3.Name" xml:space="preserve">
@@ -1436,10 +1517,22 @@
   <data name="&gt;&gt;pasteToolStripMenuItem.Type" xml:space="preserve">
     <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
+  <data name="&gt;&gt;pasteNewToolStripMenuItem.Name" xml:space="preserve">
+    <value>pasteNewToolStripMenuItem</value>
+  </data>
+  <data name="&gt;&gt;pasteNewToolStripMenuItem.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
   <data name="&gt;&gt;deleteToolStripMenuItem.Name" xml:space="preserve">
     <value>deleteToolStripMenuItem</value>
   </data>
   <data name="&gt;&gt;deleteToolStripMenuItem.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;insertGroupToolStripMenuItem.Name" xml:space="preserve">
+    <value>insertGroupToolStripMenuItem</value>
+  </data>
+  <data name="&gt;&gt;insertGroupToolStripMenuItem.Type" xml:space="preserve">
     <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="&gt;&gt;insertRecordToolStripMenuItem.Name" xml:space="preserve">
@@ -1548,6 +1641,12 @@
     <value>lookupFormidsToolStripMenuItem</value>
   </data>
   <data name="&gt;&gt;lookupFormidsToolStripMenuItem.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;uTF8ModeToolStripMenuItem.Name" xml:space="preserve">
+    <value>uTF8ModeToolStripMenuItem</value>
+  </data>
+  <data name="&gt;&gt;uTF8ModeToolStripMenuItem.Type" xml:space="preserve">
     <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="&gt;&gt;useWindowsClipboardToolStripMenuItem.Name" xml:space="preserve">
@@ -1814,6 +1913,18 @@
   <data name="&gt;&gt;reorderSubrecordsToolStripMenuItem.Type" xml:space="preserve">
     <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
+  <data name="&gt;&gt;newFormIDToolStripMenuItem.Name" xml:space="preserve">
+    <value>newFormIDToolStripMenuItem</value>
+  </data>
+  <data name="&gt;&gt;newFormIDToolStripMenuItem.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;newFormIDNoReferenceUpdateToolStripMenuItem.Name" xml:space="preserve">
+    <value>newFormIDNoReferenceUpdateToolStripMenuItem</value>
+  </data>
+  <data name="&gt;&gt;newFormIDNoReferenceUpdateToolStripMenuItem.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
   <data name="&gt;&gt;OpenModDialog.Name" xml:space="preserve">
     <value>OpenModDialog</value>
   </data>
@@ -1999,6 +2110,12 @@
   </data>
   <data name="&gt;&gt;toolStripIncrInvalidRecStatus.Type" xml:space="preserve">
     <value>System.Windows.Forms.ToolStripLabel, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;addItemBatchScriptToolStripMenuItem.Name" xml:space="preserve">
+    <value>addItemBatchScriptToolStripMenuItem</value>
+  </data>
+  <data name="&gt;&gt;addItemBatchScriptToolStripMenuItem.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="&gt;&gt;$this.Name" xml:space="preserve">
     <value>MainView</value>

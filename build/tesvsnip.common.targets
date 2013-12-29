@@ -21,7 +21,7 @@
   <PropertyGroup>
     <CompanyName>TESVSnip</CompanyName>
     <ProductName>TESVSnip (Skyrim Edition)</ProductName>
-    <Copyright>Copyright (c) 2012</Copyright>
+    <Copyright>Copyright (c) 2014</Copyright>
     <Trademark>All Rights Reserved</Trademark>
     <!-- <SignAssembly>true</SignAssembly> -->
     <PublisherName>TESVSnip</PublisherName>
@@ -70,11 +70,11 @@
         Text=" The THIRDPARTY_ROOT property must be set on the command line."
         Condition="'$(THIRDPARTY_ROOT)' == '' or !Exists('$(THIRDPARTY_ROOT)')" />
            
-    <SimpleExec Command="git" Args="log -1 &quot;--pretty=format:%h&quot; &quot;$(BUILD_ROOT)\.&quot;">
+    <SimpleExec Command="git.cmd" Args="log -1 &quot;--pretty=format:%h&quot; &quot;$(BUILD_ROOT)\.&quot;">
         <Output TaskParameter="StdOut" PropertyName="GitVersionNumber" />
         <Output TaskParameter="ExitCode" PropertyName="GitSuccess" />
     </SimpleExec>
-    <SimpleExec Command="git" Args="log -1 &quot;--pretty=format:%cd&quot; &quot;$(BUILD_ROOT)\.&quot;">
+    <SimpleExec Command="git.cmd" Args="log -1 &quot;--pretty=format:%cd&quot; &quot;$(BUILD_ROOT)\.&quot;">
         <Output TaskParameter="StdOut" PropertyName="GitProjectDate" />
         <Output TaskParameter="ExitCode" PropertyName="GitSuccess" />
     </SimpleExec>

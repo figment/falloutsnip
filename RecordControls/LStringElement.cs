@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Globalization;
 using System.Windows.Forms;
+using TESVSnip.Forms;
 using TESVSnip.Properties;
 
 namespace TESVSnip.RecordControls
@@ -19,7 +20,20 @@ namespace TESVSnip.RecordControls
 
         protected override void UpdateLabel()
         {
-            base.UpdateLabel();
+            if (element != null && !string.IsNullOrEmpty(element.name))
+            {
+                lblType.Text = element.type.ToString();
+                lblText.Text = element.name
+                               + (!string.IsNullOrEmpty(element.desc) ? (" (" + element.desc + ")") : "");
+                if (element.multiline)
+                {
+                    txtString.AcceptsReturn = true;
+                    txtString.Multiline = true;
+                    txtString.Height = 120;
+                    txtString.ScrollBars = ScrollBars.Vertical;
+                    this.Height = 148;
+                }
+            }
         }
 
         protected override void UpdateText()
@@ -126,6 +140,27 @@ namespace TESVSnip.RecordControls
         private void txtString_Validated(object sender, EventArgs e)
         {
             SaveText();
+        }
+
+        private void txtString_DoubleClick(object sender, EventArgs e)
+        {
+            using (var editor = new MultilineStringEditor())
+            {
+                editor.Text = txtString.Text;
+                DialogResult result = editor.ShowDialog(this);
+                if (result == DialogResult.OK)
+                {
+                    txtString.Text = editor.Text;
+                }
+            }
+        }
+
+        private void textBox_Enter(object sender, EventArgs e)
+        {
+            if (textBox.ReadOnly)
+            {
+                txtString.Focus();
+            }
         }
     }
 }

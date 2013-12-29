@@ -82,6 +82,7 @@ namespace TESVSnip
                                 case ElementValueType.UInt:
                                 case ElementValueType.Float:
                                 case ElementValueType.Str4:
+                                case ElementValueType.IString:
                                     size += 4;
                                     break;
                                 case ElementValueType.BString:
@@ -107,8 +108,6 @@ namespace TESVSnip
         {
             Owner = rec;
             Name = name;
-            if (size == 0) size = br.ReadUInt16();
-            else br.BaseStream.Position += 2;
             Data = new byte[size];
             br.Read(Data, 0, Data.Length);
         }
@@ -138,22 +137,22 @@ namespace TESVSnip
             Owner = null;
         }
 
-        internal override void SaveData(BinaryWriter bw)
+        internal override void SaveData(BinaryWriter writer)
         {
             if (Data.Length > ushort.MaxValue)
             {
-                WriteString(bw, "XXXX");
-                bw.Write((ushort) 4);
-                bw.Write(Data.Length);
-                WriteString(bw, Name);
-                bw.Write((ushort) 0);
-                bw.Write(Data, 0, Data.Length);
+                WriteString(writer, "XXXX");
+                writer.Write((ushort) 4);
+                writer.Write(Data.Length);
+                WriteString(writer, Name);
+                writer.Write((ushort) 0);
+                writer.Write(Data, 0, Data.Length);
             }
             else
             {
-                WriteString(bw, Name);
-                bw.Write((ushort) Data.Length);
-                bw.Write(Data, 0, Data.Length);
+                WriteString(writer, Name);
+                writer.Write((ushort) Data.Length);
+                writer.Write(Data, 0, Data.Length);
             }
         }
 
@@ -521,6 +520,14 @@ namespace TESVSnip
                                         offset += (2 + len);
                                     }
                                     break;
+                                case ElementValueType.IString:
+                                    {
+                                        int len = TypeConverter.h2si(Data[offset], Data[offset + 1], Data[offset + 2], Data[offset + 3]);
+                                        if (!sselem.notininfo)
+                                            s.Append(Encoding.CP1252.GetString(Data, offset + 4, len));
+                                        offset += (4 + len);
+                                    }
+                                    break;
                                 case ElementValueType.LString:
                                     {
                                         // Try to guess if string or string index.  Do not know if the external string checkbox is set or not in this code
@@ -658,6 +665,7 @@ namespace TESVSnip
                             break;
 
                         case ElementValueType.BString:
+                        case ElementValueType.IString:
                         case ElementValueType.String:
                             row.Add(new RTFCellDefinition(42, RTFAlignment.MiddleLeft, RTFBorderSide.Default, 15,
                                                           Color.DarkGray, Padding.Empty));
@@ -868,6 +876,9 @@ namespace TESVSnip
                         case ElementValueType.BString:
                             strValue = TypeConverter.GetBString(elem.Data);
                             break;
+                        case ElementValueType.IString:
+                            strValue = TypeConverter.GetIString(elem.Data);
+                            break;
                         default:
                             strValue = value == null ? "" : value.ToString();
                             break;
@@ -1021,7 +1032,11 @@ namespace TESVSnip
                             value = value ?? "";
                         if (hasOptions)
                         {
-                            int intVal = Convert.ToInt32(value);
+                            int intVal;
+                            if (sselem.hexview || hasFlags)
+                                intVal = int.Parse(value.ToString(), NumberStyles.HexNumber);
+                            else
+                                intVal = Convert.ToInt32(value);
                             for (int k = 0; k < sselem.options.Length; k += 2)
                             {
                                 if (intVal == int.Parse(sselem.options[k + 1]))
@@ -1032,7 +1047,7 @@ namespace TESVSnip
                         }
                         else if (hasFlags)
                         {
-                            int intVal = Convert.ToInt32(value);
+                            int intVal = int.Parse(value.ToString(), NumberStyles.HexNumber);
                             var tmp2 = new StringBuilder();
                             for (int k = 0; k < sselem.flags.Length; k++)
                             {
@@ -1058,7 +1073,11 @@ namespace TESVSnip
                             value = value ?? "";
                         if (hasOptions)
                         {
-                            uint intVal = Convert.ToUInt32(value);
+                            uint intVal;
+                            if (sselem.hexview || hasFlags)
+                                intVal = uint.Parse(value.ToString(), NumberStyles.HexNumber);
+                            else
+                                intVal = Convert.ToUInt32(value);
                             for (int k = 0; k < sselem.options.Length; k += 2)
                             {
                                 if (intVal == uint.Parse(sselem.options[k + 1]))
@@ -1069,7 +1088,7 @@ namespace TESVSnip
                         }
                         else if (hasFlags)
                         {
-                            uint intVal = Convert.ToUInt32(value);
+                            uint intVal = uint.Parse(value.ToString(), NumberStyles.HexNumber);
                             var tmp2 = new StringBuilder();
                             for (int k = 0; k < sselem.flags.Length; k++)
                             {
@@ -1090,6 +1109,9 @@ namespace TESVSnip
                     break;
                 case ElementValueType.BString:
                     strValue = TypeConverter.GetBString(elem.Data);
+                    break;
+                case ElementValueType.IString:
+                    strValue = TypeConverter.GetIString(elem.Data);
                     break;
                 default:
                     strValue = value == null ? "" : value.ToString();

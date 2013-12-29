@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -771,10 +772,15 @@ namespace TESVSnip.Data
         /// </summary>
         /// <param name="baseRecords">Records to use as base records</param>
         /// <param name="updateRecords">Inplace records to update</param>
-        internal void MergeRecords(IEnumerable<RecordsRecord> baseRecords, IEnumerable<RecordsRecord> updateRecords)
+        internal ICollection MergeRecords(IEnumerable<RecordsRecord> baseRecords, IEnumerable<RecordsRecord> updateRecords)
         {
+            var names = new HashSet<string>(StringComparer.InvariantCultureIgnoreCase);
             foreach (var r in updateRecords)
+            {
                 MergeRecord(baseRecords.FirstOrDefault(a => a.name == r.name), r);
+                names.Add(r.name);
+            }
+            return baseRecords.Where(a => !names.Contains(a.name)).ToArray();
         }
 
         /// <summary>

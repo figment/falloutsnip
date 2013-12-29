@@ -70,6 +70,9 @@
     <GenerateSerializationAssemblies>On</GenerateSerializationAssemblies>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Ionic.Zlib">
+      <HintPath>thirdparty\Ionic.Zlib.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core">
       <RequiredTargetFramework>3.5</RequiredTargetFramework>
@@ -802,8 +805,8 @@
   <ItemGroup>
     <inputAssemblies Include="$(TargetPath)" />
     <inputAssemblies Include="$(TargetDir)\*.dll" />
-    <CopyToStaging Include="$(ProjectDir)\LICENSE" />
-    <CopyToStaging Include="$(ProjectDir)\README.TXT" />
+    <CopyToStaging Include="$(ProjectDir)\TESVsnip_LICENSE" />
+    <CopyToStaging Include="$(ProjectDir)\TESVsnip_README.TXT" />
     <CopyToStagingConf Include="$(ProjectDir)conf\**" />
   </ItemGroup>
   <Target Name="Package">
@@ -818,6 +821,6 @@
     <ILMerge InputAssemblies="@(inputAssemblies)" OutputFile="$(MergeOutputFile)" DebugInfo="true" />
     <Delete Files="$(StageOutputDir)\$(ProjectName)_v$(Major).$(Minor).rar" />
     <SimpleExec Command="$(ProgramFiles)\WinRar\rar.exe" Args="a -r $(ProjectName)_v$(Major).$(Minor).rar * -x*.pdb -x*vshost* -x*.rar" WorkingDirectory="$(StageOutputDir)" />
-    <SimpleExec Command="$(ProgramFiles)\WinRar\rar.exe" Args="c $(ProjectName)_v$(Major).$(Minor).rar" StdIn="README.TXT" WorkingDirectory="$(StageOutputDir)" />
+    <SimpleExec Command="$(ProgramFiles)\WinRar\rar.exe" Args="c $(ProjectName)_v$(Major).$(Minor).rar" StdIn="TESVsnip_README.TXT" WorkingDirectory="$(StageOutputDir)" />
   </Target>
 </Project>

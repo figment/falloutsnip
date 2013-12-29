@@ -1,4 +1,4 @@
-figments's TESsnip Fork (Skyrim Edition)
+figment's TESsnip Fork (Skyrim Edition)
 =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 
 TESVSnip is a fork of the TESsnip utility bundled with Fallout Mod Manager with changes specifically for Skyrim.
@@ -9,6 +9,61 @@ Requirements:
   .NET 3.5
 
 Change Log:
+v 4.5
+- Merged changes from 4.3 and 4.4.  4.4 was not commited to svn repository so reversed from released files
+- Added Open List Shortcut
+
+---  Begin figment haitus ---
+
+v 4.4.0a
+- Added Zlib 1.2.4 support. [Leandro]
+- Completly Refactored the project. [Leandro]
+- [WIP] Updating Localization. [Smaug]
+- Updated TES4 HEDR Display. [Smaug]
+- Fixed compiler directives so EXE works on 64-bit install of Windows 7. [Smaug]
+
+v 4.3.1b
+- Backup of plugins for every save stored. (Format plugin.esp.XXX.bak where XXX is 000 to 999)
+- "File|Save" do not ask for a filename or if you want to overwrite (since we don't overwrite anymore).
+- "File|Save As" with the old "File|Save" function. 
+- Re-enabled strings file saveing.
+- Fixed bug in "Strings|Extract Internal Strings To Table" that caused an exception if the plugins masters wasn't loaded. Also string id's are now unique in the plugin only as it is in game.
+- Lots of bugfixes to RecordStructure.xml. There where alot of lstrings that was not actually lstrings that would corrupt the plugin when using the strings spells.
+
+v 4.3
+- Elements with options or flags now work for the types short and byte also (was only working for int before), both signed and unsigned.
+- New string type called Istring that has an int that defines the string length. Used for MODS, MO2S, MO3S subrecords.
+- The data in the TES4 record for new plugins are more sane.
+- Create new GRUP (GroupRecord). (Had to fix some bugs in the GroudEditor also. Looks like it hasen't seen much use)
+- Creating or pasting a record/s while having a record selected, it will be pasted on the same level as that record. (In that Group or Plugin)
+- Added "Paste" to the context menu in the tree view.
+- Added "Delete" to the toolbar in the tree view.
+- Make "Reports" of multi selected records in the tree view.
+- Make "Reports" of multi selected record in the search view.
+- Fixed alot of strange tab orders in different dialogs.
+- Fixed HeaderEditor so it stores the field you are standing on when you save the changes by pressing enter. (Since you didn't leave the textbox the validation that moved the data to the local variable hadn't accoured yet).
+- Fixed both HeaderEditor and GroupEditor so you get a chance to correct any wrong info you have when pressing save, instead of the window just closes after the error message.
+- Save Plugin Dialog is prefilled with the selected plugins filename. (No more saving the wrong plugin to the last saved plugins name).
+- Saved strings files now end up in the correct place and have the right name again.
+- Corrected the spell "Make ESM".
+- Enable compression state in the CompressioSettings window is now saved. (Compression is not binary identical to Construction Kit, but both the Construction Kit and the Game can read it just fine)
+- HexEdit window is scrollable verticaly.
+- Delete subrecord now deletes all selected subrecords, not just the first one as before.
+- Update the record count in the TES4 record on save.
+- Backup old plugin files before overwriting them.
+- Use and increment the Next ObjectID in the TES4 record as the FormID for new records.
+- New spell that gives selected record new FormID and updates all references to it. The new FormID is taken from the Next Object field in the TES4 record.
+- Moving the last subrecord up no longer unselects it.
+- Merged in leihao UTF-8 changes.
+
+Things I want to implement but don't know if I'm capable of.
+
+- GroupElement for repeating elements inside a Subrecord. Usable for WMAD, MODT, MODS and a bunch of other subrecords.
+- Conditions on Element level.
+- Leveled List Merger
+
+--- End figment haitus ---
+
 v 4.2
 - Fix null pointer exception when editing a records with no subrecords
 - Various recordstructure.xml updates
@@ -214,6 +269,10 @@ Credits:
                 - Tes5Lib (http://github.com/uesp/tes5lib)
 * Ails - Icons - http://ails.deviantart.com/art/420-Pixel-Art-Icons-for-RPG-129892453
 * Crystal Project - Icons released under LGPL
+* wmrojer - For all the 4.3 and 4.3.1 Changes
+* SLuckyD - For his work on the latest RecordStructure.xml
+* Leandro Conde - For his work on 4.4.0a
+* Smaug Nogardeht - For his work on 4.4.0a
 
 License:
 * The TESsnip code is licensed under GPL so this is by extension also GPL

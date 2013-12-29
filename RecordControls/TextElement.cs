@@ -42,6 +42,14 @@ namespace TESVSnip.RecordControls
                 lblType.Text = element.type.ToString();
                 lblText.Text = element.name
                                + (!string.IsNullOrEmpty(element.desc) ? (" (" + element.desc + ")") : "");
+                if (element.multiline)
+                {
+                    textBox.AcceptsReturn = true;
+                    textBox.Multiline = true;
+                    textBox.Height = 120;
+                    textBox.ScrollBars = ScrollBars.Vertical;
+                    this.Height = 120;
+                }
             }
         }
 
@@ -108,6 +116,10 @@ namespace TESVSnip.RecordControls
                         break;
                     case ElementValueType.BString:
                         tb.Text = TypeConverter.GetBString(data);
+                        fitTextBoxToWidth = true;
+                        break;
+                    case ElementValueType.IString:
+                        tb.Text = TypeConverter.GetIString(data);
                         fitTextBoxToWidth = true;
                         break;
                     case ElementValueType.LString:
@@ -265,6 +277,9 @@ namespace TESVSnip.RecordControls
                     break;
                 case ElementValueType.BString:
                     SetCurrentData(new ArraySegment<byte>(TypeConverter.bstr2h(textBox.Text)));
+                    break;
+                case ElementValueType.IString:
+                    SetCurrentData(new ArraySegment<byte>(TypeConverter.istr2h(textBox.Text)));
                     break;
                 case ElementValueType.LString:
                     {

@@ -221,10 +221,13 @@ namespace TESVSnip
 
                 s = ReadRecName(br);
                 if (s != "TES4") throw new Exception("File is not a valid TES4 plugin (Missing TES4 record)");
+
+                // Check for file version by checking the position of the HEDR field in the file. (ie. how big are the record header.)
                 br.BaseStream.Position = 20;
                 s = ReadRecName(br);
                 if (s == "HEDR")
                 {
+                    // Record Header is 20 bytes
                     IsOblivion = true;
                 }
                 else
@@ -233,10 +236,19 @@ namespace TESVSnip
                     if (s != "HEDR")
                         throw new Exception(
                             "File is not a valid TES4 plugin (Missing HEDR subrecord in the TES4 record)");
+                    // Record Header is 24 bytes. Or the file is illegal
                 }
+
                 br.BaseStream.Position = 4;
                 recsize = br.ReadUInt32();
+                try
+                {
                 AddRecord(new Record("TES4", recsize, br, IsOblivion));
+                }
+                catch (Exception e)
+                {
+                    System.Windows.Forms.MessageBox.Show(e.Message);
+                }
                 if (!headerOnly)
                 {
                     while (br.PeekChar() != -1)
@@ -245,7 +257,14 @@ namespace TESVSnip
                         recsize = br.ReadUInt32();
                         if (s == "GRUP")
                         {
+                            try
+                            {
                             AddRecord(new GroupRecord(recsize, br, IsOblivion, recFilter, false));
+                        }
+                            catch (Exception e)
+                            {
+                                System.Windows.Forms.MessageBox.Show(e.Message);
+                            }
                         }
                         else
                         {
@@ -253,11 +272,20 @@ namespace TESVSnip
                             if (skip)
                             {
                                 long size = (recsize + (IsOblivion ? 8 : 12));
-                                if ((br.ReadUInt32() & 0x00040000) > 0) size += 4;
-                                br.BaseStream.Position += size; // just read past the data
+                                if ((br.ReadUInt32() & 0x00040000) > 0) size += 4; // Add 4 bytes for compressed record since the decompressed size is not included in the record size.
+                                br.BaseStream.Position += size; // just position past the data
                             }
                             else
+                            {
+                                try
+                                {
                                 AddRecord(new Record(s, recsize, br, IsOblivion));
+                        }
+                                catch (Exception e)
+                                {
+                                    System.Windows.Forms.MessageBox.Show(e.Message);
+                                }
+                            }
                         }
                     }
                 }
@@ -387,7 +415,7 @@ namespace TESVSnip
 
         public Plugin()
         {
-            Name = "New plugin";
+            Name = "New plugin.esp";
         }
 
         public override string GetDesc()
@@ -410,15 +438,18 @@ namespace TESVSnip
 
         internal void Save(string FilePath)
         {
+            Spells.UpdateRecordCount(this);
             bool existed = false;
-            DateTime timestamp = DateTime.Now;
+            BinaryWriter bw;
             if (File.Exists(FilePath))
             {
-                timestamp = new FileInfo(FilePath).LastWriteTime;
                 existed = true;
-                File.Delete(FilePath);
+                bw = new BinaryWriter(File.OpenWrite(FilePath + ".new"));
             }
-            var bw = new BinaryWriter(File.OpenWrite(FilePath));
+            else
+            {
+                bw = new BinaryWriter(File.OpenWrite(FilePath));
+            }
             try
             {
                 SaveData(bw);
@@ -432,7 +463,17 @@ namespace TESVSnip
             {
                 if (existed)
                 {
-                    new FileInfo(FilePath).LastWriteTime = timestamp;
+                    bool backupExists = true;
+                    int backupVersion = 0;
+                    while (backupExists && backupVersion < 999)
+                    {
+                        backupExists = File.Exists(FilePath + String.Format(".{0,3:D3}.bak", backupVersion));
+                        if (backupExists) backupVersion++;
+                    }
+                    File.Replace(FilePath + ".new", FilePath, FilePath + String.Format(".{0,3:D3}.bak", backupVersion));
+                    // File.Replace(FilePath + ".new", FilePath, FilePath + ".bak");
+
+                    // new FileInfo(FilePath).LastWriteTime = timestamp;  // Do not keep timestamp since it is no longer used for loadorder. Better to be able to see when the plugin was last saved.
                 }
             }
             catch
@@ -448,7 +489,7 @@ namespace TESVSnip
                     string prefix = Path.Combine(Path.Combine(Path.GetDirectoryName(FilePath), "Strings"),
                                                  Path.GetFileNameWithoutExtension(FilePath));
                     prefix += "_" + Properties.Settings.Default.LocalizationName;
-                    SaveStrings(FilePath);
+                    SaveStrings(prefix);
                 }
             }
             StringsDirty = false;
@@ -468,10 +509,10 @@ namespace TESVSnip
             SavePluginStrings(enc, LocalizedStringFormat.DL, DLStrings, FilePath + ".DLSTRINGS");
         }
 
-        internal override void SaveData(BinaryWriter bw)
+        internal override void SaveData(BinaryWriter writer)
         {
             Compressor.Init();
-            foreach (Rec r in Records) r.SaveData(bw);
+            foreach (Rec r in Records) r.SaveData(writer);
             Compressor.Close();
         }
 

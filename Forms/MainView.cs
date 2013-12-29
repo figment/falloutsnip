@@ -113,6 +113,7 @@ namespace TESVSnip
 
             useNewSubrecordEditorToolStripMenuItem.Checked = !Properties.Settings.Default.UseOldSubRecordEditor;
             hexModeToolStripMenuItem.Checked = Properties.Settings.Default.UseHexSubRecordEditor;
+            uTF8ModeToolStripMenuItem.Checked = Properties.Settings.Default.UseUTF8;
 
 
             Selection = new SelectionContext();
@@ -256,12 +257,22 @@ namespace TESVSnip
 
         internal void LoadPlugin(string s)
         {
-            var p = new Plugin(s, false, GetRecordFilter(s));
-            PluginList.All.AddRecord(p);
-            UpdateStringEditor();
-            FixMasters();
-            PluginTree.UpdateRoots();
-            GC.Collect();
+            try
+            {
+                var p = new Plugin(s, false, GetRecordFilter(s));
+                PluginList.All.AddRecord(p);
+                UpdateStringEditor();
+                FixMasters();
+                PluginTree.UpdateRoots();
+            }
+            catch (Exception e)
+            {
+                MessageBox.Show(e.Message);
+            }
+            finally
+            {
+                GC.Collect();
+            }
         }
 
         private string[] GetRecordFilter(string s)
@@ -349,6 +360,11 @@ namespace TESVSnip
         {
             if (MessageBox.Show(Resources.CloseAllLoseChangesInquiry, Resources.WarningText, MessageBoxButtons.YesNo) !=
                 DialogResult.Yes) return;
+            CloseAllPlugins();
+        }
+
+        private void CloseAllPlugins()
+        {
             PluginList.All.Records.Clear();
             PluginTree.UpdateRoots();
             SubrecordList.Record = null;
@@ -398,6 +414,8 @@ namespace TESVSnip
                     copyToolStripMenuItem.Enabled = false;
                     deleteToolStripMenuItem.Enabled = false;
                     pasteToolStripMenuItem.Enabled = hasClipboard;
+                    pasteNewToolStripMenuItem.Enabled = hasClipboard;
+                    insertGroupToolStripMenuItem.Enabled = true;
                     insertRecordToolStripMenuItem.Enabled = true;
                     insertSubrecordToolStripMenuItem.Enabled = false;
                 }
@@ -406,14 +424,16 @@ namespace TESVSnip
                     cutToolStripMenuItem.Enabled = true;
                     copyToolStripMenuItem.Enabled = true;
                     deleteToolStripMenuItem.Enabled = true;
-                    pasteToolStripMenuItem.Enabled = false;
-                    insertRecordToolStripMenuItem.Enabled = false;
+                    pasteToolStripMenuItem.Enabled = hasClipboard;
+                    pasteNewToolStripMenuItem.Enabled = hasClipboard;
+                    insertGroupToolStripMenuItem.Enabled = false;
+                    insertRecordToolStripMenuItem.Enabled = true;
                     insertSubrecordToolStripMenuItem.Enabled = true;
                     Selection.Record = rec as Rec;
                     SubrecordList.Record = Selection.Record as Record;
                     MatchRecordStructureToRecord();
                 }
-                else
+                else if (rec is GroupRecord)
                 {
                     Selection.Record = null;
                     SubrecordList.Record = null;
@@ -421,7 +441,22 @@ namespace TESVSnip
                     copyToolStripMenuItem.Enabled = true;
                     deleteToolStripMenuItem.Enabled = true;
                     pasteToolStripMenuItem.Enabled = hasClipboard;
+                    pasteNewToolStripMenuItem.Enabled = hasClipboard;
+                    insertGroupToolStripMenuItem.Enabled = true;
                     insertRecordToolStripMenuItem.Enabled = true;
+                    insertSubrecordToolStripMenuItem.Enabled = false;
+                }
+                else
+                {
+                    Selection.Record = null;
+                    SubrecordList.Record = null;
+                    cutToolStripMenuItem.Enabled = false;
+                    copyToolStripMenuItem.Enabled = false;
+                    deleteToolStripMenuItem.Enabled = false;
+                    pasteToolStripMenuItem.Enabled = false;
+                    pasteNewToolStripMenuItem.Enabled = false;
+                    insertGroupToolStripMenuItem.Enabled = false;
+                    insertRecordToolStripMenuItem.Enabled = false;
                     insertSubrecordToolStripMenuItem.Enabled = false;
                 }
                 Selection.SubRecord = GetSelectedSubrecord();
@@ -461,6 +496,28 @@ namespace TESVSnip
                     return;
             }
 
+            p.Save(p.Name);
+            FixMasters();
+        }
+
+        private void saveAsToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if (PluginTree.SelectedRecord == null)
+            {
+                MessageBox.Show(Resources.NoPluginSelectedToSave, Resources.ErrorText);
+                return;
+            }
+            var p = GetPluginFromNode(PluginTree.SelectedRecord);
+            if (p.Filtered)
+            {
+                DialogResult result = MessageBox.Show(this, Resources.SavePluginWithFilterAppliedInquiry,
+                                                      Resources.WarningText, MessageBoxButtons.YesNo,
+                                                      MessageBoxIcon.Warning, MessageBoxDefaultButton.Button2);
+                if (result == DialogResult.No)
+                    return;
+            }
+
+            SaveModDialog.FileName = p.Name;
             if (SaveModDialog.ShowDialog(this) == DialogResult.OK)
             {
                 p.Save(SaveModDialog.FileName);
@@ -509,10 +566,15 @@ namespace TESVSnip
 
         private void pasteToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            PasteFromClipboard(false);
+            PasteFromClipboard(false, false);
         }
 
-        private void PasteFromClipboard(bool recordOnly)
+        private void pasteNewToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            PasteFromClipboard(false, true);
+        }
+
+        private void PasteFromClipboard(bool recordOnly, bool asNew)
         {
             if (!HasClipboardData())
             {
@@ -522,7 +584,7 @@ namespace TESVSnip
 
             if (PluginTree.ContainsFocus)
             {
-                PluginTree.PasteFromClipboard(recordOnly);
+                PluginTree.PasteFromClipboard(recordOnly, asNew);
             }
             else if (SubrecordList.ContainsFocus)
             {
@@ -538,7 +600,7 @@ namespace TESVSnip
             r.Name = "TES4";
             var sr = new SubRecord();
             sr.Name = "HEDR";
-            sr.SetData(new byte[] {0xD7, 0xA3, 0x70, 0x3F, 0xFA, 0x56, 0x0C, 0x00, 0x19, 0xEA, 0x07, 0xFF});
+            sr.SetData(new byte[] {0xD7, 0xA3, 0x70, 0x3F, 0x00, 0x00, 0x00, 0x00, 0x00, 0x1D, 0x00, 0x01});
             r.AddRecord(sr);
             sr = new SubRecord();
             sr.Name = "CNAM";
@@ -578,11 +640,31 @@ namespace TESVSnip
             return SubrecordList.GetSelectedSubrecords();
         }
 
+        private void insertGroupToolStripMenuItem3_Click(object sender, EventArgs e)
+        {
+            var node = PluginTree.SelectedRecord;
+            var p = new GroupRecord("NEW_");
+            node.AddRecord(p);
+            GetPluginFromNode(PluginTree.SelectedRecord).InvalidateCache();
+            PluginTree.RefreshObject(node);
+        }
+        
         private void insertRecordToolStripMenuItem_Click(object sender, EventArgs e)
         {
             var node = PluginTree.SelectedRecord;
-            var p = new Record();
-            node.AddRecord(p);
+
+            if (node is Record && (node.Parent is GroupRecord || node.Parent is Plugin))
+                node = node.Parent;
+
+            var record = new Record();
+            if (node is GroupRecord)
+            {
+                GroupRecord g = (GroupRecord)node;
+                if (g.groupType == 0)
+                    record.Name = g.ContentsType;
+            }
+            node.AddRecord(record);
+            Spells.giveRecordNewFormID(record,false);
             GetPluginFromNode(PluginTree.SelectedRecord).InvalidateCache();
             PluginTree.RefreshObject(node);
         }
@@ -910,8 +992,10 @@ namespace TESVSnip
             if (updateRecords != null && baseRecords != null)
             {
                 var builder = new RecordBuilder();
+                updateRecords.Items.AddRange(
                 builder.MergeRecords(baseRecords.Items.OfType<RecordsRecord>()
-                                     , updateRecords.Items.OfType<RecordsRecord>());
+                                         , updateRecords.Items.OfType<RecordsRecord>())
+                    );
 
                 using (var dlg = new SaveFileDialog())
                 {
@@ -1083,11 +1167,17 @@ namespace TESVSnip
                 FontLangInfo defLang;
                 if (!Encoding.TryGetFontInfo(Properties.Settings.Default.LocalizationName, out defLang))
                     defLang = new FontLangInfo(1252, 1033, 0);
-
-                var rb = new RTFBuilder(RTFFont.Arial, 16, defLang.lcid, defLang.charset);
-                rec.GetFormattedHeader(rb);
-                rec.GetFormattedData(rb);
-                SelectedText.Rtf = rb.ToString();
+                try
+                {
+                    var rb = new RTFBuilder(RTFFont.Arial, 16, defLang.lcid, defLang.charset);
+                    rec.GetFormattedHeader(rb);
+                    rec.GetFormattedData(rb);
+                    SelectedText.Rtf = rb.ToString();
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show( ex.Message, Resources.WarningText );
+                }
             }
         }
 
@@ -1385,11 +1475,11 @@ namespace TESVSnip
                         statusTimer = new Timer(
                             o =>
                             Invoke(new TimerCallback(o2 => { toolStripStatusLabel.Text = ""; }), new object[] { "" })
-                            , "", TimeSpan.FromSeconds(3), TimeSpan.FromMilliseconds(-1));
+                            , "", TimeSpan.FromSeconds(15), TimeSpan.FromMilliseconds(-1));
                     }
                     else
                     {
-                        statusTimer.Change(TimeSpan.FromSeconds(3), TimeSpan.FromMilliseconds(-1));
+                        statusTimer.Change(TimeSpan.FromSeconds(15), TimeSpan.FromMilliseconds(-1));
                     }                    
                 }
             }
@@ -1844,5 +1934,104 @@ namespace TESVSnip
             var search = CreateSearchWindow();
             search.ReferenceSearch(formid);
         }
+
+        private void newFormIDToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            giveSelectionNewFormID(true);
+        }
+
+        private void newFormIDNoReferenceUpdateToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            giveSelectionNewFormID(false);
+        }
+
+        private void uTF8ModeToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            Properties.Settings.Default.UseUTF8 = uTF8ModeToolStripMenuItem.Checked;
+            if (MessageBox.Show(Resources.RestartText, Resources.InfoText, MessageBoxButtons.YesNoCancel) == DialogResult.Yes)
+            {
+                Application.Restart();
+            }
+        }
+
+        private void openListToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            using (var dlg = new OpenFileDialog())
+            {
+                string path = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "Skyrim");
+                string defaultFile = Path.Combine(path, "plugins.txt");
+                dlg.Title = "Select Plugins List File";
+                dlg.InitialDirectory = path;
+                dlg.FileName = "plugins.txt";
+                dlg.Filter = "Plugin Lists|*.txt|All Files|*.*";
+                dlg.FilterIndex = 0;
+                if (dlg.ShowDialog(this) != DialogResult.OK)
+                    return;
+
+                var origCursor = Cursor.Current;
+                Cursor.Current = Cursors.WaitCursor;
+                try
+                {
+                    using (var fs = File.OpenText(dlg.FileName))
+                    {
+                        CloseAllPlugins();
+                        if (string.Compare(dlg.FileName, defaultFile, StringComparison.InvariantCultureIgnoreCase) == 0)
+                        {
+                            var file = Path.Combine(Program.gameDataDir, "skyrim.esm");
+                            if (File.Exists(file))
+                            {
+                                var p = new Plugin(file, false, GetRecordFilter(file));
+                                PluginList.All.AddRecord(p);
+                            }                            
+                        }
+                        while (true)
+                        {
+                            var line = fs.ReadLine();
+                            if (line == null) break;
+                            if (line == "") continue;
+                            var file = Path.Combine(Program.gameDataDir, line.Trim());
+                            if (File.Exists(file))
+                            {
+                                var p = new Plugin(file, false, GetRecordFilter(file));
+                                PluginList.All.AddRecord(p);
+                            }
+                        }
+                    }
+                }
+                finally
+                {
+                    UpdateStringEditor();
+                    FixMasters();
+                    PluginTree.UpdateRoots();
+                    GC.Collect();
+
+                    Cursor.Current = origCursor;
+                }
+            }
+        }
+
+        private void saveListToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            //C:\Users\User\AppData\Local\Oblivion\plugins.txt
+            using (var dlg = new SaveFileDialog())
+            {
+                dlg.Title = "Select Plugins List File";
+                dlg.InitialDirectory = Environment.CurrentDirectory;
+                dlg.FileName = "plugins.txt";
+                if (dlg.ShowDialog(this) != DialogResult.OK)
+                    return;
+
+                using (var fs = File.OpenWrite(dlg.FileName))
+                using (var sw = new StreamWriter(fs))
+                {
+                    foreach (Plugin p in PluginList.All.Records)
+                    {
+                        sw.WriteLine(Path.GetFileName(p.Name));
+                    }
+                    sw.Flush();
+                }
+            }
+        }
+
     }
 }

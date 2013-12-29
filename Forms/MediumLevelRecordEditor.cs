@@ -116,6 +116,7 @@ namespace TESVSnip
             panel1.Anchor = AnchorStyles.Top | AnchorStyles.Right | AnchorStyles.Left | AnchorStyles.Bottom;
             int ypos = 0;
             uint flagValue = 0; // value if flags is set
+            byte flagSize = 4;
             bool hasFlags = (es.options.Length == 0 && es.flags.Length > 1);
 
             var tb = new TextBox();
@@ -173,6 +174,7 @@ namespace TESVSnip
                         {
                             var v = TypeConverter.h2i(data[offset], data[offset + 1], data[offset + 2], data[offset + 3]);
                             flagValue = v;
+                            flagSize = 4;
                             tb.Text = hasFlags || es.hexview ? "0x" + v.ToString("X8") : v.ToString();
                             offset += 4;
                         }
@@ -182,6 +184,7 @@ namespace TESVSnip
                             var v = TypeConverter.h2si(data[offset], data[offset + 1], data[offset + 2],
                                                        data[offset + 3]);
                             flagValue = (uint) v;
+                            flagSize = 4;
                             tb.Text = hasFlags || es.hexview ? "0x" + v.ToString("X8") : v.ToString();
                             offset += 4;
                         }
@@ -202,6 +205,7 @@ namespace TESVSnip
                         {
                             var v = TypeConverter.h2s(data[offset], data[offset + 1]);
                             flagValue = v;
+                            flagSize = 2;
                             tb.Text = hasFlags || es.hexview ? "0x" + v.ToString("X4") : v.ToString();
                             offset += 2;
                         }
@@ -210,6 +214,7 @@ namespace TESVSnip
                         {
                             var v = TypeConverter.h2ss(data[offset], data[offset + 1]);
                             flagValue = (uint) v;
+                            flagSize = 2;
                             tb.Text = hasFlags || es.hexview ? "0x" + v.ToString("X4") : v.ToString();
                             offset += 2;
                         }
@@ -218,6 +223,7 @@ namespace TESVSnip
                         {
                             var v = data[offset];
                             flagValue = v;
+                            flagSize = 1;
                             tb.Text = hasFlags || es.hexview ? "0x" + v.ToString("X2") : v.ToString();
                             offset++;
                         }
@@ -226,6 +232,7 @@ namespace TESVSnip
                         {
                             var v = (sbyte) data[offset];
                             flagValue = (uint) v;
+                            flagSize = 1;
                             tb.Text = hasFlags || es.hexview ? "0x" + v.ToString("X2") : v.ToString();
                             offset++;
                         }
@@ -244,6 +251,15 @@ namespace TESVSnip
                             int len = TypeConverter.h2s(data[offset], data[offset + 1]);
                             string s = Encoding.CP1252.GetString(data, offset + 2, len);
                             offset = offset + (2 + len);
+                            tb.Text = s;
+                            tb.Width += 200;
+                        }
+                        break;
+                    case ElementValueType.IString:
+                        {
+                            int len = TypeConverter.h2si(data[offset], data[offset + 1], data[offset + 2], data[offset + 3]);
+                            string s = Encoding.CP1252.GetString(data, offset + 4, len);
+                            offset = offset + (4 + len);
                             tb.Text = s;
                             tb.Width += 200;
                         }
@@ -289,7 +305,7 @@ namespace TESVSnip
             else
             {
                 if (es.type == ElementValueType.String || es.type == ElementValueType.BString
-                    || es.type == ElementValueType.LString)
+                    || es.type == ElementValueType.LString || es.type == ElementValueType.IString)
                     tb.Width += 200;
                 if (removedStrings.ContainsKey(boxes.Count - 1)) tb.Text = removedStrings[boxes.Count - 1];
             }
@@ -379,7 +395,7 @@ namespace TESVSnip
             {
                 var ccb = new FlagComboBox();
                 ccb.Tag = tb;
-                ccb.SetItems(es.flags);
+                ccb.SetItems(es.flags, flagSize);
                 ccb.SetState(flagValue);
                 ccb.TextChanged += delegate
                                        {
@@ -651,6 +667,12 @@ namespace TESVSnip
                     case ElementValueType.BString:
                         {
                             bytes.AddRange(TypeConverter.s2h((ushort) tbText.Length));
+                            bytes.AddRange(System.Text.Encoding.Default.GetBytes(tbText));
+                            break;
+                        }
+                    case ElementValueType.IString:
+                        {
+                            bytes.AddRange(TypeConverter.si2h(tbText.Length));
                             bytes.AddRange(System.Text.Encoding.Default.GetBytes(tbText));
                             break;
                         }

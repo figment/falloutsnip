@@ -15,20 +15,32 @@ namespace TESVSnip
     /// </summary>
     internal static class Spells
     {
+        /// HAZD appears twice in Skyrim.esm.  2nd entry is empty.
         private static readonly string[] SanitizeOrder = new string[] {
             "GMST", "KYWD", "LCRT", "AACT", "TXST", "GLOB", "CLAS", "FACT", "HDPT", "HAIR", "EYES", "RACE", "SOUN", "ASPC", "MGEF", 
             "SCPT", "LTEX", "ENCH", "SPEL", "SCRL", "ACTI", "TACT", "ARMO", "BOOK", "CONT", "DOOR", "INGR", "LIGH", "MISC", "APPA", 
             "STAT", "SCOL", "MSTT", "PWAT", "GRAS", "TREE", "CLDC", "FLOR", "FURN", "WEAP", "AMMO", "NPC_", "LVLN", "KEYM", "ALCH", 
             "IDLM", "COBJ", "PROJ", "HAZD", "SLGM", "LVLI", "WTHR", "CLMT", "SPGD", "RFCT", "REGN", "NAVI", "CELL", "WRLD", "DIAL", 
-            "QUST", "IDLE", "PACK", "CSTY", "LSCR", "LVSP", "ANIO", "WATR", "EFSH", "EXPL", "DEBR", "IMGS", "IMAD", "FLST", "PERK",
+            "QUST", "IDLE", "PACK", "CSTY", "LSCR", "LVSP", "ANIO", "WATR", "EFSH", "EXPL", "DEBR", "IMGS", "IMAD", "FLST", "PERK", 
             "BPTD", "ADDN", "AVIF", "CAMS", "CPTH", "VTYP", "MATT", "IPCT", "IPDS", "ARMA", "ECZN", "LCTN", "MESG", "RGDL", "DOBJ", 
             "LGTM", "MUSC", "FSTP", "FSTS", "SMBN", "SMQN", "SMEN", "DLBR", "MUST", "DLVW", "WOOP", "SHOU", "EQUP", "RELA", "SCEN", 
-            "ASTP", "OTFT", "ARTO", "MATO", "MOVT", "SNDR", "DUAL", "SNCT", "SOPM", "COLL", "CLFM", "REVB"
+            "ASTP", "OTFT", "ARTO", "MATO", "MOVT", "HAZD", "SNDR", "DUAL", "SNCT", "SOPM", "COLL", "CLFM", "REVB"
                                                       };
 
         private static readonly string[] LooseGroups = new string[] {
             "CELL", "WRLD", "REFR", "ACRE", "ACHR", "NAVM", "DIAL", "INFO"
         };
+
+
+        public static Plugin GetPluginFromNode(BaseRecord node)
+        {
+            BaseRecord tn = node;
+            if (tn is Plugin) return (Plugin)tn;
+            while (!(tn is Plugin) && tn != null) tn = tn.Parent;
+            if (tn != null) return tn as Plugin;
+            return null;
+        }
+
 
         static int sanitizeCountRecords(Rec r)
         {
@@ -38,6 +50,22 @@ namespace TESVSnip
                 int i = 1;
                 foreach (Rec r2 in (r).Records) i += sanitizeCountRecords(r2);
                 return i;
+            }
+        }
+
+        public static void UpdateRecordCount(Plugin plugin)
+        {
+            int reccount = -1 + plugin.Records.Cast<Rec>().Sum(r => sanitizeCountRecords(r));
+            var tes4 = plugin.Records.OfType<Record>().FirstOrDefault(x => x.Name == "TES4");
+            if (tes4 != null)
+            {
+                if (tes4.SubRecords.Count > 0 && tes4.SubRecords[0].Name == "HEDR" && tes4.SubRecords[0].Size >= 8)
+                {
+                    byte[] data = tes4.SubRecords[0].GetData();
+                    byte[] reccountbytes = TypeConverter.si2h(reccount);
+                    for (int i = 0; i < 4; i++) data[4 + i] = reccountbytes[i];
+                    tes4.SubRecords[0].SetData(data);
+                }
             }
         }
 
@@ -126,7 +154,9 @@ namespace TESVSnip
 
                 plugin.InvalidateCache();
 
-                int reccount = -1 + plugin.Records.Cast<Rec>().Sum(r => sanitizeCountRecords(r));
+                UpdateRecordCount(plugin);
+
+                /* int reccount = -1 + plugin.Records.Cast<Rec>().Sum(r => sanitizeCountRecords(r));
                 var tes4 = plugin.Records.OfType<Record>().FirstOrDefault(x => x.Name == "TES4");
                 if (tes4 != null)
                 {
@@ -137,7 +167,7 @@ namespace TESVSnip
                         for (int i = 0; i < 4; i++) data[4 + i] = reccountbytes[i];
                         tes4.SubRecords[0].SetData(data);
                     }
-                }
+                } */
             }
             finally
             {
@@ -287,6 +317,100 @@ namespace TESVSnip
             return count;
         }
 
+
+        #region NewFormID
+
+        public static uint getNextFormID(Plugin plugin)
+        {
+            var tes4 = plugin.Records.OfType<Record>().FirstOrDefault(x => x.Name == "TES4");
+            if (tes4 != null && tes4.SubRecords.Count > 0 && tes4.SubRecords[0].Name == "HEDR" && tes4.SubRecords[0].Size >= 8)
+            {
+                byte[] data = tes4.SubRecords[0].GetData();
+                uint formid = (uint)TypeConverter.GetObject<uint>(data, 8);
+                TypeConverter.i2h(formid + 1, data, 8);
+                tes4.SubRecords[0].SetData(data);
+                return formid;
+            }
+            throw new ApplicationException(Resources.PluginLacksAValidTes4RecordCannotContinue);
+        }
+
+        public static void updateFormIDReference(Plugin plugin, uint oldFormID, uint newFormID)
+        {
+            uint refCount = 0;
+            updateFormIDReference(plugin, oldFormID, newFormID, ref refCount);
+        }
+
+        public static void updateFormIDReference(Plugin plugin, uint oldFormID, uint newFormID, ref uint refCount)
+        {
+            foreach (Record record in plugin.Enumerate().OfType<Record>())
+            {
+                record.MatchRecordStructureToRecord();
+                foreach (SubRecord sr in record.SubRecords)
+                {
+                    var elements =  sr.EnumerateElements(true).ToList();
+                    foreach (Element e in elements)
+                    {
+                        if (e.Structure != null && e.Structure.type == ElementValueType.FormID)
+                        {
+                            if ((uint)e.Value == oldFormID)
+                            {
+                                e.AssignValue<uint>((object)newFormID);
+                                refCount++;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        public static void giveRecordNewFormID(Record rec, bool updateReference)
+        {
+            uint formCount = 0, refCount = 0;
+            giveRecordNewFormID(rec, updateReference, ref formCount, ref refCount);
+        }
+
+        public static void giveRecordNewFormID(Record rec, bool updateReference, ref uint formCount, ref uint refCount)
+        {
+            var plugin = GetPluginFromNode(rec);
+            if (plugin == null)
+            {
+                throw new ApplicationException("Cannot select plugin");
+            }
+            uint newFormID = getNextFormID(plugin);
+            uint oldFormID = rec.FormID;
+            rec.FormID = newFormID;
+            formCount++;
+            if (oldFormID != 0 && updateReference)
+                updateFormIDReference(plugin, oldFormID, newFormID, ref refCount);
+            plugin.InvalidateCache();
+        }
+
+        public static void giveBaseRecordNewFormID(BaseRecord rec, bool updateReference)
+        {
+            uint formCount = 0, refCount = 0;
+            giveBaseRecordNewFormID(rec, updateReference, ref formCount, ref refCount);
+        }
+
+        public static void giveBaseRecordNewFormID(BaseRecord rec, bool updateReference, ref uint formCount, ref uint refCount)
+        {
+            if (rec is Record)
+            {
+                giveRecordNewFormID((Record)rec, updateReference, ref formCount, ref refCount);
+            }
+            else if (rec is GroupRecord)
+            {
+                foreach (BaseRecord rec2 in ((GroupRecord)rec).Records)
+                {
+                    giveBaseRecordNewFormID(rec2, updateReference, ref formCount, ref refCount);
+                }
+            }
+        }
+
+        #endregion NewFormID
+
+
+        #region StringManipulation
+
         /// <summary>
         /// Extract any internalized strings and put in string table
         /// </summary>
@@ -294,7 +418,8 @@ namespace TESVSnip
         public static int ExtractInternalStrings(Plugin plugin)
         {
             int count = 0;
-            uint maxid = plugin.Masters.Max(x=>x.Strings.Count > 0 ? x.Strings.Keys.Max() : 0);
+            // uint maxid = plugin.Masters.Max(x=>x.Strings.Count > 0 ? x.Strings.Keys.Max() : 0); // No need to check the masters string since the numbers are unique for every plugin
+
             bool anyModified = false;
             foreach (var record in plugin.Enumerate().OfType<Record>())
             {
@@ -320,7 +445,8 @@ namespace TESVSnip
                                 string value = TypeConverter.GetString(data);
                                 if (!String.IsNullOrEmpty(value))
                                 {
-                                    uint nextid = Math.Max(maxid, plugin.Strings.Count == 0 ? 0 : plugin.Strings.Keys.Max()) + 1;
+                                    // uint nextid = Math.Max(maxid, plugin.Strings.Count == 0 ? 0 : plugin.Strings.Keys.Max()) + 1; // No need to check the masters strings since the numbers are unique for every plugin
+                                    uint nextid = (plugin.Strings.Count == 0 ? 0 : plugin.Strings.Keys.Max()) + 1;
                                     int idx = plugin.Strings.FindValue(value);
                                     if (idx >= 0)
                                     {
@@ -537,5 +663,9 @@ namespace TESVSnip
             }
             return count;
         }
-    }
-}
+
+        #endregion StringManipulation
+
+    } // class Spells
+
+} //namespace TESVSnip

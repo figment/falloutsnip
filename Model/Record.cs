@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 using System.Linq;
@@ -14,11 +15,17 @@ namespace TESVSnip
     [Persistable(Flags = PersistType.DeclaredOnly), Serializable]
     public sealed class Record : Rec, ISerializable, IDeserializationCallback
     {
+        private readonly uint dataSize;
+
         public readonly AdvancedList<SubRecord> SubRecords;
-        [Persistable] public uint Flags1;
-        [Persistable] public uint Flags2;
-        [Persistable] public uint Flags3;
-        [Persistable] public uint FormID;
+        [Persistable]
+        public uint Flags1;
+        [Persistable]
+        public uint Flags2;
+        [Persistable]
+        public uint Flags3;
+        [Persistable]
+        public uint FormID;
 
         private static Dictionary<string, Func<string>> overrideFunctionsByType = new Dictionary<string, Func<string>>();
         private readonly Func<string> descNameOverride;
@@ -78,7 +85,7 @@ namespace TESVSnip
         {
             if (serializationItems == null)
                 serializationItems = new Dictionary<Record, SubRecord[]>();
-            serializationItems[this] = info.GetValue("SubRecords", typeof (SubRecord[])) as SubRecord[];
+            serializationItems[this] = info.GetValue("SubRecords", typeof(SubRecord[])) as SubRecord[];
             SubRecords = new AdvancedList<SubRecord>(1);
             descNameOverride = DefaultDescriptiveName;
             UpdateShortDescription();
@@ -106,6 +113,7 @@ namespace TESVSnip
             }
         }
 
+#if false
         internal Record(string name, uint Size, BinaryReader br, bool Oblivion)
         {
             SubRecords = new AdvancedList<SubRecord>(1);
@@ -145,13 +153,78 @@ namespace TESVSnip
             UpdateShortDescription();
             //br.BaseStream.Position+=Size;
         }
+#else
+        internal Record(string name, uint dataSize, BinaryReader recordReader, bool oblivion)
+        {
+            this.dataSize = dataSize;
 
+            SubRecords = new AdvancedList<SubRecord>(1) { AllowSorting = false };
+            Name = name;
+            Flags1 = recordReader.ReadUInt32();
+            FormID = recordReader.ReadUInt32();
+            Flags2 = recordReader.ReadUInt32();
+            if (!oblivion)
+            {
+                Flags3 = recordReader.ReadUInt32();
+            }
+
+            var compressed = (Flags1 & 0x00040000) != 0;
+            uint amountRead = 0;
+
+            var realSize = dataSize;
+            if (compressed)
+            {
+                realSize = recordReader.ReadUInt32();
+                dataSize -= 4;
+            }
+
+            using (var stream = new MemoryStream(recordReader.ReadBytes((int)dataSize)))
+            using (var br = new BinaryReader(stream))
+            {
+                var dataReader = compressed ? Decompressor.Decompress(br, (int) dataSize, (int) realSize) : br;
+                {
+                    while (true)
+                    {
+                        var left = dataReader.BaseStream.Length - dataReader.BaseStream.Position;
+                        if (left < 4) {break;}
+                        var type = ReadRecName(dataReader);
+                        uint size;
+                        if (type == "XXXX")
+                        {
+                            dataReader.ReadUInt16();
+                            size = dataReader.ReadUInt32();
+                            type = ReadRecName(dataReader);
+                            dataReader.ReadUInt16();
+                        }
+                        else
+                        {
+                            size = dataReader.ReadUInt16();
+                        }
+
+                        var record = new SubRecord(this, type, dataReader, size);
+                        SubRecords.Add(record);
+                        amountRead += (uint)record.Size2;
+                    }
+                }
+            }
+
+            if (amountRead > realSize)
+            {
+                Debug.Print(" * ERROR: SUB-RECORD {0} DATA DOESN'T MATCH THE SIZE SPECIFIED IN THE HEADER: DATA-SIZE={1} REAL-SIZE={2} AMOUNT-READ={3}", name, dataSize, realSize, amountRead);
+                throw new TESParserException(string.Format("Subrecord block did not match the size specified in the record header: ExpectedSize={0} ReadSize={1} DataSize={2}", realSize, amountRead, dataSize));
+            }
+
+            descNameOverride = DefaultDescriptiveName;
+            UpdateShortDescription();
+            //br.BaseStream.Position+=Size;
+        }
+#endif
         private Record(Record r)
         {
             SubRecords = new AdvancedList<SubRecord>(r.SubRecords.Count);
             SubRecords.AllowSorting = false;
             foreach (var sr in r.SubRecords.OfType<SubRecord>())
-                SubRecords.Add((SubRecord) sr.Clone());
+                SubRecords.Add((SubRecord)sr.Clone());
             Flags1 = r.Flags1;
             Flags2 = r.Flags2;
             Flags3 = r.Flags3;
@@ -213,8 +286,8 @@ namespace TESVSnip
                 if (data != null)
                 {
                     desc = string.Format(" [{1},{2}]\t{0}",
-                                         desc, (int) (data.GetValue<float>(0)/4096.0f),
-                                         (int) (data.GetValue<float>(4)/4096.0f)
+                                         desc, (int)(data.GetValue<float>(0) / 4096.0f),
+                                         (int)(data.GetValue<float>(4) / 4096.0f)
                         );
                 }
                 descriptiveName = desc;
@@ -227,8 +300,8 @@ namespace TESVSnip
                 if (data != null)
                 {
                     desc = string.Format(" [{1},{2}]\t{0}",
-                                         desc, (int) (data.GetValue<float>(0)/4096.0f),
-                                         (int) (data.GetValue<float>(4)/4096.0f)
+                                         desc, (int)(data.GetValue<float>(0) / 4096.0f),
+                                         (int)(data.GetValue<float>(4) / 4096.0f)
                         );
                 }
                 descriptiveName = desc;
@@ -384,10 +457,10 @@ namespace TESVSnip
 
         #endregion
 
-        internal override void SaveData(BinaryWriter bw)
+        internal override void SaveData(BinaryWriter writer)
         {
-            WriteString(bw, Name);
-            var srSize = (uint) Size;
+            WriteString(writer, Name);
+            var srSize = (uint)Size;
 
             bool bCompress = false;
             if (Properties.Settings.Default.UseDefaultRecordCompression)
@@ -400,27 +473,27 @@ namespace TESVSnip
             if (bCompress) // compressed
             {
                 var stream = Compressor.GetSharedStream();
-                using (var writer = Compressor.AllocWriter(stream))
-                    foreach (SubRecord sr in SubRecords) sr.SaveData(writer);
+                using (var cw = Compressor.AllocWriter(stream))
+                    foreach (SubRecord sr in SubRecords) sr.SaveData(cw);
 
-                bw.Write((uint) stream.Length + 4); // Size of compressed section + length
-                bw.Write((Flags1 | 0x00040000));
-                bw.Write(FormID);
-                bw.Write(Flags2);
-                bw.Write(Flags3);
+                writer.Write((uint)stream.Length + 4); // Size of compressed section + length
+                writer.Write((Flags1 | 0x00040000));
+                writer.Write(FormID);
+                writer.Write(Flags2);
+                writer.Write(Flags3);
 
                 stream.Position = 0;
-                bw.Write(srSize); //ideally use writer bytes written but should be same
-                Compressor.CopyTo(bw, stream);
+                writer.Write(srSize); //ideally use writer bytes written but should be same
+                Compressor.CopyTo(writer, stream);
             }
             else
             {
-                bw.Write(srSize);
-                bw.Write((uint) (Flags1 & ~0x00040000));
-                bw.Write(FormID);
-                bw.Write(Flags2);
-                bw.Write(Flags3);
-                foreach (SubRecord sr in SubRecords) sr.SaveData(bw);
+                writer.Write(srSize);
+                writer.Write((uint)(Flags1 & ~0x00040000));
+                writer.Write(FormID);
+                writer.Write(Flags2);
+                writer.Write(Flags3);
+                foreach (SubRecord sr in SubRecords) sr.SaveData(writer);
             }
         }
 
@@ -494,7 +567,7 @@ namespace TESVSnip
                 }
                 else if (ssb is SubrecordStructure)
                 {
-                    var ss = (SubrecordStructure) ssb;
+                    var ss = (SubrecordStructure)ssb;
                     if (ss.Condition != CondType.None && !MatchRecordCheckCondition(conditions, ss))
                     {
                         ++context.ssidx;
@@ -595,7 +668,7 @@ namespace TESVSnip
                     }
                 case ElementValueType.Float:
                     {
-                        float i = (float) cond.value, i2;
+                        float i = (float)cond.value, i2;
                         if (!float.TryParse(ss.CondOperand, out i2)) return false;
                         switch (ss.Condition)
                         {
@@ -617,9 +690,10 @@ namespace TESVSnip
                     }
                 case ElementValueType.Str4:
                 case ElementValueType.BString:
+                case ElementValueType.IString:
                 case ElementValueType.String:
                     {
-                        var s = (string) cond.value;
+                        var s = (string)cond.value;
                         switch (ss.Condition)
                         {
                             case CondType.Equal:
@@ -638,7 +712,7 @@ namespace TESVSnip
                     }
                 case ElementValueType.LString:
                     {
-                        int i = (int) cond.value, i2;
+                        int i = (int)cond.value, i2;
                         if (!int.TryParse(ss.CondOperand, out i2)) return false;
                         switch (ss.Condition)
                         {

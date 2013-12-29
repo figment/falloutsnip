@@ -76,14 +76,14 @@ namespace TESVSnip
                         for (int i = offset; i < data.Length && data[i] != 0; ++i, ++len) ;
                         if (rawData) // raw form includes the zero termination byte
                         {
-                            len = (len == 0 ? 0 : len + 1);
+                            len = Math.Min(len == 0 ? 0 : len + 1, data.Length-offset);
                             elem = new Element(es, ElementValueType.String, new ArraySegment<byte>(data, offset, len));
                             offset += len;
                         }
                         else
                         {
                             elem = new Element(es, ElementValueType.String, new ArraySegment<byte>(data, offset, len));
-                            offset += (len == 0 ? 0 : len + 1);
+                            offset += Math.Min(len == 0 ? 0 : len + 1, data.Length - offset);
                         }
                         break;
                     case ElementValueType.BString:
@@ -109,6 +109,34 @@ namespace TESVSnip
                             if (rawData)
                                 elem = new Element(es, ElementValueType.BString,
                                                    new ArraySegment<byte>(new byte[2] {0, 0}));
+                            else
+                                elem = new Element(es, ElementValueType.String, new ArraySegment<byte>(new byte[0]));
+                            offset += maxlen;
+                        }
+                        break;
+                    case ElementValueType.IString:
+                        if (maxlen >= sizeof(int))
+                        {
+                            len = TypeConverter.h2si(data[offset], data[offset + 1], data[offset + 2], data[offset + 3]);
+                            len = (len < maxlen - 4) ? len : maxlen - 4;
+                            if (rawData) // raw data includes int prefix
+                            {
+                                elem = new Element(es, ElementValueType.IString,
+                                                   new ArraySegment<byte>(data, offset, len + 4));
+                                offset += (len + 4);
+                            }
+                            else
+                            {
+                                elem = new Element(es, ElementValueType.String,
+                                                   new ArraySegment<byte>(data, offset + 4, len));
+                                offset += (len + 4);
+                            }
+                        }
+                        else
+                        {
+                            if (rawData)
+                                elem = new Element(es, ElementValueType.IString,
+                                                   new ArraySegment<byte>(new byte[4] { 0, 0, 0, 0 }));
                             else
                                 elem = new Element(es, ElementValueType.String, new ArraySegment<byte>(new byte[0]));
                             offset += maxlen;
@@ -311,6 +339,7 @@ namespace TESVSnip
                     break;
 
                 case ElementValueType.BString:
+                case ElementValueType.IString:
                     break;
 
                 case ElementValueType.Str4:
