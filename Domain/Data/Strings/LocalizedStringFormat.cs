@@ -1,23 +1,23 @@
 namespace TESVSnip.Domain.Data.Strings
 {
     /// <summary>
-    /// The localized string format.
+    ///     The localized string format.
     /// </summary>
     public enum LocalizedStringFormat
     {
         /// <summary>
-        /// The base.
+        ///     The base.
         /// </summary>
-        Base, 
+        Base,
 
         /// <summary>
-        /// The dl.
+        ///     The dl.
         /// </summary>
-        DL, 
+        DL,
 
         /// <summary>
-        /// The il.
+        ///     The il.
         /// </summary>
-        IL, 
+        IL,
     }
 }

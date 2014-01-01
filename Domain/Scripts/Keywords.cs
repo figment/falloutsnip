@@ -2,37 +2,37 @@ namespace TESVSnip.Domain.Scripts
 {
     internal enum Keywords
     {
-        If, 
+        If,
 
-        ElseIf, 
+        ElseIf,
 
-        Else, 
+        Else,
 
-        EndIf, 
+        EndIf,
 
-        ScriptName, 
+        ScriptName,
 
-        Scn, 
+        Scn,
 
-        Short, 
+        Short,
 
-        Int, 
+        Int,
 
-        Float, 
+        Float,
 
-        Ref, 
+        Ref,
 
-        Begin, 
+        Begin,
 
-        End, 
+        End,
 
-        Set, 
+        Set,
 
-        To, 
+        To,
 
-        Return, 
+        Return,
 
-        ShowMessage, 
+        ShowMessage,
 
         NotAKeyword
     }

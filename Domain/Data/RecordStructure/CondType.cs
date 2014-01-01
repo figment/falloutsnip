@@ -2,27 +2,27 @@ namespace TESVSnip.Domain.Data.RecordStructure
 {
     public enum CondType
     {
-        None, 
+        None,
 
-        Equal, 
+        Equal,
 
-        Not, 
+        Not,
 
-        Greater, 
+        Greater,
 
-        Less, 
+        Less,
 
-        GreaterEqual, 
+        GreaterEqual,
 
-        LessEqual, 
+        LessEqual,
 
-        StartsWith, 
+        StartsWith,
 
-        EndsWith, 
+        EndsWith,
 
-        Contains, 
+        Contains,
 
-        Exists, 
+        Exists,
 
         Missing
     }

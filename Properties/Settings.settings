@@ -17,6 +17,12 @@
     <Setting Name="EnableESMFilter" Type="System.Boolean" Scope="User">
       <Value Profile="(Default)">False</Value>
     </Setting>
+    <Setting Name="AllESMRecords" Type="System.String" Scope="User">
+      <Value Profile="(Default)">AACT;ACTI;ADDN;ALCH;AMMO;ANIO;APPA;ARMA;ARMO;ARTO;ASPC;ASTP;AVIF;BOOK;BPTD;CAMS;CELL;CLAS;CLDC;CLFM;CLMT;COBJ;COLL;CONT;CPTH;CSTY;DEBR;DIAL;DLBR;DLVW;DOBJ;DOOR;DUAL;ECZN;EFSH;ENCH;EQUP;EXPL;EYES;FACT;FLOR;FLST;FSTP;FSTS;FURN;GLOB;GMST;GRAS;HAIR;HAZD;HDPT;IDLE;IDLM;IMAD;IMGS;INGR;IPCT;IPDS;KEYM;KYWD;LCRT;LCTN;LGTM;LIGH;LSCR;LTEX;LVLI;LVLN;LVSP;MATO;MATT;MESG;MGEF;MISC;MOVT;MSTT;MUSC;MUST;NAVI;NPC_;OTFT;PACK;PERK;PROJ;PWAT;QUST;RACE;REGN;RELA;REVB;RFCT;RGDL;SCEN;SCOL;SCPT;SCTX;SCRL;SHOU;SLGM;SMBN;SMEN;SMQN;SNCT;SNDR;SOPM;SOUN;SPEL;SPGD;STAT;TACT;TREE;TXST;VTYP;WATR;WEAP;WOOP;WRLD;WTHR</Value>
+    </Setting>
+    <Setting Name="FilteredESMRecords" Type="System.String" Scope="User">
+      <Value Profile="(Default)">RGDL;CLDC;PWAT;SCOL;SCPT;HAIR;REGN;NAVI;WRLD;DIAL;CELL;IMAD;WTHR</Value>
+    </Setting>
     <Setting Name="IsFirstTimeOpening" Type="System.Boolean" Scope="User">
       <Value Profile="(Default)">True</Value>
     </Setting>
@@ -41,9 +47,6 @@
     <Setting Name="LocalizationName" Type="System.String" Scope="User">
       <Value Profile="(Default)">English</Value>
     </Setting>
-    <Setting Name="SkyrimLocalizerPath" Type="System.String" Scope="User">
-      <Value Profile="(Default)">Skyrim String Localizer.exe</Value>
-    </Setting>
     <Setting Name="SaveStringsFiles" Type="System.Boolean" Scope="User">
       <Value Profile="(Default)">False</Value>
     </Setting>
@@ -65,7 +68,7 @@
     <Setting Name="EnableAutoCompress" Type="System.Boolean" Scope="User">
       <Value Profile="(Default)">False</Value>
     </Setting>
-    <Setting Name="AutoCompressRecords" Type="System.String" Scope="User">
+    <Setting Name="AutoCompressRecordsOld" Type="System.String" Scope="User">
       <Value Profile="(Default)">REGN;NAVI;WRLD;DIAL;CELL;IMAD;WTHR</Value>
     </Setting>
     <Setting Name="EnableCompressionLimit" Type="System.Boolean" Scope="User">
@@ -95,11 +98,29 @@
     <Setting Name="UseUTF8" Type="System.Boolean" Scope="User">
       <Value Profile="(Default)">True</Value>
     </Setting>
-    <Setting Name="FilteredESMRecords" Type="System.String" Scope="User">
-      <Value Profile="(Default)">RGDL;CLDC;PWAT;SCOL;SCPT;HAIR;REGN;NAVI;WRLD;DIAL;CELL;IMAD;WTHR</Value>
+    <Setting Name="CultureCodeUI" Type="System.String" Scope="User">
+      <Value Profile="(Default)" />
     </Setting>
-    <Setting Name="AllESMRecords" Type="System.String" Scope="User">
-      <Value Profile="(Default)">AACT;ACTI;ADDN;ALCH;AMMO;ANIO;APPA;ARMA;ARMO;ARTO;ASPC;ASTP;AVIF;BOOK;BPTD;CAMS;CLAS;CLDC;CLFM;CLMT;COBJ;COLL;CONT;CPTH;CSTY;DEBR;DIAL;DLBR;DLVW;DOBJ;DOOR;DUAL;ECZN;EFSH;ENCH;EQUP;EXPL;EYES;FACT;FLOR;FLST;FSTP;FSTS;FURN;GLOB;GMST;GRAS;HAIR;HAZD;HDPT;IDLE;IDLM;IMAD;IMGS;INGR;IPCT;IPDS;KEYM;KYWD;LCRT;LCTN;LGTM;LIGH;LSCR;LTEX;LVLI;LVLN;LVSP;MATO;MATT;MESG;MGEF;MISC;MOVT;MSTT;MUSC;MUST;NAVI;NPC_;OTFT;PACK;PERK;PROJ;PWAT;QUST;RACE;REGN;RELA;REVB;RFCT;RGDL;SCOL;SCPT;SCRL;SHOU;SLGM;SMBN;SMEN;SMQN;SNCT;SNDR;SOPM;SOUN;SPEL;SPGD;STAT;TACT;TREE;TXST;VTYP;WATR;WEAP;WOOP;WRLD;WTHR</Value>
+    <Setting Name="LastOpenFolder" Type="System.String" Scope="User">
+      <Value Profile="(Default)" />
+    </Setting>
+    <Setting Name="LastSaveFolder" Type="System.String" Scope="User">
+      <Value Profile="(Default)" />
+    </Setting>
+    <Setting Name="PersonalSaveFolder" Type="System.String" Scope="User">
+      <Value Profile="(Default)" />
+    </Setting>
+    <Setting Name="PersonalOpenFolder" Type="System.String" Scope="User">
+      <Value Profile="(Default)" />
+    </Setting>
+    <Setting Name="UsePluginRecordCompression" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">True</Value>
+    </Setting>
+    <Setting Name="AutoCompressRecords" Type="System.String" Scope="User">
+      <Value Profile="(Default)">CELL;DIAL;IMAD;LAND;NAVI;NAVM;NPC_;REGN;WRLD;WTHR</Value>
+    </Setting>
+    <Setting Name="AllESMRecordsOld" Type="System.String" Scope="User">
+      <Value Profile="(Default)">AACT;ACTI;ADDN;ALCH;AMMO;ANIO;APPA;ARMA;ARMO;ARTO;ASPC;ASTP;AVIF;BOOK;BPTD;CAMS;CELL;CLAS;CLDC;CLFM;CLMT;COBJ;COLL;CONT;CPTH;CSTY;DEBR;DIAL;DLBR;DLVW;DOBJ;DOOR;DUAL;ECZN;EFSH;ENCH;EQUP;EXPL;EYES;FACT;FLOR;FLST;FSTP;FSTS;FURN;GLOB;GMST;GRAS;HAIR;HAZD;HDPT;IDLE;IDLM;IMAD;IMGS;INGR;IPCT;IPDS;KEYM;KYWD;LCRT;LCTN;LGTM;LIGH;LSCR;LTEX;LVLI;LVLN;LVSP;MATO;MATT;MESG;MGEF;MISC;MOVT;MSTT;MUSC;MUST;NAVI;NPC_;OTFT;PACK;PERK;PROJ;PWAT;QUST;RACE;REGN;RELA;REVB;RFCT;RGDL;SCEN;SCOL;SCPT;SCRL;SHOU;SLGM;SMBN;SMEN;SMQN;SNCT;SNDR;SOPM;SOUN;SPEL;SPGD;STAT;TACT;TREE;TXST;VTYP;WATR;WEAP;WOOP;WRLD;WTHR</Value>
     </Setting>
   </Settings>
 </SettingsFile>

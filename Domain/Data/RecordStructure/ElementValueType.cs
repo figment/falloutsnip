@@ -2,31 +2,31 @@ namespace TESVSnip.Domain.Data.RecordStructure
 {
     public enum ElementValueType
     {
-        String, 
+        String,
 
-        Float, 
+        Float,
 
-        Int, 
+        Int,
 
-        Short, 
+        Short,
 
-        Byte, 
+        Byte,
 
-        FormID, 
+        FormID,
 
-        Blob, 
+        Blob,
 
-        LString, 
+        LString,
 
-        BString, 
+        BString,
 
-        UShort, 
+        UShort,
 
-        UInt, 
+        UInt,
 
-        SByte, 
+        SByte,
 
-        Str4, 
+        Str4,
 
         IString
     }

@@ -16,6 +16,8 @@ namespace TESVSnip.Domain.Data.RecordStructure
 
         public readonly bool hexview;
 
+        public readonly bool hexviewwithdec;
+
         public readonly bool multiline;
 
         public readonly string name;
@@ -28,6 +30,10 @@ namespace TESVSnip.Domain.Data.RecordStructure
 
         public readonly int repeat;
 
+        public readonly string funcr;
+
+        public readonly string funcw;
+
         public readonly ElementValueType type;
 
         public ElementStructure()
@@ -36,6 +42,7 @@ namespace TESVSnip.Domain.Data.RecordStructure
             this.desc = "Data";
             this.@group = 0;
             this.hexview = true;
+            this.hexviewwithdec = false;
             this.notininfo = true;
             this.optional = false;
             this.options = null;
@@ -44,6 +51,8 @@ namespace TESVSnip.Domain.Data.RecordStructure
             this.CondID = 0;
             this.FormIDType = null;
             this.multiline = false;
+            this.funcr = string.Empty;
+            this.funcw = string.Empty;
             this.type = ElementValueType.Blob;
         }
 
@@ -53,11 +62,14 @@ namespace TESVSnip.Domain.Data.RecordStructure
             this.desc = node.desc;
             this.@group = node.group;
             this.hexview = node.hexview;
+            this.hexviewwithdec = node.hexviewwithdec;
             this.notininfo = node.notininfo;
             this.optional = node.optional != 0;
             this.options = node.options == null ? new string[0] : node.options.Split(new[] { ';' }, StringSplitOptions.RemoveEmptyEntries);
             this.flags = node.flags == null ? new string[0] : node.flags.Split(new[] { ';' });
             this.repeat = node.repeat;
+            this.funcr = node.funcr;
+            this.funcw = node.funcw;
             this.CondID = node.condid;
             if (this.optional || this.repeat > 0)
             {

@@ -2,25 +2,25 @@ namespace TESVSnip.Domain.Model
 {
     public enum SearchCondElementType
     {
-        Equal, 
+        Equal,
 
-        Not, 
+        Not,
 
-        Greater, 
+        Greater,
 
-        Less, 
+        Less,
 
-        GreaterEqual, 
+        GreaterEqual,
 
-        LessEqual, 
+        LessEqual,
 
-        StartsWith, 
+        StartsWith,
 
-        EndsWith, 
+        EndsWith,
 
-        Contains, 
+        Contains,
 
-        Exists, 
+        Exists,
 
         Missing
     }

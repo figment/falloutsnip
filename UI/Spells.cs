@@ -17,21 +17,45 @@ namespace TESVSnip.UI
     /// </summary>
     internal static class Spells
     {
-        private static readonly string[] LooseGroups = new[] { "CELL", "WRLD", "REFR", "ACRE", "ACHR", "NAVM", "DIAL", "INFO" };
+        private static readonly string[] LooseGroups = new[]
+                                                           {
+                                                               "CELL", "WRLD", "REFR", "ACRE", "ACHR", "NAVM", "DIAL",
+                                                               "INFO"
+                                                           };
 
         /// <summary>
         /// The sanitize order.
         /// </summary>
         /// HAZD appears twice in Skyrim.esm.  2nd entry is empty.
         private static readonly string[] SanitizeOrder = new[]
-            {
-                "GMST", "KYWD", "LCRT", "AACT", "TXST", "GLOB", "CLAS", "FACT", "HDPT", "HAIR", "EYES", "RACE", "SOUN", "ASPC", "MGEF", "SCPT", "LTEX", "ENCH", "SPEL", "SCRL", "ACTI", "TACT", "ARMO", 
-                "BOOK", "CONT", "DOOR", "INGR", "LIGH", "MISC", "APPA", "STAT", "SCOL", "MSTT", "PWAT", "GRAS", "TREE", "CLDC", "FLOR", "FURN", "WEAP", "AMMO", "NPC_", "LVLN", "KEYM", "ALCH", "IDLM", 
-                "COBJ", "PROJ", "HAZD", "SLGM", "LVLI", "WTHR", "CLMT", "SPGD", "RFCT", "REGN", "NAVI", "CELL", "WRLD", "DIAL", "QUST", "IDLE", "PACK", "CSTY", "LSCR", "LVSP", "ANIO", "WATR", "EFSH", 
-                "EXPL", "DEBR", "IMGS", "IMAD", "FLST", "PERK", "BPTD", "ADDN", "AVIF", "CAMS", "CPTH", "VTYP", "MATT", "IPCT", "IPDS", "ARMA", "ECZN", "LCTN", "MESG", "RGDL", "DOBJ", "LGTM", "MUSC", 
-                "FSTP", "FSTS", "SMBN", "SMQN", "SMEN", "DLBR", "MUST", "DLVW", "WOOP", "SHOU", "EQUP", "RELA", "SCEN", "ASTP", "OTFT", "ARTO", "MATO", "MOVT", "HAZD", "SNDR", "DUAL", "SNCT", "SOPM", 
-                "COLL", "CLFM", "REVB"
-            };
+                                                             {
+                                                                 //"GMST", "KYWD", "LCRT", "AACT", "TXST", "GLOB", "CLAS", "FACT", "HDPT", "HAIR", "EYES", "RACE", "SOUN", "ASPC", "MGEF", "SCPT", "LTEX", "ENCH", "SPEL", "SCRL", "ACTI", "TACT", "ARMO", 
+                                                                 //"BOOK", "CONT", "DOOR", "INGR", "LIGH", "MISC", "APPA", "STAT", "SCOL", "MSTT", "PWAT", "GRAS", "TREE", "CLDC", "FLOR", "FURN", "WEAP", "AMMO", "NPC_", "LVLN", "KEYM", "ALCH", "IDLM", 
+                                                                 //"COBJ", "PROJ", "HAZD", "SLGM", "LVLI", "WTHR", "CLMT", "SPGD", "RFCT", "REGN", "NAVI", "CELL", "WRLD", "DIAL", "QUST", "IDLE", "PACK", "CSTY", "LSCR", "LVSP", "ANIO", "WATR", "EFSH", 
+                                                                 //"EXPL", "DEBR", "IMGS", "IMAD", "FLST", "PERK", "BPTD", "ADDN", "AVIF", "CAMS", "CPTH", "VTYP", "MATT", "IPCT", "IPDS", "ARMA", "ECZN", "LCTN", "MESG", "RGDL", "DOBJ", "LGTM", "MUSC", 
+                                                                 //"FSTP", "FSTS", "SMBN", "SMQN", "SMEN", "DLBR", "MUST", "DLVW", "WOOP", "SHOU", "EQUP", "RELA", "SCEN", "ASTP", "OTFT", "ARTO", "MATO", "MOVT", "HAZD", "SNDR", "DUAL", "SNCT", "SOPM", 
+                                                                 //"COLL", "CLFM", "REVB"
+                                                                 "GMST", "KYWD", "LCRT", "AACT", "TXST", "GLOB", "CLAS",
+                                                                 "FACT", "HDPT", "HAIR", "EYES", "RACE", "SOUN", "ASPC",
+                                                                 "MGEF", "SCPT", "LTEX", "ENCH", "SPEL", "SCRL", "ACTI",
+                                                                 "TACT", "ARMO", "BOOK", "CONT", "DOOR", "INGR", "LIGH",
+                                                                 "MISC", "APPA", "STAT", "SCOL", "MSTT", "PWAT", "GRAS",
+                                                                 "TREE", "CLDC", "FLOR", "FURN", "WEAP", "AMMO", "NPC_",
+                                                                 "LVLN", "KEYM", "ALCH", "IDLM", "COBJ", "PROJ", "HAZD",
+                                                                 "SLGM", "LVLI", "WTHR", "CLMT", "SPGD", "RFCT", "REGN",
+                                                                 "NAVI", "CELL", "REFR", "ACHR", "NAVM", "PGRE", "PHZD",
+                                                                 "WRLD", "LAND", "DIAL", "INFO", "QUST", "IDLE", "PACK",
+                                                                 "CSTY", "LSCR", "LVSP", "ANIO", "WATR", "EFSH", "EXPL",
+                                                                 "DEBR", "IMGS", "IMAD", "FLST", "PERK", "BPTD", "ADDN",
+                                                                 "AVIF", "CAMS", "CPTH", "VTYP", "MATT", "IPCT", "IPDS",
+                                                                 "ARMA", "ECZN", "LCTN", "MESG", "RGDL", "DOBJ", "LGTM",
+                                                                 "MUSC", "FSTP", "FSTS", "SMBN", "SMQN", "SMEN", "DLBR",
+                                                                 "MUST", "DLVW", "WOOP", "SHOU", "EQUP", "RELA", "SCEN",
+                                                                 "ASTP", "OTFT", "ARTO", "MATO", "MOVT", "HAZD", "SNDR",
+                                                                 "DUAL", "SNCT", "SOPM", "COLL", "CLFM", "REVB"
+                                                             };
+
+
 
         public static int CopyRecordsTo(BaseRecord[] src, IGroupRecord dst)
         {
@@ -45,7 +69,9 @@ namespace TESVSnip.UI
                     {
                         // put records into appropriate groups
                         var groups = dst.Records.OfType<GroupRecord>();
-                        var lookup = dstRec.GroupBy(r => r.Name).Select(g => new { key = g.Key, value = g.ToArray() }).ToLookup(k => k.key, v => v.value);
+                        var lookup =
+                            dstRec.GroupBy(r => r.Name).Select(g => new {key = g.Key, value = g.ToArray()}).ToLookup(
+                                k => k.key, v => v.value);
                         foreach (var kvp in lookup)
                         {
                             if (LooseGroups.Contains(kvp.Key))
@@ -177,7 +203,8 @@ namespace TESVSnip.UI
                                         plugin.Strings[nextid] = value;
                                     }
 
-                                    elem.AssignValue<ArraySegment<byte>>(new ArraySegment<byte>((byte[])TypeConverter.i2h(nextid).Clone()));
+                                    elem.AssignValue<ArraySegment<byte>>(
+                                        new ArraySegment<byte>((byte[]) TypeConverter.i2h(nextid).Clone()));
                                     ++count;
                                 }
                             }
@@ -219,7 +246,7 @@ namespace TESVSnip.UI
             BaseRecord tn = node;
             if (tn is Plugin)
             {
-                return (Plugin)tn;
+                return (Plugin) tn;
             }
 
             while (!(tn is Plugin) && tn != null)
@@ -281,8 +308,7 @@ namespace TESVSnip.UI
                             }
                         }
                     }
-                }
-                while (found && repeat);
+                } while (found && repeat);
             }
 
             newsubs.AddRange(subs);
@@ -328,7 +354,7 @@ namespace TESVSnip.UI
                     var r = toParse.Dequeue();
                     if (r is GroupRecord)
                     {
-                        var gr = (GroupRecord)r;
+                        var gr = (GroupRecord) r;
                         if (gr.ContentsType == "CELL" || gr.ContentsType == "WRLD" || gr.ContentsType == "DIAL")
                         {
                             var gr2 = groups[gr.ContentsType];
@@ -351,7 +377,7 @@ namespace TESVSnip.UI
                     }
                     else if (r is Record)
                     {
-                        var r2 = (Record)r;
+                        var r2 = (Record) r;
                         if (LooseGroups.Contains(r2.Name))
                         {
                             looseGroupsWarning = true;
@@ -424,10 +450,11 @@ namespace TESVSnip.UI
         public static uint getNextFormID(Plugin plugin)
         {
             var tes4 = plugin.Records.OfType<Record>().FirstOrDefault(x => x.Name == "TES4");
-            if (tes4 != null && tes4.SubRecords.Count > 0 && tes4.SubRecords[0].Name == "HEDR" && tes4.SubRecords[0].Size >= 8)
+            if (tes4 != null && tes4.SubRecords.Count > 0 && tes4.SubRecords[0].Name == "HEDR" &&
+                tes4.SubRecords[0].Size >= 8)
             {
                 byte[] data = tes4.SubRecords[0].GetData();
-                var formid = (uint)TypeConverter.GetObject<uint>(data, 8);
+                var formid = (uint) TypeConverter.GetObject<uint>(data, 8);
                 TypeConverter.i2h(formid + 1, data, 8);
                 tes4.SubRecords[0].SetData(data);
                 return formid;
@@ -442,15 +469,16 @@ namespace TESVSnip.UI
             giveBaseRecordNewFormID(rec, updateReference, ref formCount, ref refCount);
         }
 
-        public static void giveBaseRecordNewFormID(BaseRecord rec, bool updateReference, ref uint formCount, ref uint refCount)
+        public static void giveBaseRecordNewFormID(BaseRecord rec, bool updateReference, ref uint formCount,
+                                                   ref uint refCount)
         {
             if (rec is Record)
             {
-                giveRecordNewFormID((Record)rec, updateReference, ref formCount, ref refCount);
+                giveRecordNewFormID((Record) rec, updateReference, ref formCount, ref refCount);
             }
             else if (rec is GroupRecord)
             {
-                foreach (BaseRecord rec2 in ((GroupRecord)rec).Records)
+                foreach (BaseRecord rec2 in ((GroupRecord) rec).Records)
                 {
                     giveBaseRecordNewFormID(rec2, updateReference, ref formCount, ref refCount);
                 }
@@ -501,9 +529,9 @@ namespace TESVSnip.UI
                     {
                         if (e.Structure != null && e.Structure.type == ElementValueType.FormID)
                         {
-                            if ((uint)e.Value == oldFormID)
+                            if ((uint) e.Value == oldFormID)
                             {
-                                e.AssignValue<uint>((object)newFormID);
+                                e.AssignValue<uint>((object) newFormID);
                                 refCount++;
                             }
                         }
@@ -741,7 +769,7 @@ namespace TESVSnip.UI
         {
             if (r is Record)
             {
-                var r2 = (Record)r;
+                var r2 = (Record) r;
                 if (r2.Name != "GMST" && r2.SubRecords.Count > 0 && r2.SubRecords[0].Name == "EDID")
                 {
                     r2.DeleteRecord(r2.SubRecords[0]);
@@ -763,9 +791,46 @@ namespace TESVSnip.UI
                 }
             }
         }
+
+        /// <summary>
+        /// Change all Form Value greater than 40 to 40
+        /// </summary>
+        /// <param name="plugin"></param>
+        /// <returns></returns>
+        internal static int ChangeFormIdGreater40To40(Plugin plugin)
+        {
+            if (plugin == null)
+            {
+                return -1;
+            }
+
+            var masters = plugin.Masters;
+            if (masters == null || masters.Length == 0)
+            {
+                return -1;
+            }
+
+            int countGreate40 = 0;
+            foreach (var record in plugin.Enumerate().OfType<Record>())
+            {
+                record.MatchRecordStructureToRecord();
+                if (record.Flags3 > 40)
+                {
+                    var data = new byte[4];
+                    TypeConverter.i2h(record.Flags3, data, 0);
+                    if (data[0] > 40)
+                    {
+                        data[0] = 40;
+                        record.Flags3 = TypeConverter.h2i(new ArraySegment<byte>(data, 0, 4));
+                        countGreate40++;
+                    }
+                }
+            }
+
+            return countGreate40;
+        }
+
     }
 
     // class Spells
 }
-
-//namespace TESVSnip

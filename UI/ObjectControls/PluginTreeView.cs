@@ -208,6 +208,11 @@
             }
         }
 
+        public void RebuildDisplayNode()
+        {
+          this.PluginTree.SetObjects(this.PluginTree.SelectedRecords);
+        }
+
         public void RebuildObjects()
         {
             this.PluginTree.RebuildAll(true);

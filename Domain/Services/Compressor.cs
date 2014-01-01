@@ -1,30 +1,125 @@
+using System;
+using System.Collections.Generic;
+using System.Diagnostics;
+using System.IO;
+using System.Reflection;
+
 namespace TESVSnip.Domain.Services
 {
-    using System;
-    using System.Collections.Generic;
-    using System.IO;
-    using Ionic.Zlib;
-
-    //internal static class Compressor
-    //{
-    //    private static readonly string[] autoCompRecList = new string[0];
-
-    //    public static bool CompressRecord(string name)
-    //    {
-    //        return Array.BinarySearch(autoCompRecList, name) >= 0;
-    //    }
-    //}
-
     #region class Compressor / Decompressor
+
+    static class CompressHelper
+    {
+        public static MethodInfo InitializeMethod;
+        public static MethodInfo CloseMethod;
+        public static MethodInfo VersionMethod;
+        public static MethodInfo CompressMethod;
+        public static MethodInfo DecompressMethod;
+
+        static CompressHelper()
+        {
+
+            Platform.RegisterLibrary("ZLibMC.dll");
+            try
+            {
+                var asm = Platform.LoadAssembly("ZLibMC.dll");
+                var type = asm.GetType("DotZLib.ZLib", false, true);
+                InitializeMethod = type.GetMethod("Initialize",
+                                                  BindingFlags.Public | BindingFlags.Static,
+                                                  null, new Type[0], new ParameterModifier[0]);
+                CloseMethod = type.GetMethod("Close",
+                                                  BindingFlags.Public | BindingFlags.Static,
+                                                  null, new Type[0], new ParameterModifier[0]);
+                CompressMethod = type.GetMethod("Compress",
+                                                  BindingFlags.Public | BindingFlags.Static,
+                                                  null, new Type[] { typeof(byte[]), typeof(int), typeof(int), typeof(int) }, new ParameterModifier[0]);
+                DecompressMethod = type.GetMethod("Decompress",
+                                                  BindingFlags.Public | BindingFlags.Static,
+                                                  null, new Type[] { typeof(byte[]), typeof(int), typeof(int), typeof(int), typeof(int).MakeByRefType() }, new ParameterModifier[0]);
+                VersionMethod = type.GetMethod("Version",
+                                                  BindingFlags.Public | BindingFlags.Static,
+                                                  null, new Type[0], new ParameterModifier[0]);
+
+                Initialize();
+            }
+            catch
+            {
+            }            
+        }
+
+        public static void Initialize()
+        {
+            InitializeMethod.Invoke(null, new object[0]);
+            string version = (string)VersionMethod.Invoke(null, new object[0]);
+            Trace.WriteLine(version);
+        }
+
+        public static void Close()
+        {
+            CloseMethod.Invoke(null, new object[0]);
+        }
+
+        public static byte[] Compress(byte[] data, int offset, int length, int level)
+        {
+            return CompressMethod.Invoke(null, new object[] {data, offset, length, level}) as byte[];
+        }
+
+        public static byte[] Decompress(byte[] data, int offset, int length, int compSize, out int level)
+        {
+            level = -1;
+            var args = new object[] {data, offset, length, compSize, level};
+            var retval = DecompressMethod.Invoke(null, args) as byte[];
+            level = (int)args[4];
+            return retval;
+        }
+    }
+
 
     internal static class Compressor
     {
+        private static HashSet<string> autoCompRecList;
+
+        static Compressor()
+        {
+            CompressHelper.Initialize();
+            // bit of a hack to avoid rebuilding this look up index
+            autoCompRecList = new HashSet<string>(Properties.Settings.Default.AutoCompressRecords != null
+                                  ? Properties.Settings.Default.AutoCompressRecords.Trim().Split(new[] { ';', ',' },
+                                                                                                 StringSplitOptions.
+                                                                                                     RemoveEmptyEntries)
+                                  : new string[0], StringComparer.InvariantCultureIgnoreCase);
+        }
+
+        public static void Init()
+        {
+            //ms = new MemoryStream();
+            //buffer = new byte[0x4000];       
+            // bit of a hack to avoid rebuilding this look up index
+            autoCompRecList = new HashSet<string>(Properties.Settings.Default.AutoCompressRecords != null
+                                  ? Properties.Settings.Default.AutoCompressRecords.Trim().Split(new[] { ';', ',' },
+                                                                                                 StringSplitOptions.
+                                                                                                     RemoveEmptyEntries)
+                                  : new string[0], StringComparer.InvariantCultureIgnoreCase);
+        }
+
+        public static bool CompressRecord(string name)
+        {
+            return autoCompRecList.Contains(name);
+            //return Array.BinarySearch(autoCompRecList, name) >= 0;
+        }
+
+        public static byte[] Compress(byte[] data, int compressLevel)
+        {
+            return CompressHelper.Compress(data, 0, data.Length, compressLevel);
+        }
+
+        public static void Close()
+        {
+        }
+
+#if false
         private static byte[] buffer;
         private static MemoryStream ms;
-        //private static ICSharpCode.SharpZipLib.Zip.Compression.Deflater def;
-        //private static ICSharpCode.SharpZipLib.Zip.Compression.Streams.DeflaterOutputStream defstr;
-        private static string[] autoCompRecList = new string[0];
-
 
         public static Stream GetSharedStream()
         {
@@ -35,11 +130,7 @@ namespace TESVSnip.Domain.Services
 
         public static BinaryWriter AllocWriter(Stream s)
         {
-            //int compressLevel = 9;
-            //def = new ICSharpCode.SharpZipLib.Zip.Compression.Deflater(compressLevel, false);
-            //defstr = new ICSharpCode.SharpZipLib.Zip.Compression.Streams.DeflaterOutputStream(ms, def);
-            //defstr.IsStreamOwner = false;
-            return new BinaryWriter(new Ionic.Zlib.DeflateStream(s, CompressionMode.Decompress, CompressionLevel.Default, true));
+            return new BinaryWriter(new Ionic.Zlib.DeflateStream(s, Ionic.Zlib.CompressionMode.Decompress, Ionic.Zlib.CompressionLevel.Default, true));
         }
 
         public static void CopyTo(BinaryWriter output, Stream input)
@@ -53,36 +144,20 @@ namespace TESVSnip.Domain.Services
             }
         }
 
-        public static byte[] Compress(byte[] data)
+        public static byte[] Compress(byte[] data, int compressLevel)
         {
-            var instream = new MemoryStream(data,false);
-            var outstream = new MemoryStream(data.Length);
-            using (var gstream = new DeflateStream(outstream, CompressionMode.Compress, CompressionLevel.Default,true))
+            var level = (Ionic.Zlib.CompressionLevel)compressLevel;
+            if (ms == null) Init();
+            ms.Position = 0;
+            ms.SetLength(0);
+            using (var gstream = new Ionic.Zlib.ZlibStream(ms, Ionic.Zlib.CompressionMode.Compress, level, true))
             {
-                instream.WriteTo(gstream);
-                gstream.Flush();                
+                gstream.Write(data, 0, data.Length);
+                gstream.Flush();
             }
-            return outstream.ToArray();
+            return ms.ToArray();
         }
 
-        public static void Init()
-        {
-            ms = new MemoryStream();
-            buffer = new byte[0x4000];
-
-            // bit of a hack to avoid rebuilding this look up index
-            autoCompRecList = Properties.Settings.Default.AutoCompressRecords != null
-                                  ? Properties.Settings.Default.AutoCompressRecords.Trim().Split(new[] { ';', ',' },
-                                                                                                 StringSplitOptions.
-                                                                                                     RemoveEmptyEntries)
-                                  : new string[0];
-            Array.Sort(autoCompRecList);
-        }
-
-        public static bool CompressRecord(string name)
-        {
-            return Array.BinarySearch(autoCompRecList, name) >= 0;
-        }
 
         public static void Close()
         {
@@ -90,6 +165,7 @@ namespace TESVSnip.Domain.Services
             if (ms != null) ms.Dispose();
             ms = null;
         }
+#endif
     }
 
     internal static class Decompressor
@@ -99,7 +175,12 @@ namespace TESVSnip.Domain.Services
         private static MemoryStream ms;
         private static BinaryReader compReader;
 
-        public static BinaryReader Decompress(BinaryReader br, int size, int outsize)
+        static Decompressor()
+        {
+            CompressHelper.Initialize();
+        }
+
+        public static BinaryReader Decompress(BinaryReader br, int size, int outsize, out int level)
         {
             if (input.Length < size)
             {
@@ -109,15 +190,50 @@ namespace TESVSnip.Domain.Services
             {
                 output = new byte[outsize];
             }
-            br.Read(input, 0, size);
-
+            int n = br.Read(input, 0, size);
             ms.Position = 0;
-            var inf = new Ionic.Zlib.ZlibStream(ms, CompressionMode.Compress, CompressionLevel.Default, true);
-            inf.Read(output, 0, outsize);
+            ms.Write(input, 0, n);
+            ms.SetLength(n);
             ms.Position = 0;
-
+            var data = CompressHelper.Decompress(ms.GetBuffer(), 0, n, outsize, out level);
+            ms.Position = 0;
+            ms.Write(data, 0, data.Length);
+            ms.SetLength(data.Length);
+            ms.Position = 0;
             return compReader;
         }
+
+
+#if false
+        public static BinaryReader Decompress(BinaryReader br, int size, int outsize, out int compressLevel)
+        {
+            if (input.Length < size)
+            {
+                input = new byte[size];
+            }
+            if (output.Length < outsize)
+            {
+                output = new byte[outsize];
+            }
+            int n = br.Read(input, 0, size);
+            ms.Position = 0;
+            ms.Write(input, 0, n);
+            ms.SetLength(n);
+            ms.Position = 0;
+            using (var inf = new Ionic.Zlib.ZlibStream(ms, Ionic.Zlib.CompressionMode.Decompress, Ionic.Zlib.CompressionLevel.Default, true))
+            {
+                n = inf.Read(output, 0, output.Length);
+                if (n != outsize)
+                    Trace.Write("Compression Output does not match expected size");
+                compressLevel = (int)Ionic.Zlib.CompressionLevel.Default;
+            }
+            ms.Position = 0;
+            ms.Write(output, 0, outsize);
+            ms.SetLength(outsize);
+            ms.Position = 0;
+            return compReader;
+        }
+#endif
 
         public static void Init()
         {
@@ -138,5 +254,4 @@ namespace TESVSnip.Domain.Services
     }
 
     #endregion
-
 }

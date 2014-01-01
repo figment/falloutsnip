@@ -1,3 +1,5 @@
+using TESVSnip.Domain.Services;
+
 namespace TESVSnip.Domain.Model
 {
     using System;
@@ -192,15 +194,23 @@ namespace TESVSnip.Domain.Model
 
         public override void AddRecord(BaseRecord br)
         {
+            try
+          {
+            //var r = br as Rec;
             var r = br as Rec;
             if (r == null)
             {
-                throw new TESParserException("Record to add was not of the correct type." + Environment.NewLine + "Groups can only hold records or other groups.");
+              throw new TESParserException("Record to add was not of the correct type." + Environment.NewLine + "Groups can only hold records or other groups.");
             }
 
             r.Parent = this;
             this.records.Add(r);
             FireRecordListUpdate(this, this);
+          }
+          catch (Exception ex)
+          {
+              throw new TESParserException("GroupRecord.AddRecord: " + ex.Message);
+          }
         }
 
         public override void AddRecords(IEnumerable<BaseRecord> br)

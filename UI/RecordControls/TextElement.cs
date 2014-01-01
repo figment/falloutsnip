@@ -1,4 +1,6 @@
-﻿namespace TESVSnip.UI.RecordControls
+﻿using TESVSnip.Domain.Scripts;
+
+namespace TESVSnip.UI.RecordControls
 {
     using System;
     using System.Globalization;
@@ -10,9 +12,11 @@
 
     internal partial class TextElement : BaseElement, ITextElementControl
     {
+        private bool _pyInterpreterCalc;
         public TextElement()
         {
             this.InitializeComponent();
+            _pyInterpreterCalc = true;
         }
 
         public Label Label
@@ -243,19 +247,28 @@
                 var es = element;
                 var tb = this.textBox;
                 bool hasFlags = es.options.Length == 0 && es.flags.Length > 1;
+                float value;
                 switch (element.type)
                 {
                     case ElementValueType.UInt:
                         {
-                            var v = TypeConverter.h2i(data);
-                            this.textBox.Text = element.hexview ? "0x" + v.ToString("X8") : v.ToString();
+                            value = TypeConverter.h2i(data);
+                            if (_pyInterpreterCalc) value = PyInterpreter.ExecuteFunction<uint>(element, value, FunctionOperation.ForReading);
+                            _pyInterpreterCalc = false;
+                            this.textBox.Text = hasFlags || es.hexview ? "0x" + value.ToString("X8") : value.ToString(CultureInfo.InvariantCulture); 
+                            //var v = TypeConverter.h2i(data);
+                            //this.textBox.Text = element.hexview ? "0x" + v.ToString("X8") : v.ToString();
                         }
 
                         break;
                     case ElementValueType.Int:
                         {
-                            var v = TypeConverter.h2si(data);
-                            this.textBox.Text = hasFlags || es.hexview ? "0x" + v.ToString("X8") : v.ToString();
+                            value = TypeConverter.h2si(data);
+                            if (_pyInterpreterCalc) value = PyInterpreter.ExecuteFunction<int>(element, value, FunctionOperation.ForReading);
+                            _pyInterpreterCalc = false;
+                            this.textBox.Text = hasFlags || es.hexview ? "0x" + value.ToString("X8") : value.ToString(CultureInfo.InvariantCulture); 
+                            //var v = TypeConverter.h2si(data);
+                            //this.textBox.Text = hasFlags || es.hexview ? "0x" + v.ToString("X8") : v.ToString();
                         }
 
                         break;
@@ -263,19 +276,31 @@
                         this.textBox.Text = TypeConverter.h2i(data).ToString("X8");
                         break;
                     case ElementValueType.Float:
-                        this.textBox.Text = TypeConverter.h2f(data).ToString();
+                        value = TypeConverter.h2f(data);
+                        if (_pyInterpreterCalc) value = PyInterpreter.ExecuteFunction<float>(element, value, FunctionOperation.ForReading);
+                        _pyInterpreterCalc = false;
+                        this.textBox.Text = value.ToString(CultureInfo.InvariantCulture);
+                        //this.textBox.Text = TypeConverter.h2f(data).ToString();
                         break;
                     case ElementValueType.UShort:
                         {
-                            var v = TypeConverter.h2s(data);
-                            this.textBox.Text = hasFlags || es.hexview ? "0x" + v.ToString("X4") : v.ToString();
+                            value = TypeConverter.h2s(data);
+                            if (_pyInterpreterCalc) value = PyInterpreter.ExecuteFunction<ushort>(element, value, FunctionOperation.ForReading);
+                            _pyInterpreterCalc = false;
+                            this.textBox.Text = hasFlags || es.hexview ? "0x" + value.ToString("X4") : value.ToString(CultureInfo.InvariantCulture); 
+                            //var v = TypeConverter.h2s(data);
+                            //this.textBox.Text = hasFlags || es.hexview ? "0x" + v.ToString("X4") : v.ToString();
                         }
 
                         break;
                     case ElementValueType.Short:
                         {
-                            var v = TypeConverter.h2ss(data);
-                            tb.Text = hasFlags || es.hexview ? "0x" + v.ToString("X4") : v.ToString();
+                            value = TypeConverter.h2ss(data);
+                            if (_pyInterpreterCalc) value = PyInterpreter.ExecuteFunction<short>(element, value, FunctionOperation.ForReading);
+                            _pyInterpreterCalc = false;
+                            this.textBox.Text = hasFlags || es.hexview ? "0x" + value.ToString("X4") : value.ToString(CultureInfo.InvariantCulture); 
+                            //var v = TypeConverter.h2ss(data);
+                            //tb.Text = hasFlags || es.hexview ? "0x" + v.ToString("X4") : v.ToString();
                         }
 
                         break;

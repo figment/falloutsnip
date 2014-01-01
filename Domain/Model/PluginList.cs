@@ -1,3 +1,5 @@
+using TESVSnip.Domain.Services;
+
 namespace TESVSnip.Domain.Model
 {
     using System;

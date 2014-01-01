@@ -365,4 +365,7 @@ Do you still want to save?</value>
     <value>To confirm the coding setting, restart Tesvsnip now?</value>
     <comment>查找类似 To confirm the coding setting, restart Tesvsnip now? 的本地化字符串。</comment>
   </data>
+  <data name="Plugin_Save_UnableToBackup" xml:space="preserve">
+    <value>Unable to backup and replace plugin. File not saved.</value>
+  </data>
 </root>

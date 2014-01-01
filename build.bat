@@ -1,14 +1,22 @@
 @echo off
 setlocal
 pushd "%~dp0"
-set ILMERGE_PATH=
-for %%I in (ilmerge.exe) do @IF EXIST "%%~dp$PATH:I" set ILMERGE_PATH=%%~dp$PATH:I
-IF NOT EXIST "%ILMERGE_PATH%"  set ILMERGE_PATH=%ProgramFiles%\Microsoft\ILMerge
-IF NOT EXIST "%ILMERGE_PATH%"  set ILMERGE_PATH=%ProgramFiles(x86)%\Microsoft\ILMerge
-IF NOT EXIST "%ILMERGE_PATH%" (
-	Echo ILMerge.exe not found on PATH.  Build will not succeed. Aborting
-	goto exit
-)
+
+REM  ILMerge does not work correctly with 4.0 runtime
+REM set ILMERGE_PATH=
+REM for %%I in (ilmerge.exe) do @IF EXIST "%%~dp$PATH:I" set ILMERGE_PATH=%%~dp$PATH:I
+REM IF NOT EXIST "%ILMERGE_PATH%"  set ILMERGE_PATH=%ProgramFiles%\Microsoft\ILMerge
+REM IF NOT EXIST "%ILMERGE_PATH%"  set ILMERGE_PATH=%ProgramFiles(x86)%\Microsoft\ILMerge
+REM IF NOT EXIST "%ILMERGE_PATH%" (
+REM 	Echo ILMerge.exe not found on PATH.  Build will not succeed. Aborting
+REM 	goto exit
+REM )
+REM IF NOT EXIST "%ILMERGE_PATH%\ILMerge.exe.config" (
+REM 	Echo ILMerge.exe.config not in ILMerge Folder.  Build will not succeed with .NET 4.0
+REM 	Echo   Create file with :
+REM 	echo  <configuration><startup useLegacyV2RuntimeActivationPolicy="true"><requiredRuntime safemode="true" imageVersion="v4.0.30319" version="v4.0.30319"/></startup></configuration>
+REM 	goto exit
+REM )
 
 for %%I in (git.cmd) do @IF EXIST "%%~dp$PATH:I" set GIT_PATH=%%~dp$PATH:I
 IF NOT EXIST "%GIT_PATH%"  set ILMERGE_PATH=%ProgramFiles%\Git\cmd

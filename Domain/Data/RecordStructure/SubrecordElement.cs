@@ -21,126 +21,123 @@ namespace TESVSnip.Domain.Data.RecordStructure
         /// </summary>
         /// <remarks>
         /// </remarks>
-        [XmlAttribute]
-        [DefaultValue(0)]
-        public int condid;
+        [XmlAttribute] [DefaultValue(0)] public int condid;
 
         /// <summary>
         /// The desc.
         /// </summary>
         /// <remarks>
         /// </remarks>
-        [XmlAttribute]
-        [DefaultValue("")]
-        public string desc = string.Empty;
+        [XmlAttribute] [DefaultValue("")] public string desc = string.Empty;
 
         /// <summary>
         /// The flags.
         /// </summary>
         /// <remarks>
         /// </remarks>
-        [XmlAttribute]
-        [DefaultValue("")]
-        public string flags;
+        [XmlAttribute] [DefaultValue("")] public string flags;
 
-        [XmlIgnore]
-        [DefaultValue(0)]
-        public int group;
+        [XmlIgnore] [DefaultValue(0)] public int group;
 
         /// <summary>
         /// The hexview.
         /// </summary>
         /// <remarks>
         /// </remarks>
-        [XmlAttribute]
-        [DefaultValue(false)]
-        public bool hexview;
+        [XmlAttribute] [DefaultValue(false)] public bool hexview;
+
+        /// <summary>
+        /// The hexview with decimal
+        /// </summary>
+        /// <remarks>
+        /// </remarks>
+        [XmlAttribute] [DefaultValue(false)] public bool hexviewwithdec;
 
         /// <summary>
         /// The multiline.
         /// </summary>
         /// <remarks>
         /// </remarks>
-        [XmlAttribute]
-        [DefaultValue(false)]
-        public bool multiline;
+        [XmlAttribute] [DefaultValue(false)] public bool multiline;
 
         /// <summary>
         /// The name.
         /// </summary>
         /// <remarks>
         /// </remarks>
-        [XmlAttribute]
-        public string name;
+        [XmlAttribute] public string name;
 
         /// <summary>
         /// The notininfo.
         /// </summary>
         /// <remarks>
         /// </remarks>
-        [XmlAttribute]
-        [DefaultValue(false)]
-        public bool notininfo;
+        [XmlAttribute] [DefaultValue(false)] public bool notininfo;
 
         /// <summary>
         /// The optional.
         /// </summary>
         /// <remarks>
         /// </remarks>
-        [XmlAttribute]
-        [DefaultValue(0)]
-        public int optional;
+        [XmlAttribute] [DefaultValue(0)] public int optional;
 
         /// <summary>
         /// The options.
         /// </summary>
         /// <remarks>
         /// </remarks>
-        [XmlAttribute]
-        public string options;
+        [XmlAttribute] public string options;
 
         /// <summary>
         /// The refid.
         /// </summary>
         /// <remarks>
         /// </remarks>
-        [XmlAttribute]
-        [DefaultValue("")]
-        public string refid;
+        [XmlAttribute] [DefaultValue("")] public string refid;
 
         /// <summary>
         /// The reftype.
         /// </summary>
         /// <remarks>
         /// </remarks>
-        [XmlAttribute]
-        [DefaultValue("")]
-        public string reftype;
+        [XmlAttribute] [DefaultValue("")] public string reftype;
 
         /// <summary>
         /// The repeat.
         /// </summary>
         /// <remarks>
         /// </remarks>
-        [XmlAttribute]
-        [DefaultValue(0)]
-        public int repeat;
+        [XmlAttribute] [DefaultValue(0)] public int repeat;
 
-        [XmlIgnore]
-        [DefaultValue(0)]
-        public int size;
+        [XmlIgnore] [DefaultValue(0)] public int size;
 
         /// <summary>
         /// The type.
         /// </summary>
         /// <remarks>
         /// </remarks>
-        [XmlAttribute]
-        public string type;
+        [XmlAttribute] public string type;
+
+        /// <summary>
+        /// The funcr.
+        /// For transform a value
+        /// </summary>
+        /// <remarks>
+        /// </remarks>
+        [XmlAttribute] [DefaultValue("")] public string funcr = string.Empty;
+
+        /// <summary>
+        /// The funcw.
+        /// To write a transfromed value
+        /// </summary>
+        /// <remarks>
+        /// </remarks>
+        [XmlAttribute] [DefaultValue("")] public string funcw = string.Empty;
 
         public SubrecordElement()
         {
             this.hexview = false;
+            this.hexviewwithdec = false;
             this.reftype = string.Empty;
             this.multiline = false;
             this.condid = 0;
@@ -150,6 +147,8 @@ namespace TESVSnip.Domain.Data.RecordStructure
             this.optional = 0;
             this.refid = string.Empty;
             this.size = 0;
+            this.funcr = string.Empty;
+            this.funcw = string.Empty;
         }
     }
 }

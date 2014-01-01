@@ -29,9 +29,9 @@ namespace TESVSnip.UI.Forms
             this.Flags2 = r.Flags2;
             this.Flags3 = r.Flags3;
             this.FormID = r.FormID;
-            this.tbFormID.Text = this.FormID.ToString("x8");
-            this.tbFlags2.Text = this.Flags2.ToString("x8");
-            this.tbFlags3.Text = this.Flags3.ToString("x8");
+            this.tbFormID.Text = this.FormID.ToString("x8").ToUpperInvariant();
+            this.tbFlags2.Text = this.Flags2.ToString("x8").ToUpperInvariant();
+            this.tbFlags3.Text = this.Flags3.ToString("x8").ToUpperInvariant();
             foreach (Control c in Controls)
             {
                 if (c is CheckBox)
@@ -55,7 +55,7 @@ namespace TESVSnip.UI.Forms
 
         private static uint GetInt(object i)
         {
-            return (uint)(1 << (int)i);
+            return unchecked((uint)(1 << (int)i));
         }
 
         private void HexOnlyKeyPress(object sender, KeyPressEventArgs e)

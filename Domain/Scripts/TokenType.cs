@@ -2,23 +2,23 @@ namespace TESVSnip.Domain.Scripts
 {
     internal enum TokenType
     {
-        Unknown, 
+        Unknown,
 
-        Integer, 
+        Integer,
 
-        Float, 
+        Float,
 
-        Keyword, 
+        Keyword,
 
-        Symbol, 
+        Symbol,
 
-        Local, 
+        Local,
 
-        Global, 
+        Global,
 
-        Function, 
+        Function,
 
-        edid, 
+        edid,
 
         Null
     }

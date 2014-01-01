@@ -24,21 +24,21 @@ namespace TESVSnip.UI.Forms {
         /// </summary>
         private void InitializeComponent() {
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MainView));
-            WeifenLuo.WinFormsUI.Docking.DockPanelSkin dockPanelSkin3 = new WeifenLuo.WinFormsUI.Docking.DockPanelSkin();
-            WeifenLuo.WinFormsUI.Docking.AutoHideStripSkin autoHideStripSkin3 = new WeifenLuo.WinFormsUI.Docking.AutoHideStripSkin();
-            WeifenLuo.WinFormsUI.Docking.DockPanelGradient dockPanelGradient7 = new WeifenLuo.WinFormsUI.Docking.DockPanelGradient();
-            WeifenLuo.WinFormsUI.Docking.TabGradient tabGradient15 = new WeifenLuo.WinFormsUI.Docking.TabGradient();
-            WeifenLuo.WinFormsUI.Docking.DockPaneStripSkin dockPaneStripSkin3 = new WeifenLuo.WinFormsUI.Docking.DockPaneStripSkin();
-            WeifenLuo.WinFormsUI.Docking.DockPaneStripGradient dockPaneStripGradient3 = new WeifenLuo.WinFormsUI.Docking.DockPaneStripGradient();
-            WeifenLuo.WinFormsUI.Docking.TabGradient tabGradient16 = new WeifenLuo.WinFormsUI.Docking.TabGradient();
-            WeifenLuo.WinFormsUI.Docking.DockPanelGradient dockPanelGradient8 = new WeifenLuo.WinFormsUI.Docking.DockPanelGradient();
-            WeifenLuo.WinFormsUI.Docking.TabGradient tabGradient17 = new WeifenLuo.WinFormsUI.Docking.TabGradient();
-            WeifenLuo.WinFormsUI.Docking.DockPaneStripToolWindowGradient dockPaneStripToolWindowGradient3 = new WeifenLuo.WinFormsUI.Docking.DockPaneStripToolWindowGradient();
-            WeifenLuo.WinFormsUI.Docking.TabGradient tabGradient18 = new WeifenLuo.WinFormsUI.Docking.TabGradient();
-            WeifenLuo.WinFormsUI.Docking.TabGradient tabGradient19 = new WeifenLuo.WinFormsUI.Docking.TabGradient();
-            WeifenLuo.WinFormsUI.Docking.DockPanelGradient dockPanelGradient9 = new WeifenLuo.WinFormsUI.Docking.DockPanelGradient();
-            WeifenLuo.WinFormsUI.Docking.TabGradient tabGradient20 = new WeifenLuo.WinFormsUI.Docking.TabGradient();
-            WeifenLuo.WinFormsUI.Docking.TabGradient tabGradient21 = new WeifenLuo.WinFormsUI.Docking.TabGradient();
+            WeifenLuo.WinFormsUI.Docking.DockPanelSkin dockPanelSkin1 = new WeifenLuo.WinFormsUI.Docking.DockPanelSkin();
+            WeifenLuo.WinFormsUI.Docking.AutoHideStripSkin autoHideStripSkin1 = new WeifenLuo.WinFormsUI.Docking.AutoHideStripSkin();
+            WeifenLuo.WinFormsUI.Docking.DockPanelGradient dockPanelGradient1 = new WeifenLuo.WinFormsUI.Docking.DockPanelGradient();
+            WeifenLuo.WinFormsUI.Docking.TabGradient tabGradient1 = new WeifenLuo.WinFormsUI.Docking.TabGradient();
+            WeifenLuo.WinFormsUI.Docking.DockPaneStripSkin dockPaneStripSkin1 = new WeifenLuo.WinFormsUI.Docking.DockPaneStripSkin();
+            WeifenLuo.WinFormsUI.Docking.DockPaneStripGradient dockPaneStripGradient1 = new WeifenLuo.WinFormsUI.Docking.DockPaneStripGradient();
+            WeifenLuo.WinFormsUI.Docking.TabGradient tabGradient2 = new WeifenLuo.WinFormsUI.Docking.TabGradient();
+            WeifenLuo.WinFormsUI.Docking.DockPanelGradient dockPanelGradient2 = new WeifenLuo.WinFormsUI.Docking.DockPanelGradient();
+            WeifenLuo.WinFormsUI.Docking.TabGradient tabGradient3 = new WeifenLuo.WinFormsUI.Docking.TabGradient();
+            WeifenLuo.WinFormsUI.Docking.DockPaneStripToolWindowGradient dockPaneStripToolWindowGradient1 = new WeifenLuo.WinFormsUI.Docking.DockPaneStripToolWindowGradient();
+            WeifenLuo.WinFormsUI.Docking.TabGradient tabGradient4 = new WeifenLuo.WinFormsUI.Docking.TabGradient();
+            WeifenLuo.WinFormsUI.Docking.TabGradient tabGradient5 = new WeifenLuo.WinFormsUI.Docking.TabGradient();
+            WeifenLuo.WinFormsUI.Docking.DockPanelGradient dockPanelGradient3 = new WeifenLuo.WinFormsUI.Docking.DockPanelGradient();
+            WeifenLuo.WinFormsUI.Docking.TabGradient tabGradient6 = new WeifenLuo.WinFormsUI.Docking.TabGradient();
+            WeifenLuo.WinFormsUI.Docking.TabGradient tabGradient7 = new WeifenLuo.WinFormsUI.Docking.TabGradient();
             this.menuStrip1 = new System.Windows.Forms.MenuStrip();
             this.fileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.newToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -47,12 +47,14 @@ namespace TESVSnip.UI.Forms {
             this.saveAsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.closeToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.closeAllToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
+            this.toolStripSeparator2 = new System.Windows.Forms.ToolStripSeparator();
             this.openListToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.saveListToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator3 = new System.Windows.Forms.ToolStripSeparator();
             this.reloadXmlToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripMenuItem1 = new System.Windows.Forms.ToolStripSeparator();
+            this.recentFilelToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
             this.exitToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.editToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.cutToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -86,6 +88,7 @@ namespace TESVSnip.UI.Forms {
             this.resetDockingWindowsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.eSMFilterSettingsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.compressionSettingsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.resetSettingsToDefaultsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.languageToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.englishToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -99,7 +102,6 @@ namespace TESVSnip.UI.Forms {
             this.editStringsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.saveStringsFilesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.saveStringsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.stringLocalizerToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.reloadStringsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripMenuItem2 = new System.Windows.Forms.ToolStripSeparator();
             this.internalizeStringReferencesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -124,6 +126,8 @@ namespace TESVSnip.UI.Forms {
             this.reorderSubrecordsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.newFormIDToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.newFormIDNoReferenceUpdateToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.addItemBatchScriptToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.reduceFormVersionsTo40ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.OpenModDialog = new System.Windows.Forms.OpenFileDialog();
             this.SaveModDialog = new System.Windows.Forms.SaveFileDialog();
             this.SaveEdidListDialog = new System.Windows.Forms.SaveFileDialog();
@@ -159,7 +163,6 @@ namespace TESVSnip.UI.Forms {
             this.toolStripSeparator5 = new System.Windows.Forms.ToolStripSeparator();
             this.toolStripIncrInvalidRecStatus = new System.Windows.Forms.ToolStripLabel();
             this.dockPanel = new WeifenLuo.WinFormsUI.Docking.DockPanel();
-            this.addItemBatchScriptToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.menuStrip1.SuspendLayout();
             this.statusStrip1.SuspendLayout();
             this.toolStripIncrFind.SuspendLayout();
@@ -186,12 +189,14 @@ namespace TESVSnip.UI.Forms {
             this.saveAsToolStripMenuItem,
             this.closeToolStripMenuItem,
             this.closeAllToolStripMenuItem,
-            this.toolStripSeparator1,
+            this.toolStripSeparator2,
             this.openListToolStripMenuItem,
             this.saveListToolStripMenuItem,
             this.toolStripSeparator3,
             this.reloadXmlToolStripMenuItem,
             this.toolStripMenuItem1,
+            this.recentFilelToolStripMenuItem,
+            this.toolStripSeparator1,
             this.exitToolStripMenuItem});
             this.fileToolStripMenuItem.Name = "fileToolStripMenuItem";
             resources.ApplyResources(this.fileToolStripMenuItem, "fileToolStripMenuItem");
@@ -232,10 +237,10 @@ namespace TESVSnip.UI.Forms {
             resources.ApplyResources(this.closeAllToolStripMenuItem, "closeAllToolStripMenuItem");
             this.closeAllToolStripMenuItem.Click += new System.EventHandler(this.closeAllToolStripMenuItem_Click);
             // 
-            // toolStripSeparator1
+            // toolStripSeparator2
             // 
-            this.toolStripSeparator1.Name = "toolStripSeparator1";
-            resources.ApplyResources(this.toolStripSeparator1, "toolStripSeparator1");
+            this.toolStripSeparator2.Name = "toolStripSeparator2";
+            resources.ApplyResources(this.toolStripSeparator2, "toolStripSeparator2");
             // 
             // openListToolStripMenuItem
             // 
@@ -264,6 +269,16 @@ namespace TESVSnip.UI.Forms {
             // 
             this.toolStripMenuItem1.Name = "toolStripMenuItem1";
             resources.ApplyResources(this.toolStripMenuItem1, "toolStripMenuItem1");
+            // 
+            // recentFilelToolStripMenuItem
+            // 
+            this.recentFilelToolStripMenuItem.Name = "recentFilelToolStripMenuItem";
+            resources.ApplyResources(this.recentFilelToolStripMenuItem, "recentFilelToolStripMenuItem");
+            // 
+            // toolStripSeparator1
+            // 
+            this.toolStripSeparator1.Name = "toolStripSeparator1";
+            resources.ApplyResources(this.toolStripSeparator1, "toolStripSeparator1");
             // 
             // exitToolStripMenuItem
             // 
@@ -430,7 +445,8 @@ namespace TESVSnip.UI.Forms {
             this.disableHyperlinksToolStripMenuItem,
             this.resetDockingWindowsToolStripMenuItem,
             this.eSMFilterSettingsToolStripMenuItem,
-            this.compressionSettingsToolStripMenuItem});
+            this.compressionSettingsToolStripMenuItem,
+            this.resetSettingsToDefaultsToolStripMenuItem});
             this.optionsToolStripMenuItem.Name = "optionsToolStripMenuItem";
             resources.ApplyResources(this.optionsToolStripMenuItem, "optionsToolStripMenuItem");
             // 
@@ -506,6 +522,12 @@ namespace TESVSnip.UI.Forms {
             resources.ApplyResources(this.compressionSettingsToolStripMenuItem, "compressionSettingsToolStripMenuItem");
             this.compressionSettingsToolStripMenuItem.Click += new System.EventHandler(this.compressionSettingsToolStripMenuItem_Click);
             // 
+            // resetSettingsToDefaultsToolStripMenuItem
+            // 
+            this.resetSettingsToDefaultsToolStripMenuItem.Name = "resetSettingsToDefaultsToolStripMenuItem";
+            resources.ApplyResources(this.resetSettingsToDefaultsToolStripMenuItem, "resetSettingsToDefaultsToolStripMenuItem");
+            this.resetSettingsToDefaultsToolStripMenuItem.Click += new System.EventHandler(this.resetSettingsToDefaultsToolStripMenuItem_Click);
+            // 
             // toolsToolStripMenuItem
             // 
             this.toolsToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
@@ -513,7 +535,6 @@ namespace TESVSnip.UI.Forms {
             this.editStringsToolStripMenuItem,
             this.saveStringsFilesToolStripMenuItem,
             this.saveStringsToolStripMenuItem,
-            this.stringLocalizerToolStripMenuItem,
             this.reloadStringsToolStripMenuItem,
             this.toolStripMenuItem2,
             this.internalizeStringReferencesToolStripMenuItem,
@@ -601,12 +622,6 @@ namespace TESVSnip.UI.Forms {
             resources.ApplyResources(this.saveStringsToolStripMenuItem, "saveStringsToolStripMenuItem");
             this.saveStringsToolStripMenuItem.Click += new System.EventHandler(this.saveStringsToolStripMenuItem_Click);
             // 
-            // stringLocalizerToolStripMenuItem
-            // 
-            this.stringLocalizerToolStripMenuItem.Name = "stringLocalizerToolStripMenuItem";
-            resources.ApplyResources(this.stringLocalizerToolStripMenuItem, "stringLocalizerToolStripMenuItem");
-            this.stringLocalizerToolStripMenuItem.Click += new System.EventHandler(this.stringLocalizerToolStripMenuItem_Click);
-            // 
             // reloadStringsToolStripMenuItem
             // 
             this.reloadStringsToolStripMenuItem.Name = "reloadStringsToolStripMenuItem";
@@ -677,7 +692,8 @@ namespace TESVSnip.UI.Forms {
             this.reorderSubrecordsToolStripMenuItem,
             this.newFormIDToolStripMenuItem,
             this.newFormIDNoReferenceUpdateToolStripMenuItem,
-            this.addItemBatchScriptToolStripMenuItem});
+            this.addItemBatchScriptToolStripMenuItem,
+            this.reduceFormVersionsTo40ToolStripMenuItem});
             this.spellsToolStripMenuItem.Name = "spellsToolStripMenuItem";
             resources.ApplyResources(this.spellsToolStripMenuItem, "spellsToolStripMenuItem");
             // 
@@ -768,6 +784,18 @@ namespace TESVSnip.UI.Forms {
             this.newFormIDNoReferenceUpdateToolStripMenuItem.Name = "newFormIDNoReferenceUpdateToolStripMenuItem";
             resources.ApplyResources(this.newFormIDNoReferenceUpdateToolStripMenuItem, "newFormIDNoReferenceUpdateToolStripMenuItem");
             this.newFormIDNoReferenceUpdateToolStripMenuItem.Click += new System.EventHandler(this.newFormIDNoReferenceUpdateToolStripMenuItem_Click);
+            // 
+            // reduceFormVersionsTo40ToolStripMenuItem
+            // 
+            resources.ApplyResources(this.reduceFormVersionsTo40ToolStripMenuItem, "reduceFormVersionsTo40ToolStripMenuItem");
+            this.reduceFormVersionsTo40ToolStripMenuItem.Name = "reduceFormVersionsTo40ToolStripMenuItem";
+            this.reduceFormVersionsTo40ToolStripMenuItem.Click += new System.EventHandler(this.reduceFormVersionTo40ToolStripMenuItem_Click);
+            // 
+            // addItemBatchScriptToolStripMenuItem
+            // 
+            this.addItemBatchScriptToolStripMenuItem.Name = "addItemBatchScriptToolStripMenuItem";
+            resources.ApplyResources(this.addItemBatchScriptToolStripMenuItem, "addItemBatchScriptToolStripMenuItem");
+            this.addItemBatchScriptToolStripMenuItem.Click += new System.EventHandler(this.addItemBatchScriptToolStripMenuItem_Click);
             // 
             // OpenModDialog
             // 
@@ -1047,58 +1075,52 @@ namespace TESVSnip.UI.Forms {
             this.dockPanel.DockTopPortion = 150D;
             this.dockPanel.Name = "dockPanel";
             this.dockPanel.RightToLeftLayout = true;
-            dockPanelGradient7.EndColor = System.Drawing.SystemColors.ControlLight;
-            dockPanelGradient7.StartColor = System.Drawing.SystemColors.ControlLight;
-            autoHideStripSkin3.DockStripGradient = dockPanelGradient7;
-            tabGradient15.EndColor = System.Drawing.SystemColors.Control;
-            tabGradient15.StartColor = System.Drawing.SystemColors.Control;
-            tabGradient15.TextColor = System.Drawing.SystemColors.ControlDarkDark;
-            autoHideStripSkin3.TabGradient = tabGradient15;
-            autoHideStripSkin3.TextFont = new System.Drawing.Font("Segoe UI", 9F);
-            dockPanelSkin3.AutoHideStripSkin = autoHideStripSkin3;
-            tabGradient16.EndColor = System.Drawing.SystemColors.ControlLightLight;
-            tabGradient16.StartColor = System.Drawing.SystemColors.ControlLightLight;
-            tabGradient16.TextColor = System.Drawing.SystemColors.ControlText;
-            dockPaneStripGradient3.ActiveTabGradient = tabGradient16;
-            dockPanelGradient8.EndColor = System.Drawing.SystemColors.Control;
-            dockPanelGradient8.StartColor = System.Drawing.SystemColors.Control;
-            dockPaneStripGradient3.DockStripGradient = dockPanelGradient8;
-            tabGradient17.EndColor = System.Drawing.SystemColors.ControlLight;
-            tabGradient17.StartColor = System.Drawing.SystemColors.ControlLight;
-            tabGradient17.TextColor = System.Drawing.SystemColors.ControlText;
-            dockPaneStripGradient3.InactiveTabGradient = tabGradient17;
-            dockPaneStripSkin3.DocumentGradient = dockPaneStripGradient3;
-            dockPaneStripSkin3.TextFont = new System.Drawing.Font("Segoe UI", 9F);
-            tabGradient18.EndColor = System.Drawing.SystemColors.ActiveCaption;
-            tabGradient18.LinearGradientMode = System.Drawing.Drawing2D.LinearGradientMode.Vertical;
-            tabGradient18.StartColor = System.Drawing.SystemColors.GradientActiveCaption;
-            tabGradient18.TextColor = System.Drawing.SystemColors.ActiveCaptionText;
-            dockPaneStripToolWindowGradient3.ActiveCaptionGradient = tabGradient18;
-            tabGradient19.EndColor = System.Drawing.SystemColors.Control;
-            tabGradient19.StartColor = System.Drawing.SystemColors.Control;
-            tabGradient19.TextColor = System.Drawing.SystemColors.ControlText;
-            dockPaneStripToolWindowGradient3.ActiveTabGradient = tabGradient19;
-            dockPanelGradient9.EndColor = System.Drawing.SystemColors.ControlLight;
-            dockPanelGradient9.StartColor = System.Drawing.SystemColors.ControlLight;
-            dockPaneStripToolWindowGradient3.DockStripGradient = dockPanelGradient9;
-            tabGradient20.EndColor = System.Drawing.SystemColors.GradientInactiveCaption;
-            tabGradient20.LinearGradientMode = System.Drawing.Drawing2D.LinearGradientMode.Vertical;
-            tabGradient20.StartColor = System.Drawing.SystemColors.GradientInactiveCaption;
-            tabGradient20.TextColor = System.Drawing.SystemColors.ControlText;
-            dockPaneStripToolWindowGradient3.InactiveCaptionGradient = tabGradient20;
-            tabGradient21.EndColor = System.Drawing.Color.Transparent;
-            tabGradient21.StartColor = System.Drawing.Color.Transparent;
-            tabGradient21.TextColor = System.Drawing.SystemColors.ControlDarkDark;
-            dockPaneStripToolWindowGradient3.InactiveTabGradient = tabGradient21;
-            dockPaneStripSkin3.ToolWindowGradient = dockPaneStripToolWindowGradient3;
-            dockPanelSkin3.DockPaneStripSkin = dockPaneStripSkin3;
-            this.dockPanel.Skin = dockPanelSkin3;
-            // 
-            // addItemBatchScriptToolStripMenuItem
-            // 
-            this.addItemBatchScriptToolStripMenuItem.Name = "addItemBatchScriptToolStripMenuItem";
-            resources.ApplyResources(this.addItemBatchScriptToolStripMenuItem, "addItemBatchScriptToolStripMenuItem");
-            this.addItemBatchScriptToolStripMenuItem.Click += new System.EventHandler(this.addItemBatchScriptToolStripMenuItem_Click);
+            dockPanelGradient1.EndColor = System.Drawing.SystemColors.ControlLight;
+            dockPanelGradient1.StartColor = System.Drawing.SystemColors.ControlLight;
+            autoHideStripSkin1.DockStripGradient = dockPanelGradient1;
+            tabGradient1.EndColor = System.Drawing.SystemColors.Control;
+            tabGradient1.StartColor = System.Drawing.SystemColors.Control;
+            tabGradient1.TextColor = System.Drawing.SystemColors.ControlDarkDark;
+            autoHideStripSkin1.TabGradient = tabGradient1;
+            autoHideStripSkin1.TextFont = new System.Drawing.Font("Segoe UI", 9F);
+            dockPanelSkin1.AutoHideStripSkin = autoHideStripSkin1;
+            tabGradient2.EndColor = System.Drawing.SystemColors.ControlLightLight;
+            tabGradient2.StartColor = System.Drawing.SystemColors.ControlLightLight;
+            tabGradient2.TextColor = System.Drawing.SystemColors.ControlText;
+            dockPaneStripGradient1.ActiveTabGradient = tabGradient2;
+            dockPanelGradient2.EndColor = System.Drawing.SystemColors.Control;
+            dockPanelGradient2.StartColor = System.Drawing.SystemColors.Control;
+            dockPaneStripGradient1.DockStripGradient = dockPanelGradient2;
+            tabGradient3.EndColor = System.Drawing.SystemColors.ControlLight;
+            tabGradient3.StartColor = System.Drawing.SystemColors.ControlLight;
+            tabGradient3.TextColor = System.Drawing.SystemColors.ControlText;
+            dockPaneStripGradient1.InactiveTabGradient = tabGradient3;
+            dockPaneStripSkin1.DocumentGradient = dockPaneStripGradient1;
+            dockPaneStripSkin1.TextFont = new System.Drawing.Font("Segoe UI", 9F);
+            tabGradient4.EndColor = System.Drawing.SystemColors.ActiveCaption;
+            tabGradient4.LinearGradientMode = System.Drawing.Drawing2D.LinearGradientMode.Vertical;
+            tabGradient4.StartColor = System.Drawing.SystemColors.GradientActiveCaption;
+            tabGradient4.TextColor = System.Drawing.SystemColors.ActiveCaptionText;
+            dockPaneStripToolWindowGradient1.ActiveCaptionGradient = tabGradient4;
+            tabGradient5.EndColor = System.Drawing.SystemColors.Control;
+            tabGradient5.StartColor = System.Drawing.SystemColors.Control;
+            tabGradient5.TextColor = System.Drawing.SystemColors.ControlText;
+            dockPaneStripToolWindowGradient1.ActiveTabGradient = tabGradient5;
+            dockPanelGradient3.EndColor = System.Drawing.SystemColors.ControlLight;
+            dockPanelGradient3.StartColor = System.Drawing.SystemColors.ControlLight;
+            dockPaneStripToolWindowGradient1.DockStripGradient = dockPanelGradient3;
+            tabGradient6.EndColor = System.Drawing.SystemColors.GradientInactiveCaption;
+            tabGradient6.LinearGradientMode = System.Drawing.Drawing2D.LinearGradientMode.Vertical;
+            tabGradient6.StartColor = System.Drawing.SystemColors.GradientInactiveCaption;
+            tabGradient6.TextColor = System.Drawing.SystemColors.ControlText;
+            dockPaneStripToolWindowGradient1.InactiveCaptionGradient = tabGradient6;
+            tabGradient7.EndColor = System.Drawing.Color.Transparent;
+            tabGradient7.StartColor = System.Drawing.Color.Transparent;
+            tabGradient7.TextColor = System.Drawing.SystemColors.ControlDarkDark;
+            dockPaneStripToolWindowGradient1.InactiveTabGradient = tabGradient7;
+            dockPaneStripSkin1.ToolWindowGradient = dockPaneStripToolWindowGradient1;
+            dockPanelSkin1.DockPaneStripSkin = dockPaneStripSkin1;
+            this.dockPanel.Skin = dockPanelSkin1;
             // 
             // MainView
             // 
@@ -1215,7 +1237,6 @@ namespace TESVSnip.UI.Forms {
         private System.Windows.Forms.ToolStripMenuItem spanishToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem russianToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem editStringsToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem stringLocalizerToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem reloadStringsToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem saveStringsFilesToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem expandCollapseToolStripMenuItem;
@@ -1242,7 +1263,7 @@ namespace TESVSnip.UI.Forms {
         private System.Windows.Forms.ToolStripMenuItem exportStringsToFileToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem importStringsToFileToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem internalizeStringReferencesToolStripMenuItem;
-        private System.Windows.Forms.ToolStripSeparator toolStripSeparator1;
+        private System.Windows.Forms.ToolStripSeparator toolStripSeparator2;
         private System.Windows.Forms.ToolStripMenuItem saveListToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem openListToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem insertGroupToolStripMenuItem;
@@ -1252,5 +1273,9 @@ namespace TESVSnip.UI.Forms {
         private System.Windows.Forms.ToolStripMenuItem pasteNewToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem saveAsToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem addItemBatchScriptToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem recentFilelToolStripMenuItem;
+        private System.Windows.Forms.ToolStripSeparator toolStripSeparator1;
+        private System.Windows.Forms.ToolStripMenuItem resetSettingsToDefaultsToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem reduceFormVersionsTo40ToolStripMenuItem;
     }
 }

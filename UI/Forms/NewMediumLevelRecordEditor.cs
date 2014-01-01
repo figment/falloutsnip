@@ -1,3 +1,6 @@
+using TESVSnip.Domain.Scripts;
+using TESVSnip.Framework;
+
 namespace TESVSnip.UI.Forms
 {
     using System;
@@ -178,13 +181,13 @@ namespace TESVSnip.UI.Forms
             {
                 var screen = Screen.FromPoint(Location);
                 int maxHeight = Owner == null ? screen.WorkingArea.Height : Owner.Height;
-                int workingSize = Math.Min(maxHeight, screen.WorkingArea.Height * 3 / 4);
+                int workingSize = Math.Min(maxHeight, screen.WorkingArea.Height*3/4);
                 int offset = this.fpanel1.PreferredSize.Height - this.fpanel1.Height + 40; // height of scrollbar?
                 Height = Math.Min(workingSize, Height + offset);
 
                 if (Owner != null)
                 {
-                    int yOff = (Owner.Height - Height) / 2;
+                    int yOff = (Owner.Height - Height)/2;
                     Top = Owner.Top + yOff;
                 }
             }
@@ -208,11 +211,11 @@ namespace TESVSnip.UI.Forms
                 if (DialogResult.Yes
                     !=
                     MessageBox.Show(
-                        this, 
-                        this.strWarnOnSave + "\n\nData maybe lost if saved. Do you want to continue saving?", 
-                        "Warning", 
-                        MessageBoxButtons.YesNo, 
-                        MessageBoxIcon.Warning, 
+                        this,
+                        this.strWarnOnSave + "\n\nData maybe lost if saved. Do you want to continue saving?",
+                        "Warning",
+                        MessageBoxButtons.YesNo,
+                        MessageBoxIcon.Warning,
                         MessageBoxDefaultButton.Button2))
                 {
                     return;
@@ -234,9 +237,140 @@ namespace TESVSnip.UI.Forms
                     }
                     else
                     {
+
                         var elem = c.Data;
                         if (elem.Count > 0 && elem.Array != null)
                         {
+                            switch (kvp.Key.type)
+                            {
+                                case ElementValueType.UInt:
+                                    {
+                                        var sf = new ArraySegment<byte>(elem.Array, elem.Offset, elem.Count);
+                                        var value = TypeConverter.h2i(sf);
+                                        if (!string.IsNullOrWhiteSpace(kvp.Key.funcw))
+                                        {
+                                            bool valueIsChanged = (kvp.Value).Changed;
+                                            if (kvp.Value is OptionalElement)
+                                                valueIsChanged = (((OptionalElement) (kvp.Value)).InnerControl).Changed;
+                                            if (valueIsChanged)
+                                            {
+                                                value = PyInterpreter.ExecuteFunction<uint>(kvp.Key, value, FunctionOperation.ForWriting);
+                                                var b = TypeConverter.i2h(value);
+                                                Buffer.BlockCopy(b, 0, elem.Array, elem.Offset, elem.Count);
+                                            }
+                                        }
+                                    }
+                                    break;
+                                case ElementValueType.FormID:
+                                    {
+                                    }
+                                    break;
+
+                                case ElementValueType.Int:
+                                    {
+                                        var sf = new ArraySegment<byte>(elem.Array, elem.Offset, elem.Count);
+                                        var value = TypeConverter.h2si(sf);
+                                        if (!string.IsNullOrWhiteSpace(kvp.Key.funcw))
+                                        {
+                                            bool valueIsChanged = (kvp.Value).Changed;
+                                            if (kvp.Value is OptionalElement)
+                                                valueIsChanged = (((OptionalElement)(kvp.Value)).InnerControl).Changed;
+                                            if (valueIsChanged)
+                                            {
+                                                value = PyInterpreter.ExecuteFunction<int>(kvp.Key, value, FunctionOperation.ForWriting);
+                                                var b = TypeConverter.si2h(value);
+                                                Buffer.BlockCopy(b, 0, elem.Array, elem.Offset, elem.Count);
+                                            }
+                                        }
+                                    }
+                                    break;
+
+                                case ElementValueType.Float:
+                                    {
+                                        var sf = new ArraySegment<byte>(elem.Array, elem.Offset, elem.Count);
+                                        var value = TypeConverter.h2f(sf);
+                                        if(!string.IsNullOrWhiteSpace(kvp.Key.funcw))
+                                        {
+                                            bool valueIsChanged = (kvp.Value).Changed;
+                                            if (kvp.Value is OptionalElement)
+                                                valueIsChanged = (((OptionalElement) (kvp.Value)).InnerControl).Changed;           
+                                            if (valueIsChanged)
+                                            {
+                                                value = PyInterpreter.ExecuteFunction<float>(kvp.Key, value, FunctionOperation.ForWriting);
+                                                var b = TypeConverter.f2h(value);
+                                                Buffer.BlockCopy(b, 0, elem.Array, elem.Offset, elem.Count);
+                                            }
+                                        }
+                                    }
+                                    break;
+
+                                case ElementValueType.UShort:
+                                    {
+                                        var sf = new ArraySegment<byte>(elem.Array, elem.Offset, elem.Count);
+                                        var value = TypeConverter.h2s(sf);
+                                        if (!string.IsNullOrWhiteSpace(kvp.Key.funcw))
+                                        {
+                                            bool valueIsChanged = (kvp.Value).Changed;
+                                            if (kvp.Value is OptionalElement)
+                                                valueIsChanged = (((OptionalElement)(kvp.Value)).InnerControl).Changed;
+                                            if (valueIsChanged)
+                                            {
+                                                value = PyInterpreter.ExecuteFunction<ushort>(kvp.Key, value, FunctionOperation.ForWriting);
+                                                var b = TypeConverter.s2h(value);
+                                                Buffer.BlockCopy(b, 0, elem.Array, elem.Offset, elem.Count);
+                                            }
+                                        }
+                                    }
+                                    break;
+
+                                case ElementValueType.Short:
+                                    {
+                                        var sf = new ArraySegment<byte>(elem.Array, elem.Offset, elem.Count);
+                                        var value = TypeConverter.h2ss(sf);
+                                        if (!string.IsNullOrWhiteSpace(kvp.Key.funcw))
+                                        {
+                                            bool valueIsChanged = (kvp.Value).Changed;
+                                            if (kvp.Value is OptionalElement)
+                                                valueIsChanged = (((OptionalElement)(kvp.Value)).InnerControl).Changed;
+                                            if (valueIsChanged)
+                                            {
+                                                value = PyInterpreter.ExecuteFunction<short>(kvp.Key, value, FunctionOperation.ForWriting);
+                                                var b = TypeConverter.ss2h(value);
+                                                Buffer.BlockCopy(b, 0, elem.Array, elem.Offset, elem.Count);
+                                            }
+                                        }
+                                    }
+                                    break;
+
+                                case ElementValueType.Byte:
+                                    {
+                                    }
+                                    break;
+                                case ElementValueType.SByte:
+                                    {
+                                    }
+                                    break;
+
+                                case ElementValueType.String:
+                                    break;
+
+                                case ElementValueType.BString:
+                                    break;
+
+                                case ElementValueType.IString:
+                                    break;
+
+                                case ElementValueType.LString:
+                                    {
+                                        // not handled
+                                    }
+                                    break;
+
+                                case ElementValueType.Str4:
+                                    {
+                                    }
+                                    break;
+                            }
                             str.Write(elem.Array, elem.Offset, elem.Count);
                         }
                     }

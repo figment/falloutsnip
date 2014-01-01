@@ -2,20 +2,20 @@ namespace TESVSnip.Domain.Model
 {
     internal enum BatchCondElementType
     {
-        Set, 
+        Set,
 
-        Add, 
+        Add,
 
-        Subtract, 
+        Subtract,
 
-        Multiply, 
+        Multiply,
 
-        Divide, 
+        Divide,
 
-        BitAnd, 
+        BitAnd,
 
-        BitOr, 
+        BitOr,
 
-        Clear, 
+        Clear,
     }
 }

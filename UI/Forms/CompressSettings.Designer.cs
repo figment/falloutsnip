@@ -41,6 +41,7 @@
             this.label2 = new System.Windows.Forms.Label();
             this.txtCompressLimit = new System.Windows.Forms.MaskedTextBox();
             this.chkEnableCompressLimit = new System.Windows.Forms.CheckBox();
+            this.rdoPluginCompressRecords = new System.Windows.Forms.RadioButton();
             this.grpCompSettings.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -131,12 +132,21 @@
             this.chkEnableCompressLimit.UseVisualStyleBackColor = true;
             this.chkEnableCompressLimit.CheckedChanged += new System.EventHandler(this.chkEnableCompressLimit_CheckedChanged);
             // 
+            // rdoPluginCompressRecords
+            // 
+            resources.ApplyResources(this.rdoPluginCompressRecords, "rdoPluginCompressRecords");
+            this.rdoPluginCompressRecords.Name = "rdoPluginCompressRecords";
+            this.rdoPluginCompressRecords.TabStop = true;
+            this.rdoPluginCompressRecords.UseVisualStyleBackColor = true;
+            this.rdoPluginCompressRecords.CheckedChanged += new System.EventHandler(this.rdoPluginCompressRecords_CheckedChanged);
+            // 
             // CompressSettings
             // 
             this.AcceptButton = this.btnOk;
             resources.ApplyResources(this, "$this");
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.CancelButton = this.btnCancel;
+            this.Controls.Add(this.rdoPluginCompressRecords);
             this.Controls.Add(this.grpCompSettings);
             this.Controls.Add(this.label1);
             this.Controls.Add(this.rdoDefaultCompressRecords);
@@ -167,6 +177,7 @@
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.MaskedTextBox txtCompressLimit;
         private System.Windows.Forms.CheckBox chkEnableCompressLimit;
+        private System.Windows.Forms.RadioButton rdoPluginCompressRecords;
 
     }
 }

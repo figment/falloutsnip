@@ -1,3 +1,6 @@
+using TESVSnip.Domain.Scripts;
+using TESVSnip.Domain.Services;
+
 namespace TESVSnip.Domain.Model
 {
     using System;
@@ -799,7 +802,7 @@ namespace TESVSnip.Domain.Model
                         case ElementValueType.Short:
                         case ElementValueType.UShort:
                         case ElementValueType.Float:
-                            row.Add(new RTFCellDefinition(12, RTFAlignment.MiddleLeft, RTFBorderSide.Default, 15, Color.DarkGray, Padding.Empty));
+                            row.Add(new RTFCellDefinition(20, RTFAlignment.MiddleLeft, RTFBorderSide.Default, 15, Color.DarkGray, Padding.Empty));
                             row.Add(new RTFCellDefinition(30, RTFAlignment.MiddleLeft, RTFBorderSide.Default, 15, Color.DarkGray, Padding.Empty));
                             break;
                         case ElementValueType.Blob:
@@ -840,6 +843,7 @@ namespace TESVSnip.Domain.Model
                     var elem = elems[rowIdx];
                     var sselem = elem.Structure;
                     var value = elem.Value;
+
                     string recprefix = null;
                     Record rec = null;
                     string strValue = null; // value to display
@@ -847,6 +851,15 @@ namespace TESVSnip.Domain.Model
                     string strDesc2 = null; // second description
                     bool hasOptions = sselem.options != null && sselem.options.Length > 0;
                     bool hasFlags = sselem.flags != null && sselem.flags.Length > 1;
+
+                    if (!string.IsNullOrWhiteSpace(elem.Structure.funcr))
+                    {
+                        if (elem.Type == ElementValueType.Float) value = PyInterpreter.ExecuteFunction<float>(elem, FunctionOperation.ForReading);
+                        else if (elem.Type == ElementValueType.Int) value = PyInterpreter.ExecuteFunction<int>(elem, FunctionOperation.ForReading);
+                        else if (elem.Type == ElementValueType.Short) value = PyInterpreter.ExecuteFunction<short>(elem, FunctionOperation.ForReading);
+                        else if (elem.Type == ElementValueType.UShort) value = PyInterpreter.ExecuteFunction<ushort>(elem, FunctionOperation.ForReading);
+                        else if (elem.Type == ElementValueType.UInt) value = PyInterpreter.ExecuteFunction<uint>(elem, FunctionOperation.ForReading);
+                    }
 
                     // Pre row write caching to avoid expensive duplicate calls between cells
                     switch (sselem.type)
@@ -918,7 +931,10 @@ namespace TESVSnip.Domain.Model
                             {
                                 if (sselem.hexview || hasFlags)
                                 {
-                                    strValue = string.Format(string.Format("{{0:X{0}}}", elem.Data.Count * 2), value);
+                                    if (sselem.hexviewwithdec)
+                                        strValue = string.Format(string.Format("{{0:X{0}}}", elem.Data.Count * 2), value) + string.Format(" : {0}", value);
+                                    else
+                                        strValue = string.Format(string.Format("{{0:X{0}}}", elem.Data.Count * 2), value);
                                 }
                                 else
                                 {
@@ -966,7 +982,10 @@ namespace TESVSnip.Domain.Model
                             {
                                 if (sselem.hexview || hasFlags)
                                 {
-                                    strValue = string.Format(string.Format("{{0:X{0}}}", elem.Data.Count * 2), value);
+                                    if (sselem.hexviewwithdec)
+                                        strValue = string.Format(string.Format("{{0:X{0}}}", elem.Data.Count * 2), value) + string.Format(" : {0}", value);
+                                    else
+                                        strValue = string.Format(string.Format("{{0:X{0}}}", elem.Data.Count * 2), value);
                                 }
                                 else
                                 {
@@ -1528,7 +1547,7 @@ namespace TESVSnip.Domain.Model
                 WriteString(writer, Name);
                 writer.Write((ushort)this.Data.Length);
                 writer.Write(this.Data, 0, this.Data.Length);
+                }
+                }
             }
         }
-    }
-}

@@ -1,3 +1,6 @@
+using Microsoft.Scripting.Runtime;
+using TESVSnip.Properties;
+
 namespace TESVSnip.Domain.Model
 {
     using System;
@@ -13,6 +16,8 @@ namespace TESVSnip.Domain.Model
     using TESVSnip.Framework;
     using TESVSnip.Framework.Persistence;
     using TESVSnip.Framework.Services;
+
+    using TESVSnip.Domain.Services;
 
     [Persistable(Flags = PersistType.DeclaredOnly)]
     [Serializable]
@@ -70,6 +75,7 @@ namespace TESVSnip.Domain.Model
         internal Plugin(string FilePath, bool headerOnly, string[] recFilter)
         {
             Name = Path.GetFileName(FilePath);
+            PluginPath = Path.GetDirectoryName(FilePath);
             var fi = new FileInfo(FilePath);
             using (var br = new BinaryReader(fi.OpenRead()))
             {
@@ -188,7 +194,6 @@ namespace TESVSnip.Domain.Model
             }
 
             var sbrMaster = new SubRecord();
-            sbrMaster = new SubRecord();
             sbrMaster.Name = "DATA";
             sbrMaster.SetData(new byte[] { 0, 0, 0, 0, 0, 0, 0, 0 });
             brcTES4.InsertRecord(idx, sbrMaster);
@@ -208,33 +213,51 @@ namespace TESVSnip.Domain.Model
 
         public override void AddRecord(BaseRecord br)
         {
-            var r = br as Rec;
-            if (r == null)
+            try
             {
-                throw new TESParserException("Record to add was not of the correct type." + Environment.NewLine + "Plugins can only hold Groups or Records.");
+                var r = br as Rec;
+                if (r == null)
+                {
+                    throw new TESParserException("Record to add was not of the correct type." + Environment.NewLine + "Plugins can only hold Groups or Records.");
+                }
+
+                r.Parent = this;
+                this.records.Add(r);
+                this.InvalidateCache();
+                FireRecordListUpdate(this, this);
+            }
+            catch (Exception)
+            {
+
+                throw;
             }
 
-            r.Parent = this;
-            this.records.Add(r);
-            this.InvalidateCache();
-            FireRecordListUpdate(this, this);
         }
 
         public override void AddRecords(IEnumerable<BaseRecord> br)
         {
-            if (br.Count(r => !(r is Record || r is GroupRecord)) > 0)
+            try
             {
-                throw new TESParserException("Record to add was not of the correct type.\nPlugins can only hold records or other groups.");
+                if (br.Count(r => !(r is Record || r is GroupRecord)) > 0)
+                {
+                    throw new TESParserException("Record to add was not of the correct type.\nPlugins can only hold records or other groups.");
+                }
+
+                foreach (var r in br)
+                {
+                    r.Parent = this;
+                }
+
+                this.records.AddRange(br.OfType<Rec>());
+                FireRecordListUpdate(this, this);
+                this.InvalidateCache();
+            }
+            catch (Exception)
+            {
+
+                throw;
             }
 
-            foreach (var r in br)
-            {
-                r.Parent = this;
-            }
-
-            this.records.AddRange(br.OfType<Rec>());
-            FireRecordListUpdate(this, this);
-            this.InvalidateCache();
         }
 
         public void Clear()
@@ -517,7 +540,8 @@ namespace TESVSnip.Domain.Model
 
                 // This enumerate misses any records that are children of masters
                 foreach (var r in this.Masters[i].Enumerate(
-                    r => {
+                    r =>
+                    {
                         if (r is Record)
                         {
                             if ((type == null || r.Name == type) && (((Record)r).FormID & 0xFF000000) == match)
@@ -551,7 +575,8 @@ namespace TESVSnip.Domain.Model
 
             // finally add records of self in to the list
             foreach (var r in this.Enumerate(
-                r => {
+                r =>
+                {
                     if (r is Record)
                     {
                         if (type == null || r.Name == type)
@@ -711,60 +736,45 @@ namespace TESVSnip.Domain.Model
             return value;
         }
 
-        internal void Save(string FilePath)
+        internal void Save(string filePath)
         {
             this.UpdateRecordCount();
-            bool existed = false;
-            BinaryWriter bw;
-
-            // DateTime timestamp = DateTime.Now;
-            if (File.Exists(FilePath))
+            string tmpFileName = filePath + ".new";
+            if (File.Exists(tmpFileName))
+                File.Delete(tmpFileName);
+            using (var bw = new BinaryWriter(File.OpenWrite(tmpFileName)))
             {
-                // timestamp = new FileInfo(FilePath).LastWriteTime;
-                existed = true;
+                this.SaveData(bw);
+                bw.Flush();
+            }
 
-                // File.Delete(FilePath);
-                bw = new BinaryWriter(File.OpenWrite(FilePath + ".new"));
+            if (File.Exists(filePath))
+            {
+                try
+                {
+                    string bakFile = null;
+                    string fileName = Path.GetFileName(filePath);
+                    bool backupExists = true;
+                    int backupVersion = 0;
+                    string backupFolder = CreateBackupFolder(filePath);
+                    while (backupExists)
+                    {
+                        bakFile = Path.Combine(backupFolder, fileName + string.Format(".{0,3:D3}.bak", backupVersion));
+                        backupExists = File.Exists(bakFile);
+                        if (backupExists)
+                            backupVersion++;
+                    }
+                    File.Replace(tmpFileName, filePath, bakFile);
+                }
+                catch
+                {
+                    MessageBox.Show(Resources.Plugin_Save_UnableToBackup);
+                    return;
+                }
             }
             else
             {
-                bw = new BinaryWriter(File.OpenWrite(FilePath));
-            }
-
-            try
-            {
-                this.SaveData(bw);
-                Name = Path.GetFileName(FilePath);
-            }
-            finally
-            {
-                bw.Close();
-            }
-
-            try
-            {
-                if (existed)
-                {
-                    bool backupExists = true;
-                    int backupVersion = 0;
-                    while (backupExists && backupVersion < 999)
-                    {
-                        backupExists = File.Exists(FilePath + string.Format(".{0,3:D3}.bak", backupVersion));
-                        if (backupExists)
-                        {
-                            backupVersion++;
-                        }
-                    }
-
-                    File.Replace(FilePath + ".new", FilePath, FilePath + string.Format(".{0,3:D3}.bak", backupVersion));
-
-                    // File.Replace(FilePath + ".new", FilePath, FilePath + ".bak");
-
-                    // new FileInfo(FilePath).LastWriteTime = timestamp;  // Do not keep timestamp since it is no longer used for loadorder. Better to be able to see when the plugin was last saved.
-                }
-            }
-            catch
-            {
+                File.Move(tmpFileName, filePath);
             }
 
             // if (StringsDirty)
@@ -773,7 +783,7 @@ namespace TESVSnip.Domain.Model
             {
                 if (Properties.Settings.Default.SaveStringsFiles)
                 {
-                    string prefix = Path.Combine(Path.Combine(Path.GetDirectoryName(FilePath), "Strings"), Path.GetFileNameWithoutExtension(FilePath));
+                    string prefix = Path.Combine(Path.Combine(Path.GetDirectoryName(filePath), "Strings"), Path.GetFileNameWithoutExtension(filePath));
                     prefix += "_" + Properties.Settings.Default.LocalizationName;
                     this.SaveStrings(prefix);
                 }
@@ -782,11 +792,27 @@ namespace TESVSnip.Domain.Model
             this.StringsDirty = false;
         }
 
+        private string CreateBackupFolder([NotNull] string filePath)
+        {
+            var dir = Path.Combine(Path.GetDirectoryName(filePath), "Backup");
+            if (!Directory.Exists(dir))
+                Directory.CreateDirectory(dir);
+            return dir;
+        }
+
         internal override void SaveData(BinaryWriter writer)
         {
-            foreach (Rec r in this.Records)
+            Compressor.Init();
+            try
             {
-                r.SaveData(writer);
+                foreach (Rec r in this.Records)
+                {
+                    r.SaveData(writer);
+                }
+            }
+            finally
+            {
+                Compressor.Close();
             }
         }
 
@@ -811,11 +837,14 @@ namespace TESVSnip.Domain.Model
         {
             int reccount = -1 + this.Records.Cast<Rec>().Sum(r => r.CountRecords());
             var tes4 = this.Records.OfType<Record>().FirstOrDefault(x => x.Name == "TES4");
-            if (tes4 != null) {
-                if (tes4.SubRecords.Count > 0 && tes4.SubRecords[0].Name == "HEDR" && tes4.SubRecords[0].Size >= 8) {
+            if (tes4 != null)
+            {
+                if (tes4.SubRecords.Count > 0 && tes4.SubRecords[0].Name == "HEDR" && tes4.SubRecords[0].Size >= 8)
+                {
                     byte[] data = tes4.SubRecords[0].GetData();
                     byte[] reccountbytes = TypeConverter.si2h(reccount);
-                    for (int i = 0; i < 4; i++) {
+                    for (int i = 0; i < 4; i++)
+                    {
                         data[4 + i] = reccountbytes[i];
                     }
 
@@ -836,6 +865,7 @@ namespace TESVSnip.Domain.Model
                 this.Filtered = recFilter != null && recFilter.Length > 0;
 
                 HoldUpdates = true;
+                Decompressor.Init();
 
                 s = ReadRecName(br);
                 if (s != "TES4")
@@ -922,6 +952,7 @@ namespace TESVSnip.Domain.Model
             {
                 HoldUpdates = oldHoldUpdates;
                 FireRecordListUpdate(this, this);
+                Decompressor.Close();
             }
         }
 
@@ -1022,7 +1053,8 @@ namespace TESVSnip.Domain.Model
             if (this.FormIDLookup.Count == 0)
             {
                 this.ForEach(
-                    br => {
+                    br =>
+                    {
                         var r = br as Record;
                         if (r != null)
                         {

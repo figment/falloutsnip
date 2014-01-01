@@ -2,7 +2,7 @@ namespace TESVSnip.Domain.Model
 {
     public enum SearchCondRecordType
     {
-        Exists, 
+        Exists,
 
         Missing
     }

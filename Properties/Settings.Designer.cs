@@ -85,6 +85,30 @@ namespace TESVSnip.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute(@"AACT;ACTI;ADDN;ALCH;AMMO;ANIO;APPA;ARMA;ARMO;ARTO;ASPC;ASTP;AVIF;BOOK;BPTD;CAMS;CELL;CLAS;CLDC;CLFM;CLMT;COBJ;COLL;CONT;CPTH;CSTY;DEBR;DIAL;DLBR;DLVW;DOBJ;DOOR;DUAL;ECZN;EFSH;ENCH;EQUP;EXPL;EYES;FACT;FLOR;FLST;FSTP;FSTS;FURN;GLOB;GMST;GRAS;HAIR;HAZD;HDPT;IDLE;IDLM;IMAD;IMGS;INGR;IPCT;IPDS;KEYM;KYWD;LCRT;LCTN;LGTM;LIGH;LSCR;LTEX;LVLI;LVLN;LVSP;MATO;MATT;MESG;MGEF;MISC;MOVT;MSTT;MUSC;MUST;NAVI;NPC_;OTFT;PACK;PERK;PROJ;PWAT;QUST;RACE;REGN;RELA;REVB;RFCT;RGDL;SCEN;SCOL;SCPT;SCTX;SCRL;SHOU;SLGM;SMBN;SMEN;SMQN;SNCT;SNDR;SOPM;SOUN;SPEL;SPGD;STAT;TACT;TREE;TXST;VTYP;WATR;WEAP;WOOP;WRLD;WTHR")]
+        public string AllESMRecords {
+            get {
+                return ((string)(this["AllESMRecords"]));
+            }
+            set {
+                this["AllESMRecords"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("RGDL;CLDC;PWAT;SCOL;SCPT;HAIR;REGN;NAVI;WRLD;DIAL;CELL;IMAD;WTHR")]
+        public string FilteredESMRecords {
+            get {
+                return ((string)(this["FilteredESMRecords"]));
+            }
+            set {
+                this["FilteredESMRecords"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("True")]
         public bool IsFirstTimeOpening {
             get {
@@ -181,18 +205,6 @@ namespace TESVSnip.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("Skyrim String Localizer.exe")]
-        public string SkyrimLocalizerPath {
-            get {
-                return ((string)(this["SkyrimLocalizerPath"]));
-            }
-            set {
-                this["SkyrimLocalizerPath"] = value;
-            }
-        }
-        
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("False")]
         public bool SaveStringsFiles {
             get {
@@ -278,12 +290,12 @@ namespace TESVSnip.Properties {
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("REGN;NAVI;WRLD;DIAL;CELL;IMAD;WTHR")]
-        public string AutoCompressRecords {
+        public string AutoCompressRecordsOld {
             get {
-                return ((string)(this["AutoCompressRecords"]));
+                return ((string)(this["AutoCompressRecordsOld"]));
             }
             set {
-                this["AutoCompressRecords"] = value;
+                this["AutoCompressRecordsOld"] = value;
             }
         }
         
@@ -394,25 +406,97 @@ namespace TESVSnip.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("RGDL;CLDC;PWAT;SCOL;SCPT;HAIR;REGN;NAVI;WRLD;DIAL;CELL;IMAD;WTHR")]
-        public string FilteredESMRecords {
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string CultureCodeUI {
             get {
-                return ((string)(this["FilteredESMRecords"]));
+                return ((string)(this["CultureCodeUI"]));
             }
             set {
-                this["FilteredESMRecords"] = value;
+                this["CultureCodeUI"] = value;
             }
         }
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute(@"AACT;ACTI;ADDN;ALCH;AMMO;ANIO;APPA;ARMA;ARMO;ARTO;ASPC;ASTP;AVIF;BOOK;BPTD;CAMS;CLAS;CLDC;CLFM;CLMT;COBJ;COLL;CONT;CPTH;CSTY;DEBR;DIAL;DLBR;DLVW;DOBJ;DOOR;DUAL;ECZN;EFSH;ENCH;EQUP;EXPL;EYES;FACT;FLOR;FLST;FSTP;FSTS;FURN;GLOB;GMST;GRAS;HAIR;HAZD;HDPT;IDLE;IDLM;IMAD;IMGS;INGR;IPCT;IPDS;KEYM;KYWD;LCRT;LCTN;LGTM;LIGH;LSCR;LTEX;LVLI;LVLN;LVSP;MATO;MATT;MESG;MGEF;MISC;MOVT;MSTT;MUSC;MUST;NAVI;NPC_;OTFT;PACK;PERK;PROJ;PWAT;QUST;RACE;REGN;RELA;REVB;RFCT;RGDL;SCOL;SCPT;SCRL;SHOU;SLGM;SMBN;SMEN;SMQN;SNCT;SNDR;SOPM;SOUN;SPEL;SPGD;STAT;TACT;TREE;TXST;VTYP;WATR;WEAP;WOOP;WRLD;WTHR")]
-        public string AllESMRecords {
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string LastOpenFolder {
             get {
-                return ((string)(this["AllESMRecords"]));
+                return ((string)(this["LastOpenFolder"]));
             }
             set {
-                this["AllESMRecords"] = value;
+                this["LastOpenFolder"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string LastSaveFolder {
+            get {
+                return ((string)(this["LastSaveFolder"]));
+            }
+            set {
+                this["LastSaveFolder"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string PersonalSaveFolder {
+            get {
+                return ((string)(this["PersonalSaveFolder"]));
+            }
+            set {
+                this["PersonalSaveFolder"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string PersonalOpenFolder {
+            get {
+                return ((string)(this["PersonalOpenFolder"]));
+            }
+            set {
+                this["PersonalOpenFolder"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("True")]
+        public bool UsePluginRecordCompression {
+            get {
+                return ((bool)(this["UsePluginRecordCompression"]));
+            }
+            set {
+                this["UsePluginRecordCompression"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("CELL;DIAL;IMAD;LAND;NAVI;NAVM;NPC_;REGN;WRLD;WTHR")]
+        public string AutoCompressRecords {
+            get {
+                return ((string)(this["AutoCompressRecords"]));
+            }
+            set {
+                this["AutoCompressRecords"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute(@"AACT;ACTI;ADDN;ALCH;AMMO;ANIO;APPA;ARMA;ARMO;ARTO;ASPC;ASTP;AVIF;BOOK;BPTD;CAMS;CELL;CLAS;CLDC;CLFM;CLMT;COBJ;COLL;CONT;CPTH;CSTY;DEBR;DIAL;DLBR;DLVW;DOBJ;DOOR;DUAL;ECZN;EFSH;ENCH;EQUP;EXPL;EYES;FACT;FLOR;FLST;FSTP;FSTS;FURN;GLOB;GMST;GRAS;HAIR;HAZD;HDPT;IDLE;IDLM;IMAD;IMGS;INGR;IPCT;IPDS;KEYM;KYWD;LCRT;LCTN;LGTM;LIGH;LSCR;LTEX;LVLI;LVLN;LVSP;MATO;MATT;MESG;MGEF;MISC;MOVT;MSTT;MUSC;MUST;NAVI;NPC_;OTFT;PACK;PERK;PROJ;PWAT;QUST;RACE;REGN;RELA;REVB;RFCT;RGDL;SCEN;SCOL;SCPT;SCRL;SHOU;SLGM;SMBN;SMEN;SMQN;SNCT;SNDR;SOPM;SOUN;SPEL;SPGD;STAT;TACT;TREE;TXST;VTYP;WATR;WEAP;WOOP;WRLD;WTHR")]
+        public string AllESMRecordsOld {
+            get {
+                return ((string)(this["AllESMRecordsOld"]));
+            }
+            set {
+                this["AllESMRecordsOld"] = value;
             }
         }
     }

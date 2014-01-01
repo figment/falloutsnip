@@ -10,7 +10,7 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>TESVSnip</RootNamespace>
     <AssemblyName>TESVSnip</AssemblyName>
-    <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <ApplicationIcon>Resources\tesv_ico.ico</ApplicationIcon>
     <FileUpgradeFlags>
@@ -76,7 +76,24 @@
     <Reference Include="Ionic.Zlib">
       <HintPath>thirdparty\Ionic.Zlib.dll</HintPath>
     </Reference>
+    <Reference Include="IronPython, Version=2.7.0.40, Culture=neutral, PublicKeyToken=7f709c5b713576e1, processorArchitecture=MSIL">
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="IronPython.Modules, Version=2.7.0.40, Culture=neutral, PublicKeyToken=7f709c5b713576e1, processorArchitecture=MSIL">
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="Microsoft.Dynamic, Version=1.1.0.20, Culture=neutral, PublicKeyToken=7f709c5b713576e1, processorArchitecture=MSIL">
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Microsoft.Scripting, Version=1.1.0.20, Culture=neutral, PublicKeyToken=7f709c5b713576e1, processorArchitecture=MSIL">
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Microsoft.Scripting.Metadata, Version=1.1.0.20, Culture=neutral, PublicKeyToken=7f709c5b713576e1, processorArchitecture=MSIL">
+      <Private>True</Private>
+    </Reference>
     <Reference Include="System" />
+    <Reference Include="System.Configuration" />
     <Reference Include="System.Core">
       <RequiredTargetFramework>3.5</RequiredTargetFramework>
     </Reference>
@@ -145,13 +162,17 @@
     <Compile Include="Domain\Model\SearchSubrecordXml.cs" />
     <Compile Include="Domain\Model\SubRecord.cs" />
     <Compile Include="Domain\Model\TESParserException.cs" />
+    <Compile Include="Domain\Scripts\PyInterpreter.cs" />
     <Compile Include="Domain\Scripts\Keywords.cs" />
     <Compile Include="Domain\Scripts\ScriptCompiler.cs" />
     <Compile Include="Domain\Scripts\Token.cs" />
     <Compile Include="Domain\Scripts\TokenStream.cs" />
     <Compile Include="Domain\Scripts\TokenType.cs" />
+    <Compile Include="Domain\Services\Platform.cs" />
+    <Compile Include="Domain\Services\RecordsTace.cs" />
     <Compile Include="Domain\Services\Compressor.cs" />
     <Compile Include="Domain\Services\Options.cs" />
+    <Compile Include="Domain\Services\SaveReadStream.cs" />
     <Compile Include="Domain\Services\Settings.cs" />
     <Compile Include="Framework\Collections\AdvancedList.cs" />
     <Compile Include="Framework\Collections\PropertyComparer.cs" />
@@ -174,9 +195,14 @@
     <Compile Include="Framework\Services\Encoding.cs" />
     <Compile Include="Framework\Services\FontLangInfo.cs" />
     <Compile Include="Framework\TypeConverter.cs" />
+    <Compile Include="TranslateUI\Localization.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="TranslateUI\TranslateUIGlobalization.cs" />
     <Compile Include="UI\Controls\CustomTreeView.cs">
       <SubType>Component</SubType>
     </Compile>
+    <Compile Include="UI\MruStripMenu.cs" />
     <Compile Include="UI\RecordBuilder.cs" />
     <Compile Include="UI\RecordControls\IGroupedElementControl.cs" />
     <Compile Include="UI\RecordControls\IOuterElementControl.cs" />
@@ -508,6 +534,13 @@
     <Compile Include="UI\RecordControls\HexElement.Designer.cs">
       <DependentUpon>HexElement.cs</DependentUpon>
     </Compile>
+    <EmbeddedResource Include="Lang\resource.fr-FR.resx">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Lang\resource.resx">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
     <EmbeddedResource Include="Vendor\Controls\ballontooltip.resx">
       <DependentUpon>ballontooltip.cs</DependentUpon>
     </EmbeddedResource>
@@ -651,7 +684,22 @@
       <DependentUpon>TextElement.cs</DependentUpon>
     </EmbeddedResource>
     <None Include="build\tesvsnip.snk" />
+    <None Include="changelog.rtf" />
+    <None Include="conf\scripts.py">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="conf\DockPanel.config">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <Content Include="conf\ScriptFunctions.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="conf\ScriptFunctionsFormat.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
     <None Include="Domain\Data\RecordStructure.xsd" />
+    <None Include="TranslateUI\Tools\ResEx\ResEx.chm" />
+    <None Include="TranslateUI\Tools\ResEx\ResEx.exe.config" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
@@ -744,6 +792,7 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="build\buildver.txt" />
+    <Content Include="Lang\ResGen.exe" />
     <Content Include="conf\RecordStructure.xml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <SubType>Designer</SubType>
@@ -760,7 +809,42 @@
     <Content Include="conf\settings.xml">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <Content Include="TranslateUI\Tools\ResEx\Extended.Common.dll" />
+    <Content Include="TranslateUI\Tools\ResEx\ResEx.exe" />
+    <Content Include="TranslateUI\Tools\ResEx\ResExSetup1.2.exe" />
+    <Content Include="TranslateUI\Tools\ResEx\ResExSetup1.5Beta.exe" />
+    <Content Include="TranslateUI\Tools\xmlDbEditor\xmlDbEditor.exe" />
+    <Content Include="TranslateUI\Tools\xmlDbEditor\xmlDbEditor.pdb" />
+    <Content Include="Vendor\DotZLib\LICENSE_1_0.txt" />
+    <Content Include="Vendor\DotZLib\readme.txt" />
+    <Content Include="Vendor\IronPython-2.7.3\IronPython.dll" />
+    <Content Include="Vendor\IronPython-2.7.3\IronPython.Modules.dll" />
+    <Content Include="Vendor\IronPython-2.7.3\IronPython.Modules.xml" />
+    <Content Include="Vendor\IronPython-2.7.3\IronPython.SQLite.dll" />
+    <Content Include="Vendor\IronPython-2.7.3\IronPython.SQLite.xml" />
+    <Content Include="Vendor\IronPython-2.7.3\IronPython.Wpf.dll" />
+    <Content Include="Vendor\IronPython-2.7.3\IronPython.Wpf.xml" />
+    <Content Include="Vendor\IronPython-2.7.3\IronPython.xml" />
+    <Content Include="Vendor\IronPython-2.7.3\Microsoft.Dynamic.dll" />
+    <Content Include="Vendor\IronPython-2.7.3\Microsoft.Dynamic.xml" />
+    <Content Include="Vendor\IronPython-2.7.3\Microsoft.Scripting.AspNet.dll" />
+    <Content Include="Vendor\IronPython-2.7.3\Microsoft.Scripting.AspNet.xml" />
+    <Content Include="Vendor\IronPython-2.7.3\Microsoft.Scripting.dll" />
+    <Content Include="Vendor\IronPython-2.7.3\Microsoft.Scripting.Metadata.dll" />
+    <Content Include="Vendor\IronPython-2.7.3\Microsoft.Scripting.Metadata.xml" />
+    <Content Include="Vendor\IronPython-2.7.3\Microsoft.Scripting.xml" />
     <Content Include="Vendor\ObjectListView\CustomDictionary.xml" />
+    <Content Include="Vendor\ObjectListView\Resources\clear-filter.png" />
+    <Content Include="Vendor\ObjectListView\Resources\clear-filter1.png" />
+    <Content Include="Vendor\ObjectListView\Resources\coffee.jpg" />
+    <Content Include="Vendor\ObjectListView\Resources\filter-icons3.png" />
+    <Content Include="Vendor\ObjectListView\Resources\filter-icons31.png" />
+    <Content Include="Vendor\ObjectListView\Resources\filter.png" />
+    <Content Include="Vendor\ObjectListView\Resources\filter1.png" />
+    <Content Include="Vendor\ObjectListView\Resources\sort-ascending.png" />
+    <Content Include="Vendor\ObjectListView\Resources\sort-ascending1.png" />
+    <Content Include="Vendor\ObjectListView\Resources\sort-descending.png" />
+    <Content Include="Vendor\ObjectListView\Resources\sort-descending1.png" />
     <None Include="Resources\bookmark_add.png" />
     <None Include="Resources\14_layer_deletelayer.png" />
     <Content Include="Resources\clear-filter.png" />
@@ -829,12 +913,21 @@
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">
   </Target>
-  <Target Name="AfterBuild">
-  </Target>
   -->
+  <Target Name="AfterBuild">
+    <Copy SourceFiles="@(CopyToStagingPlatform32)" DestinationFolder="$(TargetDir)Platform\x86" />
+    <Copy SourceFiles="@(CopyToStagingPlatform64)" DestinationFolder="$(TargetDir)Platform\x64" />
+  </Target>
   <PropertyGroup>
     <StageOutputDir>$(ProjectDir)\Output\</StageOutputDir>
     <MergeOutputFile>$(StageOutputDir)\$(TargetName)$(TargetExt)</MergeOutputFile>
+  </PropertyGroup>
+  <PropertyGroup>
+    <PostBuildEvent>"$(ProjectDir)Lang\resgen.exe" "$(TargetDir)Lang\resource.resx"
+"$(ProjectDir)Lang\resgen.exe" "$(TargetDir)Lang\resource.fr-FR.resx"
+del "$(TargetDir)Lang\resource.resx"
+del "$(TargetDir)Lang\resource.fr-FR.resx"
+</PostBuildEvent>
   </PropertyGroup>
   <ItemGroup>
     <inputAssemblies Include="$(TargetPath)" />
@@ -842,18 +935,31 @@
     <CopyToStaging Include="$(ProjectDir)\TESVsnip_LICENSE" />
     <CopyToStaging Include="$(ProjectDir)\TESVsnip_README.TXT" />
     <CopyToStagingConf Include="$(ProjectDir)conf\**" />
+    <CopyToStagingLang Include="$(TargetDir)Lang\**" />
+    <CopyToStagingFr Include="$(TargetDir)fr-FR\**" />
+    <CopyToStagingPython Include="$(ProjectDir)Vendor\IronPython-2.7.3\IronPython.dll" />
+    <CopyToStagingPython Include="$(ProjectDir)Vendor\IronPython-2.7.3\IronPython.Modules.dll" />
+    <CopyToStagingPython Include="$(ProjectDir)Vendor\IronPython-2.7.3\Microsoft.Dynamic.dll" />
+    <CopyToStagingPython Include="$(ProjectDir)Vendor\IronPython-2.7.3\Microsoft.Scripting.dll" />
+    <CopyToStagingPlatform64 Include="$(ProjectDir)Platform\x64\zlib1.dll" />
+    <CopyToStagingPlatform64 Include="$(ProjectDir)Platform\x64\ZLibMC.dll" />
+    <CopyToStagingPlatform32 Include="$(ProjectDir)Platform\x86\zlib1.dll" />
+    <CopyToStagingPlatform32 Include="$(ProjectDir)Platform\x86\ZLibMC.dll" />
   </ItemGroup>
   <ItemGroup />
   <Target Name="Package">
     <MakeDir Directories="$(StageOutputDir)" />
     <Delete Files="$(StageOutputDir)conf\DockPanel.config" />
-    <Copy SourceFiles="@(CopyToStaging)" DestinationFolder="$(StageOutputDir)">
-    </Copy>
-    <Copy SourceFiles="@(CopyToStagingConf)" DestinationFolder="$(StageOutputDir)conf">
-    </Copy>
-    <Copy SourceFiles="$(TargetPath).config" DestinationFolder="$(StageOutputDir)">
-    </Copy>
-    <ILMerge InputAssemblies="@(inputAssemblies)" OutputFile="$(MergeOutputFile)" DebugInfo="true" />
+    <Copy SourceFiles="@(CopyToStaging)" DestinationFolder="$(StageOutputDir)" />
+    <Copy SourceFiles="@(CopyToStagingConf)" DestinationFolder="$(StageOutputDir)conf" />
+    <Copy SourceFiles="@(CopyToStagingLang)" DestinationFolder="$(StageOutputDir)Lang" />
+    <Copy SourceFiles="@(CopyToStagingFr)" DestinationFolder="$(StageOutputDir)fr-FR" />
+    <Copy SourceFiles="@(CopyToStagingPython)" DestinationFolder="$(StageOutputDir)" />
+    <Copy SourceFiles="$(TargetPath).config" DestinationFolder="$(StageOutputDir)" />
+    <Copy SourceFiles="@(inputAssemblies)" DestinationFolder="$(StageOutputDir)" />
+    <Copy SourceFiles="@(CopyToStagingPlatform32)" DestinationFolder="$(StageOutputDir)Platform\x86" />
+    <Copy SourceFiles="@(CopyToStagingPlatform64)" DestinationFolder="$(StageOutputDir)Platform\x64" />
+    <!-- <ILMerge InputAssemblies="@(inputAssemblies)" OutputFile="$(MergeOutputFile)" DebugInfo="true" /> -->
   </Target>
   <Target Name="Package_rar" DependsOnTargets="Package">
     <MakeDir Directories="$(StageOutputDir)" />
@@ -863,7 +969,7 @@
   </Target>
   <Target Name="Package_7z" DependsOnTargets="Package">
     <MakeDir Directories="$(StageOutputDir)" />
-	<Delete Files="$(StageOutputDir)\$(ProjectName)_v$(Major).$(Minor).7z" />
+    <Delete Files="$(StageOutputDir)\$(ProjectName)_v$(Major).$(Minor).7z" />
     <SimpleExec Command="7za.exe" Args="a -r $(ProjectName)_v$(Major).$(Minor).7z * -x!*.pdb -x!*vshost* -x!*.rar -x!*.7z" WorkingDirectory="$(StageOutputDir)" />
   </Target>
 </Project>

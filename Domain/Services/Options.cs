@@ -4,23 +4,23 @@ namespace TESVSnip.Domain.Services
     using System.Collections.Generic;
     using System.IO;
     using System.Reflection;
-
+    using System.Windows.Forms;
     using Microsoft.Win32;
+    using TESVSnip.Domain.Model;
 
     /// <summary>
     /// Global program options.
     /// </summary>
     public sealed class Options
     {
-        private static Options instance;
+        private static Options _instance;
 
-        private readonly List<string> plugins = new List<string>();
+        private readonly List<string> _plugins = new List<string>();
 
         private Options(string[] args)
         {
             this.SettingsDirectory = Environment.CurrentDirectory;
             this.ApplicationDirectory = Environment.CurrentDirectory;
-
             this.SetupGameDirectory();
             this.SetupApplicationDirectory();
             this.ParseCommandLine(args);
@@ -34,33 +34,31 @@ namespace TESVSnip.Domain.Services
         {
             get
             {
-                if (instance == null)
+                if (_instance == null)
                 {
-                    throw new NullReferenceException("Program options are not initialized yet.");
+                    throw new NullReferenceException(
+                        TranslateUI.TranslateUiGlobalization.ResManager.GetString(name: "Domain_Services_Options_NotInitializedYet")); // Program options are not initialized yet.
                 }
 
-                return instance;
+                return _instance;
             }
         }
+
+        public string ApplicationDirectory { get; private set; }
+
+        public string GameDataDirectory { get; private set; }
+
+        public string GameDirectory { get; private set; }
 
         /// <summary>
         /// Gets the list of plugins to pre-load specified using the command-line options.
         /// </summary>
         public IEnumerable<string> Plugins
         {
-            get
-            {
-                return this.plugins;
-            }
+            get { return this._plugins; }
         }
 
         public string SettingsDirectory { get; private set; }
-
-        public string ApplicationDirectory { get; private set; }
-
-        public string GameDirectory { get; private set; }
-
-        public string GameDataDirectory { get; private set; }
 
         /// <summary>
         /// Initializes the global options parsing the given <paramref name="args"/> array.
@@ -70,20 +68,13 @@ namespace TESVSnip.Domain.Services
         /// </param>
         public static void Initialize(string[] args)
         {
-            instance = new Options(args);
+            _instance = new Options(args);
         }
 
-        private void SetupApplicationDirectory()
-        {
-            var assembly = Assembly.GetExecutingAssembly();
-            this.ApplicationDirectory = Path.GetDirectoryName(assembly.Location);
-            var applicationDirectory = this.ApplicationDirectory;
-            if (applicationDirectory != null)
-            {
-                this.SettingsDirectory = Path.Combine(applicationDirectory, "conf");
-            }
-        }
-
+        /// <summary>
+        /// Parse the command line <paramref name="args"/> array.
+        /// </summary>
+        /// <param name="args"></param>
         private void ParseCommandLine(string[] args)
         {
             for (int i = 0; i < args.Length; ++i)
@@ -110,43 +101,22 @@ namespace TESVSnip.Domain.Services
                 }
                 else
                 {
-                    this.plugins.Add(arg);
+                    this._plugins.Add(arg);
                 }
             }
         }
 
-        private void SetupGameDirectory()
-        {
-            try
-            {
-                using (var key = Registry.LocalMachine.OpenSubKey(@"SOFTWARE\Wow6432Node\Bethesda Softworks\Skyrim"))
-                {
-                    if (key == null)
-                    {
-                        return;
-                    }
-
-                    this.GameDirectory = key.GetValue("Installed Path", this.GameDirectory, RegistryValueOptions.None) as string;
-                    var gameDirectory = this.GameDirectory;
-                    if (gameDirectory != null)
-                    {
-                        this.GameDataDirectory = Path.Combine(gameDirectory, "Data");
-                    }
-                }
-            }
-            catch
-            {
-            }
-        }
-
+        /// <summary>
+        /// Prepare directories
+        /// </summary>
         private void PrepareDirectories()
         {
-            if (string.IsNullOrEmpty(this.GameDirectory))
+            if (string.IsNullOrWhiteSpace(this.GameDirectory))
             {
                 this.GameDirectory = Environment.CurrentDirectory;
             }
 
-            if (string.IsNullOrEmpty(this.GameDataDirectory))
+            if (string.IsNullOrWhiteSpace(this.GameDataDirectory))
             {
                 this.GameDataDirectory = Environment.CurrentDirectory;
             }
@@ -154,6 +124,57 @@ namespace TESVSnip.Domain.Services
             if (Directory.Exists(this.GameDataDirectory))
             {
                 Environment.CurrentDirectory = this.GameDataDirectory;
+            }
+        }
+
+        /// <summary>
+        /// Retrieve the application directory and settings directory (conf)
+        /// </summary>
+        private void SetupApplicationDirectory()
+        {
+            var assembly = Assembly.GetExecutingAssembly();
+            this.ApplicationDirectory = Path.GetDirectoryName(assembly.Location);
+            var applicationDirectory = this.ApplicationDirectory;
+            if (applicationDirectory != null)
+            {
+                this.SettingsDirectory = Path.Combine(applicationDirectory, "conf");
+            }
+        }
+
+        /// <summary>
+        /// Search the skyrim directory
+        /// </summary>
+        private void SetupGameDirectory()
+        {
+            try
+            {
+                using (var key = Registry.LocalMachine.OpenSubKey(@"SOFTWARE\Wow6432Node\Bethesda Softworks\Skyrim"))
+                {
+                    //on 64bits
+                    if (key == null)
+                    {
+                        using (var key2 = Registry.LocalMachine.OpenSubKey(@"SOFTWARE\Bethesda Softworks\Skyrim"))
+                        {
+                            //on 32bits
+                            if (key2 == null) return;
+                            this.GameDirectory = key2.GetValue("Installed Path", this.GameDirectory, RegistryValueOptions.None) as string;
+                        }
+                    }
+                    else
+                        this.GameDirectory = key.GetValue("Installed Path", this.GameDirectory, RegistryValueOptions.None) as string;
+
+                    var gameDirectory = this.GameDirectory;
+                    if (gameDirectory != null)
+                    {
+                        this.GameDataDirectory = Path.Combine(gameDirectory, "Data");
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                string msg = "Options.SetupGameDirectory" + Environment.NewLine + "Message: " + ex.Message + Environment.NewLine + "StackTrace: " + ex.StackTrace;
+                Clipboard.SetText(msg);
+                throw new TESParserException(msg);
             }
         }
     }

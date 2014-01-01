@@ -1,3 +1,5 @@
+using TESVSnip.Domain.Services;
+
 namespace TESVSnip.Domain.Model
 {
     using System;
@@ -48,23 +50,20 @@ namespace TESVSnip.Domain.Model
 
         public virtual string DescriptiveName
         {
-            get
-            {
-                return this.Name;
-            }
+            get { return this.Name; }
         }
 
         [Persistable]
         public virtual string Name { get; set; }
 
+        [Persistable]
+        public virtual string PluginPath { get; set; }
+
         public abstract BaseRecord Parent { get; internal set; }
 
         public virtual IList Records
         {
-            get
-            {
-                return emptyList;
-            }
+            get { return emptyList; }
         }
 
         /// <summary>
@@ -207,8 +206,30 @@ namespace TESVSnip.Domain.Model
 
         protected static string ReadRecName(BinaryReader br)
         {
-            br.Read(RecByte, 0, 4);
-            return string.Empty + ((char)RecByte[0]) + ((char)RecByte[1]) + ((char)RecByte[2]) + ((char)RecByte[3]);
+            try
+            {
+                br.Read(RecByte, 0, 4);
+                return string.Empty + ((char) RecByte[0]) + ((char) RecByte[1]) + ((char) RecByte[2]) +
+                       ((char) RecByte[3]);
+            }
+            catch (Exception ex)
+            {
+                throw new TESParserException("BaseRecord.ReadRecName: " + Environment.NewLine + ex.Message);
+            }
+        }
+
+        protected static string ReadRecName(byte[] rec)
+        {
+            try
+            {
+                Array.Copy(rec, RecByte, 4);
+                return string.Empty + ((char) RecByte[0]) + ((char) RecByte[1]) + ((char) RecByte[2]) +
+                       ((char) RecByte[3]);
+            }
+            catch (Exception ex)
+            {
+                throw new TESParserException("BaseRecord.ReadRecName: " + Environment.NewLine + ex.Message);
+            }
         }
 
         protected static void WriteString(BinaryWriter bw, string s)

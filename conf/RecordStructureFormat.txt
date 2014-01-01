@@ -30,13 +30,15 @@ desc (optional): A human readable description of the subrecord contents
 
 subrecord (optional): The Subrecord block is evaluated as indicated by the Subrecord attributes and, repeat or optional apply to each individual Subrecord block within the Group block.
 
-element (optional): Elements within a the Subrecord block are evaluated as indicated by the Elements attributes and, repeat or optional apply to each individual Group block.  Group blocks can be nested within other Group blocks.
+element (optional): Elements within a the Subrecord block are evaluated as indicated by the Elements attributes and, repeat or optional apply to each individual Group block.  Group blocks can be bested within other Group blocks.
 
-repeat (optional - Boolean): A value of 1 will repeat the entire Group block 1 or more times.  If omitted, defaults to 0.  This should only be used on nested Group Blocks within the Main Grop Block.
+repeat (Boolean): A value of 1 will repeat the entire Group block 1 or more times.  If omitted, defaults to 0.  This should only be used on nested Group Blocks within the Main Grop Block.
 
-NOTE for optional: Only used with Group that will contain Surecord Blocks.  It should not to be used with Elements as there is nothing to track to and determine whether on not the information there.
+optional (Boolean): Depreciated this is no longer valid within a Group block.
 
-optional (optional - Boolean):  A value of 1 indicates that Group block will look at it's contents.  It will not apply to Elements.  If Subrecord blocks are found, and the [names] don't match within the Group glock, then the entire Group can be skipped. If omitted, defaults to 0.
+NOTE: The size of the data is by each Subrecord block indepentently.  Group should not worry about the size.
+
+NOTE: When a Group block contains Subrecord blocks, [repeat] and [optional] apply only to the Subrecord block within the Group block.
 
 The Subrecords in the group determine the order.  TESVSnip 4.4.0a already does this correctly.
 
@@ -70,10 +72,10 @@ Use of repeat in Group for only elements:
   <Subrecord="ALLS" Arguments>
     <Elements>
   </Subrecord>
-  <Subrecord="ANAM" Arguments>  <!-- optional="1" could be used here -->
+  <Subrecord="ANAM" Arguments>
     <Elements>
     <Elements>
-    <Group id="blah" repeat="5"> <!-- Start Here --> <!-- Don't use optional="1" here -->
+    <Group id="blah" repeat="5"> <!-- Start Here -->
       <Elements>
       <Elements>
       <Elements>
@@ -91,7 +93,6 @@ Use of repeat in Group for only elements:
   <Subrecord="ALLS" Arguments>
     <Elements>
   </Subrecord>
-  <!-- Looks for this pattern of Subgroups, skips any marked optional. If none are optional skips it entirly.  Error produced when only some exists and not others. -->
   <Group id="blah" repeat="1">
     <Subrecord="ANAM" Arguments>
       <Elements>
@@ -131,6 +132,7 @@ Use of Optional:
   </Subrecord>
 </Group>
 
+
 When a Subrecord block uses [optional] then the record is still skipped.  This also seems to work correctly with TESVSnip 4.4.0a.
 
 XXXXXXXXXXXXXXXXX
@@ -158,7 +160,7 @@ condition (optional): If it exists, a given value is compared the value of a pie
 
 condid (required if condition is used): An integer id that must match up with a previous and unique condid attribute.
 
-condvalue (required if condition is used): The value to compare against in a comparison and, condvalue can be an valid [type] indicated in the matching element.  E.x. flag value such as value of "$01", '0.9500', '0x08D545', '1.023', 'Building', 'float', 'formid', 'string'.
+condvalue (required if condition is used): The value to compare against in a comparison and, condvalue can be an valid [type] indicated in the matching element.  E.x. flag value such as value of "$01", '0.9500', '0x08D545', '1.023', 'Building'.
 
 XXXXXXXXXXXXXXX
 XXX Element XXX
@@ -195,7 +197,7 @@ elmcondition: Performs the same task as the Subrecord attribute, but with the fo
 
 elmcondid: Performs the same task as the Subrecord attribute, but with the following exception: An integer, used to match up with the elmcondid in a conditional Element. A value greater than 0 tells tessnip that this Element will be compared later within an Element or Subrecord block. Defaults to 0 if omitted.
 
-elmcondvalue (required if elmcondition is used): Performs the same task as the subrecord attribute.  The value to compare against in a comparison and, elmcondvalue can be an valid [type] indicated in the matching element.  E.x. flag value such as value of "$01", '0.9500', '0x08D545', '1.023', 'Building', 'float', 'formid', 'string'.
+elmcondvalue (required if elmcondition is used): Performs the same task as the subrecord attribute.  The value to compare against in a comparison and, elmcondvalue can be an valid [type] indicated in the matching element.  E.x. flag value such as value of "$01", '0.9500', '0x08D545', '1.023', 'Building'.
 
 XXXXXXXXXXXXXXXXXXXXXXXX
 XXX Script Functions XXX

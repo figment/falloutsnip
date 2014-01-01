@@ -2,10 +2,10 @@ namespace TESVSnip.Domain.Model
 {
     internal enum BatchCondRecordType
     {
-        NoAction, 
+        NoAction,
 
-        Create, 
+        Create,
 
-        Delete, 
+        Delete,
     }
 }

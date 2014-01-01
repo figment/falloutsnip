@@ -13,11 +13,17 @@ v 4.5
 - Merged changes from 4.3 and 4.4
 - Added Open List Shortcut
 
----  Begin figment haitus ---
+v 4.4.2a
+- Updated RecordStructure.xml
+- Removed "Reduce Form Versions to 40" it did not provide the intended solution to Version Control with the CK
+
+v 4.4.1a
+- Updated RecordStructure.xml
+- Added "Reduce Form Versions to 40" and attempt to fix Version Control with the CK
 
 v 4.4.0a
 - Added Zlib 1.2.4 support. [Leandro]
-- Completly Refactored the project. [Leandro]
+- Completely Refactored the project. [Leandro]
 - [WIP] Updating Localization. [Smaug]
 - Updated TES4 HEDR Display. [Smaug]
 - Fixed compiler directives so EXE works on 64-bit install of Windows 7. [Smaug]
