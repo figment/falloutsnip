@@ -90,6 +90,14 @@
   <ItemGroup>
     <Compile Include="Framework\Collections\AdvancedList.cs" />
     <Compile Include="Framework\Collections\ValueComparer.cs" />
+    <Compile Include="Properties\Settings.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Properties\Settings.Designer.cs">
+      <DependentUpon>Settings.settings</DependentUpon>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+      <AutoGen>True</AutoGen>
+    </Compile>
     <Compile Include="Vendor\Controls\ballontooltip.cs">
       <SubType>Component</SubType>
     </Compile>
@@ -225,11 +233,11 @@
     <Compile Include="UI\Docking\BaseDockContent.Designer.cs">
       <DependentUpon>BaseDockContent.cs</DependentUpon>
     </Compile>
-    <Compile Include="UI\Docking\RichTextView.cs">
+    <Compile Include="UI\Docking\RichTextContent.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="UI\Docking\RichTextView.Designer.cs">
-      <DependentUpon>RichTextView.cs</DependentUpon>
+    <Compile Include="UI\Docking\RichTextContent.Designer.cs">
+      <DependentUpon>RichTextContent.cs</DependentUpon>
     </Compile>
     <Compile Include="UI\Docking\SubrecordListContent.cs">
       <SubType>Form</SubType>
@@ -450,8 +458,8 @@
     <EmbeddedResource Include="UI\Docking\BaseDockContent.resx">
       <DependentUpon>BaseDockContent.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="UI\Docking\RichTextView.resx">
-      <DependentUpon>RichTextView.cs</DependentUpon>
+    <EmbeddedResource Include="UI\Docking\RichTextContent.resx">
+      <DependentUpon>RichTextContent.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="UI\Docking\SubrecordListContent.resx">
       <DependentUpon>SubrecordListContent.cs</DependentUpon>
@@ -572,17 +580,12 @@
       <DependentUpon>TextElement.cs</DependentUpon>
     </EmbeddedResource>
     <None Include="build\tesvsnip.snk" />
-    <None Include="Vendor\ObjectListView\ObjectListView.FxCop" />
-    <None Include="Vendor\ObjectListView\ObjectListView.shfb" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
     </None>
-    <Compile Include="Properties\Settings.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DependentUpon>Settings.settings</DependentUpon>
-      <DesignTimeSharedInput>True</DesignTimeSharedInput>
-    </Compile>
+    <None Include="Vendor\ObjectListView\ObjectListView.FxCop" />
+    <None Include="Vendor\ObjectListView\ObjectListView.shfb" />
     <Compile Include="Main\RecordStructure.cs" />
     <Compile Include="UI\RecordControls\BaseElement.cs">
       <SubType>UserControl</SubType>
@@ -653,7 +656,6 @@
     <Compile Include="Vendor\RTFLib\RTF\RTFRowDefinition.cs" />
     <Compile Include="Vendor\RTFLib\RTF\RTFUtil.cs" />
     <Compile Include="Main\Settings.cs" />
-    <Compile Include="Properties\Settings.cs" />
     <Compile Include="UI\Forms\MainView.cs">
       <SubType>Form</SubType>
     </Compile>
