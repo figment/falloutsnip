@@ -10,7 +10,7 @@ Requirements:
 
 Change Log:
 v 4.5
-- Merged changes from 4.3 and 4.4.  4.4 was not commited to svn repository so reversed from released files
+- Merged changes from 4.3 and 4.4
 - Added Open List Shortcut
 
 ---  Begin figment haitus ---
