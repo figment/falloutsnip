@@ -1,5 +1,7 @@
-﻿namespace TESVSnip.ObjectControls
+﻿namespace TESVSnip.UI.ObjectControls
 {
+    using TESVSnip.UI.Controls;
+
     partial class PluginTreeView
     {
         /// <summary> 
@@ -13,9 +15,9 @@
         /// <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
         protected override void Dispose(bool disposing)
         {
-            if (disposing && (components != null))
+            if (disposing && (this.components != null))
             {
-                components.Dispose();
+                this.components.Dispose();
             }
             base.Dispose(disposing);
         }
@@ -55,7 +57,7 @@
             this.toolStripMenuItem5 = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripMenuItem6 = new System.Windows.Forms.ToolStripMenuItem();
             this.referenceSearchToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.PluginTree = new TESVSnip.Controls.CustomTreeView();
+            this.PluginTree = new CustomTreeView();
             this.toolStripRecord.SuspendLayout();
             this.contextMenuRecord.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.PluginTree)).BeginInit();
@@ -314,7 +316,7 @@
 
         #endregion
 
-        private TESVSnip.Controls.CustomTreeView PluginTree;
+        private CustomTreeView PluginTree;
         private System.Windows.Forms.ToolStrip toolStripRecord;
         private System.Windows.Forms.ToolStripSplitButton toolStripRecordBack;
         private System.Windows.Forms.ToolStripSplitButton toolStripRecordNext;

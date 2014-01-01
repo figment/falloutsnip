@@ -1,5 +1,7 @@
-﻿namespace TESVSnip.Docking
+﻿namespace TESVSnip.UI.Docking
 {
+    using TESVSnip.UI.ObjectControls;
+
     partial class SubrecordListContent
     {
         /// <summary>
@@ -13,9 +15,9 @@
         /// <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
         protected override void Dispose(bool disposing)
         {
-            if (disposing && (components != null))
+            if (disposing && (this.components != null))
             {
-                components.Dispose();
+                this.components.Dispose();
             }
             base.Dispose(disposing);
         }
@@ -29,7 +31,7 @@
         private void InitializeComponent()
         {
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(SubrecordListContent));
-            this.subrecordPanel = new TESVSnip.ObjectControls.SubrecordListEditor();
+            this.subrecordPanel = new SubrecordListEditor();
             ((System.ComponentModel.ISupportInitialize)(this.subrecordPanel)).BeginInit();
             this.SuspendLayout();
             // 
@@ -65,6 +67,6 @@
 
         #endregion
 
-        private TESVSnip.ObjectControls.SubrecordListEditor subrecordPanel;
+        private SubrecordListEditor subrecordPanel;
     }
 }

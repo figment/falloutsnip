@@ -1,24 +1,16 @@
-﻿using System;
-using System.Windows.Forms;
-
-namespace TESVSnip.RecordControls
+﻿namespace TESVSnip.UI.RecordControls
 {
+    using System;
+    using System.Windows.Forms;
+
+    using TESVSnip.Domain.Data.RecordStructure;
+    using TESVSnip.Framework;
+
     internal partial class FlagsElement : TextElement
     {
         public FlagsElement()
         {
-            InitializeComponent();
-        }
-
-
-        protected override void UpdateElement()
-        {
-            base.UpdateElement();
-        }
-
-        protected override void UpdateLabel()
-        {
-            base.UpdateLabel();
+            this.InitializeComponent();
         }
 
         protected override void UpdateAllControls()
@@ -49,14 +41,25 @@ namespace TESVSnip.RecordControls
                         value = 0;
                         break;
                 }
-                cboFlags.SetItems(element.flags, flagSize);
-                cboFlags.SetState(value);
+
+                this.cboFlags.SetItems(element.flags, flagSize);
+                this.cboFlags.SetState(value);
             }
+        }
+
+        protected override void UpdateElement()
+        {
+            base.UpdateElement();
+        }
+
+        protected override void UpdateLabel()
+        {
+            base.UpdateLabel();
         }
 
         private void cboFlags_ItemCheck(object sender, ItemCheckEventArgs e)
         {
-            uint value = cboFlags.GetState();
+            uint value = this.cboFlags.GetState();
             uint oldValue = TypeConverter.h2i(Data);
             switch (element.type)
             {
@@ -76,6 +79,7 @@ namespace TESVSnip.RecordControls
                     oldValue = 0;
                     break;
             }
+
             if (value != oldValue)
             {
                 switch (element.type)
@@ -95,6 +99,7 @@ namespace TESVSnip.RecordControls
                         SetCurrentData(new ArraySegment<byte>(TypeConverter.i2h(value)));
                         break;
                 }
+
                 TextBox.Text = "0x" + value.ToString("X");
                 Changed = true;
             }

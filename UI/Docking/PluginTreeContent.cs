@@ -1,15 +1,22 @@
-﻿namespace TESVSnip.Docking
+﻿namespace TESVSnip.UI.Docking
 {
-    public partial class PluginTreeContent : WeifenLuo.WinFormsUI.Docking.DockContent
+    using TESVSnip.UI.ObjectControls;
+
+    using WeifenLuo.WinFormsUI.Docking;
+
+    public partial class PluginTreeContent : DockContent
     {
         public PluginTreeContent()
         {
-            InitializeComponent();
+            this.InitializeComponent();
         }
 
-        public TESVSnip.ObjectControls.PluginTreeView PluginTree
+        public PluginTreeView PluginTree
         {
-            get { return this.pluginTreeControl; }
+            get
+            {
+                return this.pluginTreeControl;
+            }
         }
     }
 }
