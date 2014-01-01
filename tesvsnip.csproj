@@ -17,6 +17,9 @@
     </FileUpgradeFlags>
     <OldToolsVersion>3.5</OldToolsVersion>
     <UpgradeBackupLocation />
+    <IsWebBootstrapper>false</IsWebBootstrapper>
+    <TargetFrameworkProfile>
+    </TargetFrameworkProfile>
     <PublishUrl>publish\</PublishUrl>
     <Install>true</Install>
     <InstallFrom>Disk</InstallFrom>
@@ -88,16 +91,98 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Domain\Data\RecordStructure\Conditional.cs" />
+    <Compile Include="Domain\Data\RecordStructure\CondType.cs" />
+    <Compile Include="Domain\Data\RecordStructure\ElementStructure.cs" />
+    <Compile Include="Domain\Data\RecordStructure\ElementValueType.cs" />
+    <Compile Include="Domain\Data\RecordStructure\Group.cs" />
+    <Compile Include="Domain\Data\RecordStructure\Records.cs" />
+    <Compile Include="Domain\Data\RecordStructure\RecordsRecord.cs" />
+    <Compile Include="Domain\Data\RecordStructure\RecordStructure.cs" />
+    <Compile Include="Domain\Data\RecordStructure\RecordXmlException.cs" />
+    <Compile Include="Domain\Data\RecordStructure\Subrecord.cs" />
+    <Compile Include="Domain\Data\RecordStructure\SubrecordBase.cs" />
+    <Compile Include="Domain\Data\RecordStructure\SubrecordElement.cs" />
+    <Compile Include="Domain\Data\RecordStructure\SubrecordGroup.cs" />
+    <Compile Include="Domain\Data\RecordStructure\SubrecordStructure.cs" />
+    <Compile Include="Domain\Data\Strings\LocalizedString.cs" />
+    <Compile Include="Domain\Data\Strings\LocalizedStringDict.cs" />
+    <Compile Include="Domain\Data\Strings\LocalizedStringFormat.cs" />
+    <Compile Include="Domain\Data\Strings\LocalizedStrings.cs" />
+    <Compile Include="Domain\Model\BaseRecord.cs" />
+    <Compile Include="Domain\Model\BatchCondElementType.cs" />
+    <Compile Include="Domain\Model\BatchCondRecordType.cs" />
+    <Compile Include="Domain\Model\BatchCriteria.cs" />
+    <Compile Include="Domain\Model\BatchCriteriaSettings.cs" />
+    <Compile Include="Domain\Model\BatchElement.cs" />
+    <Compile Include="Domain\Model\BatchSubrecord.cs" />
+    <Compile Include="Domain\Model\ColumnCriteria.cs" />
+    <Compile Include="Domain\Model\ColumnElement.cs" />
+    <Compile Include="Domain\Model\ColumnSettings.cs" />
+    <Compile Include="Domain\Model\ColumnSubrecord.cs" />
+    <Compile Include="Domain\Model\Delegates.cs" />
+    <Compile Include="Domain\Model\Element.cs" />
+    <Compile Include="Domain\Model\ElementAssignmentType.cs" />
+    <Compile Include="Domain\Model\FlagDefs.cs" />
+    <Compile Include="Domain\Model\GroupRecord.cs" />
+    <Compile Include="Domain\Model\IGroupRecord.cs" />
+    <Compile Include="Domain\Model\IRecord.cs" />
+    <Compile Include="Domain\Model\ISelectionContext.cs" />
+    <Compile Include="Domain\Model\Plugin.cs" />
+    <Compile Include="Domain\Model\PluginList.cs" />
+    <Compile Include="Domain\Model\Rec.cs" />
+    <Compile Include="Domain\Model\Record.cs" />
+    <Compile Include="Domain\Model\RecordChangeEventArgs.cs" />
+    <Compile Include="Domain\Model\SearchCondElementType.cs" />
+    <Compile Include="Domain\Model\SearchCondRecordType.cs" />
+    <Compile Include="Domain\Model\SearchCriteria.cs" />
+    <Compile Include="Domain\Model\SearchCriteriaList.cs" />
+    <Compile Include="Domain\Model\SearchCriteriaSettings.cs" />
+    <Compile Include="Domain\Model\SearchCriteriaXmlSettings.cs" />
+    <Compile Include="Domain\Model\SearchElement.cs" />
+    <Compile Include="Domain\Model\SearchElementXml.cs" />
+    <Compile Include="Domain\Model\SearchSubrecord.cs" />
+    <Compile Include="Domain\Model\SearchSubrecordXml.cs" />
+    <Compile Include="Domain\Model\SubRecord.cs" />
+    <Compile Include="Domain\Model\TESParserException.cs" />
+    <Compile Include="Domain\Scripts\Keywords.cs" />
+    <Compile Include="Domain\Scripts\ScriptCompiler.cs" />
+    <Compile Include="Domain\Scripts\Token.cs" />
+    <Compile Include="Domain\Scripts\TokenStream.cs" />
+    <Compile Include="Domain\Scripts\TokenType.cs" />
+    <Compile Include="Domain\Services\Compressor.cs" />
+    <Compile Include="Domain\Services\Options.cs" />
+    <Compile Include="Domain\Services\Settings.cs" />
     <Compile Include="Framework\Collections\AdvancedList.cs" />
+    <Compile Include="Framework\Collections\PropertyComparer.cs" />
+    <Compile Include="Framework\Collections\PropertyComparerCollection.cs" />
     <Compile Include="Framework\Collections\ValueComparer.cs" />
-    <Compile Include="Properties\Settings.cs">
-      <SubType>Code</SubType>
+    <Compile Include="Framework\EnumerableExtensions.cs" />
+    <Compile Include="Framework\Extensions.cs" />
+    <Compile Include="Framework\ICloneable.cs" />
+    <Compile Include="Framework\Pair.cs" />
+    <Compile Include="Framework\Persistence\IPostSerializationCallback.cs" />
+    <Compile Include="Framework\Persistence\PersistableAttribute.cs" />
+    <Compile Include="Framework\Persistence\PersistAssist.cs" />
+    <Compile Include="Framework\Persistence\PersistContext.cs" />
+    <Compile Include="Framework\Persistence\PersistContextStates.cs" />
+    <Compile Include="Framework\Persistence\PersistObject.cs" />
+    <Compile Include="Framework\Persistence\PersistSurrogate.cs" />
+    <Compile Include="Framework\Persistence\PersistType.cs" />
+    <Compile Include="Framework\Persistence\SerializationInfoCache.cs" />
+    <Compile Include="Framework\Persistence\serializationinfocachelist.cs" />
+    <Compile Include="Framework\Services\Encoding.cs" />
+    <Compile Include="Framework\Services\FontLangInfo.cs" />
+    <Compile Include="Framework\TypeConverter.cs" />
+    <Compile Include="UI\Controls\CustomTreeView.cs">
+      <SubType>Component</SubType>
     </Compile>
-    <Compile Include="Properties\Settings.Designer.cs">
-      <DependentUpon>Settings.settings</DependentUpon>
-      <DesignTimeSharedInput>True</DesignTimeSharedInput>
-      <AutoGen>True</AutoGen>
-    </Compile>
+    <Compile Include="UI\RecordBuilder.cs" />
+    <Compile Include="UI\RecordControls\IGroupedElementControl.cs" />
+    <Compile Include="UI\RecordControls\IOuterElementControl.cs" />
+    <Compile Include="UI\RecordControls\ITextElementControl.cs" />
+    <Compile Include="UI\SelectionContext.cs" />
+    <Compile Include="UI\Spells.cs" />
     <Compile Include="Vendor\Controls\ballontooltip.cs">
       <SubType>Component</SubType>
     </Compile>
@@ -113,9 +198,6 @@
     <Compile Include="Vendor\Controls\CustomComboBox.cs">
       <SubType>Component</SubType>
     </Compile>
-    <Compile Include="UI\Controls\CustomTreeView.cs">
-      <SubType>Component</SubType>
-    </Compile>
     <Compile Include="Vendor\Controls\FlagComboBox.cs">
       <SubType>Component</SubType>
     </Compile>
@@ -124,6 +206,17 @@
     </Compile>
     <Compile Include="Vendor\Controls\History.cs" />
     <Compile Include="Vendor\Controls\nativemethods.cs" />
+    <Compile Include="Vendor\HexBox\ByteCollection.cs" />
+    <Compile Include="Vendor\HexBox\DataBlock.cs" />
+    <Compile Include="Vendor\HexBox\DataMap.cs" />
+    <Compile Include="Vendor\HexBox\Design\HexFontEditor.cs" />
+    <Compile Include="Vendor\HexBox\DynamicByteProvider.cs" />
+    <Compile Include="Vendor\HexBox\FileByteProvider.cs" />
+    <Compile Include="Vendor\HexBox\HexBox.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Vendor\HexBox\IByteProvider.cs" />
+    <Compile Include="Vendor\HexBox\NativeMethods.cs" />
     <Compile Include="Vendor\ObjectListView\CellEditing\CellEditKeyEngine.cs" />
     <Compile Include="Vendor\ObjectListView\CellEditing\CellEditors.cs">
       <SubType>Component</SubType>
@@ -211,6 +304,18 @@
     <Compile Include="Vendor\ObjectListView\VirtualObjectListView.cs">
       <SubType>Component</SubType>
     </Compile>
+    <Content Include="Vendor\ObjectListView\CustomDictionary.xml" />
+    <Content Include="Vendor\ObjectListView\Resources\clear-filter.png" />
+    <Content Include="Vendor\ObjectListView\Resources\clear-filter1.png" />
+    <Content Include="Vendor\ObjectListView\Resources\coffee.jpg" />
+    <Content Include="Vendor\ObjectListView\Resources\filter-icons3.png" />
+    <Content Include="Vendor\ObjectListView\Resources\filter-icons31.png" />
+    <Content Include="Vendor\ObjectListView\Resources\filter.png" />
+    <Content Include="Vendor\ObjectListView\Resources\filter1.png" />
+    <Content Include="Vendor\ObjectListView\Resources\sort-ascending.png" />
+    <Content Include="Vendor\ObjectListView\Resources\sort-ascending1.png" />
+    <Content Include="Vendor\ObjectListView\Resources\sort-descending.png" />
+    <Content Include="Vendor\ObjectListView\Resources\sort-descending1.png" />
     <Compile Include="Vendor\Controls\OldNewEvent.cs" />
     <Compile Include="Vendor\Controls\PopupControl.cs">
       <SubType>Component</SubType>
@@ -221,12 +326,6 @@
     <Compile Include="Vendor\Controls\virtuallistview.cs">
       <SubType>Component</SubType>
     </Compile>
-    <Compile Include="Framework\Persistence\persistassist.cs" />
-    <Compile Include="Domain\Data\RecordBuilder.cs" />
-    <Compile Include="Domain\Data\RecordStructure.cs">
-      <SubType>code</SubType>
-    </Compile>
-    <Compile Include="Framework\Persistence\serializationinfocachelist.cs" />
     <Compile Include="UI\Docking\BaseDockContent.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -335,21 +434,6 @@
     <Compile Include="UI\Forms\SearchFilterAdvanced.Designer.cs">
       <DependentUpon>SearchFilterAdvanced.cs</DependentUpon>
     </Compile>
-    <Compile Include="Main\CastValue.cs" />
-    <Compile Include="Main\Spells.cs" />
-    <Compile Include="Domain\Model\BaseRecord.cs" />
-    <Compile Include="Domain\Model\ColumnElement.cs" />
-    <Compile Include="Domain\Model\BatchElement.cs" />
-    <Compile Include="Domain\Model\Element.cs" />
-    <Compile Include="Domain\Model\GroupRecord.cs" />
-    <Compile Include="Domain\Model\IGroupRecord.cs" />
-    <Compile Include="Domain\Model\IRecord.cs" />
-    <Compile Include="Domain\Model\Plugin.cs" />
-    <Compile Include="Domain\Model\PluginList.cs" />
-    <Compile Include="Domain\Model\Rec.cs" />
-    <Compile Include="Domain\Model\Record.cs" />
-    <Compile Include="Domain\Model\SearchElement.cs" />
-    <Compile Include="Domain\Model\SubRecord.cs" />
     <Compile Include="UI\ObjectControls\RecordEditor.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -380,24 +464,12 @@
     <Compile Include="UI\Forms\HeaderEditor.designer.cs">
       <DependentUpon>HeaderEditor.cs</DependentUpon>
     </Compile>
-    <Compile Include="Vendor\HexBox\ByteCollection.cs" />
-    <Compile Include="Vendor\HexBox\DataBlock.cs" />
-    <Compile Include="Vendor\HexBox\DataMap.cs" />
-    <Compile Include="Vendor\HexBox\Design\HexFontEditor.cs" />
-    <Compile Include="Vendor\HexBox\DynamicByteProvider.cs" />
-    <Compile Include="Vendor\HexBox\FileByteProvider.cs" />
-    <Compile Include="Vendor\HexBox\HexBox.cs">
-      <SubType>Component</SubType>
-    </Compile>
-    <Compile Include="Vendor\HexBox\IByteProvider.cs" />
-    <Compile Include="Vendor\HexBox\NativeMethods.cs" />
     <Compile Include="UI\Forms\HexDataEdit.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="UI\Forms\HexDataEdit.designer.cs">
       <DependentUpon>HexDataEdit.cs</DependentUpon>
     </Compile>
-    <Compile Include="Framework\Collections\LocalizedString.cs" />
     <Compile Include="Framework\Collections\ordereddictionary.cs" />
     <Compile Include="UI\ObjectControls\PluginTreeView.cs">
       <SubType>UserControl</SubType>
@@ -411,11 +483,11 @@
     <Compile Include="UI\ObjectControls\RecordSearch.Designer.cs">
       <DependentUpon>RecordSearch.cs</DependentUpon>
     </Compile>
-    <Compile Include="UI\ObjectControls\SubrecordElementEditor.cs">
+    <Compile Include="UI\ObjectControls\SubrecordEditor.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="UI\ObjectControls\SubrecordElementEditor.Designer.cs">
-      <DependentUpon>SubrecordElementEditor.cs</DependentUpon>
+    <Compile Include="UI\ObjectControls\SubrecordEditor.Designer.cs">
+      <DependentUpon>SubrecordEditor.cs</DependentUpon>
     </Compile>
     <Compile Include="UI\ObjectControls\SubrecordListEditor.cs">
       <SubType>UserControl</SubType>
@@ -423,7 +495,6 @@
     <Compile Include="UI\ObjectControls\SubrecordListEditor.Designer.cs">
       <DependentUpon>SubrecordListEditor.cs</DependentUpon>
     </Compile>
-    <Compile Include="Main\Pair.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Properties\Resources.Designer.cs">
@@ -536,8 +607,8 @@
     <EmbeddedResource Include="UI\ObjectControls\RecordSearch.resx">
       <DependentUpon>RecordSearch.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="UI\ObjectControls\SubrecordElementEditor.resx">
-      <DependentUpon>SubrecordElementEditor.cs</DependentUpon>
+    <EmbeddedResource Include="UI\ObjectControls\SubrecordEditor.resx">
+      <DependentUpon>SubrecordEditor.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="UI\ObjectControls\SubrecordListEditor.resx">
       <DependentUpon>SubrecordListEditor.cs</DependentUpon>
@@ -580,13 +651,16 @@
       <DependentUpon>TextElement.cs</DependentUpon>
     </EmbeddedResource>
     <None Include="build\tesvsnip.snk" />
+    <None Include="Domain\Data\RecordStructure.xsd" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
     </None>
-    <None Include="Vendor\ObjectListView\ObjectListView.FxCop" />
-    <None Include="Vendor\ObjectListView\ObjectListView.shfb" />
-    <Compile Include="Main\RecordStructure.cs" />
+    <Compile Include="Properties\Settings.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Settings.settings</DependentUpon>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+    </Compile>
     <Compile Include="UI\RecordControls\BaseElement.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -655,15 +729,12 @@
     <Compile Include="Vendor\RTFLib\RTF\RTFRow.cs" />
     <Compile Include="Vendor\RTFLib\RTF\RTFRowDefinition.cs" />
     <Compile Include="Vendor\RTFLib\RTF\RTFUtil.cs" />
-    <Compile Include="Main\Settings.cs" />
     <Compile Include="UI\Forms\MainView.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="UI\Forms\MainView.designer.cs">
       <DependentUpon>MainView.cs</DependentUpon>
     </Compile>
-    <Compile Include="Main\TESsnipParser.cs" />
-    <Compile Include="Main\TypeConverter.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\tesv_ico.ico" />
@@ -766,14 +837,13 @@
     <MergeOutputFile>$(StageOutputDir)\$(TargetName)$(TargetExt)</MergeOutputFile>
   </PropertyGroup>
   <ItemGroup>
+    <inputAssemblies Include="$(TargetPath)" />
     <inputAssemblies Include="$(TargetDir)\*.dll" />
     <CopyToStaging Include="$(ProjectDir)\TESVsnip_LICENSE" />
     <CopyToStaging Include="$(ProjectDir)\TESVsnip_README.TXT" />
     <CopyToStagingConf Include="$(ProjectDir)conf\**" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Framework\Services\" />
-  </ItemGroup>
+  <ItemGroup />
   <Target Name="Package">
     <MakeDir Directories="$(StageOutputDir)" />
     <Delete Files="$(StageOutputDir)conf\DockPanel.config" />
@@ -784,8 +854,16 @@
     <Copy SourceFiles="$(TargetPath).config" DestinationFolder="$(StageOutputDir)">
     </Copy>
     <ILMerge InputAssemblies="@(inputAssemblies)" OutputFile="$(MergeOutputFile)" DebugInfo="true" />
+  </Target>
+  <Target Name="Package_rar" DependsOnTargets="Package">
+    <MakeDir Directories="$(StageOutputDir)" />
     <Delete Files="$(StageOutputDir)\$(ProjectName)_v$(Major).$(Minor).rar" />
-    <SimpleExec Command="$(ProgramFiles)\WinRar\rar.exe" Args="a -r $(ProjectName)_v$(Major).$(Minor).rar * -x*.pdb -x*vshost* -x*.rar" WorkingDirectory="$(StageOutputDir)" />
+    <SimpleExec Command="$(ProgramFiles)\WinRar\rar.exe" Args="a -r $(ProjectName)_v$(Major).$(Minor).rar * -x*.pdb -x*vshost* -x*.rar -x*.7z" WorkingDirectory="$(StageOutputDir)" />
     <SimpleExec Command="$(ProgramFiles)\WinRar\rar.exe" Args="c $(ProjectName)_v$(Major).$(Minor).rar" StdIn="TESVsnip_README.TXT" WorkingDirectory="$(StageOutputDir)" />
+  </Target>
+  <Target Name="Package_7z" DependsOnTargets="Package">
+    <MakeDir Directories="$(StageOutputDir)" />
+	<Delete Files="$(StageOutputDir)\$(ProjectName)_v$(Major).$(Minor).7z" />
+    <SimpleExec Command="7za.exe" Args="a -r $(ProjectName)_v$(Major).$(Minor).7z * -x!*.pdb -x!*vshost* -x!*.rar -x!*.7z" WorkingDirectory="$(StageOutputDir)" />
   </Target>
 </Project>

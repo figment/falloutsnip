@@ -1192,7 +1192,11 @@ namespace TESVSnip.UI.Forms
             {
                 return;
             }
+            CloseAllPlugins();
+        }
 
+        private void CloseAllPlugins()
+        {
             PluginList.All.Records.Clear();
             this.PluginTree.UpdateRoots();
             this.SubrecordList.Record = null;
@@ -2052,7 +2056,7 @@ namespace TESVSnip.UI.Forms
                         CloseAllPlugins();
                         if (string.Compare(dlg.FileName, defaultFile, StringComparison.InvariantCultureIgnoreCase) == 0)
                         {
-                            var file = Path.Combine(Program.gameDataDir, "skyrim.esm");
+                            var file = Path.Combine(Options.Value.GameDataDirectory, "skyrim.esm");
                             if (File.Exists(file))
                             {
                                 var p = new Plugin(file, false, GetRecordFilter(file));
@@ -2064,7 +2068,7 @@ namespace TESVSnip.UI.Forms
                             var line = fs.ReadLine();
                             if (line == null) break;
                             if (line == "") continue;
-                            var file = Path.Combine(Program.gameDataDir, line.Trim());
+                            var file = Path.Combine(Options.Value.GameDataDirectory, line.Trim());
                             if (File.Exists(file))
                             {
                                 var p = new Plugin(file, false, GetRecordFilter(file));

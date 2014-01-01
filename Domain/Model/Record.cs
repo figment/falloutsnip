@@ -76,11 +76,14 @@ namespace TESVSnip.Domain.Model
             }
 
             using (var stream = new MemoryStream(recordReader.ReadBytes((int)dataSize)))
+            using (var br = new BinaryReader(stream))
             {
-                using (var dataReader = compressed ? ZLib.Decompress(stream, (int)realSize) : new BinaryReader(stream))
+                var dataReader = compressed ? Decompressor.Decompress(br, (int) dataSize, (int) realSize) : br;
                 {
-                    while (dataReader.BaseStream.Position < dataReader.BaseStream.Length)
+                    while (true)
                     {
+                        var left = dataReader.BaseStream.Length - dataReader.BaseStream.Position;
+                        if (left < 4) {break;}
                         var type = ReadRecName(dataReader);
                         uint size;
                         if (type == "XXXX")
@@ -547,9 +550,9 @@ namespace TESVSnip.Domain.Model
                 }
 
                 data = stream.ToArray();
-                if (compressed)
+                if (compressed) // compressed
                 {
-                    data = ZLib.Compress(data);
+                    data = Compressor.Compress(data);
                 }
             }
 
