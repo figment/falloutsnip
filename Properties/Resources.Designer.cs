@@ -295,9 +295,49 @@ namespace TESVSnip.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap Copy1 {
+            get {
+                object obj = ResourceManager.GetObject("Copy1", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap CreateWall {
+            get {
+                object obj = ResourceManager.GetObject("CreateWall", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap Cut {
+            get {
+                object obj = ResourceManager.GetObject("Cut", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap delete {
             get {
                 object obj = ResourceManager.GetObject("delete", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap Delete_ {
+            get {
+                object obj = ResourceManager.GetObject("Delete_", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -634,9 +674,29 @@ namespace TESVSnip.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap Open1 {
+            get {
+                object obj = ResourceManager.GetObject("Open1", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap Paste {
             get {
                 object obj = ResourceManager.GetObject("Paste", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap Paste1 {
+            get {
+                object obj = ResourceManager.GetObject("Paste1", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -660,11 +720,91 @@ namespace TESVSnip.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Icon similar to (Icon).
+        /// </summary>
+        internal static System.Drawing.Icon py {
+            get {
+                object obj = ResourceManager.GetObject("py", resourceCulture);
+                return ((System.Drawing.Icon)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Icon similar to (Icon).
+        /// </summary>
+        internal static System.Drawing.Icon pycon {
+            get {
+                object obj = ResourceManager.GetObject("pycon", resourceCulture);
+                return ((System.Drawing.Icon)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Byte[].
+        /// </summary>
+        internal static byte[] Python {
+            get {
+                object obj = ResourceManager.GetObject("Python", resourceCulture);
+                return ((byte[])(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap PythonConsole16x16 {
+            get {
+                object obj = ResourceManager.GetObject("PythonConsole16x16", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap PythonConsole32x32 {
+            get {
+                object obj = ResourceManager.GetObject("PythonConsole32x32", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap PythonScript16x16 {
+            get {
+                object obj = ResourceManager.GetObject("PythonScript16x16", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap PythonScript32x32 {
+            get {
+                object obj = ResourceManager.GetObject("PythonScript32x32", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
         internal static System.Drawing.Bitmap quick_restart {
             get {
                 object obj = ResourceManager.GetObject("quick_restart", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap Redo {
+            get {
+                object obj = ResourceManager.GetObject("Redo", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -711,9 +851,29 @@ namespace TESVSnip.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap Run {
+            get {
+                object obj = ResourceManager.GetObject("Run", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap Save {
             get {
                 object obj = ResourceManager.GetObject("Save", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap Save1 {
+            get {
+                object obj = ResourceManager.GetObject("Save1", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -799,6 +959,16 @@ namespace TESVSnip.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap Undo {
+            get {
+                object obj = ResourceManager.GetObject("Undo", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap up {
             get {
                 object obj = ResourceManager.GetObject("up", resourceCulture);
@@ -822,6 +992,16 @@ namespace TESVSnip.Properties {
         internal static string WarningText {
             get {
                 return ResourceManager.GetString("WarningText", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap WordWrap {
+            get {
+                object obj = ResourceManager.GetObject("WordWrap", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
             }
         }
         

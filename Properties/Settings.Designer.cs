@@ -499,5 +499,17 @@ namespace TESVSnip.Properties {
                 this["AllESMRecordsOld"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string IronPythonPath {
+            get {
+                return ((string)(this["IronPythonPath"]));
+            }
+            set {
+                this["IronPythonPath"] = value;
+            }
+        }
     }
 }

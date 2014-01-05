@@ -12,6 +12,7 @@ Change Log:
 v 4.5
 - Merged changes from 4.3 and 4.4
 - Added Open List Shortcut
+- Initial pass at embedded IronPython console to enable gui scripts
 
 v 4.4.2a
 - Updated RecordStructure.xml
@@ -280,9 +281,13 @@ Credits:
 * Leandro Conde - For his work on 4.4.0a
 * Smaug Nogardeht - For his work on 4.4.0a
 
+
 License:
 * The TESsnip code is licensed under GPL so this is by extension also GPL
 * Included third party components are covered by their own license
+  * IronLab PythonConsole (GPL) https://code.google.com/p/ironlab/
+  * Revit Python Shell (MIT) https://code.google.com/p/revitpythonshell/ 
+
 
 Source:
 git://github.com/figment/tesvsnip.git

@@ -1,4 +1,5 @@
 using System.Configuration;
+using PythonConsoleControl;
 using TESVSnip.Domain.Scripts;
 
 namespace TESVSnip.UI.Forms
@@ -2082,21 +2083,24 @@ namespace TESVSnip.UI.Forms
                     using (StreamReader fs = File.OpenText(dlg.FileName))
                     {
                         CloseAllPlugins();
-                        if (string.Compare(dlg.FileName, defaultFile, StringComparison.InvariantCultureIgnoreCase) == 0)
-                        {
-                            string file = Path.Combine(Options.Value.GameDataDirectory, "skyrim.esm");
-                            if (File.Exists(file))
-                            {
-                                var p = new Plugin(file, false, GetRecordFilter(file));
-                                PluginList.All.AddRecord(p);
-                            }
-                        }
+                        bool checkSkyrim = string.Compare(dlg.FileName, defaultFile, StringComparison.InvariantCultureIgnoreCase) == 0;
                         while (true)
                         {
                             string line = fs.ReadLine();
                             if (line == null) break;
                             if (line == "") continue;
                             string file = Path.Combine(Options.Value.GameDataDirectory, line.Trim());
+                            if (checkSkyrim)
+                            {
+                                checkSkyrim = false;
+                                // skyrim is not first item in plugins.txt so load it first
+                                if (string.Compare(Path.GetFileName(file), "skyrim.esm", StringComparison.InvariantCultureIgnoreCase) != 0)
+                                {
+                                    var skyrimFile = Path.Combine(Options.Value.GameDataDirectory, "skyrim.esm");
+                                    if (File.Exists(skyrimFile))
+                                        PluginList.All.AddRecord(new Plugin(skyrimFile, false, GetRecordFilter(skyrimFile)));
+                                }
+                            }
                             if (File.Exists(file))
                             {
                                 var p = new Plugin(file, false, GetRecordFilter(file));
@@ -2146,6 +2150,7 @@ namespace TESVSnip.UI.Forms
             }
         }
 
+        #region MessageFilter
         public class MainViewMessageFilter : IMessageFilter
         {
             public const int WM_CHAR = 0x102;
@@ -2166,37 +2171,21 @@ namespace TESVSnip.UI.Forms
             internal enum VirtualKeyStates : int
             {
                 VK_LBUTTON = 0x01,
-
                 VK_RBUTTON = 0x02,
-
                 VK_CANCEL = 0x03,
-
                 VK_MBUTTON = 0x04,
-
                 VK_LSHIFT = 0xA0,
-
                 VK_RSHIFT = 0xA1,
-
                 VK_LCONTROL = 0xA2,
-
                 VK_RCONTROL = 0xA3,
-
                 VK_LMENU = 0xA4,
-
                 VK_RMENU = 0xA5,
-
                 VK_LEFT = 0x25,
-
                 VK_UP = 0x26,
-
                 VK_RIGHT = 0x27,
-
                 VK_DOWN = 0x28,
-
                 VK_SHIFT = 0x10,
-
                 VK_CONTROL = 0x11,
-
                 VK_MENU = 0x12,
             }
 
@@ -2234,6 +2223,7 @@ namespace TESVSnip.UI.Forms
                 return true;
             }
         }
+        #endregion
 
         /// <summary>
         /// Event for MRU List
@@ -2273,6 +2263,56 @@ namespace TESVSnip.UI.Forms
             catch (Exception ex)
             {
                 MessageBox.Show(ex.Message, "Tesvsnip", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
+
+        public TESVSnip.UI.Docking.InterpreterConsole CreateInterpreterWindow()
+        {
+            int id = Application.OpenForms.OfType<InterpreterConsole>().Count() + 1;
+            var form = new InterpreterConsole {Text = string.Format("Console {0}", id)};
+            var console = Application.OpenForms.OfType<InterpreterConsole>().LastOrDefault(x => x.Visible);
+            if (console != null)
+            {
+                if (console.Pane != null)
+                {
+                    // second item in list
+                    form.Show(console.Pane, null);
+                }
+                else if (console.PanelPane != null)
+                {
+                    form.Show(console.PanelPane, null);
+                }
+            }
+            else
+            {
+                form.Show(this.dockPanel, DockState.Document);
+            }
+
+            return form;
+        }
+
+        private void consoleToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                var pyWindow = CreateInterpreterWindow();
+                if (pyWindow != null)
+                {
+                    var pyConsole = pyWindow.InnerView.consoleControl;
+                    Scripting.BootstrapConsole(pyConsole, (c) =>
+                        {
+                            c.ScriptScope.SetVariable("__window__", this);
+                            c.ScriptScope.SetVariable("__plugins__", PluginList.All);
+                            c.ScriptScope.SetVariable("__options__", Options.Value);
+                            c.ScriptScope.SetVariable("__settings__", Settings.Default);
+                            c.ScriptScope.SetVariable("plugins", PluginList.All);
+                        });
+                }
+            }
+            catch 
+            {
+                
             }
         }
     }

@@ -23,6 +23,7 @@ namespace TESVSnip
         {
             Platform.Initialize();
             Options.Initialize(args);
+            Scripting.Initialize();
             Encoding.Initalize(TESVSnip.Properties.Settings.Default.UseUTF8);
             try
             {

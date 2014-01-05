@@ -1,0 +1,88 @@
+﻿<UserControl
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:PythonConsoleControl="clr-namespace:PythonConsoleControl;assembly=PythonConsoleControl" xmlns:avalonedit="http://icsharpcode.net/sharpdevelop/avalonedit" x:Class="TESVSnip.UI.Hosting.IronPythonConsole" 
+             mc:Ignorable="d" 
+             d:DesignHeight="500" d:DesignWidth="700">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="50*" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="30*" />
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="1*" />
+            <ColumnDefinition Width="Auto" />
+        </Grid.ColumnDefinitions>
+        <Grid Grid.Row="0" Grid.Column="0">
+            <PythonConsoleControl:IronPythonConsoleControl Name="consoleControl"/>
+        </Grid>
+        <GridSplitter Grid.Row="1" Height="10" VerticalAlignment="Center" HorizontalAlignment="Stretch"></GridSplitter>
+        <DockPanel Grid.Row="2" Grid.Column="0">
+            <ToolBar DockPanel.Dock="Top">
+                <ToolBar.Resources>
+                    <Style TargetType="{x:Type Image}">
+                        <Style.Triggers>
+                            <DataTrigger
+                                Binding="{Binding RelativeSource={RelativeSource AncestorType={x:Type ButtonBase}, AncestorLevel=1}, Path=IsEnabled}"
+                                Value="False">
+                                <Setter Property="Opacity" Value="0.30" />
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </ToolBar.Resources>
+                <Button Click="openFileClick">
+                    <Image Source="../../Resources/Paste.png" Height="16" />
+                </Button>
+                <Button Click="saveFileClick">
+                    <Image Source="../../Resources/Save.png" Height="16" />
+                </Button>
+                <Separator />
+                <Button Command="Cut">
+                    <Image Source="../../Resources/Cut.png" Height="16" />
+                </Button>
+                <Button Command="Copy">
+                    <Image Source="../../Resources/Copy.png" Height="16" />
+                </Button>
+                <Button Command="Paste">
+                    <Image Source="../../Resources/Paste.png" Height="16" />
+                </Button>
+                <Button Command="Delete">
+                    <Image Source="../../Resources/Delete_.png" Height="16" />
+                </Button>
+                <Separator />
+                <Button Command="Undo">
+                    <Image Source="../../Resources/Undo.png" Height="16" />
+                </Button>
+                <Button Command="Redo">
+                    <Image Source="../../Resources/Redo.png" Height="16" />
+                </Button>
+                <Separator />
+                <CheckBox IsChecked="{Binding WordWrap, ElementName=textEditor}">
+                    <Image Source="../../Resources/WordWrap.png" Height="16" />
+                </CheckBox>
+                <CheckBox IsChecked="{Binding ShowLineNumbers, ElementName=textEditor}">
+                    <TextBlock Width="16" TextAlignment="Center">#</TextBlock>
+                </CheckBox>
+                <CheckBox IsChecked="{Binding Options.ShowEndOfLine, ElementName=textEditor}">
+                    <TextBlock Width="16" TextAlignment="Center">¶</TextBlock>
+                </CheckBox>
+                <Separator />
+                <Button Click="runClick">
+                    <Image Source="../../Resources/Run.png" Height="16" />
+                </Button>
+            </ToolBar>
+            <Grid DockPanel.Dock="Bottom">
+                <avalonedit:TextEditor
+                    Name="textEditor"
+                    FontFamily="Consolas"
+                    FontSize="10pt" TextInput="textEditor_TextInput" PreviewKeyDown="textEditor_PreviewKeyDown">
+                    # IronPython Pad. Write code snippets here and F5 to run.
+                </avalonedit:TextEditor>
+            </Grid>
+        </DockPanel>
+
+    </Grid>
+    </UserControl>

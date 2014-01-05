@@ -73,24 +73,34 @@
     <GenerateSerializationAssemblies>On</GenerateSerializationAssemblies>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Ionic.Zlib">
-      <HintPath>thirdparty\Ionic.Zlib.dll</HintPath>
+    <Reference Include="ICSharpCode.AvalonEdit">
+      <HintPath>thirdparty\ICSharpCode.AvalonEdit.dll</HintPath>
     </Reference>
     <Reference Include="IronPython, Version=2.7.0.40, Culture=neutral, PublicKeyToken=7f709c5b713576e1, processorArchitecture=MSIL">
-      <Private>True</Private>
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>Vendor\IronPython-2.7.4\IronPython.dll</HintPath>
     </Reference>
     <Reference Include="IronPython.Modules, Version=2.7.0.40, Culture=neutral, PublicKeyToken=7f709c5b713576e1, processorArchitecture=MSIL">
-      <Private>True</Private>
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>Vendor\IronPython-2.7.4\IronPython.Modules.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="Microsoft.Dynamic, Version=1.1.0.20, Culture=neutral, PublicKeyToken=7f709c5b713576e1, processorArchitecture=MSIL">
-      <Private>True</Private>
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>Vendor\IronPython-2.7.4\Microsoft.Dynamic.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.Scripting, Version=1.1.0.20, Culture=neutral, PublicKeyToken=7f709c5b713576e1, processorArchitecture=MSIL">
-      <Private>True</Private>
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>Vendor\IronPython-2.7.4\Microsoft.Scripting.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.Scripting.Metadata, Version=1.1.0.20, Culture=neutral, PublicKeyToken=7f709c5b713576e1, processorArchitecture=MSIL">
-      <Private>True</Private>
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>Vendor\IronPython-2.7.4\Microsoft.Scripting.Metadata.dll</HintPath>
+    </Reference>
+    <Reference Include="PresentationCore" />
+    <Reference Include="PresentationFramework" />
+    <Reference Include="PythonConsoleControl">
+      <HintPath>thirdparty\PythonConsoleControl.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Configuration" />
@@ -102,10 +112,14 @@
     <Reference Include="System.Data" />
     <Reference Include="System.Drawing" />
     <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Xaml" />
     <Reference Include="System.Xml" />
+    <Reference Include="UIAutomationProvider" />
     <Reference Include="WeifenLuo.WinFormsUI.Docking">
       <HintPath>thirdparty\WeifenLuo.WinFormsUI.Docking.dll</HintPath>
     </Reference>
+    <Reference Include="WindowsBase" />
+    <Reference Include="WindowsFormsIntegration" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Domain\Data\RecordStructure\Conditional.cs" />
@@ -194,6 +208,7 @@
     <Compile Include="Framework\Persistence\serializationinfocachelist.cs" />
     <Compile Include="Framework\Services\Encoding.cs" />
     <Compile Include="Framework\Services\FontLangInfo.cs" />
+    <Compile Include="Framework\Services\Scripting.cs" />
     <Compile Include="Framework\TypeConverter.cs" />
     <Compile Include="TranslateUI\Localization.cs">
       <SubType>Form</SubType>
@@ -202,11 +217,22 @@
     <Compile Include="UI\Controls\CustomTreeView.cs">
       <SubType>Component</SubType>
     </Compile>
+    <Compile Include="UI\Docking\InterpreterConsole.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="UI\Docking\InterpreterConsole.Designer.cs">
+      <DependentUpon>InterpreterConsole.cs</DependentUpon>
+    </Compile>
+    <Compile Include="UI\Hosting\ConsoleOptions.cs" />
+    <Compile Include="UI\Hosting\IronPythonConsole.xaml.cs">
+      <DependentUpon>IronPythonConsole.xaml</DependentUpon>
+    </Compile>
     <Compile Include="UI\MruStripMenu.cs" />
     <Compile Include="UI\RecordBuilder.cs" />
     <Compile Include="UI\RecordControls\IGroupedElementControl.cs" />
     <Compile Include="UI\RecordControls\IOuterElementControl.cs" />
     <Compile Include="UI\RecordControls\ITextElementControl.cs" />
+    <Compile Include="UI\Hosting\PyInterpreter.cs" />
     <Compile Include="UI\SelectionContext.cs" />
     <Compile Include="UI\Spells.cs" />
     <Compile Include="Vendor\Controls\ballontooltip.cs">
@@ -330,6 +356,23 @@
     <Compile Include="Vendor\ObjectListView\VirtualObjectListView.cs">
       <SubType>Component</SubType>
     </Compile>
+    <Resource Include="Resources\Copy.png" />
+    <Resource Include="Resources\CreateWall.png" />
+    <Resource Include="Resources\Cut.png" />
+    <Resource Include="Resources\Open.png" />
+    <Resource Include="Resources\Paste.png" />
+    <Resource Include="Resources\py.ico" />
+    <Resource Include="Resources\pycon.ico" />
+    <Resource Include="Resources\PythonConsole16x16.png" />
+    <Resource Include="Resources\PythonConsole32x32.png" />
+    <Resource Include="Resources\PythonScript16x16.png" />
+    <Resource Include="Resources\PythonScript32x32.png" />
+    <Resource Include="Resources\Redo.png" />
+    <Resource Include="Resources\Run.png" />
+    <Resource Include="Resources\Save.png" />
+    <Resource Include="Resources\Undo.png" />
+    <Resource Include="Resources\WordWrap.png" />
+    <Resource Include="Resources\Delete_.png" />
     <Content Include="Vendor\ObjectListView\CustomDictionary.xml" />
     <Content Include="Vendor\ObjectListView\Resources\clear-filter.png" />
     <Content Include="Vendor\ObjectListView\Resources\clear-filter1.png" />
@@ -534,12 +577,12 @@
     <Compile Include="UI\RecordControls\HexElement.Designer.cs">
       <DependentUpon>HexElement.cs</DependentUpon>
     </Compile>
-    <EmbeddedResource Include="Lang\resource.fr-FR.resx">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </EmbeddedResource>
+    <EmbeddedResource Include="Lang\resource.fr-FR.resx" />
     <EmbeddedResource Include="Lang\resource.resx">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="UI\Docking\InterpreterConsole.resx">
+      <DependentUpon>InterpreterConsole.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Vendor\Controls\ballontooltip.resx">
       <DependentUpon>ballontooltip.cs</DependentUpon>
@@ -698,6 +741,7 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <None Include="Domain\Data\RecordStructure.xsd" />
+    <None Include="Resources\Python.xshd" />
     <None Include="TranslateUI\Tools\ResEx\ResEx.chm" />
     <None Include="TranslateUI\Tools\ResEx\ResEx.exe.config" />
     <None Include="Properties\Settings.settings">
@@ -915,6 +959,9 @@
   </Target>
   -->
   <Target Name="AfterBuild">
+    <MakeDir Directories="$(TargetDir)Lang" />
+    <SimpleExec Command="$(ProjectDir)\Lang\resgen.exe" Args="$(ProjectDir)Lang\resource.resx $(TargetDir)Lang\resource.resources" WorkingDirectory="$(TargetDir)Lang" />
+    <SimpleExec Command="$(ProjectDir)\Lang\resgen.exe" Args="$(ProjectDir)Lang\resource.fr-FR.resx $(TargetDir)Lang\resource.fr-FR.resources" WorkingDirectory="$(TargetDir)Lang" />
     <Copy SourceFiles="@(CopyToStagingPlatform32)" DestinationFolder="$(TargetDir)Platform\x86" />
     <Copy SourceFiles="@(CopyToStagingPlatform64)" DestinationFolder="$(TargetDir)Platform\x64" />
   </Target>
@@ -923,11 +970,7 @@
     <MergeOutputFile>$(StageOutputDir)\$(TargetName)$(TargetExt)</MergeOutputFile>
   </PropertyGroup>
   <PropertyGroup>
-    <PostBuildEvent>"$(ProjectDir)Lang\resgen.exe" "$(TargetDir)Lang\resource.resx"
-"$(ProjectDir)Lang\resgen.exe" "$(TargetDir)Lang\resource.fr-FR.resx"
-del "$(TargetDir)Lang\resource.resx"
-del "$(TargetDir)Lang\resource.fr-FR.resx"
-</PostBuildEvent>
+    <PostBuildEvent />
   </PropertyGroup>
   <ItemGroup>
     <inputAssemblies Include="$(TargetPath)" />
@@ -935,25 +978,35 @@ del "$(TargetDir)Lang\resource.fr-FR.resx"
     <CopyToStaging Include="$(ProjectDir)\TESVsnip_LICENSE" />
     <CopyToStaging Include="$(ProjectDir)\TESVsnip_README.TXT" />
     <CopyToStagingConf Include="$(ProjectDir)conf\**" />
-    <CopyToStagingLang Include="$(TargetDir)Lang\**" />
+    <CopyToStagingLang Include="$(TargetDir)Lang\resource.resources" />
+    <CopyToStagingLang Include="$(TargetDir)Lang\resource.fr-FR.resources" />
+    <CopyToStagingFr Include="$(TargetDir)Lang\**" />
+    <CopyToStagingFr Include="$(TargetDir)fr-FR\TESVSnip.resources.dll" />
     <CopyToStagingFr Include="$(TargetDir)fr-FR\**" />
-    <CopyToStagingPython Include="$(ProjectDir)Vendor\IronPython-2.7.3\IronPython.dll" />
-    <CopyToStagingPython Include="$(ProjectDir)Vendor\IronPython-2.7.3\IronPython.Modules.dll" />
-    <CopyToStagingPython Include="$(ProjectDir)Vendor\IronPython-2.7.3\Microsoft.Dynamic.dll" />
-    <CopyToStagingPython Include="$(ProjectDir)Vendor\IronPython-2.7.3\Microsoft.Scripting.dll" />
+    <CopyToStagingPython Include="$(ProjectDir)Vendor\IronPython-2.7.4\IronPython.dll" />
+    <CopyToStagingPython Include="$(ProjectDir)Vendor\IronPython-2.7.4\IronPython.Modules.dll" />
+    <CopyToStagingPython Include="$(ProjectDir)Vendor\IronPython-2.7.4\Microsoft.Dynamic.dll" />
+    <CopyToStagingPython Include="$(ProjectDir)Vendor\IronPython-2.7.4\Microsoft.Scripting.dll" />
     <CopyToStagingPlatform64 Include="$(ProjectDir)Platform\x64\zlib1.dll" />
     <CopyToStagingPlatform64 Include="$(ProjectDir)Platform\x64\ZLibMC.dll" />
     <CopyToStagingPlatform32 Include="$(ProjectDir)Platform\x86\zlib1.dll" />
     <CopyToStagingPlatform32 Include="$(ProjectDir)Platform\x86\ZLibMC.dll" />
   </ItemGroup>
-  <ItemGroup />
-  <Target Name="Package">
+  <ItemGroup>
+    <Page Include="UI\Hosting\IronPythonConsole.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+  </ItemGroup>
+  <Target Name="Package" DependsOnTargets="AfterBuild">
     <MakeDir Directories="$(StageOutputDir)" />
+    <MakeDir Directories="$(StageOutputDir)Lang" />
+    <MakeDir Directories="$(StageOutputDir)fr-FR" />
     <Delete Files="$(StageOutputDir)conf\DockPanel.config" />
     <Copy SourceFiles="@(CopyToStaging)" DestinationFolder="$(StageOutputDir)" />
     <Copy SourceFiles="@(CopyToStagingConf)" DestinationFolder="$(StageOutputDir)conf" />
-    <Copy SourceFiles="@(CopyToStagingLang)" DestinationFolder="$(StageOutputDir)Lang" />
-    <Copy SourceFiles="@(CopyToStagingFr)" DestinationFolder="$(StageOutputDir)fr-FR" />
+    <Copy SourceFiles="@(CopyToStagingLang)" DestinationFolder="$(StageOutputDir)Lang"/>
+    <Copy SourceFiles="@(CopyToStagingFr)" DestinationFolder="$(StageOutputDir)fr-FR"/>
     <Copy SourceFiles="@(CopyToStagingPython)" DestinationFolder="$(StageOutputDir)" />
     <Copy SourceFiles="$(TargetPath).config" DestinationFolder="$(StageOutputDir)" />
     <Copy SourceFiles="@(inputAssemblies)" DestinationFolder="$(StageOutputDir)" />

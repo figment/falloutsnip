@@ -23,6 +23,7 @@ namespace TESVSnip.Domain.Services
             this.ApplicationDirectory = Environment.CurrentDirectory;
             this.SetupGameDirectory();
             this.SetupApplicationDirectory();
+            this.SetupScriptHostDirectory();
             this.ParseCommandLine(args);
             this.PrepareDirectories();
         }
@@ -49,6 +50,10 @@ namespace TESVSnip.Domain.Services
         public string GameDataDirectory { get; private set; }
 
         public string GameDirectory { get; private set; }
+
+        public string IronPythonDirectory { get; private set; }
+
+        public string ScriptsDirectory { get; private set; } 
 
         /// <summary>
         /// Gets the list of plugins to pre-load specified using the command-line options.
@@ -138,7 +143,32 @@ namespace TESVSnip.Domain.Services
             if (applicationDirectory != null)
             {
                 this.SettingsDirectory = Path.Combine(applicationDirectory, "conf");
+                this.ScriptsDirectory = Path.Combine(applicationDirectory, "conf", "scripts");
             }
+        }
+
+        /// <summary>
+        /// Locate the IronPython install location for scripting
+        /// </summary>
+        private void SetupScriptHostDirectory()
+        {
+            var path = Properties.Settings.Default.IronPythonPath;
+            if (string.IsNullOrWhiteSpace(path) || !Directory.Exists(path))
+            {
+                using (var key = Registry.LocalMachine.OpenSubKey(Environment.Is64BitOperatingSystem
+                                                                      ? @"SOFTWARE\Wow6432Node\IronPython\2.7\InstallPath"
+                                                                      : @"SOFTWARE\IronPython\2.7\InstallPath"))
+                {
+                    if (key != null)
+                    {
+                        this.IronPythonDirectory = key.GetValue(null, "", RegistryValueOptions.None) as string;
+                    }
+                }
+            }
+            else
+            {
+                this.IronPythonDirectory = path;
+            }           
         }
 
         /// <summary>

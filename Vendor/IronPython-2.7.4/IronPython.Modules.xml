@@ -3516,7 +3516,7 @@
         </member>
         <member name="M:IronPython.Modules.PythonLocale.LocaleInfo.CreateConventionsDict">
             <summary>
-            Popupates the given directory w/ the locale information from the given
+            Populates the given directory w/ the locale information from the given
             CultureInfo.
             </summary>
         </member>
