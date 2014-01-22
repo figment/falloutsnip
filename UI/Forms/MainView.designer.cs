@@ -126,8 +126,15 @@ namespace TESVSnip.UI.Forms {
             this.reorderSubrecordsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.newFormIDToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.newFormIDNoReferenceUpdateToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.addItemBatchScriptToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.reduceFormVersionsTo40ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.scriptsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.globalScriptsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.selectionScriptsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.editScriptsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.endScriptsToolStripSeparator = new System.Windows.Forms.ToolStripSeparator();
+            this.consoleToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.outputWindowToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.reloadToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.OpenModDialog = new System.Windows.Forms.OpenFileDialog();
             this.SaveModDialog = new System.Windows.Forms.SaveFileDialog();
             this.SaveEdidListDialog = new System.Windows.Forms.SaveFileDialog();
@@ -163,8 +170,6 @@ namespace TESVSnip.UI.Forms {
             this.toolStripSeparator5 = new System.Windows.Forms.ToolStripSeparator();
             this.toolStripIncrInvalidRecStatus = new System.Windows.Forms.ToolStripLabel();
             this.dockPanel = new WeifenLuo.WinFormsUI.Docking.DockPanel();
-            this.scriptsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.consoleToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.menuStrip1.SuspendLayout();
             this.statusStrip1.SuspendLayout();
             this.toolStripIncrFind.SuspendLayout();
@@ -695,7 +700,6 @@ namespace TESVSnip.UI.Forms {
             this.reorderSubrecordsToolStripMenuItem,
             this.newFormIDToolStripMenuItem,
             this.newFormIDNoReferenceUpdateToolStripMenuItem,
-            this.addItemBatchScriptToolStripMenuItem,
             this.reduceFormVersionsTo40ToolStripMenuItem});
             this.spellsToolStripMenuItem.Name = "spellsToolStripMenuItem";
             resources.ApplyResources(this.spellsToolStripMenuItem, "spellsToolStripMenuItem");
@@ -788,17 +792,67 @@ namespace TESVSnip.UI.Forms {
             resources.ApplyResources(this.newFormIDNoReferenceUpdateToolStripMenuItem, "newFormIDNoReferenceUpdateToolStripMenuItem");
             this.newFormIDNoReferenceUpdateToolStripMenuItem.Click += new System.EventHandler(this.newFormIDNoReferenceUpdateToolStripMenuItem_Click);
             // 
-            // addItemBatchScriptToolStripMenuItem
-            // 
-            this.addItemBatchScriptToolStripMenuItem.Name = "addItemBatchScriptToolStripMenuItem";
-            resources.ApplyResources(this.addItemBatchScriptToolStripMenuItem, "addItemBatchScriptToolStripMenuItem");
-            this.addItemBatchScriptToolStripMenuItem.Click += new System.EventHandler(this.addItemBatchScriptToolStripMenuItem_Click);
-            // 
             // reduceFormVersionsTo40ToolStripMenuItem
             // 
             resources.ApplyResources(this.reduceFormVersionsTo40ToolStripMenuItem, "reduceFormVersionsTo40ToolStripMenuItem");
             this.reduceFormVersionsTo40ToolStripMenuItem.Name = "reduceFormVersionsTo40ToolStripMenuItem";
             this.reduceFormVersionsTo40ToolStripMenuItem.Click += new System.EventHandler(this.reduceFormVersionTo40ToolStripMenuItem_Click);
+            // 
+            // scriptsToolStripMenuItem
+            // 
+            this.scriptsToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.globalScriptsToolStripMenuItem,
+            this.selectionScriptsToolStripMenuItem,
+            this.editScriptsToolStripMenuItem,
+            this.endScriptsToolStripSeparator,
+            this.consoleToolStripMenuItem,
+            this.outputWindowToolStripMenuItem,
+            this.reloadToolStripMenuItem});
+            this.scriptsToolStripMenuItem.Name = "scriptsToolStripMenuItem";
+            resources.ApplyResources(this.scriptsToolStripMenuItem, "scriptsToolStripMenuItem");
+            this.scriptsToolStripMenuItem.DropDownOpening += new System.EventHandler(this.scriptsToolStripMenuItem_DropDownOpening);
+            // 
+            // globalScriptsToolStripMenuItem
+            // 
+            this.globalScriptsToolStripMenuItem.Name = "globalScriptsToolStripMenuItem";
+            resources.ApplyResources(this.globalScriptsToolStripMenuItem, "globalScriptsToolStripMenuItem");
+            this.globalScriptsToolStripMenuItem.DropDownItemClicked += new System.Windows.Forms.ToolStripItemClickedEventHandler(this.globalScriptsToolStripMenuItem_DropDownItemClicked);
+            // 
+            // selectionScriptsToolStripMenuItem
+            // 
+            this.selectionScriptsToolStripMenuItem.Name = "selectionScriptsToolStripMenuItem";
+            resources.ApplyResources(this.selectionScriptsToolStripMenuItem, "selectionScriptsToolStripMenuItem");
+            this.selectionScriptsToolStripMenuItem.DropDownOpening += new System.EventHandler(this.selectionScriptsToolStripMenuItem_DropDownOpening);
+            this.selectionScriptsToolStripMenuItem.DropDownItemClicked += new System.Windows.Forms.ToolStripItemClickedEventHandler(this.selectionScriptsToolStripMenuItem_DropDownItemClicked);
+            // 
+            // editScriptsToolStripMenuItem
+            // 
+            this.editScriptsToolStripMenuItem.Name = "editScriptsToolStripMenuItem";
+            resources.ApplyResources(this.editScriptsToolStripMenuItem, "editScriptsToolStripMenuItem");
+            this.editScriptsToolStripMenuItem.DropDownItemClicked += new System.Windows.Forms.ToolStripItemClickedEventHandler(this.editScriptsToolStripMenuItem_DropDownItemClicked);
+            // 
+            // endScriptsToolStripSeparator
+            // 
+            this.endScriptsToolStripSeparator.Name = "endScriptsToolStripSeparator";
+            resources.ApplyResources(this.endScriptsToolStripSeparator, "endScriptsToolStripSeparator");
+            // 
+            // consoleToolStripMenuItem
+            // 
+            this.consoleToolStripMenuItem.Name = "consoleToolStripMenuItem";
+            resources.ApplyResources(this.consoleToolStripMenuItem, "consoleToolStripMenuItem");
+            this.consoleToolStripMenuItem.Click += new System.EventHandler(this.consoleToolStripMenuItem_Click);
+            // 
+            // outputWindowToolStripMenuItem
+            // 
+            this.outputWindowToolStripMenuItem.Name = "outputWindowToolStripMenuItem";
+            resources.ApplyResources(this.outputWindowToolStripMenuItem, "outputWindowToolStripMenuItem");
+            this.outputWindowToolStripMenuItem.Click += new System.EventHandler(this.outputWindowToolStripMenuItem_Click);
+            // 
+            // reloadToolStripMenuItem
+            // 
+            this.reloadToolStripMenuItem.Name = "reloadToolStripMenuItem";
+            resources.ApplyResources(this.reloadToolStripMenuItem, "reloadToolStripMenuItem");
+            this.reloadToolStripMenuItem.Click += new System.EventHandler(this.reloadToolStripMenuItem_Click);
             // 
             // OpenModDialog
             // 
@@ -1125,19 +1179,6 @@ namespace TESVSnip.UI.Forms {
             dockPanelSkin1.DockPaneStripSkin = dockPaneStripSkin1;
             this.dockPanel.Skin = dockPanelSkin1;
             // 
-            // scriptsToolStripMenuItem
-            // 
-            this.scriptsToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.consoleToolStripMenuItem});
-            this.scriptsToolStripMenuItem.Name = "scriptsToolStripMenuItem";
-            resources.ApplyResources(this.scriptsToolStripMenuItem, "scriptsToolStripMenuItem");
-            // 
-            // consoleToolStripMenuItem
-            // 
-            this.consoleToolStripMenuItem.Name = "consoleToolStripMenuItem";
-            resources.ApplyResources(this.consoleToolStripMenuItem, "consoleToolStripMenuItem");
-            this.consoleToolStripMenuItem.Click += new System.EventHandler(this.consoleToolStripMenuItem_Click);
-            // 
             // MainView
             // 
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
@@ -1288,12 +1329,17 @@ namespace TESVSnip.UI.Forms {
         private System.Windows.Forms.ToolStripMenuItem newFormIDNoReferenceUpdateToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem pasteNewToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem saveAsToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem addItemBatchScriptToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem recentFilelToolStripMenuItem;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator1;
         private System.Windows.Forms.ToolStripMenuItem resetSettingsToDefaultsToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem reduceFormVersionsTo40ToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem scriptsToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem consoleToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem outputWindowToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem reloadToolStripMenuItem;
+        private System.Windows.Forms.ToolStripSeparator endScriptsToolStripSeparator;
+        private System.Windows.Forms.ToolStripMenuItem globalScriptsToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem selectionScriptsToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem editScriptsToolStripMenuItem;
     }
 }

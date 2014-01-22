@@ -13,6 +13,14 @@ v 4.5
 - Merged changes from 4.3 and 4.4
 - Added Open List Shortcut
 - Initial pass at embedded IronPython console to enable gui scripts
+- Fixed Copy To Semantics to add masters when needed and use correct ids in references
+- Fixed Add Master to recalculate IDS for current plugin
+- Fixed layout of value editor using table rather than flow
+- Exposed internal and private utility methods to allow Python scripts access
+- Calculate new formids automatically during copy and update header when saving
+- Added alternate ZLib implementation which allows for x86 and x64 architectures
+- Add Plugin functionality for Python scripts to extend functionality
+  - Added Copy Override To, Copy New To, Set Weights, List Weights, List items as examples
 
 v 4.4.2a
 - Updated RecordStructure.xml

@@ -91,6 +91,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
+using System.Linq;
 using System.Windows.Forms;
 
 namespace BrightIdeasSoftware
@@ -763,6 +764,22 @@ namespace BrightIdeasSoftware
                 get { return trunk.Children; }
                 set
                 {
+                    bool anyOld = trunk.Children.Cast<object>().Any();
+                    bool anyNew = value.Cast<object>().Any();
+                    if (anyOld && anyNew)
+                    {
+                        var existing = new Hashtable();
+                        foreach (var child in trunk.Children)
+                            existing.Add(child, child);
+                        foreach (var child in value.Cast<object>().Where(child => !existing.Contains(child)))
+                            RemoveBranch(child);
+                    }
+                    else if (anyOld)
+                    {
+                        this.mapObjectToBranch.Clear();
+                        this.mapObjectToExpanded.Clear();
+                        this.mapObjectToIndex.Clear();
+                    }
                     trunk.Children = value;
                     foreach (Branch br in trunk.ChildBranches)
                         br.RefreshChildren();
@@ -877,6 +894,21 @@ namespace BrightIdeasSoftware
                 Branch br;
                 mapObjectToBranch.TryGetValue(model, out br);
                 return br;
+            }
+
+            /// <summary>
+            /// Remove the branch corresponding to the model.  This is a major memory leak 
+            /// </summary>
+            /// <param name="model"></param>
+            private void RemoveBranch(object model)
+            {
+                Branch br = GetBranch(model);
+                if (br != null)
+                {
+                    mapObjectToBranch.Remove(model);
+                    foreach (var cbr in br.Children)
+                        RemoveBranch(br);
+                }
             }
 
             /// <summary>
@@ -1141,6 +1173,7 @@ namespace BrightIdeasSoftware
                 {
                     newRoots.Remove(x);
                     mapObjectToIndex.Remove(x);
+                    RemoveBranch(x);
                 }
                 SetObjects(newRoots);
             }

@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <root>
   <!-- 
     Microsoft ResX Schema 
@@ -487,7 +487,7 @@
     <value>61, 20</value>
   </data>
   <data name="optionsToolStripMenuItem.Text" xml:space="preserve">
-    <value>Options</value>
+    <value>&amp;Options</value>
   </data>
   <data name="englishToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
     <value>116, 22</value>
@@ -732,12 +732,6 @@
   <data name="newFormIDNoReferenceUpdateToolStripMenuItem.ToolTipText" xml:space="preserve">
     <value>Gives all selected records a new FormID from the TES4 Next Object field.</value>
   </data>
-  <data name="addItemBatchScriptToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>264, 22</value>
-  </data>
-  <data name="addItemBatchScriptToolStripMenuItem.Text" xml:space="preserve">
-    <value>Add Items as Batch</value>
-  </data>
   <data name="reduceFormVersionsTo40ToolStripMenuItem.Enabled" type="System.Boolean, mscorlib">
     <value>False</value>
   </data>
@@ -756,17 +750,50 @@
   <data name="spellsToolStripMenuItem.Text" xml:space="preserve">
     <value>&amp;Spells</value>
   </data>
+  <data name="globalScriptsToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
+    <value>159, 22</value>
+  </data>
+  <data name="globalScriptsToolStripMenuItem.Text" xml:space="preserve">
+    <value>&amp;Global</value>
+  </data>
+  <data name="selectionScriptsToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
+    <value>159, 22</value>
+  </data>
+  <data name="selectionScriptsToolStripMenuItem.Text" xml:space="preserve">
+    <value>&amp;Selection</value>
+  </data>
+  <data name="editScriptsToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
+    <value>159, 22</value>
+  </data>
+  <data name="editScriptsToolStripMenuItem.Text" xml:space="preserve">
+    <value>&amp;Edit</value>
+  </data>
+  <data name="endScriptsToolStripSeparator.Size" type="System.Drawing.Size, System.Drawing">
+    <value>156, 6</value>
+  </data>
   <data name="consoleToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>152, 22</value>
+    <value>159, 22</value>
   </data>
   <data name="consoleToolStripMenuItem.Text" xml:space="preserve">
     <value>&amp;Console</value>
+  </data>
+  <data name="outputWindowToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
+    <value>159, 22</value>
+  </data>
+  <data name="outputWindowToolStripMenuItem.Text" xml:space="preserve">
+    <value>&amp;Output Window</value>
+  </data>
+  <data name="reloadToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
+    <value>159, 22</value>
+  </data>
+  <data name="reloadToolStripMenuItem.Text" xml:space="preserve">
+    <value>&amp;Reload Scripts</value>
   </data>
   <data name="scriptsToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
     <value>54, 20</value>
   </data>
   <data name="scriptsToolStripMenuItem.Text" xml:space="preserve">
-    <value>&amp;Scripts</value>
+    <value>S&amp;cripts</value>
   </data>
   <data name="menuStrip1.Location" type="System.Drawing.Point, System.Drawing">
     <value>0, 0</value>
@@ -1982,16 +2009,58 @@
   <data name="&gt;&gt;newFormIDNoReferenceUpdateToolStripMenuItem.Type" xml:space="preserve">
     <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
-  <data name="&gt;&gt;addItemBatchScriptToolStripMenuItem.Name" xml:space="preserve">
-    <value>addItemBatchScriptToolStripMenuItem</value>
-  </data>
-  <data name="&gt;&gt;addItemBatchScriptToolStripMenuItem.Type" xml:space="preserve">
-    <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
   <data name="&gt;&gt;reduceFormVersionsTo40ToolStripMenuItem.Name" xml:space="preserve">
     <value>reduceFormVersionsTo40ToolStripMenuItem</value>
   </data>
   <data name="&gt;&gt;reduceFormVersionsTo40ToolStripMenuItem.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;scriptsToolStripMenuItem.Name" xml:space="preserve">
+    <value>scriptsToolStripMenuItem</value>
+  </data>
+  <data name="&gt;&gt;scriptsToolStripMenuItem.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;globalScriptsToolStripMenuItem.Name" xml:space="preserve">
+    <value>globalScriptsToolStripMenuItem</value>
+  </data>
+  <data name="&gt;&gt;globalScriptsToolStripMenuItem.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;selectionScriptsToolStripMenuItem.Name" xml:space="preserve">
+    <value>selectionScriptsToolStripMenuItem</value>
+  </data>
+  <data name="&gt;&gt;selectionScriptsToolStripMenuItem.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;editScriptsToolStripMenuItem.Name" xml:space="preserve">
+    <value>editScriptsToolStripMenuItem</value>
+  </data>
+  <data name="&gt;&gt;editScriptsToolStripMenuItem.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;endScriptsToolStripSeparator.Name" xml:space="preserve">
+    <value>endScriptsToolStripSeparator</value>
+  </data>
+  <data name="&gt;&gt;endScriptsToolStripSeparator.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ToolStripSeparator, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;consoleToolStripMenuItem.Name" xml:space="preserve">
+    <value>consoleToolStripMenuItem</value>
+  </data>
+  <data name="&gt;&gt;consoleToolStripMenuItem.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;outputWindowToolStripMenuItem.Name" xml:space="preserve">
+    <value>outputWindowToolStripMenuItem</value>
+  </data>
+  <data name="&gt;&gt;outputWindowToolStripMenuItem.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;reloadToolStripMenuItem.Name" xml:space="preserve">
+    <value>reloadToolStripMenuItem</value>
+  </data>
+  <data name="&gt;&gt;reloadToolStripMenuItem.Type" xml:space="preserve">
     <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="&gt;&gt;OpenModDialog.Name" xml:space="preserve">
@@ -2179,18 +2248,6 @@
   </data>
   <data name="&gt;&gt;toolStripIncrInvalidRecStatus.Type" xml:space="preserve">
     <value>System.Windows.Forms.ToolStripLabel, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;scriptsToolStripMenuItem.Name" xml:space="preserve">
-    <value>scriptsToolStripMenuItem</value>
-  </data>
-  <data name="&gt;&gt;scriptsToolStripMenuItem.Type" xml:space="preserve">
-    <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;consoleToolStripMenuItem.Name" xml:space="preserve">
-    <value>consoleToolStripMenuItem</value>
-  </data>
-  <data name="&gt;&gt;consoleToolStripMenuItem.Type" xml:space="preserve">
-    <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="&gt;&gt;$this.Name" xml:space="preserve">
     <value>MainView</value>

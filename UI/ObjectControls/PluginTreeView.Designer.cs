@@ -56,8 +56,9 @@
             this.toolStripMenuItem4 = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripMenuItem5 = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripMenuItem6 = new System.Windows.Forms.ToolStripMenuItem();
+            this.scriptsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.referenceSearchToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.PluginTree = new CustomTreeView();
+            this.PluginTree = new TESVSnip.UI.Controls.CustomTreeView();
             this.toolStripRecord.SuspendLayout();
             this.contextMenuRecord.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.PluginTree)).BeginInit();
@@ -151,6 +152,7 @@
             this.contextMenuRecordPasteNew,
             this.contextMenuRecordDelete,
             this.toolStripMenuItem2,
+            this.scriptsToolStripMenuItem,
             this.referenceSearchToolStripMenuItem});
             this.contextMenuRecord.Name = "contextMenuRecord";
             resources.ApplyResources(this.contextMenuRecord, "contextMenuRecord");
@@ -247,6 +249,13 @@
             resources.ApplyResources(this.toolStripMenuItem6, "toolStripMenuItem6");
             this.toolStripMenuItem6.Click += new System.EventHandler(this.collapseBranchToolStripMenuItem_Click);
             // 
+            // scriptsToolStripMenuItem
+            // 
+            this.scriptsToolStripMenuItem.Name = "scriptsToolStripMenuItem";
+            resources.ApplyResources(this.scriptsToolStripMenuItem, "scriptsToolStripMenuItem");
+            this.scriptsToolStripMenuItem.DropDownOpening += new System.EventHandler(this.scriptsToolStripMenuItem_DropDownOpening);
+            this.scriptsToolStripMenuItem.DropDownItemClicked += new System.Windows.Forms.ToolStripItemClickedEventHandler(this.scriptsToolStripMenuItem_DropDownItemClicked);
+            // 
             // referenceSearchToolStripMenuItem
             // 
             this.referenceSearchToolStripMenuItem.Name = "referenceSearchToolStripMenuItem";
@@ -262,7 +271,7 @@
             this.PluginTree.ContextMenuStrip = this.contextMenuRecord;
             resources.ApplyResources(this.PluginTree, "PluginTree");
             this.PluginTree.EmptyListMsgFont = new System.Drawing.Font("Comic Sans MS", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.PluginTree.IsSearchOnSortColumn = true;
+            this.PluginTree.EnableSearchByKeyboard = true;
             this.PluginTree.GridLines = true;
             this.PluginTree.HideSelection = false;
             this.PluginTree.HighlightBackgroundColor = System.Drawing.SystemColors.Highlight;
@@ -342,5 +351,6 @@
         private System.Windows.Forms.ToolStripButton toolStripRecordDelete;
         private System.Windows.Forms.ToolStripButton toolStripRecordPasteNew;
         private System.Windows.Forms.ToolStripMenuItem contextMenuRecordPasteNew;
+        private System.Windows.Forms.ToolStripMenuItem scriptsToolStripMenuItem;
     }
 }

@@ -11,7 +11,7 @@ namespace TESVSnip.Domain.Model
     /// <summary>
     ///   Master Plugin Handler
     /// </summary>
-    internal class PluginList : BaseRecord, IGroupRecord
+    internal class PluginList : BaseRecord, IGroupRecord, ICollection
     {
         private static readonly PluginList plugins = new PluginList();
 
@@ -170,5 +170,54 @@ namespace TESVSnip.Domain.Model
         {
             throw new NotImplementedException();
         }
+
+
+        public Plugin this[string name]
+        {
+            get
+            {
+                return
+                    this.Records.Cast<Plugin>()
+                        .First(x => 0 == string.Compare(x.Name, name, StringComparison.InvariantCultureIgnoreCase));
+            }
+        }
+
+        public Plugin this[int index]
+        {
+            get
+            {
+                if (index <0 || index >= this.Records.Count)
+                    return null;
+                return (Plugin)this.Records[index];
+            }
+        }
+
+        #region ICollection Members
+
+        public void CopyTo(Array array, int index)
+        {
+            this.Records.CopyTo(array, index);
+        }
+
+        public int Count
+        {
+            get { return this.Records.Count; }
+        }
+
+        public bool IsSynchronized
+        {
+            get { return false; }
+        }
+
+        public object SyncRoot
+        {
+            get { return this; }
+        }
+
+        public IEnumerator GetEnumerator()
+        {
+            return this.Records.GetEnumerator();
+        }
+        #endregion
     }
 }

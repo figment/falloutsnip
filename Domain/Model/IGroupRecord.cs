@@ -3,7 +3,7 @@ namespace TESVSnip.Domain.Model
     using System.Collections;
     using System.Collections.Generic;
 
-    internal interface IGroupRecord : IRecord
+    public interface IGroupRecord : IRecord
     {
         IList Records { get; }
 

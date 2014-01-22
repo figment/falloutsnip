@@ -6,7 +6,7 @@
     /// <summary>
     /// RecordsTace : Trace records plugin for maintenance
     /// </summary>
-    public static class RecordsTace
+    public static class RecordsTrace
     {
         public static List<string> AllRecords { get; private set; } // list of plugin records
 

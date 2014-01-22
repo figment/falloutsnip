@@ -3,7 +3,7 @@ namespace TESVSnip.Framework.Services
     using System;
     using System.Collections.Generic;
 
-    internal static class Encoding
+    public static class Encoding
     {
         private static readonly System.Text.Encoding Cp1252 = System.Text.Encoding.GetEncoding(1252);
         private static readonly System.Text.Encoding Utf8 = System.Text.Encoding.GetEncoding("utf-8");

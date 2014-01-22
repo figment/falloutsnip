@@ -140,7 +140,17 @@ namespace TESVSnip.Domain.Services
             var assembly = Assembly.GetExecutingAssembly();
             this.ApplicationDirectory = Path.GetDirectoryName(assembly.Location);
             var applicationDirectory = this.ApplicationDirectory;
-            if (applicationDirectory != null)
+            if (!string.IsNullOrWhiteSpace(applicationDirectory))
+            {
+                var dir = new DirectoryInfo(applicationDirectory);
+                if (System.String.Compare(dir.Name, "Debug", System.StringComparison.OrdinalIgnoreCase) == 0
+                    || System.String.Compare(dir.Name, "Release", System.StringComparison.OrdinalIgnoreCase) == 0)
+                    dir = dir.Parent;
+                if (System.String.Compare(dir.Name, "bin", System.StringComparison.OrdinalIgnoreCase) == 0)
+                    dir = dir.Parent;
+                applicationDirectory = dir.FullName;                
+            }
+            if (!string.IsNullOrWhiteSpace(applicationDirectory))
             {
                 this.SettingsDirectory = Path.Combine(applicationDirectory, "conf");
                 this.ScriptsDirectory = Path.Combine(applicationDirectory, "conf", "scripts");

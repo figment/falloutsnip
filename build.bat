@@ -54,7 +54,7 @@ SET BUILD_OPTIONS=
 for %%I in (rar.exe) do @IF EXIST "%%~dp$PATH:I" set RAR_PATH=%%~dp$PATH:I
 IF NOT EXIST "%RAR_PATH%" set RAR_PATH=%ProgramFiles%\WinRAR\
 IF NOT EXIST "%RAR_PATH%" set RAR_PATH=%ProgramFiles(x86)%\WinRAR\
-IF EXIST "%RAR_PATH%" set BUILD_OPTIONS=%BUILD_OPTIONS%,package_rar
+REM IF EXIST "%RAR_PATH%" set BUILD_OPTIONS=%BUILD_OPTIONS%,package_rar
 
 for %%I in (7za.exe) do @IF EXIST "%%~dp$PATH:I" set SZA_PATH=%%~dp$PATH:I
 IF NOT EXIST "%SZA_PATH%" set SZA_PATH=%ProgramFiles%\WinRAR\

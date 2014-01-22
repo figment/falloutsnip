@@ -24,15 +24,10 @@
         private enum SearchType
         {
             EditorID, 
-
             FormID, 
-
             FullSearch, 
-
             TypeEditorIdSearch, 
-
             TypeFullSearch, 
-
             FormIDRef, 
         }
 
@@ -96,7 +91,7 @@
             float totalNodes = PluginList.All.Enumerate(x => x != null).Count();
             if (totalNodes == 0)
             {
-                this.toolStripIncrInvalidRecStatus.Text = "No Plugins Loaded";
+                this.toolStripIncrInvalidRecStatus.Text = "No PluginList Loaded";
                 this.toolStripIncrInvalidRecStatus.ForeColor = Color.Maroon;
                 if (!Settings.Default.NoWindowsSounds)
                 {
@@ -205,7 +200,7 @@
             float totalNodes = PluginList.All.Enumerate(x => x != null).Count();
             if (totalNodes == 0)
             {
-                this.toolStripIncrInvalidRecStatus.Text = "No Plugins Loaded";
+                this.toolStripIncrInvalidRecStatus.Text = "No PluginList Loaded";
                 this.toolStripIncrInvalidRecStatus.ForeColor = Color.Maroon;
                 if (!Settings.Default.NoWindowsSounds)
                 {

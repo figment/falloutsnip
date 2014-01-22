@@ -1,4 +1,6 @@
+using System.ComponentModel;
 using Microsoft.Scripting.Runtime;
+using TESVSnip.Domain.Data.RecordStructure;
 using TESVSnip.Properties;
 
 namespace TESVSnip.Domain.Model
@@ -206,8 +208,27 @@ namespace TESVSnip.Domain.Model
             sbrMaster.SetData(bteData);
             brcTES4.InsertRecord(idx, sbrMaster);
 
-            // Fix Masters
+            int masterIdx = brcTES4.SubRecords.Count(x => x.Name == "MAST") - 1;
             // Update IDs for current record to be +1
+            // Fix FormID and references now
+            foreach (var rec in EnumerateRecords(null).Select(x => x.Value)
+                .SkipWhile(x=>RecordLayout.NoNewCopyTypes.Contains(x.Name)))
+            {
+                if ((rec.FormID >> 24) >= masterIdx)
+                    rec.FormID = (rec.FormID & 0x00FFFFFF) | (((rec.FormID >> 24) + 1) << 24);
+
+                // now handle child references
+                rec.MatchRecordStructureToRecord();
+                foreach (var elem in rec.SubRecords
+                    .SelectMany(sr => sr.EnumerateElements())
+                    .Where(elem => elem.Structure != null && elem.Structure.type == ElementValueType.FormID) )
+                {
+                    var value = elem.GetValue<uint>();
+                    if ((value >> 24) >= masterIdx)
+                        elem.AssignValue<uint>((value & 0x00FFFFFF) | (((value >> 24) + 1) << 24));
+                }
+            }
+
             return true;
         }
 
@@ -218,7 +239,7 @@ namespace TESVSnip.Domain.Model
                 var r = br as Rec;
                 if (r == null)
                 {
-                    throw new TESParserException("Record to add was not of the correct type." + Environment.NewLine + "Plugins can only hold Groups or Records.");
+                    throw new TESParserException("Record to add was not of the correct type." + Environment.NewLine + "PluginList can only hold Groups or Records.");
                 }
 
                 r.Parent = this;
@@ -366,7 +387,7 @@ namespace TESVSnip.Domain.Model
             var r = br as Rec;
             if (r == null)
             {
-                throw new TESParserException("Record to add was not of the correct type." + Environment.NewLine + "Plugins can only hold Groups or Records.");
+                throw new TESParserException("Record to add was not of the correct type." + Environment.NewLine + "PluginList can only hold Groups or Records.");
             }
 
             r.Parent = this;
@@ -522,7 +543,7 @@ namespace TESVSnip.Domain.Model
             }
         }
 
-        internal IEnumerable<KeyValuePair<uint, Record>> EnumerateRecords(string type)
+        public IEnumerable<KeyValuePair<uint, Record>> EnumerateRecords(string type)
         {
             var list = new Dictionary<uint, string>();
 
@@ -608,6 +629,35 @@ namespace TESVSnip.Domain.Model
             }
         }
 
+        /// <summary>
+        /// Python helper function to get list of records. 
+        /// </summary>
+        /// <param name="type">Type to </param>
+        /// <returns>Array of Records</returns>
+        public Record[] GetRecordList(string type)
+        {
+            return string.IsNullOrEmpty(type)
+                ? EnumerateRecords(null).Select(x => x.Value).ToArray()
+                : GetRecordList(new[] { type });
+        }
+
+        /// <summary>
+        /// Python helper function to get list of records. 
+        /// </summary>
+        /// <param name="types">Collection of types</param>
+        /// <returns>Array of Records</returns>
+        public Record[] GetRecordList(IEnumerable types)
+        {
+            if (types == null)
+                return EnumerateRecords(null).Select(x => x.Value).ToArray();
+
+            var vtypes = new HashSet<string>(types.OfType<string>());
+            Predicate<BaseRecord> itr = (rec) => (rec is Plugin)
+                || (rec is GroupRecord && (((GroupRecord)rec).groupType != 0 || vtypes.Contains(((GroupRecord)rec).ContentsType)))
+                || (rec is Record && vtypes.Contains(rec.Name));
+            return Enumerate(itr).OfType<Record>().ToArray();
+        }
+
         internal override List<string> GetIDs(bool lower)
         {
             var list = new List<string>();
@@ -618,6 +668,41 @@ namespace TESVSnip.Domain.Model
 
             return list;
         }
+
+        public uint GetNewFormID(bool increment = false)
+        {
+            uint formID = 0;
+            var tes4 = this.Records.OfType<Record>().FirstOrDefault(x => x.Name == "TES4");
+            if (tes4 != null && tes4.SubRecords.Count > 0)
+            {
+                var masterCount = tes4.SubRecords.Count(x => x.Name == "MAST");
+                var hedr = tes4.SubRecords[0];
+                if (hedr.Name == "HEDR" && hedr.Size >= 12)
+                {
+                    if (hedr.TryGetValue(8, out formID) && increment)
+                    {
+                        hedr.TrySetValue(8, (formID & 0x00FFFFFF) + 1);
+                    }
+                }
+                return (formID & 0x00FFFFFF) | ((uint)(masterCount << 24));
+            }
+            return formID;
+        }
+
+        public void UpdateNextFormID(uint newid)
+        {
+            var tes4 = this.Records.OfType<Record>().FirstOrDefault(x => x.Name == "TES4");
+            if (tes4 != null && tes4.SubRecords.Count > 0)
+            {
+                var masterCount = tes4.SubRecords.Count(x => x.Name == "MAST");
+                var hedr = tes4.SubRecords[0];
+                if (hedr.Name == "HEDR" && hedr.Size >= 12)
+                {
+                    hedr.TrySetValue(8, newid);
+                }
+            }
+        }
+
 
         internal Record GetRecordByID(uint id)
         {
@@ -839,16 +924,17 @@ namespace TESVSnip.Domain.Model
             var tes4 = this.Records.OfType<Record>().FirstOrDefault(x => x.Name == "TES4");
             if (tes4 != null)
             {
-                if (tes4.SubRecords.Count > 0 && tes4.SubRecords[0].Name == "HEDR" && tes4.SubRecords[0].Size >= 8)
-                {
-                    byte[] data = tes4.SubRecords[0].GetData();
-                    byte[] reccountbytes = TypeConverter.si2h(reccount);
-                    for (int i = 0; i < 4; i++)
-                    {
-                        data[4 + i] = reccountbytes[i];
-                    }
+                var masterCount = tes4.SubRecords.Count(x => x.Name == "MAST");
+                var maxID = this.Records.OfType<BaseRecord>().SelectMany(x => x.Enumerate()).OfType<Record>()
+                    .Where(x => (x.FormID >> 24) == masterCount).Select(x => x.FormID & 0x00FFFFFF).Max();
 
-                    tes4.SubRecords[0].SetData(data);
+                var hedr = tes4.SubRecords[0];
+                if (hedr.Name == "HEDR" && hedr.Size >= 12)
+                {
+                    hedr.TrySetValue(4, reccount);
+                    uint curid;
+                    if (hedr.TryGetValue(8, out curid) && maxID >= curid)
+                        hedr.TrySetValue(8, maxID + 1);
                 }
             }
         }
@@ -947,6 +1033,7 @@ namespace TESVSnip.Domain.Model
                         }
                     }
                 }
+                this.UpdateRecordCount();
             }
             finally
             {
@@ -1132,5 +1219,10 @@ namespace TESVSnip.Domain.Model
                 }
             }
         }
+        public override string ToString()
+        {
+            return string.Format("[Plugin] '{0}'", this.Name);
+        }
+
     }
 }

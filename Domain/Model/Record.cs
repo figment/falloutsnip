@@ -958,5 +958,20 @@ using TESVSnip.Framework.Persistence;
                 Success, // some matched
             }
         }
+
+        /// <summary>
+        /// Python helper function
+        /// </summary>
+        /// <param name="type"></param>
+        /// <returns></returns>
+        public SubRecord[] GetSubRecords(string type)
+        {
+            return this.SubRecords.Where(x => x.Name == type).ToArray();
+        }
+
+        public override string ToString()
+        {
+            return string.Format("[Record] '{0}' [{1:X8}]: {2}", this.Name, this.FormID, this.DescriptiveName);
+        }
     }
 }

@@ -33,7 +33,7 @@ namespace TESVSnip
                 AppDomain.CurrentDomain.UnhandledException += Program.CurrentDomainUnhandledException;
 
                 // Add an event handler for handling UI thread exceptions to the event
-                Application.ThreadException += Program.ApplicationThreadException;
+                //Application.ThreadException += Program.ApplicationThreadException;
 
                 TESVSnip.Properties.Settings.Default.Reload();
                 Application.EnableVisualStyles();

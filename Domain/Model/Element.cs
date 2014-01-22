@@ -8,7 +8,7 @@ namespace TESVSnip.Domain.Model
     /// <summary>
     ///   Helper for reference to Element structure including data
     /// </summary>
-    internal sealed class Element
+    public sealed class Element
     {
         private readonly ElementValueType type = ElementValueType.Blob;
 
@@ -16,22 +16,33 @@ namespace TESVSnip.Domain.Model
         {
         }
 
-        public Element(ElementStructure es, byte[] data, int offset, int count)
+        internal Element(ElementStructure es, byte[] data, int offset, int count)
             : this(es, new ArraySegment<byte>(data, offset, count))
         {
         }
 
-        public Element(ElementStructure es, ArraySegment<byte> data)
+        internal Element(ElementStructure es, ArraySegment<byte> data)
         {
             this.Structure = es;
             this.Data = data;
         }
 
-        public Element(ElementStructure es, ElementValueType vt, ArraySegment<byte> data)
+        internal Element(ElementStructure es, ElementValueType vt, ArraySegment<byte> data)
         {
             this.Structure = es;
             this.Data = data;
             this.type = vt;
+        }
+
+        /// <summary>
+        /// Public constructor that can be used with python scripts
+        /// </summary>
+        /// <param name="vt"></param>
+        /// <param name="value"></param>
+        public Element(ElementValueType vt, object value)
+        {
+            this.type = vt;
+            this.AssignValue(ElementAssignmentType.Set, value);
         }
 
         public bool Changed { get; private set; }
@@ -40,14 +51,24 @@ namespace TESVSnip.Domain.Model
 
         public bool Modified { get; private set; }
 
-        public ElementStructure Structure { get; private set; }
+        internal ElementStructure Structure { get; private set; }
 
         public ElementValueType Type
         {
             get
             {
-                return this.Structure == null && this.type == ElementValueType.Blob ? this.Structure.type : this.type;
+                return this.Structure == null || this.type == ElementValueType.Blob ? this.type : this.Structure.type;
             }
+        }
+
+        public string Name
+        {
+            get { return this.Structure != null ? this.Structure.name : null; }
+        }
+
+        public string Description
+        {
+            get { return this.Structure != null ? this.Structure.desc : null; }
         }
 
         // layout changed i.e. no inplace assignment possible
@@ -87,7 +108,7 @@ namespace TESVSnip.Domain.Model
             }
         }
 
-        public static Element CreateElement(ElementStructure es, byte[] data, ref int offset, bool rawData)
+        internal static Element CreateElement(ElementStructure es, byte[] data, ref int offset, bool rawData)
         {
             int maxlen = data.Length - offset;
             Element elem = null;
@@ -292,7 +313,13 @@ namespace TESVSnip.Domain.Model
             return elem;
         }
 
-        internal bool AssignValue<T>(object val)
+        public T GetValue<T>()
+        {
+            object value = this.Value;
+            return (T)Convert.ChangeType(value, typeof (T));
+        }
+
+        public bool AssignValue<T>(object val)
         {
             if (TypeConverter.TrySetValue<T>(this.Data, val))
             {
@@ -577,6 +604,11 @@ namespace TESVSnip.Domain.Model
             }
 
             return false;
+        }
+
+        public override string ToString()
+        {
+            return string.Format("[Element] {0} '{1}' = {2}", this.Type, this.Structure != null ? this.Structure.desc : "", this.Value);
         }
     }
 }

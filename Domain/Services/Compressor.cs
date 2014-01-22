@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Reflection;
+using TESVSnip.Framework.Services;
 
 namespace TESVSnip.Domain.Services
 {

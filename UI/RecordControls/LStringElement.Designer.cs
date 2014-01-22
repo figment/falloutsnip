@@ -42,6 +42,7 @@
             // 
             resources.ApplyResources(this.chkUseText, "chkUseText");
             this.chkUseText.Name = "chkUseText";
+            this.ToolTip.SetToolTip(this.chkUseText, resources.GetString("chkUseText.ToolTip"));
             this.chkUseText.UseVisualStyleBackColor = true;
             // 
             // txtString

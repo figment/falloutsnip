@@ -210,7 +210,7 @@
 
         public void RebuildDisplayNode()
         {
-          this.PluginTree.SetObjects(this.PluginTree.SelectedRecords);
+            this.PluginTree.SetObjects(this.PluginTree.SelectedRecords);
         }
 
         public void RebuildObjects()
@@ -432,7 +432,8 @@
         {
             this.PluginTree.MultiSelect = true;
             this.PluginTree.CanExpandGetter = x => (x is IGroupRecord);
-            this.PluginTree.ChildrenGetter = x => {
+            this.PluginTree.ChildrenGetter = x =>
+            {
                 var r = x as IGroupRecord;
                 return (r != null) ? r.Records : null;
             };
@@ -440,7 +441,8 @@
             this._olvColumnName = new OLVColumn("Name", "Name");
             this.PluginTree.Columns.Add(this._olvColumnName);
 
-            this._olvColumnName.AspectGetter = x => {
+            this._olvColumnName.AspectGetter = x =>
+            {
                 var r = x as IRecord;
                 return (r != null) ? r.DescriptiveName : x;
             };
@@ -779,8 +781,8 @@
         private void UpdateToolStripSelection()
         {
             var rec = this.PluginTree.SelectedRecord;
-            var recs = this.PluginTree.SelectedRecords;
-            bool oneSel = recs.Count() == 1;
+            var recs = this.PluginTree.SelectedRecords.ToArray();
+            bool oneSel = recs.Length == 1;
             bool isRecord = rec is Record;
             bool isGroup = rec is GroupRecord;
             bool isPlugin = rec is Plugin;
@@ -796,6 +798,12 @@
             this.toolStripRecordPasteNew.Enabled = enablePaste;
             this.contextMenuRecordPaste.Enabled = enablePaste;
             this.contextMenuRecordPasteNew.Enabled = enablePaste;
+
+            bool hasAnyScripts =
+                TESVSnip.Framework.Services.PluginStore.Plugins.Any(x => x.SupportsSelection && x.IsValidSelection(recs));
+            this.scriptsToolStripMenuItem.Enabled = hasAnyScripts;
+            if (!this.scriptsToolStripMenuItem.HasDropDownItems)
+                this.scriptsToolStripMenuItem.DropDownItems.Add(""); // dummy item
         }
 
         private void addMasterToolStripMenuItem_Click(object sender, EventArgs e)
@@ -1103,6 +1111,46 @@
         private void toolStripRecordPaste_Click(object sender, EventArgs e)
         {
             this.PasteFromClipboard(true, false);
+        }
+
+        private void scriptsToolStripMenuItem_DropDownOpening(object sender, EventArgs e)
+        {
+            if (scriptsToolStripMenuItem.Enabled)
+            {
+                scriptsToolStripMenuItem.DropDownItems.Clear();
+
+                var recs = this.PluginTree.SelectedRecords.ToArray();
+
+                foreach (var plugin in TESVSnip.Framework.Services.PluginStore.Plugins.Where(x => x.SupportsSelection && x.IsValidSelection(recs)))
+                {
+                    // not valid 
+                    if (string.IsNullOrWhiteSpace(plugin.Name))
+                        continue;
+
+                    var item = new ToolStripMenuItem()
+                    {
+                        Name = plugin.Name,
+                        Text = string.IsNullOrWhiteSpace(plugin.DisplayName) ? plugin.Name : plugin.DisplayName,
+                        Image = plugin.DisplayImage,
+                        ToolTipText = plugin.ToolTipText,
+                        AutoToolTip = !string.IsNullOrWhiteSpace(plugin.ToolTipText),
+                        Visible = true,
+                        Enabled = true,
+                        Tag = plugin.Name,
+                    };
+                    scriptsToolStripMenuItem.DropDownItems.Add(item);
+                }
+            }
+        }
+
+        private void scriptsToolStripMenuItem_DropDownItemClicked(object sender, ToolStripItemClickedEventArgs e)
+        {
+            var recs = this.PluginTree.SelectedRecords.ToArray();
+            if (recs.Length == 0) return;
+
+            var name = e.ClickedItem.Tag as string;
+            if (e.ClickedItem.Enabled)
+                TESVSnip.Framework.Services.PluginEngine.Default.ExecuteSelectionByName(name, recs);
         }
     }
 }

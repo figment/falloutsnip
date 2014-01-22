@@ -45,10 +45,7 @@ namespace TESVSnip.Domain.Scripts
 
         private static readonly Dictionary<string, Operator> uniOps = new Dictionary<string, Operator>();
 
-        // #if DEBUG
-        // private static string xmlPath=System.IO.Path.Combine(Program.ApplicationDirectory, @"conf\ScriptFunctions.xml");
-        // #else
-        private static readonly string xmlPath = Path.Combine(Options.Value.ApplicationDirectory, @"conf\ScriptFunctions.xml");
+        private static readonly string xmlPath = Path.Combine(Options.Value.SettingsDirectory, @"ScriptFunctions.xml");
 
         private static bool Inited;
 

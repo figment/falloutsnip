@@ -511,5 +511,17 @@ namespace TESVSnip.Properties {
                 this["IronPythonPath"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string ExternalPythonEditor {
+            get {
+                return ((string)(this["ExternalPythonEditor"]));
+            }
+            set {
+                this["ExternalPythonEditor"] = value;
+            }
+        }
     }
 }

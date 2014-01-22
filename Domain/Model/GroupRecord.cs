@@ -536,5 +536,10 @@ namespace TESVSnip.Domain.Model
 
             return null;
         }
+
+        public override string ToString()
+        {
+            return string.Format("[Group] '{0}' : {1}", this.Name, this.DescriptiveName);
+        }
     }
 }

@@ -247,12 +247,11 @@ namespace TESVSnip.UI.RecordControls
                 var es = element;
                 var tb = this.textBox;
                 bool hasFlags = es.options.Length == 0 && es.flags.Length > 1;
-                float value;
                 switch (element.type)
                 {
                     case ElementValueType.UInt:
                         {
-                            value = TypeConverter.h2i(data);
+                            var value = TypeConverter.h2i(data);
                             if (_pyInterpreterCalc) value = PyInterpreter.ExecuteFunction<uint>(element, value, FunctionOperation.ForReading);
                             _pyInterpreterCalc = false;
                             this.textBox.Text = hasFlags || es.hexview ? "0x" + value.ToString("X8") : value.ToString(CultureInfo.InvariantCulture); 
@@ -263,7 +262,7 @@ namespace TESVSnip.UI.RecordControls
                         break;
                     case ElementValueType.Int:
                         {
-                            value = TypeConverter.h2si(data);
+                            var value = TypeConverter.h2si(data);
                             if (_pyInterpreterCalc) value = PyInterpreter.ExecuteFunction<int>(element, value, FunctionOperation.ForReading);
                             _pyInterpreterCalc = false;
                             this.textBox.Text = hasFlags || es.hexview ? "0x" + value.ToString("X8") : value.ToString(CultureInfo.InvariantCulture); 
@@ -276,15 +275,18 @@ namespace TESVSnip.UI.RecordControls
                         this.textBox.Text = TypeConverter.h2i(data).ToString("X8");
                         break;
                     case ElementValueType.Float:
-                        value = TypeConverter.h2f(data);
-                        if (_pyInterpreterCalc) value = PyInterpreter.ExecuteFunction<float>(element, value, FunctionOperation.ForReading);
-                        _pyInterpreterCalc = false;
-                        this.textBox.Text = value.ToString(CultureInfo.InvariantCulture);
-                        //this.textBox.Text = TypeConverter.h2f(data).ToString();
+                        {
+                            var value = TypeConverter.h2f(data);
+                            if (_pyInterpreterCalc)
+                                value = PyInterpreter.ExecuteFunction<float>(element, value, FunctionOperation.ForReading);
+                            _pyInterpreterCalc = false;
+                            this.textBox.Text = value.ToString(CultureInfo.InvariantCulture);
+                            //this.textBox.Text = TypeConverter.h2f(data).ToString();
+                        }
                         break;
                     case ElementValueType.UShort:
                         {
-                            value = TypeConverter.h2s(data);
+                            var value = TypeConverter.h2s(data);
                             if (_pyInterpreterCalc) value = PyInterpreter.ExecuteFunction<ushort>(element, value, FunctionOperation.ForReading);
                             _pyInterpreterCalc = false;
                             this.textBox.Text = hasFlags || es.hexview ? "0x" + value.ToString("X4") : value.ToString(CultureInfo.InvariantCulture); 
@@ -295,7 +297,7 @@ namespace TESVSnip.UI.RecordControls
                         break;
                     case ElementValueType.Short:
                         {
-                            value = TypeConverter.h2ss(data);
+                            var value = TypeConverter.h2ss(data);
                             if (_pyInterpreterCalc) value = PyInterpreter.ExecuteFunction<short>(element, value, FunctionOperation.ForReading);
                             _pyInterpreterCalc = false;
                             this.textBox.Text = hasFlags || es.hexview ? "0x" + value.ToString("X4") : value.ToString(CultureInfo.InvariantCulture); 

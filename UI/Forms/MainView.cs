@@ -1,4 +1,8 @@
 using System.Configuration;
+using System.Text;
+using System.Windows.Media.Animation;
+using IronPython.Runtime;
+using Microsoft.Win32;
 using PythonConsoleControl;
 using TESVSnip.Domain.Scripts;
 
@@ -54,6 +58,8 @@ namespace TESVSnip.UI.Forms
         private readonly PluginTreeContent pluginTreeContent = new PluginTreeContent();
 
         private readonly RichTextContent selectedTextContent = new RichTextContent();
+
+        private OutputTextContent outputTextContent = null;
 
         private readonly SubrecordListContent subrecordListContent = new SubrecordListContent();
 
@@ -157,12 +163,19 @@ namespace TESVSnip.UI.Forms
             this.SubrecordList.SelectionChanged += this.subrecordPanel_SelectionChanged;
             this.SubrecordList.OnSubrecordChanged += this.subrecordPanel_OnSubrecordChanged;
             this.SubrecordList.DataChanged += this.subrecordPanel_DataChanged;
-
+            PluginList.ChildListChanged += PluginList_ChildListChanged;
             this.LocalizeApp();
             PyInterpreter.InitPyInterpreter();
-
             mruMenu = new JWC.MruStripMenu(recentFilelToolStripMenuItem, new JWC.MruStripMenu.ClickedHandler(OnMruFile),
                                        mruRegKey + "\\MRU", true, 16);
+        }
+
+        void PluginList_ChildListChanged(object sender, RecordChangeEventArgs e)
+        {
+            this.RebuildSelection();
+            this.UpdateStringEditor();
+            this.FixMasters();
+            this.PluginTree.UpdateRoots();
         }
 
         public static event EventHandler ClipboardChanged;
@@ -425,9 +438,9 @@ namespace TESVSnip.UI.Forms
             {
                 var p = new Plugin(s, false, this.GetRecordFilter(s));
                 PluginList.All.AddRecord(p);
-                this.UpdateStringEditor();
-                this.FixMasters();
-                this.PluginTree.UpdateRoots();
+                //this.UpdateStringEditor();
+                //this.FixMasters();
+                //this.PluginTree.UpdateRoots();
             }
             catch (Exception e)
             {
@@ -783,7 +796,7 @@ namespace TESVSnip.UI.Forms
 
         private void LoadDockingWindows()
         {
-            string configFile = Path.Combine(Path.GetDirectoryName(Application.ExecutablePath), @"conf\DockPanel.config");
+            string configFile = Path.Combine(Options.Value.SettingsDirectory, @"DockPanel.config");
             if (File.Exists(configFile))
             {
                 try
@@ -854,6 +867,7 @@ namespace TESVSnip.UI.Forms
             this.toolStripIncrFind.Enabled = false;
             this.toolStripIncrInvalidRec.Visible = false;
             this.toolStripIncrInvalidRec.Enabled = false;
+            BuildDynamicScriptsMenu();
         }
 
         private void MainView_Shown(object sender, EventArgs e)
@@ -1045,7 +1059,8 @@ namespace TESVSnip.UI.Forms
             string configFile = null;
             try
             {
-                configFile = Path.Combine(Path.GetDirectoryName(Application.ExecutablePath), @"conf\DockPanel.config");
+
+                configFile = Path.Combine(Options.Value.SettingsDirectory, "DockPanel.config");
                 this.dockPanel.SaveAsXml(configFile);
             }
             catch
@@ -1615,20 +1630,26 @@ namespace TESVSnip.UI.Forms
 
         private void newToolStripMenuItem_Click(object sender, EventArgs e)
         {
+            NewPlugin();
+        }
+
+        public Plugin NewPlugin()
+        {
             var p = new Plugin();
-            PluginList.All.AddRecord(p);
-            var r = new Record();
-            r.Name = "TES4";
-            var sr = new SubRecord();
-            sr.Name = "HEDR";
-            sr.SetData(new byte[] {0xD7, 0xA3, 0x70, 0x3F, 0x00, 0x00, 0x00, 0x00, 0x00, 0x1D, 0x00, 0x01});
+            var r = new Record {Name = "TES4"};
+            var sr = new SubRecord {Name = "HEDR"};
+            sr.SetData(new byte[] {0xD7, 0xA3, 0x70, 0x3F, 0x00, 0x00, 0x00, 0x00, 0x00, 0x08, 0x00, 0x01});
             r.AddRecord(sr);
-            sr = new SubRecord();
-            sr.Name = "CNAM";
+            sr = new SubRecord {Name = "CNAM"};
             sr.SetData(Encoding.Instance.GetBytes("Default\0"));
             r.AddRecord(sr);
             p.AddRecord(r);
+            PluginList.All.AddRecord(p);
+            return p;
+        }
 
+        public void RefreshPlugins()
+        {
             this.RebuildSelection();
             this.UpdateStringEditor();
             this.FixMasters();
@@ -2067,7 +2088,7 @@ namespace TESVSnip.UI.Forms
                 string path = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
                                            "Skyrim");
                 string defaultFile = Path.Combine(path, "plugins.txt");
-                dlg.Title = "Select Plugins List File";
+                dlg.Title = "Select PluginList List File";
                 dlg.InitialDirectory = path;
                 dlg.FileName = "plugins.txt";
                 dlg.Filter = "Plugin Lists|*.txt|All Files|*.*";
@@ -2132,7 +2153,7 @@ namespace TESVSnip.UI.Forms
             //C:\Users\User\AppData\Local\Oblivion\plugins.txt
             using (var dlg = new SaveFileDialog())
             {
-                dlg.Title = "Select Plugins List File";
+                dlg.Title = "Select PluginList List File";
                 dlg.InitialDirectory = Environment.CurrentDirectory;
                 dlg.FileName = "plugins.txt";
                 if (dlg.ShowDialog(this) != DialogResult.OK)
@@ -2302,11 +2323,25 @@ namespace TESVSnip.UI.Forms
                     var pyConsole = pyWindow.InnerView.consoleControl;
                     Scripting.BootstrapConsole(pyConsole, (c) =>
                         {
+                            var engine = c.ScriptScope.Engine;
+                            var paths = engine.GetSearchPaths().ToList();
+                            paths.Add(PluginEngine.ScriptsPyPath);
+                            engine.SetSearchPaths(paths);
+
+                            var runtime = engine.Runtime;
+                            runtime.LoadAssembly(Assembly.GetExecutingAssembly());
+                            runtime.LoadAssembly(typeof(String).Assembly);
+                            runtime.LoadAssembly(typeof(System.Drawing.Icon).Assembly);
+                            runtime.LoadAssembly(typeof(IronPython.Hosting.Python).Assembly);
+                            runtime.LoadAssembly(typeof(System.Dynamic.DynamicObject).Assembly);
+                            runtime.LoadAssembly(typeof(System.Windows.Forms.Cursor).Assembly);
+
                             c.ScriptScope.SetVariable("__window__", this);
                             c.ScriptScope.SetVariable("__plugins__", PluginList.All);
                             c.ScriptScope.SetVariable("__options__", Options.Value);
                             c.ScriptScope.SetVariable("__settings__", Settings.Default);
                             c.ScriptScope.SetVariable("plugins", PluginList.All);
+                            c.ScriptScope.SetVariable("exit", new Action(() => BeginInvoke(new Action(pyWindow.Close))));
                         });
                 }
             }
@@ -2315,5 +2350,251 @@ namespace TESVSnip.UI.Forms
                 
             }
         }
+
+
+        public T GetWindowByName<T>(string name) where T : BaseDockContent
+        {
+            return Application.OpenForms.OfType<T>().FirstOrDefault(x => string.Compare(x.Text, name, false) == 0);
+        }
+        public T GetOrCreateWindowByName<T>(string name) where T : BaseDockContent, new()
+        {
+            var form = Application.OpenForms.OfType<T>().FirstOrDefault(x => string.Compare(x.Text, name, false) == 0);
+            if (form == null)
+            {
+                form = new T() { Text = name };
+                form.Show(this.dockPanel, DockState.Document);
+            }
+            if (!form.Visible)
+            {
+                form.Show(this.dockPanel, DockState.Document);
+            }
+            return form;
+        }
+
+        #region Scripting Output Window
+        private void outputWindowToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if (outputTextContent == null)
+            {
+                outputTextContent = GetWindowByName<OutputTextContent>("Output");
+                if (outputTextContent == null)
+                {
+                    outputTextContent = GetOrCreateWindowByName<OutputTextContent>("Output");
+                    outputTextContent.AppendText(PluginEngine.Default.GetOutputText());
+                    outputTextContent.Closed += outputWindow_Closed;
+                    PluginEngine.Default.OnConsoleMessage += pluginEngine_OnConsoleMessage;
+                }
+            }
+        }
+        void outputWindow_Closed(object sender, EventArgs e)
+        {
+            outputTextContent = null;
+            PluginEngine.Default.OnConsoleMessage -= pluginEngine_OnConsoleMessage;
+        }
+        void pluginEngine_OnConsoleMessage(object sender, PluginEngine.MessageEventArgs e)
+        {
+            if (outputTextContent != null)
+            {
+                outputTextContent.AppendText(e.Text);
+            }
+        }
+        #endregion
+
+        #region Dynamic IronPython Plugin Scripts
+        private void LoadDynamicScripts()
+        {
+            if (!PluginEngine.Default.Plugins.Any())
+            {
+                globalScriptsToolStripMenuItem.Enabled = false;
+                selectionScriptsToolStripMenuItem.Enabled = false;
+            }
+            foreach (var plugin in PluginEngine.Default.Plugins)
+            {
+                // not valid 
+                if (string.IsNullOrWhiteSpace(plugin.Name))
+                    continue;
+
+                if (plugin.SupportsSelection)
+                {
+                    var item = new ToolStripMenuItem()
+                    {
+                        Name = plugin.Name,
+                        Text = string.IsNullOrWhiteSpace(plugin.DisplayName) ? plugin.Name : plugin.DisplayName,
+                        Image = plugin.DisplayImage,
+                        ToolTipText = plugin.ToolTipText,
+                        AutoToolTip = !string.IsNullOrWhiteSpace(plugin.ToolTipText),
+                        Visible = true,
+                        Enabled = true,
+                        Tag = plugin.Name,
+                    };
+                    selectionScriptsToolStripMenuItem.DropDownItems.Add(item);
+                }
+                if (plugin.SupportGlobal)
+                {
+                    var item = new ToolStripMenuItem()
+                    {
+                        Name = plugin.Name,
+                        Text = string.IsNullOrWhiteSpace(plugin.DisplayName) ? plugin.Name : plugin.DisplayName,
+                        Image = plugin.DisplayImage,
+                        ToolTipText = plugin.ToolTipText,
+                        AutoToolTip = !string.IsNullOrWhiteSpace(plugin.ToolTipText),
+                        Visible = true,
+                        Enabled = true,
+                        Tag = plugin.Name,
+                    };
+                    globalScriptsToolStripMenuItem.DropDownItems.Add(item);
+                }
+            }
+
+            var rootUri = new Uri(Path.Combine(PluginEngine.ScriptsPyPath,"."), UriKind.Absolute);
+            foreach (
+                var filename in
+                    Directory.EnumerateFiles(PluginEngine.ScriptsPyPath, "*.py", SearchOption.TopDirectoryOnly))
+            {
+                var relativePath = rootUri.MakeRelativeUri(new Uri(filename, UriKind.Absolute)).ToString();
+                // was going to show subdirectories but will leave that alone for now
+                var item = new ToolStripMenuItem()
+                {
+                    Name = Path.GetFileNameWithoutExtension(relativePath),
+                    Text = Path.GetFileNameWithoutExtension(relativePath),
+                    Image = Properties.Resources.PythonScript32x32,
+                    ToolTipText = string.Format("Open in {0} in default python editor", relativePath),
+                    AutoToolTip = true,
+                    Visible = true,
+                    Enabled = true,
+                    Tag = Path.GetFullPath(filename),
+                };
+                editScriptsToolStripMenuItem.DropDownItems.Add(item);
+            }
+
+            selectionScriptsToolStripMenuItem.Enabled = selectionScriptsToolStripMenuItem.HasDropDownItems;
+            globalScriptsToolStripMenuItem.Enabled = globalScriptsToolStripMenuItem.HasDropDownItems;
+        }
+
+        private void ClearDynamicScripts()
+        {
+            globalScriptsToolStripMenuItem.DropDownItems.Clear();
+            selectionScriptsToolStripMenuItem.DropDownItems.Clear();
+            editScriptsToolStripMenuItem.DropDownItems.Clear();
+        }
+
+        private void BuildDynamicScriptsMenu()
+        {
+            this.ClearDynamicScripts();
+            var outputWindow = GetWindowByName<OutputTextContent>("Output");
+            if (outputWindow != null)
+                outputWindow.UpdateText("");
+            PluginEngine.Default.Reinitialize();
+            this.LoadDynamicScripts();
+        }
+        private void reloadToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            BuildDynamicScriptsMenu();
+        }
+
+        private void scriptsToolStripMenuItem_DropDownOpening(object sender, EventArgs e)
+        {
+            selectionScriptsToolStripMenuItem.Enabled =
+                scriptsToolStripMenuItem.Enabled &&
+                selectionScriptsToolStripMenuItem.HasDropDownItems &&
+                this.PluginTree.SelectedRecord != null;
+        }
+
+        private void globalScriptsToolStripMenuItem_DropDownItemClicked(object sender, ToolStripItemClickedEventArgs e)
+        {
+            if (e.ClickedItem.Tag != null)
+            {
+                var name = e.ClickedItem.Tag as string;
+                PluginEngine.Default.ExecuteByName(name);
+            }
+        }
+
+        private System.Collections.IList BuildSelectionList()
+        {
+            var recs = this.PluginTree.SelectedRecords;
+            return recs != null ? recs.ToArray() : new object[0];
+        }
+
+        private void selectionScriptsToolStripMenuItem_DropDownOpening(object sender, EventArgs e)
+        {
+            var recs = BuildSelectionList();
+            if (recs.Count == 0) return;
+            foreach (ToolStripMenuItem menu in this.selectionScriptsToolStripMenuItem.DropDownItems)
+            {
+                var name = menu.Tag as string;
+                menu.Enabled = !string.IsNullOrEmpty(name) &&
+                                PluginEngine.Default.IsValidSelectionByName(name, recs);
+            }
+        }
+
+        private void selectionScriptsToolStripMenuItem_DropDownItemClicked(object sender, ToolStripItemClickedEventArgs e)
+        {
+            var recs = BuildSelectionList();
+            if (recs.Count == 0) return;
+
+            var name = e.ClickedItem.Tag as string;
+            if (e.ClickedItem.Enabled)
+                PluginEngine.Default.ExecuteSelectionByName(name, recs);
+        }
+        #endregion
+
+        [DllImport("shell32.dll")]
+        static extern int FindExecutable(string lpFile, string lpDirectory, [Out] System.Text.StringBuilder lpResult);
+
+        private void editScriptsToolStripMenuItem_DropDownItemClicked(object sender, ToolStripItemClickedEventArgs e)
+        {
+            var filename = e.ClickedItem.Tag as string;
+            if (!string.IsNullOrEmpty(filename))
+            {
+                if (!string.IsNullOrEmpty(Properties.Settings.Default.ExternalPythonEditor))
+                {
+                    Process.Start(Properties.Settings.Default.ExternalPythonEditor, filename);
+                }
+                else
+                {
+                    var info = new ProcessStartInfo(filename);
+                    if (info.Verbs.Length > 0)
+                    {
+                        // try to find default editor via Open With. as usually python is default "open" which just runs it
+                        //  after that try to find "edit" then one of the "edit with using notepad" then any edit with
+                        using (var key = Registry.CurrentUser.OpenSubKey(
+                            @"Software\Microsoft\Windows\CurrentVersion\Explorer\FileExts\" + Path.GetExtension(filename) + @"\OpenWithList", false))
+                        {
+                            if (key != null)
+                            {
+                                foreach (var item in key.GetValue("MRUList", "").ToString())
+                                {
+                                    var process = key.GetValue(item.ToString(), "").ToString();
+                                    if (!string.IsNullOrEmpty(process) && !process.StartsWith("python") && !process.StartsWith("py.exe"))
+                                    {
+                                        var tmpinfo = new ProcessStartInfo(process, filename) { Verb = "open" };
+                                        if (tmpinfo.Verbs.Contains("open", StringComparer.InvariantCultureIgnoreCase)) // make sure open is a valid verb
+                                        {
+                                            info = tmpinfo;
+                                            break;
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                        if (string.IsNullOrEmpty(info.Verb))
+                            info.Verb = info.Verbs.FirstOrDefault(
+                                (v) => 0 == string.Compare(v, "edit", StringComparison.InvariantCultureIgnoreCase));
+                        if (string.IsNullOrEmpty(info.Verb))
+                            info.Verb = info.Verbs.FirstOrDefault(
+                                (v) => v.StartsWith("edit", StringComparison.InvariantCultureIgnoreCase)
+                                    && v.IndexOf("notepad", StringComparison.InvariantCultureIgnoreCase) > 0
+                                );
+                        if (string.IsNullOrEmpty(info.Verb))
+                            info.Verb = info.Verbs.FirstOrDefault(
+                                (v) => v.StartsWith("edit", StringComparison.InvariantCultureIgnoreCase) );
+                    }
+                    info.WorkingDirectory = Path.GetDirectoryName(filename);
+                    info.WindowStyle = ProcessWindowStyle.Normal;
+                    Process.Start(info);
+                }
+            }
+        }
+
     }
 }

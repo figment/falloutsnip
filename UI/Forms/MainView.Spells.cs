@@ -1183,62 +1183,6 @@ namespace TESVSnip.UI.Forms
             {
                 this.SendStatusText(TranslateUI.TranslateUiGlobalization.ResManager.GetString("TESSNIP_Spell_NoFormVersionGreater40"), Color.OrangeRed);
             }
-        }
-        private void addItemBatchScriptToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            var plugins = PluginList.All.Records;
-            if (plugins.Count == 0)
-            {
-                MessageBox.Show(Resources.NoPluginSelected, Resources.ErrorText);
-                return;
-            }
-            var types = new HashSet<string>(new[]
-                {
-                    "ARMO", "WEAP", "MISC", "AMMO", "KEYM"
-                });
-            var reWhite = new Regex(@"[\n\t\r]");
-            var sb = new StringBuilder();
-            for (int plugidx = 0; plugidx < PluginList.All.Records.Count; plugidx++)
-            {
-                var plugin = PluginList.All.Records[plugidx] as Plugin;
-                if (plugin == null)
-                    continue;
-                if (String.Compare(plugin.Name, "RBS.esp", StringComparison.InvariantCultureIgnoreCase) == 0)
-                    continue;
-
-                int pluginID = plugin.GetMasters().Length;
-                bool first = true;
-                foreach (
-                    Record rec in
-                        plugin.Enumerate(
-                            x =>
-                            x != null && (x is Plugin || x is GroupRecord || (x is Record && types.Contains(x.Name))))
-                              .OfType<Record>())
-                {
-                    uint itemMaster = (rec.FormID & 0xFF000000) >> 24;
-                    if (itemMaster != pluginID)
-                        continue;
-                    if (first)
-                    {
-                        sb.AppendFormat("\n; [{0:X2}] {1}\n", plugidx, plugin.DescriptiveName);
-                        first = false;
-                    }
-                    SubRecord fullRec = rec.SubRecords.FirstOrDefault(x => x.Name == "FULL");
-                    string fullStr = fullRec != null ? fullRec.GetLString() : null;
-                    sb.AppendFormat("player.additem {0:X2}{1:X6} 1 ; {2} {3}\n",
-                                    plugidx,
-                                    rec.FormID & 0x00FFFFFF,
-                                    rec.DescriptiveName,
-                                    !string.IsNullOrEmpty(fullStr) ? reWhite.Replace(fullStr, " ") : ""
-                        );
-                }
-            }
-            if (sb.Length > 0)
-            {
-                System.Windows.Forms.Clipboard.Clear();
-                System.Windows.Forms.Clipboard.SetText(sb.ToString());
-                MessageBox.Show(this, "AddItem List added to clipboard");
-            }
-        }
+        }        
     }
 }

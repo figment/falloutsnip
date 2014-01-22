@@ -1,3 +1,4 @@
+using System.Runtime.InteropServices;
 using TESVSnip.Domain.Scripts;
 using TESVSnip.Domain.Services;
 
@@ -1226,8 +1227,35 @@ namespace TESVSnip.Domain.Model
 
         public bool TryGetValue<T>(int offset, out T value)
         {
-            value = (T)TypeConverter.GetObject<T>(this.Data, offset);
-            return true;
+            try
+            {
+                value = (T)TypeConverter.GetObject<T>(this.Data, offset);
+                return true;
+            }
+            catch
+            {
+                value = default(T);
+                return false;               
+            }
+        }
+
+        public bool TrySetValue<T>(int offset, T value)
+        {
+            try
+            {
+                var data = new ArraySegment<byte>(this.Data, offset, Marshal.SizeOf(value));
+                return TypeConverter.TrySetValue<T>(data, value);
+            }
+            catch
+            {
+                return false;               
+            }
+        }
+
+        public void SetValue<T>(int offset, T value)
+        {
+            var data = new ArraySegment<byte>(this.Data, offset, Marshal.SizeOf(value));
+            TypeConverter.TrySetValue<T>(data, value);
         }
 
         internal void AttachStructure(SubrecordStructure ss)
@@ -1240,9 +1268,30 @@ namespace TESVSnip.Domain.Model
             this.Structure = null;
         }
 
-        internal IEnumerable<Element> EnumerateElements()
+        public IEnumerable<Element> EnumerateElements()
         {
             return this.EnumerateElements(false);
+        }
+
+
+        /// <summary>
+        /// Python helper function to unpack elements with references to data
+        /// </summary>
+        /// <returns></returns>
+        public Element[] UnpackElements()
+        {
+            return this.EnumerateElements(false).ToArray();
+        }
+        /// <summary>
+        /// Python helper function to repack elements into data from array of elements
+        ///     Note that passed in Elements are not updated
+        /// </summary>
+        public void PackElements(System.Collections.IEnumerable items)
+        {
+            var stream = new MemoryStream(this.Data.Length);
+            foreach (Element elem in items)
+                stream.Write(elem.Data.Array, elem.Data.Offset, elem.Data.Count);
+            this.Data = stream.ToArray();
         }
 
         /// <summary>
@@ -1253,7 +1302,7 @@ namespace TESVSnip.Domain.Model
         /// <returns>
         /// The System.Collections.Generic.IEnumerable`1[T -&gt; TESVSnip.Element].
         /// </returns>
-        internal IEnumerable<Element> EnumerateElements(bool rawData)
+        public IEnumerable<Element> EnumerateElements(bool rawData)
         {
             if (this.Structure == null)
             {
@@ -1327,7 +1376,7 @@ namespace TESVSnip.Domain.Model
             return value;
         }
 
-        internal object GetDisplayValue(Element elem)
+        public object GetDisplayValue(Element elem)
         {
             object value = elem.Value;
 
@@ -1501,7 +1550,7 @@ namespace TESVSnip.Domain.Model
             return value;
         }
 
-        internal string GetFormattedData()
+        public string GetFormattedData()
         {
             var sb = new StringBuilder();
             this.GetFormattedData(sb);
@@ -1513,16 +1562,8 @@ namespace TESVSnip.Domain.Model
             var list = new List<string>();
             if (Name == "EDID")
             {
-                if (lower)
-                {
-                    list.Add(this.GetStrData().ToLower());
-                }
-                else
-                {
-                    list.Add(this.GetStrData());
-                }
+                list.Add(lower ? this.GetStrData().ToLower() : this.GetStrData());
             }
-
             return list;
         }
 
@@ -1547,7 +1588,12 @@ namespace TESVSnip.Domain.Model
                 WriteString(writer, Name);
                 writer.Write((ushort)this.Data.Length);
                 writer.Write(this.Data, 0, this.Data.Length);
-                }
-                }
             }
         }
+
+        public override string ToString()
+        {
+            return string.Format("[SubRecord] {0} [{1}]: {2} ", this.Name, this.Size, this.Structure != null ? this.Structure.desc : "");
+        }
+    }
+}

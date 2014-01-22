@@ -2,7 +2,7 @@ namespace TESVSnip.Domain.Model
 {
     using System;
 
-    internal interface IRecord : ICloneable
+    public interface IRecord : ICloneable
     {
         string DescriptiveName { get; }
 

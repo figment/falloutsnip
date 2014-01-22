@@ -7,6 +7,7 @@ namespace TESVSnip.UI.Forms
     using System.Drawing;
     using System.IO;
     using System.Windows.Forms;
+    using System.Linq;
 
     using TESVSnip.Domain.Data.RecordStructure;
     using TESVSnip.Domain.Model;
@@ -42,6 +43,9 @@ namespace TESVSnip.UI.Forms
             int panelOffset = 0;
             try
             {
+                this.fpanel1.ColumnStyles[0] = new ColumnStyle(SizeType.Percent, 100.0f);
+                int maxWidth = this.fpanel1.Width - SystemInformation.VerticalScrollBarWidth - 8;
+                int leftOffset = 0; // 8;
                 foreach (var elem in ss.elements)
                 {
                     Control c = null;
@@ -84,8 +88,8 @@ namespace TESVSnip.UI.Forms
                         {
                             var ge = new RepeatingElement();
                             c = ge;
-                            c.Left = 8;
-                            c.Width = this.fpanel1.Width - 16;
+                            c.Left = leftOffset;
+                            c.Width = maxWidth;
                             c.Top = panelOffset;
                             c.Anchor = c.Anchor | AnchorStyles.Left | AnchorStyles.Right;
 
@@ -97,8 +101,8 @@ namespace TESVSnip.UI.Forms
                         {
                             var re = new OptionalElement();
                             c = re;
-                            c.Left = 8;
-                            c.Width = this.fpanel1.Width - 16;
+                            c.Left = leftOffset;
+                            c.Width = maxWidth;
                             c.Top = panelOffset;
                             c.Anchor = c.Anchor | AnchorStyles.Left | AnchorStyles.Right;
 
@@ -109,17 +113,22 @@ namespace TESVSnip.UI.Forms
                         }
                         else
                         {
-                            c.Left = 8;
-                            c.Width = this.fpanel1.Width - 16;
+                            c.Left = leftOffset;
+                            c.Width = maxWidth;
                             c.Top = panelOffset;
                             c.Anchor = c.Anchor | AnchorStyles.Left | AnchorStyles.Right;
                         }
 
-                        c.MinimumSize = c.Size;
-
                         this.controlMap.Add(elem, ec);
-                        this.fpanel1.Controls.Add(c);
-                        panelOffset = c.Bottom;
+                        int idx = this.fpanel1.RowCount - 1;
+                        this.fpanel1.Controls.Add(c, 0, idx);
+                        var info = new RowStyle(SizeType.Absolute, c.Size.Height+2);
+                        if (idx == 0)
+                            this.fpanel1.RowStyles[0] = info;
+                        else
+                            this.fpanel1.RowStyles.Add(info);
+                        panelOffset = 0;
+                        ++this.fpanel1.RowCount;
                     }
                 }
 
@@ -383,13 +392,14 @@ namespace TESVSnip.UI.Forms
 
         private void fpanel1_Resize(object sender, EventArgs e)
         {
-            this.fpanel1.SuspendLayout();
-            foreach (Control c in this.fpanel1.Controls)
-            {
-                c.MinimumSize = new Size(Width - c.Left - 30, c.MinimumSize.Height);
-            }
+            //this.fpanel1.SuspendLayout();
+            //foreach (Control c in this.fpanel1.Controls)
+            //{
+            //    c.MinimumSize = new Size(Width - c.Left - SystemInformation.VerticalScrollBarWidth - 4, c.MinimumSize.Height);
+            //}
+            //this.fpanel1.GetRowHeights().Sum();
 
-            this.fpanel1.ResumeLayout();
+            //this.fpanel1.ResumeLayout();
         }
     }
 }

@@ -182,8 +182,10 @@
     <Compile Include="Domain\Scripts\Token.cs" />
     <Compile Include="Domain\Scripts\TokenStream.cs" />
     <Compile Include="Domain\Scripts\TokenType.cs" />
-    <Compile Include="Domain\Services\Platform.cs" />
-    <Compile Include="Domain\Services\RecordsTace.cs" />
+    <Compile Include="Domain\Services\CloneTool.cs" />
+    <Compile Include="Domain\Services\RecordLayout.cs" />
+    <Compile Include="Framework\Services\Platform.cs" />
+    <Compile Include="Domain\Services\RecordsTrace.cs" />
     <Compile Include="Domain\Services\Compressor.cs" />
     <Compile Include="Domain\Services\Options.cs" />
     <Compile Include="Domain\Services\SaveReadStream.cs" />
@@ -208,6 +210,8 @@
     <Compile Include="Framework\Persistence\serializationinfocachelist.cs" />
     <Compile Include="Framework\Services\Encoding.cs" />
     <Compile Include="Framework\Services\FontLangInfo.cs" />
+    <Compile Include="Framework\Services\PluginBase.cs" />
+    <Compile Include="Framework\Services\PluginEngine.cs" />
     <Compile Include="Framework\Services\Scripting.cs" />
     <Compile Include="Framework\TypeConverter.cs" />
     <Compile Include="TranslateUI\Localization.cs">
@@ -217,6 +221,12 @@
     <Compile Include="UI\Controls\CustomTreeView.cs">
       <SubType>Component</SubType>
     </Compile>
+    <Compile Include="UI\Docking\OutputTextContent.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="UI\Docking\OutputTextContent.Designer.cs">
+      <DependentUpon>OutputTextContent.cs</DependentUpon>
+    </Compile>
     <Compile Include="UI\Docking\InterpreterConsole.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -224,15 +234,16 @@
       <DependentUpon>InterpreterConsole.cs</DependentUpon>
     </Compile>
     <Compile Include="UI\Hosting\ConsoleOptions.cs" />
+    <Compile Include="Framework\Services\PluginStore.cs" />
     <Compile Include="UI\Hosting\IronPythonConsole.xaml.cs">
       <DependentUpon>IronPythonConsole.xaml</DependentUpon>
     </Compile>
+    <Compile Include="UI\Hosting\ScriptSupport.cs" />
     <Compile Include="UI\MruStripMenu.cs" />
     <Compile Include="UI\RecordBuilder.cs" />
     <Compile Include="UI\RecordControls\IGroupedElementControl.cs" />
     <Compile Include="UI\RecordControls\IOuterElementControl.cs" />
     <Compile Include="UI\RecordControls\ITextElementControl.cs" />
-    <Compile Include="UI\Hosting\PyInterpreter.cs" />
     <Compile Include="UI\SelectionContext.cs" />
     <Compile Include="UI\Spells.cs" />
     <Compile Include="Vendor\Controls\ballontooltip.cs">
@@ -581,6 +592,10 @@
     <EmbeddedResource Include="Lang\resource.resx">
       <SubType>Designer</SubType>
     </EmbeddedResource>
+    <EmbeddedResource Include="UI\Docking\OutputTextContent.resx">
+      <DependentUpon>OutputTextContent.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
     <EmbeddedResource Include="UI\Docking\InterpreterConsole.resx">
       <DependentUpon>InterpreterConsole.cs</DependentUpon>
     </EmbeddedResource>
@@ -728,18 +743,6 @@
     </EmbeddedResource>
     <None Include="build\tesvsnip.snk" />
     <None Include="changelog.rtf" />
-    <None Include="conf\scripts.py">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Include="conf\DockPanel.config">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <Content Include="conf\ScriptFunctions.xml">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="conf\ScriptFunctionsFormat.txt">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
     <None Include="Domain\Data\RecordStructure.xsd" />
     <None Include="Resources\Python.xshd" />
     <None Include="TranslateUI\Tools\ResEx\ResEx.chm" />
@@ -837,22 +840,6 @@
   <ItemGroup>
     <Content Include="build\buildver.txt" />
     <Content Include="Lang\ResGen.exe" />
-    <Content Include="conf\RecordStructure.xml">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      <SubType>Designer</SubType>
-    </Content>
-    <Content Include="conf\RecordStructureFormat.txt">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="conf\ScriptFunctions.xml">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="conf\ScriptFunctionsFormat.txt">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="conf\settings.xml">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
     <Content Include="TranslateUI\Tools\ResEx\Extended.Common.dll" />
     <Content Include="TranslateUI\Tools\ResEx\ResEx.exe" />
     <Content Include="TranslateUI\Tools\ResEx\ResExSetup1.2.exe" />
@@ -1004,9 +991,9 @@
     <MakeDir Directories="$(StageOutputDir)fr-FR" />
     <Delete Files="$(StageOutputDir)conf\DockPanel.config" />
     <Copy SourceFiles="@(CopyToStaging)" DestinationFolder="$(StageOutputDir)" />
-    <Copy SourceFiles="@(CopyToStagingConf)" DestinationFolder="$(StageOutputDir)conf" />
-    <Copy SourceFiles="@(CopyToStagingLang)" DestinationFolder="$(StageOutputDir)Lang"/>
-    <Copy SourceFiles="@(CopyToStagingFr)" DestinationFolder="$(StageOutputDir)fr-FR"/>
+    <Copy SourceFiles="@(CopyToStagingConf)" DestinationFolder="$(StageOutputDir)conf\%(RecursiveDir)" />
+    <Copy SourceFiles="@(CopyToStagingLang)" DestinationFolder="$(StageOutputDir)Lang\%(RecursiveDir)" />
+    <Copy SourceFiles="@(CopyToStagingFr)" DestinationFolder="$(StageOutputDir)fr-FR\%(RecursiveDir)" />
     <Copy SourceFiles="@(CopyToStagingPython)" DestinationFolder="$(StageOutputDir)" />
     <Copy SourceFiles="$(TargetPath).config" DestinationFolder="$(StageOutputDir)" />
     <Copy SourceFiles="@(inputAssemblies)" DestinationFolder="$(StageOutputDir)" />

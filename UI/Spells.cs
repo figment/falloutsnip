@@ -1,139 +1,42 @@
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Windows.Forms;
+
+using TESVSnip.Domain.Data.RecordStructure;
+using TESVSnip.Domain.Data.Strings;
+using TESVSnip.Domain.Model;
+using TESVSnip.Domain.Services;
+using TESVSnip.Framework;
+using TESVSnip.Properties;
+
 namespace TESVSnip.UI
 {
-    using System;
-    using System.Collections.Generic;
-    using System.IO;
-    using System.Linq;
-    using System.Windows.Forms;
-
-    using TESVSnip.Domain.Data.RecordStructure;
-    using TESVSnip.Domain.Data.Strings;
-    using TESVSnip.Domain.Model;
-    using TESVSnip.Framework;
-    using TESVSnip.Properties;
-
     /// <summary>
     /// This file contains the miscellaneous spells for the main form.
     /// </summary>
-    internal static class Spells
+    public static class Spells
     {
-        private static readonly string[] LooseGroups = new[]
-                                                           {
-                                                               "CELL", "WRLD", "REFR", "ACRE", "ACHR", "NAVM", "DIAL",
-                                                               "INFO"
-                                                           };
-
+        private static readonly string[] LooseGroups = TESVSnip.Domain.Services.RecordLayout.LooseGroups;
+        private static readonly string[] SanitizeOrder = TESVSnip.Domain.Services.RecordLayout.SanitizeOrder;
+        
         /// <summary>
-        /// The sanitize order.
+        ///  Copy Records to new plugin.  By default make as overrides
         /// </summary>
-        /// HAZD appears twice in Skyrim.esm.  2nd entry is empty.
-        private static readonly string[] SanitizeOrder = new[]
-                                                             {
-                                                                 //"GMST", "KYWD", "LCRT", "AACT", "TXST", "GLOB", "CLAS", "FACT", "HDPT", "HAIR", "EYES", "RACE", "SOUN", "ASPC", "MGEF", "SCPT", "LTEX", "ENCH", "SPEL", "SCRL", "ACTI", "TACT", "ARMO", 
-                                                                 //"BOOK", "CONT", "DOOR", "INGR", "LIGH", "MISC", "APPA", "STAT", "SCOL", "MSTT", "PWAT", "GRAS", "TREE", "CLDC", "FLOR", "FURN", "WEAP", "AMMO", "NPC_", "LVLN", "KEYM", "ALCH", "IDLM", 
-                                                                 //"COBJ", "PROJ", "HAZD", "SLGM", "LVLI", "WTHR", "CLMT", "SPGD", "RFCT", "REGN", "NAVI", "CELL", "WRLD", "DIAL", "QUST", "IDLE", "PACK", "CSTY", "LSCR", "LVSP", "ANIO", "WATR", "EFSH", 
-                                                                 //"EXPL", "DEBR", "IMGS", "IMAD", "FLST", "PERK", "BPTD", "ADDN", "AVIF", "CAMS", "CPTH", "VTYP", "MATT", "IPCT", "IPDS", "ARMA", "ECZN", "LCTN", "MESG", "RGDL", "DOBJ", "LGTM", "MUSC", 
-                                                                 //"FSTP", "FSTS", "SMBN", "SMQN", "SMEN", "DLBR", "MUST", "DLVW", "WOOP", "SHOU", "EQUP", "RELA", "SCEN", "ASTP", "OTFT", "ARTO", "MATO", "MOVT", "HAZD", "SNDR", "DUAL", "SNCT", "SOPM", 
-                                                                 //"COLL", "CLFM", "REVB"
-                                                                 "GMST", "KYWD", "LCRT", "AACT", "TXST", "GLOB", "CLAS",
-                                                                 "FACT", "HDPT", "HAIR", "EYES", "RACE", "SOUN", "ASPC",
-                                                                 "MGEF", "SCPT", "LTEX", "ENCH", "SPEL", "SCRL", "ACTI",
-                                                                 "TACT", "ARMO", "BOOK", "CONT", "DOOR", "INGR", "LIGH",
-                                                                 "MISC", "APPA", "STAT", "SCOL", "MSTT", "PWAT", "GRAS",
-                                                                 "TREE", "CLDC", "FLOR", "FURN", "WEAP", "AMMO", "NPC_",
-                                                                 "LVLN", "KEYM", "ALCH", "IDLM", "COBJ", "PROJ", "HAZD",
-                                                                 "SLGM", "LVLI", "WTHR", "CLMT", "SPGD", "RFCT", "REGN",
-                                                                 "NAVI", "CELL", "REFR", "ACHR", "NAVM", "PGRE", "PHZD",
-                                                                 "WRLD", "LAND", "DIAL", "INFO", "QUST", "IDLE", "PACK",
-                                                                 "CSTY", "LSCR", "LVSP", "ANIO", "WATR", "EFSH", "EXPL",
-                                                                 "DEBR", "IMGS", "IMAD", "FLST", "PERK", "BPTD", "ADDN",
-                                                                 "AVIF", "CAMS", "CPTH", "VTYP", "MATT", "IPCT", "IPDS",
-                                                                 "ARMA", "ECZN", "LCTN", "MESG", "RGDL", "DOBJ", "LGTM",
-                                                                 "MUSC", "FSTP", "FSTS", "SMBN", "SMQN", "SMEN", "DLBR",
-                                                                 "MUST", "DLVW", "WOOP", "SHOU", "EQUP", "RELA", "SCEN",
-                                                                 "ASTP", "OTFT", "ARTO", "MATO", "MOVT", "HAZD", "SNDR",
-                                                                 "DUAL", "SNCT", "SOPM", "COLL", "CLFM", "REVB"
-                                                             };
-
-
-
-        public static int CopyRecordsTo(BaseRecord[] src, IGroupRecord dst)
+        /// <param name="src"></param>
+        /// <param name="dst"></param>
+        /// <param name="bOverride">Make record an override in the new location</param>
+        /// <returns></returns>
+        public static int CopyRecordsTo(BaseRecord[] src, IGroupRecord dst, bool bOverride = true)
         {
             int count = 0;
             if (src != null && dst != null)
             {
                 if (dst is Plugin)
                 {
-                    var dstRec = src.Where(x => !LooseGroups.Contains(x.Name)).Select(x => x.Clone()).ToArray();
-                    if (dstRec.All(x => x is Record))
-                    {
-                        // put records into appropriate groups
-                        var groups = dst.Records.OfType<GroupRecord>();
-                        var lookup =
-                            dstRec.GroupBy(r => r.Name).Select(g => new {key = g.Key, value = g.ToArray()}).ToLookup(
-                                k => k.key, v => v.value);
-                        foreach (var kvp in lookup)
-                        {
-                            if (LooseGroups.Contains(kvp.Key))
-                            {
-                                dst.AddRecords(dstRec);
-                            }
-                            else
-                            {
-                                var gr = groups.FirstOrDefault(x => x.ContentsType == kvp.Key);
-                                if (gr == null)
-                                {
-                                    gr = new GroupRecord(kvp.Key);
-                                    dst.AddRecord(gr);
-                                }
-
-                                foreach (var list in kvp)
-                                {
-                                    gr.AddRecords(list);
-                                }
-                            }
-                        }
-                    }
-                    else
-                    {
-                        dst.AddRecords(dstRec);
-                    }
-
-                    // handle loose groups by creating copy of parent groups
-                    foreach (var srcRec in src.Where(x => LooseGroups.Contains(x.Name)))
-                    {
-                        var dstnodes = new Stack<BaseRecord>();
-                        dstnodes.Push(srcRec.Clone(recursive: true));
-                        for (var n = srcRec.Parent; n is GroupRecord; n = n.Parent)
-                        {
-                            dstnodes.Push(n.Clone(recursive: false));
-                        }
-
-                        var par = dst as IGroupRecord;
-                        foreach (var baseRecord in dstnodes)
-                        {
-                            if (par == null)
-                            {
-                                break;
-                            }
-
-                            if (baseRecord is GroupRecord)
-                            {
-                                var gr = baseRecord as GroupRecord;
-                                var pargr = par.Records.OfType<GroupRecord>().FirstOrDefault(x => x.IsEquivalent(gr));
-                                if (pargr != null)
-                                {
-                                    par = pargr;
-                                    continue;
-                                }
-                            }
-
-                            par.AddRecord(baseRecord);
-                            par = baseRecord as IGroupRecord;
-                        }
-
-                        count += dstnodes.Count;
-                    }
+                    var plugin = (Plugin)dst;
+                    count = new CloneTool(plugin, bOverride).CopyRecordsTo(src);
                 }
                 else
                 {
@@ -204,7 +107,7 @@ namespace TESVSnip.UI
                                     }
 
                                     elem.AssignValue<ArraySegment<byte>>(
-                                        new ArraySegment<byte>((byte[]) TypeConverter.i2h(nextid).Clone()));
+                                        new ArraySegment<byte>((byte[])TypeConverter.i2h(nextid).Clone()));
                                     ++count;
                                 }
                             }
@@ -246,7 +149,7 @@ namespace TESVSnip.UI
             BaseRecord tn = node;
             if (tn is Plugin)
             {
-                return (Plugin) tn;
+                return (Plugin)tn;
             }
 
             while (!(tn is Plugin) && tn != null)
@@ -354,7 +257,7 @@ namespace TESVSnip.UI
                     var r = toParse.Dequeue();
                     if (r is GroupRecord)
                     {
-                        var gr = (GroupRecord) r;
+                        var gr = (GroupRecord)r;
                         if (gr.ContentsType == "CELL" || gr.ContentsType == "WRLD" || gr.ContentsType == "DIAL")
                         {
                             var gr2 = groups[gr.ContentsType];
@@ -377,7 +280,7 @@ namespace TESVSnip.UI
                     }
                     else if (r is Record)
                     {
-                        var r2 = (Record) r;
+                        var r2 = (Record)r;
                         if (LooseGroups.Contains(r2.Name))
                         {
                             looseGroupsWarning = true;
@@ -454,7 +357,7 @@ namespace TESVSnip.UI
                 tes4.SubRecords[0].Size >= 8)
             {
                 byte[] data = tes4.SubRecords[0].GetData();
-                var formid = (uint) TypeConverter.GetObject<uint>(data, 8);
+                var formid = (uint)TypeConverter.GetObject<uint>(data, 8);
                 TypeConverter.i2h(formid + 1, data, 8);
                 tes4.SubRecords[0].SetData(data);
                 return formid;
@@ -474,11 +377,11 @@ namespace TESVSnip.UI
         {
             if (rec is Record)
             {
-                giveRecordNewFormID((Record) rec, updateReference, ref formCount, ref refCount);
+                giveRecordNewFormID((Record)rec, updateReference, ref formCount, ref refCount);
             }
             else if (rec is GroupRecord)
             {
-                foreach (BaseRecord rec2 in ((GroupRecord) rec).Records)
+                foreach (BaseRecord rec2 in ((GroupRecord)rec).Records)
                 {
                     giveBaseRecordNewFormID(rec2, updateReference, ref formCount, ref refCount);
                 }
@@ -529,9 +432,9 @@ namespace TESVSnip.UI
                     {
                         if (e.Structure != null && e.Structure.type == ElementValueType.FormID)
                         {
-                            if ((uint) e.Value == oldFormID)
+                            if ((uint)e.Value == oldFormID)
                             {
-                                e.AssignValue<uint>((object) newFormID);
+                                e.AssignValue<uint>((object)newFormID);
                                 refCount++;
                             }
                         }
@@ -769,7 +672,7 @@ namespace TESVSnip.UI
         {
             if (r is Record)
             {
-                var r2 = (Record) r;
+                var r2 = (Record)r;
                 if (r2.Name != "GMST" && r2.SubRecords.Count > 0 && r2.SubRecords[0].Name == "EDID")
                 {
                     r2.DeleteRecord(r2.SubRecords[0]);
