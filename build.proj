@@ -1,0 +1,85 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Release</Configuration>
+    <!--<SolutionDir Condition=" '$(SolutionDir)' == '' ">$(MSBuildProjectDirectory)\</SolutionDir>-->
+	<SolutionDir>$(MSBuildProjectDirectory)\</SolutionDir>
+    <Platform>AnyCPU</Platform>
+  </PropertyGroup>
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <BUILD_ROOT Condition="'$(BUILD_ROOT)' == '' AND Exists('$(SolutionDir)build\')">$(SolutionDir)</BUILD_ROOT>
+    <BUILD_ROOT Condition="'$(BUILD_ROOT)' == '' AND Exists('$(MSBuildProjectDirectory)\build\')">$(MSBuildProjectDirectory)\</BUILD_ROOT>
+  </PropertyGroup>
+  <PropertyGroup>
+    <ProjectName>TESVSnip</ProjectName>
+    <ProjectGuid>{E5EAE955-8751-46A5-9881-C68E7C508151}</ProjectGuid>
+    <ApplicationDir>$(SolutionDir)Application\</ApplicationDir>
+    <ApplicationTargetDir>$(SolutionDir)Application\bin\$(Configuration)\</ApplicationTargetDir>
+    <StageOutputDir>$(SolutionDir)Output\</StageOutputDir>
+    <MergeOutputFile>$(StageOutputDir)\$(TargetName)$(TargetExt)</MergeOutputFile>
+  </PropertyGroup>
+  <Import Project="$(BUILD_ROOT)\build\tesvsnip.common.targets" />
+  <ItemGroup>
+    <inputAssembliesConf Include="$(ApplicationTargetDir)*.exe.config" />
+    <inputAssemblies Include="$(ApplicationTargetDir)*.exe" />
+    <inputAssemblies Include="$(ApplicationTargetDir)*.dll" />
+    <CopyToStagingConf Include="$(SolutionDir)conf\**" />
+    <CopyToStagingLang Include="$(ApplicationTargetDir)Lang\resource.resources" />
+    <CopyToStagingLang Include="$(ApplicationTargetDir)Lang\resource.fr-FR.resources" />
+    <CopyToStagingFr Include="$(ApplicationTargetDir)Lang\**" />
+    <CopyToStagingFr Include="$(ApplicationTargetDir)fr-FR\TESVSnip.resources.dll" />
+    <CopyToStagingFr Include="$(ApplicationTargetDir)fr-FR\**" />
+    <CopyToStaging Include="$(SolutionDir)TESVsnip_LICENSE" />
+    <CopyToStaging Include="$(SolutionDir)TESVsnip_README.TXT" />
+    <CopyToStagingPython Include="$(SolutionDir)Vendor\IronPython-2.7.4\IronPython.dll" />
+    <CopyToStagingPython Include="$(SolutionDir)Vendor\IronPython-2.7.4\IronPython.Modules.dll" />
+    <CopyToStagingPython Include="$(SolutionDir)Vendor\IronPython-2.7.4\Microsoft.Dynamic.dll" />
+    <CopyToStagingPython Include="$(SolutionDir)Vendor\IronPython-2.7.4\Microsoft.Scripting.dll" />
+    <CopyToStagingPlatform64 Include="$(SolutionDir)Platform\x64\zlib1.dll" />
+    <CopyToStagingPlatform64 Include="$(SolutionDir)Platform\x64\ZLibMC.dll" />
+    <CopyToStagingPlatform32 Include="$(SolutionDir)Platform\x86\zlib1.dll" />
+    <CopyToStagingPlatform32 Include="$(SolutionDir)Platform\x86\ZLibMC.dll" />
+  </ItemGroup>
+  <Target Name="Build" DependsOnTargets="version_import">
+    <MSBuild Projects="$(ApplicationDir)tesvsnip.csproj" 
+		Properties="Configuration=$(Configuration);Platform=$(Platform);SolutionDir=$(SolutionDir)" 
+		Targets="Build"/>
+  </Target>
+
+  <Target Name="AfterBuild" DependsOnTargets="Build">
+    <MakeDir Directories="$(ApplicationTargetDir)Lang" />
+    <SimpleExec Command="$(ApplicationDir)Lang\resgen.exe" Args="$(ApplicationDir)Lang\resource.resx $(ApplicationTargetDir)Lang\resource.resources" WorkingDirectory="$(ApplicationTargetDir)Lang" />
+    <SimpleExec Command="$(ApplicationDir)Lang\resgen.exe" Args="$(ApplicationDir)Lang\resource.fr-FR.resx $(ApplicationTargetDir)Lang\resource.fr-FR.resources" WorkingDirectory="$(ApplicationTargetDir)Lang" />
+    <Copy SourceFiles="@(CopyToStagingPlatform32)" DestinationFolder="$(ApplicationTargetDir)Platform\x86" />
+    <Copy SourceFiles="@(CopyToStagingPlatform64)" DestinationFolder="$(ApplicationTargetDir)Platform\x64" />
+  </Target>
+  <Target Name="Package" DependsOnTargets="AfterBuild">
+    <MakeDir Directories="$(StageOutputDir)" />
+    <MakeDir Directories="$(StageOutputDir)Lang" />
+    <MakeDir Directories="$(StageOutputDir)fr-FR" />
+    <Delete Files="$(StageOutputDir)conf\DockPanel.config" />
+    <Copy SourceFiles="@(CopyToStaging)" DestinationFolder="$(StageOutputDir)" />
+    <Copy SourceFiles="@(CopyToStagingConf)" DestinationFolder="$(StageOutputDir)conf\%(RecursiveDir)" />
+    <Copy SourceFiles="@(CopyToStagingLang)" DestinationFolder="$(StageOutputDir)Lang\%(RecursiveDir)" />
+    <Copy SourceFiles="@(CopyToStagingFr)" DestinationFolder="$(StageOutputDir)fr-FR\%(RecursiveDir)" />
+    <Copy SourceFiles="@(CopyToStagingPython)" DestinationFolder="$(StageOutputDir)" />
+    <Copy SourceFiles="@(inputAssembliesConf)" DestinationFolder="$(StageOutputDir)" />
+    <Copy SourceFiles="@(inputAssemblies)" DestinationFolder="$(StageOutputDir)" />
+    <Copy SourceFiles="@(CopyToStagingPlatform32)" DestinationFolder="$(StageOutputDir)Platform\x86" />
+    <Copy SourceFiles="@(CopyToStagingPlatform64)" DestinationFolder="$(StageOutputDir)Platform\x64" />
+    <!-- <ILMerge InputAssemblies="@(inputAssemblies)" OutputFile="$(MergeOutputFile)" DebugInfo="true" /> -->
+  </Target>
+  <Target Name="Package_rar" DependsOnTargets="Package">
+    <MakeDir Directories="$(StageOutputDir)" />
+    <Delete Files="$(StageOutputDir)\$(ProjectName)_v$(Major).$(Minor).rar" />
+    <SimpleExec Command="$(ProgramFiles)\WinRar\rar.exe" Args="a -r $(ProjectName)_v$(Major).$(Minor).rar * -x*.pdb -x*vshost* -x*.rar -x*.7z" WorkingDirectory="$(StageOutputDir)" />
+    <SimpleExec Command="$(ProgramFiles)\WinRar\rar.exe" Args="c $(ProjectName)_v$(Major).$(Minor).rar" StdIn="TESVsnip_README.TXT" WorkingDirectory="$(StageOutputDir)" />
+  </Target>
+  <Target Name="Package_7z" DependsOnTargets="Package">
+    <MakeDir Directories="$(StageOutputDir)" />
+    <Delete Files="$(StageOutputDir)\$(ProjectName)_v$(Major).$(Minor).7z" />
+    <SimpleExec Command="7za.exe" Args="a -r $(ProjectName)_v$(Major).$(Minor).7z * -x!*.pdb -x!*vshost* -x!*.rar -x!*.7z" WorkingDirectory="$(StageOutputDir)" />
+  </Target>
+
+</Project>

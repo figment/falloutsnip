@@ -11,7 +11,6 @@ Requirements:
 Change Log:
 v 4.5
 - Merged changes from 4.3 and 4.4 
-- Huge speed boost when loading Plugins
 - Added Open List Shortcut
 - Initial pass at embedded IronPython console to enable gui scripts
 - Fixed Copy To Semantics to add masters when needed and use correct ids in references
@@ -23,6 +22,7 @@ v 4.5
 - Add Plugin functionality for Python scripts to extend functionality
   - Added Copy Override To, Copy New To, Set Weights, List Weights, List items as examples
 - Added setting to not update the nextformid on load and save rather than recalculate based on highest number.
+- Huge speed boost when loading Plugins
 - Replace RTF Report with HTML Report
 - Add ElementGroup to handle repeating structures in subrecords like MO?T 
 - Fix some memory leaks in the Tree Control and History

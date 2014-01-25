@@ -26,14 +26,14 @@ namespace TESVSnip.UI.Rendering
 
         public string GetFormattedData(BaseRecord rec)
         {
-            var sb = new StringBuilder();
-            using (var text = new System.IO.StringWriter(sb))
-            using (var html = new HtmlTextWriter(text))
+            //var sb = new StringBuilder();
+            //using (var text = new System.IO.StringWriter(sb))
+            //using (var html = new HtmlTextWriter(text))
             {
                 return TESVSnip.UI.Rendering.Extensions.StringRenderer.GetDesc(rec);
                 /// what 
             }
-            return sb.ToString();
+            //return sb.ToString();
         }
 
         public void GetFormattedData(BaseRecord rec,  HtmlTextWriter html)

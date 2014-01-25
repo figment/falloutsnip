@@ -35,6 +35,27 @@
   <UsingTask TaskName="MSBuildTasks.SimpleExec" AssemblyFile="$(BUILD_ROOT)\build\tesvsnip.buildtasks.dll"/>
 
   <!-- Check status of build variables and stop build if required folders cannot be located -->
+  <Target Name="version_import">
+    <Version VersionFile="$(BUILD_ROOT)\build\buildver.txt" Major="1" Minor="0" Build="0" Revision="0">
+      <Output TaskParameter="Major" PropertyName="Major" />
+      <Output TaskParameter="Minor" PropertyName="Minor" />
+      <Output TaskParameter="Build" PropertyName="Build" />
+      <Output TaskParameter="Revision" PropertyName="Revision" />
+    </Version>
+    <Message Text="Version: $(Major).$(Minor).$(Build).$(Revision)"/>
+            
+    <Error
+        Text=" The BUILD_ROOT property must be set on the command line."
+        Condition="'$(BUILD_ROOT)' == '' or !Exists('$(BUILD_ROOT)')" />
+
+    <Error
+        Text=" The THIRDPARTY_ROOT property must be set on the command line."
+        Condition="'$(THIRDPARTY_ROOT)' == '' or !Exists('$(THIRDPARTY_ROOT)')" />
+    
+    <Message Text=" Using BUILD_ROOT = '$(BUILD_ROOT)'"/>
+    <Message Text=" Using THIRDPARTY_ROOT = '$(THIRDPARTY_ROOT)'"/>  
+  </Target>
+  
   <Target Name="build_check">
     <Version VersionFile="$(BUILD_ROOT)\build\buildver.txt" RevisionType="BuildIncrement" BuildType="Automatic" Major="1" Minor="0">
       <Output TaskParameter="Major" PropertyName="Major" />

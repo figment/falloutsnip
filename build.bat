@@ -62,8 +62,8 @@ IF NOT EXIST "%SZA_PATH%" set SZA_PATH=%ProgramFiles(x86)%\WinRAR\
 IF EXIST "%SZA_PATH%" set BUILD_OPTIONS=%BUILD_OPTIONS%,package_7z
 
 REM 2 pass build since copy does not pickup source files generated or copied during build process
-msbuild tesvsnip.csproj /p:Configuration=Release /p:Platform="AnyCPU" /t:version_force,build,afterbuild
-msbuild tesvsnip.csproj /p:Configuration=Release /p:Platform="AnyCPU" /t:version_force,package%BUILD_OPTIONS%
+msbuild build.proj /p:Configuration=Release /p:Platform="AnyCPU" /t:version_force,build,afterbuild
+msbuild build.csproj /p:Configuration=Release /p:Platform="AnyCPU" /t:version_force,package%BUILD_OPTIONS%
 
 :exit
 popd

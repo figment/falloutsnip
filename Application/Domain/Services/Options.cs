@@ -148,12 +148,15 @@ namespace TESVSnip.Domain.Services
                     dir = dir.Parent;
                 if (System.String.Compare(dir.Name, "bin", System.StringComparison.OrdinalIgnoreCase) == 0)
                     dir = dir.Parent;
-                applicationDirectory = dir.FullName;                
+                applicationDirectory = dir.FullName;
             }
             if (!string.IsNullOrWhiteSpace(applicationDirectory))
             {
-                this.SettingsDirectory = Path.Combine(applicationDirectory, "conf");
-                this.ScriptsDirectory = Path.Combine(applicationDirectory, "conf", "scripts");
+                var confFolder = Path.Combine(applicationDirectory, "conf");
+                if (!Directory.Exists(confFolder))
+                    confFolder = Path.GetFullPath(Path.Combine(applicationDirectory, "..", "conf"));
+                this.SettingsDirectory = confFolder;
+                this.ScriptsDirectory = Path.Combine(this.SettingsDirectory, "scripts");
             }
         }
 
