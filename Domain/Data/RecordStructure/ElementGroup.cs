@@ -1,12 +1,10 @@
-using TESVSnip.Domain.Data.RecordStructure.Xml;
-
 namespace TESVSnip.Domain.Data.RecordStructure
 {
-    internal class SubrecordGroup : SubrecordBase
+    internal class ElementGroup : ElementBase
     {
-        public readonly SubrecordBase[] elements;
+        public readonly ElementBase[] elements;
 
-        public SubrecordGroup(Group node, SubrecordBase[] items)
+        public ElementGroup(Xml.ElementGroup node, ElementBase[] items)
             : base(node)
         {
             this.elements = items;

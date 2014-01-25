@@ -4,7 +4,9 @@ using System.Windows.Media.Animation;
 using IronPython.Runtime;
 using Microsoft.Win32;
 using PythonConsoleControl;
+using TESVSnip.Domain.Data.RecordStructure.Xml;
 using TESVSnip.Domain.Scripts;
+using TESVSnip.UI.Rendering.Extensions;
 
 namespace TESVSnip.UI.Forms
 {
@@ -56,8 +58,8 @@ namespace TESVSnip.UI.Forms
         private readonly SelectionContext Selection;
 
         private readonly PluginTreeContent pluginTreeContent = new PluginTreeContent();
-
-        private readonly RichTextContent selectedTextContent = new RichTextContent();
+        private readonly RichTextContent rtfTextContent = new RichTextContent();
+        private readonly HtmlContent htmlContent = new HtmlContent();
 
         private OutputTextContent outputTextContent = null;
 
@@ -138,7 +140,7 @@ namespace TESVSnip.UI.Forms
             this.useWindowsClipboardToolStripMenuItem.Checked = Settings.Default.UseWindowsClipboard;
             this.noWindowsSoundsToolStripMenuItem.Checked = Settings.Default.NoWindowsSounds;
             this.disableHyperlinksToolStripMenuItem.Checked = Settings.Default.DisableHyperlinks;
-            this.SelectedText.DetectUrls = !Settings.Default.DisableHyperlinks;
+            this.SelectedRichText.DetectUrls = !Settings.Default.DisableHyperlinks;
             this.saveStringsFilesToolStripMenuItem.Checked = Settings.Default.SaveStringsFiles;
 
             this.useNewSubrecordEditorToolStripMenuItem.Checked = !Settings.Default.UseOldSubRecordEditor;
@@ -194,9 +196,13 @@ namespace TESVSnip.UI.Forms
             }
         }
 
-        public RichTextBox SelectedText
+        public RichTextBox SelectedRichText
         {
-            get { return this.selectedTextContent.RtfInfo; }
+            get { return this.rtfTextContent.RtfInfo; }
+        }
+        public HtmlRenderer.HtmlPanel SelectedHtmlText
+        {
+            get { return this.htmlContent.Html;  }
         }
 
         private PluginTreeView PluginTree
@@ -448,7 +454,7 @@ namespace TESVSnip.UI.Forms
             }
             finally
             {
-                GC.Collect();
+                this.ClearCachedInfo();
             }
         }
 
@@ -601,7 +607,7 @@ namespace TESVSnip.UI.Forms
 
             if (persistString == typeof (RichTextContent).ToString())
             {
-                return this.selectedTextContent;
+                return this.rtfTextContent;
             }
 
             return null;
@@ -756,7 +762,7 @@ namespace TESVSnip.UI.Forms
             try
             {
                 if (!force && IsVisible(this.pluginTreeContent) && IsVisible(this.subrecordListContent) &&
-                    IsVisible(this.selectedTextContent))
+                    IsVisible(this.rtfTextContent) && IsVisible(htmlContent))
                 {
                     return;
                 }
@@ -766,7 +772,8 @@ namespace TESVSnip.UI.Forms
                 {
                     this.pluginTreeContent.DockPanel = null;
                     this.subrecordListContent.DockPanel = null;
-                    this.selectedTextContent.DockPanel = null;
+                    this.rtfTextContent.DockPanel = null;
+                    this.htmlContent.DockPanel = null;
                 }
 
                 if (!IsVisible(this.pluginTreeContent) || force)
@@ -780,9 +787,13 @@ namespace TESVSnip.UI.Forms
                     this.subrecordListContent.Show(this.pluginTreeContent.Pane, DockAlignment.Bottom, 0.5);
                 }
 
-                if (!IsVisible(this.selectedTextContent) || force)
+                if (!IsVisible(this.rtfTextContent) || force)
                 {
-                    this.selectedTextContent.Show(this.dockPanel, DockState.Document);
+                    this.rtfTextContent.Show(this.dockPanel, DockState.Document);
+                }
+                if (!IsVisible(this.htmlContent) || force)
+                {
+                    this.htmlContent.Show(this.dockPanel, DockState.Document);
                 }
             }
             catch
@@ -1080,14 +1091,18 @@ namespace TESVSnip.UI.Forms
 
         private void ShowDockingWindows()
         {
-            this.selectedTextContent.RtfInfo.LinkClicked += this.rtfInfo_LinkClicked;
-            this.selectedTextContent.RtfInfo.PreviewKeyDown += this.tbInfo_PreviewKeyDown;
+            this.rtfTextContent.RtfInfo.LinkClicked += this.rtfInfo_LinkClicked;
+            this.rtfTextContent.RtfInfo.PreviewKeyDown += this.tbInfo_PreviewKeyDown;
             this.pluginTreeContent.CloseButtonVisible = false;
             this.subrecordListContent.CloseButtonVisible = false;
-            this.selectedTextContent.MdiParent = this;
-            this.selectedTextContent.CloseButtonVisible = false;
-            this.selectedTextContent.CloseButton = false;
-            this.selectedTextContent.HideOnClose = true;
+            this.rtfTextContent.MdiParent = this;
+            this.rtfTextContent.CloseButtonVisible = false;
+            this.rtfTextContent.CloseButton = false;
+            this.rtfTextContent.HideOnClose = true;
+            this.htmlContent.MdiParent = this;
+            this.htmlContent.CloseButtonVisible = false;
+            this.htmlContent.CloseButton = false;
+            this.htmlContent.HideOnClose = true;
             this.LayoutDockingWindows(force: false);
         }
 
@@ -1123,7 +1138,9 @@ namespace TESVSnip.UI.Forms
                     var rb = new RTFBuilder(RTFFont.Arial, 16, defLang.lcid, defLang.charset);
                     rec.GetFormattedHeader(rb);
                     rec.GetFormattedData(rb);
-                    this.SelectedText.Rtf = rb.ToString();
+                    this.SelectedRichText.Rtf = rb.ToString();
+
+                    this.SelectedHtmlText.Text = new UI.Rendering.HtmlRenderer().GetFormattedData(rec);
                 }
                 catch (Exception ex)
                 {
@@ -1135,7 +1152,8 @@ namespace TESVSnip.UI.Forms
         private void UpdateMainText(string text)
         {
             // tbInfo.Text = text;
-            this.SelectedText.Text = text;
+            this.SelectedRichText.Text = text;
+            this.SelectedHtmlText.Text = text;
         }
 
         private void UpdateStringEditor()
@@ -1234,13 +1252,23 @@ namespace TESVSnip.UI.Forms
         {
             PluginList.All.Records.Clear();
             this.PluginTree.UpdateRoots();
+            this.Selection.Reset();
             this.SubrecordList.Record = null;
             Clipboard = null;
             this.CloseStringEditor();
             this.UpdateMainText(string.Empty);
+            ClearCachedInfo();
+        }
+
+        private void ClearCachedInfo()
+        {
+            // Following is mostly about cleaning up leaked / referenced memory
+            this.SubrecordList.SetContext(this.Selection);
             this.RebuildSelection();
             this.PluginTree.UpdateRoots();
-            GC.Collect();
+            this.Selection.Reset();
+            this.SubrecordList.SetContext(this.Selection);
+            GC.Collect();            
         }
 
         private void closeToolStripMenuItem_Click(object sender, EventArgs e)
@@ -1264,7 +1292,7 @@ namespace TESVSnip.UI.Forms
             this.FixMasters();
             this.PluginTree.UpdateRoots();
             this.RebuildSelection();
-            GC.Collect();
+            ClearCachedInfo();
         }
 
         private void collapseAllToolStripMenuItem_Click(object sender, EventArgs e)
@@ -1322,7 +1350,7 @@ namespace TESVSnip.UI.Forms
         {
             Settings.Default.DisableHyperlinks =
                 this.disableHyperlinksToolStripMenuItem.Checked = !this.disableHyperlinksToolStripMenuItem.Checked;
-            this.SelectedText.DetectUrls = !Settings.Default.DisableHyperlinks;
+            this.SelectedRichText.DetectUrls = !Settings.Default.DisableHyperlinks;
         }
 
         private void eSMFilterSettingsToolStripMenuItem_Click(object sender, EventArgs e)
@@ -1675,20 +1703,27 @@ namespace TESVSnip.UI.Forms
             try
             {
                 Stopwatch sw = Stopwatch.StartNew();
+                this.PluginTree.EnableEvents(false);
 
-                foreach (string s in fileNames)
+                try
                 {
-                    this.LoadPlugin(s);
-                    mruMenu.AddFileAndSaveToRegistry(s);
+                    foreach (string s in fileNames)
+                    {
+                        this.LoadPlugin(s);
+                        mruMenu.AddFileAndSaveToRegistry(s);
+                    }
                 }
-
-                this.FixMasters();
-                this.PluginTree.UpdateRoots();
-
-                sw.Stop();
-                TimeSpan t = TimeSpan.FromMilliseconds(sw.ElapsedMilliseconds);
-                toolStripStatusLabel.Text =
-                    string.Format(TranslateUI.TranslateUiGlobalization.ResManager.GetString("MSG_LoadPluginIn"), t.ToString());
+                finally
+                {
+                    this.FixMasters();
+                    this.PluginTree.UpdateRoots();
+                    this.PluginTree.EnableEvents(true);
+                    this.ClearCachedInfo();
+                    sw.Stop();
+                    TimeSpan t = TimeSpan.FromMilliseconds(sw.ElapsedMilliseconds);
+                    toolStripStatusLabel.Text =
+                        string.Format(TranslateUI.TranslateUiGlobalization.ResManager.GetString("MSG_LoadPluginIn"), t.ToString());                    
+                }
             }
             catch (Exception ex)
             {
@@ -2099,6 +2134,7 @@ namespace TESVSnip.UI.Forms
                 Cursor origCursor = Cursor.Current;
                 Cursor.Current = Cursors.WaitCursor;
                 Stopwatch sw = Stopwatch.StartNew();
+                this.PluginTree.EnableEvents(false);
                 try
                 {
                     using (StreamReader fs = File.OpenText(dlg.FileName))
@@ -2135,7 +2171,8 @@ namespace TESVSnip.UI.Forms
                     UpdateStringEditor();
                     FixMasters();
                     PluginTree.UpdateRoots();
-                    GC.Collect();
+                    this.PluginTree.EnableEvents(true);
+                    this.ClearCachedInfo();
 
                     Cursor.Current = origCursor;
 
@@ -2143,7 +2180,6 @@ namespace TESVSnip.UI.Forms
                     TimeSpan t = TimeSpan.FromMilliseconds(sw.ElapsedMilliseconds);
                     toolStripStatusLabel.Text =
                         string.Format(TranslateUI.TranslateUiGlobalization.ResManager.GetString("MSG_LoadPluginIn"), t.ToString());
-
                 }
             }
         }

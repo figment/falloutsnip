@@ -5,7 +5,7 @@ namespace TESVSnip.Domain.Data.RecordStructure
     using System;
     using System.Globalization;
 
-    internal class SubrecordBase
+    internal class ElementBase
     {
         public readonly string desc;
 
@@ -15,7 +15,14 @@ namespace TESVSnip.Domain.Data.RecordStructure
 
         public readonly int repeat;
 
-        protected SubrecordBase(SubrecordBase src, int optional, int repeat)
+        protected ElementBase()
+        {
+            this.name = "DATA";
+            this.desc = "Data";
+            this.optional = 0;
+            this.repeat = 0;            
+        }
+        protected ElementBase(ElementBase src, int optional, int repeat)
         {
             if (src.name.StartsWith("&#x"))
             {
@@ -33,7 +40,7 @@ namespace TESVSnip.Domain.Data.RecordStructure
             this.repeat = repeat;
         }
 
-        protected SubrecordBase(Xml.Subrecord node)
+        protected ElementBase(Xml.SubrecordElement node)
         {
             if (node.name.StartsWith("&#x"))
             {
@@ -51,7 +58,7 @@ namespace TESVSnip.Domain.Data.RecordStructure
             this.desc = node.desc;
         }
 
-        protected SubrecordBase(Xml.Group node)
+        protected ElementBase(Xml.ElementGroup node)
         {
             if (node.name.StartsWith("&#x"))
             {

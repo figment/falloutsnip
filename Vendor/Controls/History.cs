@@ -16,7 +16,7 @@ using System.ComponentModel;
 using System.Diagnostics;
 using System.Drawing;
 using System.Windows.Forms;
-
+using System.Linq;
 // RightToCopy & PublishAndPerish: OrlandoCurioso 2006
 
 namespace OC.Windows.Forms
@@ -162,6 +162,24 @@ namespace OC.Windows.Forms
                     list.Remove(item);
                 }
             }
+            enableButtons();
+        }
+
+        
+        public void Remove(Func<T, bool> match)
+        {
+            var items = list.Where(match).ToArray();
+            if (items.Length > 0)
+            {
+                foreach (var item in items)
+                {
+                    if (current != null && item.Equals(current.Value)) 
+                        this.current = null;
+                    list.Remove(item);
+                }
+            }
+            if (current == null && this.list.Count > 0)
+                current = list.First;
             enableButtons();
         }
 

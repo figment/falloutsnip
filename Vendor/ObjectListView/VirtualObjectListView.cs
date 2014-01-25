@@ -650,6 +650,7 @@ namespace BrightIdeasSoftware
         public virtual void ClearCachedInfo()
         {
             lastRetrieveVirtualItemIndex = -1;
+            lastRetrieveVirtualItem = null;
         }
 
         /// <summary>

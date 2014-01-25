@@ -3,6 +3,9 @@
 //TODO: ref.local should work for references
 //TODO: End function call on ')'
 //TODO: ModPCMiscStat
+
+using TESVSnip.Domain.Data.RecordStructure.Xml;
+
 namespace TESVSnip.Domain.Scripts
 {
     using System;

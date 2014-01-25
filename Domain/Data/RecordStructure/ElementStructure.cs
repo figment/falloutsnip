@@ -1,14 +1,14 @@
+using TESVSnip.Domain.Data.RecordStructure.Xml;
+
 namespace TESVSnip.Domain.Data.RecordStructure
 {
     using System;
 
-    internal class ElementStructure
+    internal class ElementStructure : ElementBase
     {
         public readonly int CondID;
 
         public readonly string FormIDType;
-
-        public readonly string desc;
 
         public readonly string[] flags;
 
@@ -20,15 +20,9 @@ namespace TESVSnip.Domain.Data.RecordStructure
 
         public readonly bool multiline;
 
-        public readonly string name;
-
         public readonly bool notininfo;
 
-        public readonly bool optional;
-
         public readonly string[] options;
-
-        public readonly int repeat;
 
         public readonly string funcr;
 
@@ -37,17 +31,14 @@ namespace TESVSnip.Domain.Data.RecordStructure
         public readonly ElementValueType type;
 
         public ElementStructure()
+            : base()
         {
-            this.name = "DATA";
-            this.desc = "Data";
             this.@group = 0;
             this.hexview = true;
             this.hexviewwithdec = false;
             this.notininfo = true;
-            this.optional = false;
             this.options = null;
             this.flags = null;
-            this.repeat = 0;
             this.CondID = 0;
             this.FormIDType = null;
             this.multiline = false;
@@ -55,23 +46,43 @@ namespace TESVSnip.Domain.Data.RecordStructure
             this.funcw = string.Empty;
             this.type = ElementValueType.Blob;
         }
+        public ElementStructure(ElementStructure src, int optional = 0, int repeat = 0)
+            : base(src, optional, repeat)
+        {
+            this.CondID = src.CondID;
+            this.FormIDType = src.FormIDType;
+            this.flags = src.flags;
+            this.group = src.group;
+            this.hexview = src.hexview;
+            this.hexviewwithdec = src.hexviewwithdec;
+            this.multiline = src.multiline;
+            //this.name = src.name;
+            this.notininfo = src.notininfo;
+            //this.optional = @optional;
+            this.options = src.options;
+            //this.repeat = repeat;
+            this.funcr = src.funcr;
+            this.funcw = src.funcw;
+            this.type = src.type;
+        }
 
         public ElementStructure(SubrecordElement node)
+            : base(node)
         {
-            this.name = node.name;
-            this.desc = node.desc;
+            //this.name = node.name;
+            //this.desc = node.desc;
             this.@group = node.group;
             this.hexview = node.hexview;
             this.hexviewwithdec = node.hexviewwithdec;
             this.notininfo = node.notininfo;
-            this.optional = node.optional != 0;
+            //this.optional = node.optional != 0;
             this.options = node.options == null ? new string[0] : node.options.Split(new[] { ';' }, StringSplitOptions.RemoveEmptyEntries);
             this.flags = node.flags == null ? new string[0] : node.flags.Split(new[] { ';' });
-            this.repeat = node.repeat;
+            //this.repeat = node.repeat;
             this.funcr = node.funcr;
             this.funcw = node.funcw;
             this.CondID = node.condid;
-            if (this.optional || this.repeat > 0)
+            if (this.optional > 0 || this.repeat > 0)
             {
                 if (this.@group != 0)
                 {
@@ -88,7 +99,7 @@ namespace TESVSnip.Domain.Data.RecordStructure
                     this.FormIDType = node.reftype;
                     break;
                 case ElementValueType.Blob:
-                    if (this.repeat > 0 || this.optional)
+                    if (this.repeat > 0 || this.optional > 0)
                     {
                         throw new RecordXmlException("blob type elements can't be marked with repeat or optional");
                     }

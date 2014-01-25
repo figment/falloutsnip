@@ -1,10 +1,10 @@
-namespace TESVSnip.Domain.Data.RecordStructure
-{
-    using System;
-    using System.ComponentModel;
-    using System.Diagnostics;
-    using System.Xml.Serialization;
+using System;
+using System.ComponentModel;
+using System.Diagnostics;
+using System.Xml.Serialization;
 
+namespace TESVSnip.Domain.Data.RecordStructure.Xml
+{
     /// <summary>
     /// The subrecord element.
     /// </summary>
@@ -14,30 +14,26 @@ namespace TESVSnip.Domain.Data.RecordStructure
     [DebuggerStepThrough]
     [DesignerCategory("code")]
     [XmlType(AnonymousType = true)]
-    public class SubrecordElement
+    public class SubrecordElement : ElementBase
     {
         /// <summary>
         /// The condid.
         /// </summary>
         /// <remarks>
         /// </remarks>
-        [XmlAttribute] [DefaultValue(0)] public int condid;
-
-        /// <summary>
-        /// The desc.
-        /// </summary>
-        /// <remarks>
-        /// </remarks>
-        [XmlAttribute] [DefaultValue("")] public string desc = string.Empty;
+        [XmlAttribute] [DefaultValue(0)] 
+        public int condid;
 
         /// <summary>
         /// The flags.
         /// </summary>
         /// <remarks>
         /// </remarks>
-        [XmlAttribute] [DefaultValue("")] public string flags;
+        [XmlAttribute] [DefaultValue("")] 
+        public string flags;
 
-        [XmlIgnore] [DefaultValue(0)] public int group;
+        [XmlIgnore] [DefaultValue(0)] 
+        public int group;
 
         /// <summary>
         /// The hexview.
@@ -61,27 +57,6 @@ namespace TESVSnip.Domain.Data.RecordStructure
         [XmlAttribute] [DefaultValue(false)] public bool multiline;
 
         /// <summary>
-        /// The name.
-        /// </summary>
-        /// <remarks>
-        /// </remarks>
-        [XmlAttribute] public string name;
-
-        /// <summary>
-        /// The notininfo.
-        /// </summary>
-        /// <remarks>
-        /// </remarks>
-        [XmlAttribute] [DefaultValue(false)] public bool notininfo;
-
-        /// <summary>
-        /// The optional.
-        /// </summary>
-        /// <remarks>
-        /// </remarks>
-        [XmlAttribute] [DefaultValue(0)] public int optional;
-
-        /// <summary>
         /// The options.
         /// </summary>
         /// <remarks>
@@ -101,14 +76,7 @@ namespace TESVSnip.Domain.Data.RecordStructure
         /// <remarks>
         /// </remarks>
         [XmlAttribute] [DefaultValue("")] public string reftype;
-
-        /// <summary>
-        /// The repeat.
-        /// </summary>
-        /// <remarks>
-        /// </remarks>
-        [XmlAttribute] [DefaultValue(0)] public int repeat;
-
+        
         [XmlIgnore] [DefaultValue(0)] public int size;
 
         /// <summary>

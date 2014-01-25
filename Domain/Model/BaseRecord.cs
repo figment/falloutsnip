@@ -18,8 +18,6 @@ namespace TESVSnip.Domain.Model
     [Serializable]
     public abstract class BaseRecord : PersistObject, ICloneable, ISerializable, IRecord
     {
-        private static readonly byte[] RecByte = new byte[4];
-
         private static readonly BaseRecord[] emptyList = new BaseRecord[0];
 
         protected BaseRecord()
@@ -118,22 +116,6 @@ namespace TESVSnip.Domain.Model
             action(this);
         }
 
-        public abstract string GetDesc();
-
-        public virtual void GetFormattedData(RTFBuilder rb)
-        {
-            rb.Append(this.GetDesc());
-        }
-
-        public virtual void GetFormattedData(StringBuilder sb)
-        {
-            sb.Append(this.GetDesc());
-        }
-
-        public virtual void GetFormattedHeader(RTFBuilder rb)
-        {
-        }
-
         public virtual int IndexOf(BaseRecord br)
         {
             return -1;
@@ -208,9 +190,7 @@ namespace TESVSnip.Domain.Model
         {
             try
             {
-                br.Read(RecByte, 0, 4);
-                return string.Empty + ((char) RecByte[0]) + ((char) RecByte[1]) + ((char) RecByte[2]) +
-                       ((char) RecByte[3]);
+                return Encoding.Default.GetString(br.ReadBytes(4));
             }
             catch (Exception ex)
             {
@@ -222,9 +202,7 @@ namespace TESVSnip.Domain.Model
         {
             try
             {
-                Array.Copy(rec, RecByte, 4);
-                return string.Empty + ((char) RecByte[0]) + ((char) RecByte[1]) + ((char) RecByte[2]) +
-                       ((char) RecByte[3]);
+                return Encoding.Default.GetString(rec,0,4);
             }
             catch (Exception ex)
             {

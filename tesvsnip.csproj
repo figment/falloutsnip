@@ -73,6 +73,9 @@
     <GenerateSerializationAssemblies>On</GenerateSerializationAssemblies>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="HtmlRenderer">
+      <HintPath>thirdparty\HtmlRenderer.dll</HintPath>
+    </Reference>
     <Reference Include="ICSharpCode.AvalonEdit">
       <HintPath>thirdparty\ICSharpCode.AvalonEdit.dll</HintPath>
     </Reference>
@@ -111,6 +114,7 @@
     <Reference Include="System.Drawing.Design" />
     <Reference Include="System.Data" />
     <Reference Include="System.Drawing" />
+    <Reference Include="System.Web" />
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xaml" />
     <Reference Include="System.Xml" />
@@ -124,16 +128,20 @@
   <ItemGroup>
     <Compile Include="Domain\Data\RecordStructure\Conditional.cs" />
     <Compile Include="Domain\Data\RecordStructure\CondType.cs" />
+    <Compile Include="Domain\Data\RecordStructure\ElementGroup.cs" />
+    <Compile Include="Domain\Data\RecordStructure\ElementBase.cs" />
+    <Compile Include="Domain\Data\RecordStructure\Xml\ElementBase.cs" />
+    <Compile Include="Domain\Data\RecordStructure\Xml\ElementGroup.cs" />
+    <Compile Include="Domain\Data\RecordStructure\Xml\Group.cs" />
     <Compile Include="Domain\Data\RecordStructure\ElementStructure.cs" />
     <Compile Include="Domain\Data\RecordStructure\ElementValueType.cs" />
-    <Compile Include="Domain\Data\RecordStructure\Group.cs" />
-    <Compile Include="Domain\Data\RecordStructure\Records.cs" />
-    <Compile Include="Domain\Data\RecordStructure\RecordsRecord.cs" />
+    <Compile Include="Domain\Data\RecordStructure\Xml\Records.cs" />
+    <Compile Include="Domain\Data\RecordStructure\Xml\RecordsRecord.cs" />
     <Compile Include="Domain\Data\RecordStructure\RecordStructure.cs" />
-    <Compile Include="Domain\Data\RecordStructure\RecordXmlException.cs" />
-    <Compile Include="Domain\Data\RecordStructure\Subrecord.cs" />
+    <Compile Include="Domain\Data\RecordStructure\Xml\RecordXmlException.cs" />
+    <Compile Include="Domain\Data\RecordStructure\Xml\Subrecord.cs" />
     <Compile Include="Domain\Data\RecordStructure\SubrecordBase.cs" />
-    <Compile Include="Domain\Data\RecordStructure\SubrecordElement.cs" />
+    <Compile Include="Domain\Data\RecordStructure\Xml\SubrecordElement.cs" />
     <Compile Include="Domain\Data\RecordStructure\SubrecordGroup.cs" />
     <Compile Include="Domain\Data\RecordStructure\SubrecordStructure.cs" />
     <Compile Include="Domain\Data\Strings\LocalizedString.cs" />
@@ -221,6 +229,12 @@
     <Compile Include="UI\Controls\CustomTreeView.cs">
       <SubType>Component</SubType>
     </Compile>
+    <Compile Include="UI\Docking\HtmlContent.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="UI\Docking\HtmlContent.Designer.cs">
+      <DependentUpon>HtmlContent.cs</DependentUpon>
+    </Compile>
     <Compile Include="UI\Docking\OutputTextContent.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -233,6 +247,9 @@
     <Compile Include="UI\Docking\InterpreterConsole.Designer.cs">
       <DependentUpon>InterpreterConsole.cs</DependentUpon>
     </Compile>
+    <Compile Include="UI\Rendering\HtmlRenderer.cs" />
+    <Compile Include="UI\Rendering\StringRenderer.cs" />
+    <Compile Include="UI\Rendering\RTFRenderer.cs" />
     <Compile Include="UI\Hosting\ConsoleOptions.cs" />
     <Compile Include="Framework\Services\PluginStore.cs" />
     <Compile Include="UI\Hosting\IronPythonConsole.xaml.cs">
@@ -592,6 +609,9 @@
     <EmbeddedResource Include="Lang\resource.resx">
       <SubType>Designer</SubType>
     </EmbeddedResource>
+    <EmbeddedResource Include="UI\Docking\HtmlContent.resx">
+      <DependentUpon>HtmlContent.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="UI\Docking\OutputTextContent.resx">
       <DependentUpon>OutputTextContent.cs</DependentUpon>
       <SubType>Designer</SubType>
@@ -743,7 +763,13 @@
     </EmbeddedResource>
     <None Include="build\tesvsnip.snk" />
     <None Include="changelog.rtf" />
+    <None Include="Domain\Data\RecordStructure.xsc">
+      <DependentUpon>RecordStructure.xsd</DependentUpon>
+    </None>
     <None Include="Domain\Data\RecordStructure.xsd" />
+    <None Include="Domain\Data\RecordStructure.xss">
+      <DependentUpon>RecordStructure.xsd</DependentUpon>
+    </None>
     <None Include="Resources\Python.xshd" />
     <None Include="TranslateUI\Tools\ResEx\ResEx.chm" />
     <None Include="TranslateUI\Tools\ResEx\ResEx.exe.config" />

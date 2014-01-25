@@ -361,11 +361,6 @@ namespace TESVSnip.Domain.Model
             }
         }
 
-        public override string GetDesc()
-        {
-            return "[Skyrim plugin]" + Environment.NewLine + "Filename: " + Name + Environment.NewLine + "File size: " + this.Size + Environment.NewLine + "Records: " + this.records.Count;
-        }
-
         public string[] GetMasters()
         {
             Record brcTES4 = this.Records.OfType<Record>().FirstOrDefault(x => x.Name == "TES4");
@@ -924,17 +919,23 @@ namespace TESVSnip.Domain.Model
             var tes4 = this.Records.OfType<Record>().FirstOrDefault(x => x.Name == "TES4");
             if (tes4 != null)
             {
-                var masterCount = tes4.SubRecords.Count(x => x.Name == "MAST");
-                var maxID = this.Records.OfType<BaseRecord>().SelectMany(x => x.Enumerate()).OfType<Record>()
-                    .Where(x => (x.FormID >> 24) == masterCount).Select(x => x.FormID & 0x00FFFFFF).Max();
-
                 var hedr = tes4.SubRecords[0];
                 if (hedr.Name == "HEDR" && hedr.Size >= 12)
                 {
                     hedr.TrySetValue(4, reccount);
-                    uint curid;
-                    if (hedr.TryGetValue(8, out curid) && maxID >= curid)
-                        hedr.TrySetValue(8, maxID + 1);
+
+                    if (Properties.Settings.Default.AutoUpdateNextFormID)
+                    {
+                        var minId = new uint[] {0x0801};
+                        var masterCount = tes4.SubRecords.Count(x => x.Name == "MAST");
+                        var maxID = this.Records.OfType<BaseRecord>().SelectMany(x => x.Enumerate()).OfType<Record>()
+                            .Where(x => (x.FormID >> 24) == masterCount).Select(x => x.FormID & 0x00FFFFFF)
+                            .Union(minId).Max();
+
+                        uint curid;
+                        if (hedr.TryGetValue(8, out curid) && maxID >= curid)
+                            hedr.TrySetValue(8, maxID + 1);
+                    }
                 }
             }
         }

@@ -185,9 +185,7 @@
             Disposed += this.PluginTreeView_Disposed;
             MainView.ClipboardChanged += this.MainView_ClipboardChanged;
 
-            BaseRecord.RecordDescChanged += this.BaseRecord_RecordDescChanged;
-            BaseRecord.ChildListChanged += this.BaseRecord_ChildListChanged;
-            BaseRecord.RecordDeleted += this.BaseRecord_RecordDeleted;
+            EnableEvents(true);
         }
 
         public void ExpandAll()
@@ -233,9 +231,36 @@
             this.PluginTree.SelectedRecords = records;
         }
 
+
+        private bool IsValidNode(BaseRecord item)
+        {
+            var p = TESVSnip.UI.Spells.GetPluginFromNode(item);
+            return (p.Parent != null);
+        }
+
         public void UpdateRoots()
         {
             this.PluginTree.Roots = PluginList.All.Records;
+            if (PluginList.All.Records.Count == 0)
+                _historyHandler.Clear();
+            else
+                _historyHandler.Remove((x) => !IsValidNode(x));
+            ClearCachedInfo();
+        }
+
+        public void ClearCachedInfo()
+        {
+            // list item will hold on to objects
+            this.PluginTree.ClearCachedInfo();
+            this.PluginTree.TreeColumnRenderer.ListItem = null;
+            var mouseMove = this.PluginTree.MouseMoveHitTest;
+            if (mouseMove != null) mouseMove.Item = null;
+            var renderer = (this._olvColumnName.Renderer as BaseRenderer);
+            if (renderer != null)
+            {
+                renderer.RowObject = null;
+                renderer.Event = null;
+            }
         }
 
         internal void CopySelectedRecord()
@@ -481,9 +506,7 @@
 
         private void PluginTreeView_Disposed(object sender, EventArgs e)
         {
-            MainView.ClipboardChanged -= this.MainView_ClipboardChanged;
-            BaseRecord.RecordDescChanged -= this.BaseRecord_RecordDescChanged;
-            BaseRecord.ChildListChanged -= this.BaseRecord_ChildListChanged;
+            EnableEvents(false);
         }
 
         private void PluginTree_Enter(object sender, EventArgs e)
@@ -1151,6 +1174,22 @@
             var name = e.ClickedItem.Tag as string;
             if (e.ClickedItem.Enabled)
                 TESVSnip.Framework.Services.PluginEngine.Default.ExecuteSelectionByName(name, recs);
+        }
+
+        public void EnableEvents(bool enable)
+        {
+            if (enable)
+            {
+                BaseRecord.RecordDescChanged += this.BaseRecord_RecordDescChanged;
+                BaseRecord.ChildListChanged += this.BaseRecord_ChildListChanged;
+                BaseRecord.RecordDeleted += this.BaseRecord_RecordDeleted;
+            }
+            else
+            {
+                BaseRecord.RecordDescChanged -= this.BaseRecord_RecordDescChanged;
+                BaseRecord.ChildListChanged -= this.BaseRecord_ChildListChanged;
+                BaseRecord.RecordDeleted -= this.BaseRecord_RecordDeleted;
+            }
         }
     }
 }

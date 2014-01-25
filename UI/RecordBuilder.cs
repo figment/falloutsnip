@@ -1,3 +1,5 @@
+using TESVSnip.Domain.Data.RecordStructure.Xml;
+
 namespace TESVSnip.UI
 {
     using System;
@@ -250,7 +252,7 @@ namespace TESVSnip.UI
                     if (++szCount > 10)
                     {
                         SubrecordElement elem = this.CreateType(null, "string");
-                        sr.Elements.Add(elem);
+                        sr.Items.Add(elem);
                         break;
                     }
                 }
@@ -260,7 +262,7 @@ namespace TESVSnip.UI
                 }
             }
 
-            if (sr.Elements.Count > 0)
+            if (!sr.Elements.Any())
             {
                 return; // found string
             }
@@ -287,7 +289,7 @@ namespace TESVSnip.UI
                         {
                             var elem = this.CreateType(index++, "short");
                             elem.size = 2;
-                            sr.Elements.Add(elem);
+                            sr.Items.Add(elem);
                             elemSize = 2;
                             continue;
                         }
@@ -295,7 +297,7 @@ namespace TESVSnip.UI
                         {
                             var elem = this.CreateType(index++, "byte");
                             elem.size = 1;
-                            sr.Elements.Add(elem);
+                            sr.Items.Add(elem);
                             elemSize = 1;
                             continue;
                         }
@@ -360,14 +362,14 @@ namespace TESVSnip.UI
                         {
                             var elem = this.CreateType(index++, "float");
                             elem.size = 4;
-                            sr.Elements.Add(elem);
+                            sr.Items.Add(elem);
                         }
                         else if (num2Short > 0 && shortPct > 0.5f)
                         {
                             var elem = this.CreateType(index++, "short");
                             elem.size = 2;
-                            sr.Elements.Add(elem);
-                            sr.Elements.Add(elem);
+                            sr.Items.Add(elem);
+                            sr.Items.Add(elem);
                             this.UpdateSize(sr);
                         }
                         else if (isFormID > 0 && formPct > 0.5f)
@@ -375,19 +377,19 @@ namespace TESVSnip.UI
                             var elem = this.CreateType(index++, "formid");
                             elem.reftype = reftype;
                             elem.size = 4;
-                            sr.Elements.Add(elem);
+                            sr.Items.Add(elem);
                         }
                         else if (isLString > 0 && lstrPct > 0.5f)
                         {
                             var elem = this.CreateType(index++, "lstring");
                             elem.size = 4;
-                            sr.Elements.Add(elem);
+                            sr.Items.Add(elem);
                         }
                         else
                         {
                             var elem = this.CreateType(index++, "int");
                             elem.size = 4;
-                            sr.Elements.Add(elem);
+                            sr.Items.Add(elem);
                         }
                     }
                 }
@@ -395,7 +397,7 @@ namespace TESVSnip.UI
             else
             {
                 // guess dynamically sized object... default to blob
-                if (sr.Elements.Count == 0)
+                if (!sr.Elements.Any())
                 {
                     long modSum = srs.Sum(a => a.Size % 4); // useful if we suspect this is an array of integers
                     if (modSum == 0)
@@ -440,7 +442,7 @@ namespace TESVSnip.UI
                             elem.size = 4;
                             elem.repeat = 1;
                             elem.optional = 1;
-                            sr.Elements.Add(elem);
+                            sr.Items.Add(elem);
                         }
                     }
                 }
@@ -448,9 +450,9 @@ namespace TESVSnip.UI
                 // check if it is a string else make it a blob
                 sr.size = 0;
 
-                if (sr.Elements.Count == 0)
+                if (!sr.Elements.Any())
                 {
-                    sr.Elements.Add(this.CreateBlob());
+                    sr.Items.Add(this.CreateBlob());
                 }
             }
         }

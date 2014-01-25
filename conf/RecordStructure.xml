@@ -288,6 +288,11 @@
       <Element name="Unknown" type="uint" hexview="1" hexviewwithdec="1" />
       <Element name="Total # of Textures Used by Model" type="uint" />
       <Element name="Unknown" type="uint" hexview="1" hexviewwithdec="1" />
+	  <Group id="Block" repeat="1" >
+		  <Element name="Hash1" type="uint" hexview="1"/>
+		  <Element name="Type" type="Str4" />
+		  <Element name="Hash2" type="uint" hexview="1"/>
+	  </Group>
       <Element name="Rest of Data" type="uint" hexview="1" hexviewwithdec="1" optional="1" repeat="1" />
     </Subrecord>
     <Group id="MODS" optional="1" />
@@ -297,25 +302,41 @@
   </Group>
   <Group id="MO2Textures" desc="Model Texture Data (DDS referenced in NIF)">
     <Subrecord name="MO2T" desc="Texture Files Hashes" optional="1">
+      <Element name="Size 1" type="uint" hexview="1" hexviewwithdec="1" />
+      <Element name="Size 2" type="uint" />
       <Element name="Unknown" type="uint" hexview="1" hexviewwithdec="1" />
-      <Element name="Total # of Textures Used by Model" type="uint" />
-      <Element name="Unknown" type="uint" hexview="1" hexviewwithdec="1" />
+	  <Group id="Block" repeat="1" >
+		  <Element name="Hash1" type="uint" hexview="1"/>
+		  <Element name="Type" type="Str4" />
+		  <Element name="Hash2" type="uint" hexview="1"/>
+	  </Group>
       <Element name="Rest of Data" type="uint" hexview="1" hexviewwithdec="1" optional="1" repeat="1" />
     </Subrecord>
   </Group>
   <Group id="MO3Textures" desc="Model Texture Data (DDS referenced in NIF)">
     <Subrecord name="MO3T" desc="Texture Files Hashes" optional="1">
-      <Element name="Unknown" type="uint" hexview="1" hexviewwithdec="1" />
+      <!-- <Element name="Unknown" type="uint" hexview="1" hexviewwithdec="1" />
       <Element name="Total # of Textures Used by Model" type="uint" />
       <Element name="Unknown" type="uint" hexview="1" hexviewwithdec="1" />
+	  -->
+	  <Group id="Block" repeat="1" >
+		  <Element name="Hash1" type="uint" hexview="1"/>
+		  <Element name="Type" type="Str4" />
+		  <Element name="Hash2" type="uint" hexview="1"/>
+	  </Group>
       <Element name="Rest of Data" type="uint" hexview="1" hexviewwithdec="1" optional="1" repeat="1" />
     </Subrecord>
   </Group>
   <Group id="MO4Textures" desc="Model Texture Data (DDS referenced in NIF)">
     <Subrecord name="MO4T" desc="Texture Files Hashes" optional="1">
+      <Element name="Size 1" type="uint" />
+      <Element name="Size 2" type="uint" />
       <Element name="Unknown" type="uint" hexview="1" hexviewwithdec="1" />
-      <Element name="Total # of Textures Used by Model" type="uint" />
-      <Element name="Unknown" type="uint" hexview="1" hexviewwithdec="1" />
+	  <Group id="Block" repeat="1" >
+		  <Element name="Hash1" type="uint" hexview="1"/>
+		  <Element name="Type" type="Str4" />
+		  <Element name="Hash2" type="uint" hexview="1"/>
+	  </Group>
       <Element name="Rest of Data" type="uint" hexview="1" hexviewwithdec="1" optional="1" repeat="1" />
     </Subrecord>
   </Group>
@@ -324,6 +345,11 @@
       <Element name="Unknown" type="uint" hexview="1" hexviewwithdec="1" />
       <Element name="Total # of Textures Used by Model" type="uint" />
       <Element name="Unknown" type="uint" hexview="1" hexviewwithdec="1" />
+	  <Group id="Block" repeat="1" >
+		  <Element name="Hash1" type="uint" hexview="1"/>
+		  <Element name="Type" type="Str4" />
+		  <Element name="Hash2" type="uint" hexview="1"/>
+	  </Group>
       <Element name="Rest of Data" type="uint" hexview="1" hexviewwithdec="1" optional="1" repeat="1" />
     </Subrecord>
   </Group>

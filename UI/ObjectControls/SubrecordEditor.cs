@@ -223,7 +223,7 @@
                                 ge.Element = elem;
                                 ec = ge;
                             }
-                            else if (elem.optional)
+                            else if (elem.optional > 0)
                             {
                                 var re = new OptionalElement();
                                 c = re;

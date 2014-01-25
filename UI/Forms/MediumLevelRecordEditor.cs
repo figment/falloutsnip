@@ -63,7 +63,7 @@ namespace TESVSnip.UI.Forms
             {
                 for (int i = 0; i < ss.elements.Length; i++)
                 {
-                    if (ss.elements[i].optional && offset == data.Length)
+                    if (ss.elements[i].optional > 0 && offset == data.Length)
                     {
                         this.AddElement(ss.elements[i]);
                     }
@@ -135,7 +135,7 @@ namespace TESVSnip.UI.Forms
                 cb.CheckedChanged += this.CheckBox_CheckedChanged;
             }
 
-            if (es.optional || es.repeat > 0 && this.repeatcount > 0)
+            if (es.optional > 0 || es.repeat > 0 && this.repeatcount > 0)
             {
                 var cb = new CheckBox();
                 cb.Text = "Use this value?";

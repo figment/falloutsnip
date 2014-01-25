@@ -961,7 +961,7 @@ namespace TESVSnip.UI.Forms {
             this.toolStripIncrFindTypeFilter.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.toolStripIncrFindTypeFilter.Items.AddRange(new object[] {
             resources.GetString("toolStripIncrFindTypeFilter.Items"),
-            resources.GetString("toolStripIncrFindTypeFilter.Items1")});
+            resources.GetString("toolStripIncrFindTypeFilter.Items")});
             this.toolStripIncrFindTypeFilter.Name = "toolStripIncrFindTypeFilter";
             this.toolStripIncrFindTypeFilter.Overflow = System.Windows.Forms.ToolStripItemOverflow.Never;
             resources.ApplyResources(this.toolStripIncrFindTypeFilter, "toolStripIncrFindTypeFilter");
@@ -996,7 +996,7 @@ namespace TESVSnip.UI.Forms {
             this.toolStripIncrFindType.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.toolStripIncrFindType.Items.AddRange(new object[] {
             resources.GetString("toolStripIncrFindType.Items"),
-            resources.GetString("toolStripIncrFindType.Items1")});
+            resources.GetString("toolStripIncrFindType.Items")});
             this.toolStripIncrFindType.Name = "toolStripIncrFindType";
             resources.ApplyResources(this.toolStripIncrFindType, "toolStripIncrFindType");
             this.toolStripIncrFindType.SelectedIndexChanged += new System.EventHandler(this.toolStripIncrFindType_SelectedIndexChanged);

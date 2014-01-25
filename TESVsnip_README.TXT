@@ -10,7 +10,8 @@ Requirements:
 
 Change Log:
 v 4.5
-- Merged changes from 4.3 and 4.4
+- Merged changes from 4.3 and 4.4 
+- Huge speed boost when loading Plugins
 - Added Open List Shortcut
 - Initial pass at embedded IronPython console to enable gui scripts
 - Fixed Copy To Semantics to add masters when needed and use correct ids in references
@@ -18,9 +19,14 @@ v 4.5
 - Fixed layout of value editor using table rather than flow
 - Exposed internal and private utility methods to allow Python scripts access
 - Calculate new formids automatically during copy and update header when saving
-- Added alternate ZLib implementation which allows for x86 and x64 architectures
+- Added alternate ZLib implementation which allows both for x86 and x64 architectures
 - Add Plugin functionality for Python scripts to extend functionality
   - Added Copy Override To, Copy New To, Set Weights, List Weights, List items as examples
+- Added setting to not update the nextformid on load and save rather than recalculate based on highest number.
+- Replace RTF Report with HTML Report
+- Add ElementGroup to handle repeating structures in subrecords like MO?T 
+- Fix some memory leaks in the Tree Control and History
+- Refactor out the Text formating from the models
 
 v 4.4.2a
 - Updated RecordStructure.xml

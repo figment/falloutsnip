@@ -10,18 +10,18 @@ namespace TESVSnip.UI.Docking
     using TESVSnip.Framework.Services;
     using TESVSnip.Properties;
 
-    public partial class RichTextContent : BaseDockContent
+    public partial class HtmlContent : BaseDockContent
     {
-        public RichTextContent()
+        public HtmlContent()
         {
             this.InitializeComponent();
         }
 
-        public RichTextBox RtfInfo
+        public HtmlRenderer.HtmlPanel Html
         {
             get
             {
-                return this.rtfInfo;
+                return this.htmlInfo;
             }
         }
 
@@ -39,20 +39,18 @@ namespace TESVSnip.UI.Docking
                 defLang = new FontLangInfo(1252, 1033, 0);
             }
 
-            var rb = new RTFBuilder(RTFFont.Arial, 16, defLang.lcid, defLang.charset);
-            sc.GetFormattedHeader(rb);
-            sc.GetFormattedData(rb);
-            this.rtfInfo.Rtf = rb.ToString();
-        }
-
-        public void UpdateRtf(string rtfText)
-        {
-            this.rtfInfo.Rtf = rtfText;
+            //var writer = new System.Web.UI.HtmlTextWriter();
+            
+            //var rb = new System.Web.UI;
+            //var rb = new RTFBuilder(RTFFont.Arial, 16, defLang.lcid, defLang.charset);
+            //sc.GetFormattedHeader(rb);
+            //sc.GetFormattedData(rb);
+            //this.rtfInfo.Text = rb.ToString();
         }
 
         public void UpdateText(string text)
         {
-            this.rtfInfo.Text = text;
+            this.htmlInfo.Text = text;
         }
     }
 }

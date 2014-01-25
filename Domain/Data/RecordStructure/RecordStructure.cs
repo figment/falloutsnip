@@ -1,3 +1,5 @@
+using TESVSnip.Domain.Data.RecordStructure.Xml;
+
 namespace TESVSnip.Domain.Data.RecordStructure
 {
     using System;

@@ -1,14 +1,14 @@
-namespace TESVSnip.Domain.Data.RecordStructure
-{
-    using System;
-    using System.CodeDom.Compiler;
-    using System.Collections;
-    using System.Collections.Generic;
-    using System.ComponentModel;
-    using System.Diagnostics;
-    using System.Linq;
-    using System.Xml.Serialization;
+using System;
+using System.CodeDom.Compiler;
+using System.Collections;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Diagnostics;
+using System.Linq;
+using System.Xml.Serialization;
 
+namespace TESVSnip.Domain.Data.RecordStructure.Xml
+{
     /// <summary>
     /// The records record.
     /// </summary>

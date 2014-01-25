@@ -124,12 +124,7 @@ namespace TESVSnip.Domain.Model
                 r.ForEach(action);
             }
         }
-
-        public override string GetDesc()
-        {
-            return "Master List";
-        }
-
+        
         public override int IndexOf(BaseRecord br)
         {
             return this.pluginList.IndexOf(br as Plugin);

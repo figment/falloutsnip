@@ -317,51 +317,6 @@ namespace TESVSnip.Domain.Model
             return (byte[])this.data.Clone();
         }
 
-        public override string GetDesc()
-        {
-            string desc = "[Record group]" + Environment.NewLine + "Record type: ";
-            switch (this.groupType)
-            {
-                case 0:
-                    desc += "Top " + this.GetSubDesc();
-                    break;
-                case 1:
-                    desc += "World children " + this.GetSubDesc();
-                    break;
-                case 2:
-                    desc += "Interior Cell Block " + this.GetSubDesc();
-                    break;
-                case 3:
-                    desc += "Interior Cell Sub-Block " + this.GetSubDesc();
-                    break;
-                case 4:
-                    desc += "Exterior Cell Block " + this.GetSubDesc();
-                    break;
-                case 5:
-                    desc += "Exterior Cell Sub-Block " + this.GetSubDesc();
-                    break;
-                case 6:
-                    desc += "Cell Children " + this.GetSubDesc();
-                    break;
-                case 7:
-                    desc += "Topic Children " + this.GetSubDesc();
-                    break;
-                case 8:
-                    desc += "Cell Persistent Children " + this.GetSubDesc();
-                    break;
-                case 9:
-                    desc += "Cell Temporary Children " + this.GetSubDesc();
-                    break;
-                case 10:
-                    desc += "Cell Visible Distant Children " + this.GetSubDesc();
-                    break;
-                default:
-                    desc += "Unknown";
-                    break;
-            }
-
-            return desc + Environment.NewLine + "Records: " + this.records.Count.ToString() + Environment.NewLine + "Size: " + this.Size.ToString() + " bytes (including header)";
-        }
 
         public override int IndexOf(BaseRecord br)
         {
@@ -512,30 +467,6 @@ namespace TESVSnip.Domain.Model
 
         [DllImport("msvcrt.dll")]
         private static extern int memcmp(byte[] b1, byte[] b2, long count);
-
-        private string GetSubDesc()
-        {
-            switch (this.groupType)
-            {
-                case 0:
-                    return "(Contains: " + (char)this.data[0] + (char)this.data[1] + (char)this.data[2] + (char)this.data[3] + ")";
-                case 2:
-                case 3:
-                    return "(Block number: " + (this.data[0] + this.data[1] * 256 + this.data[2] * 256 * 256 + this.data[3] * 256 * 256 * 256).ToString() + ")";
-                case 4:
-                case 5:
-                    return "(Coordinates: [" + (this.data[0] + this.data[1] * 256) + ", " + this.data[2] + this.data[3] * 256 + "])";
-                case 1:
-                case 6:
-                case 7:
-                case 8:
-                case 9:
-                case 10:
-                    return "(Parent FormID: 0x" + this.data[3].ToString("x2") + this.data[2].ToString("x2") + this.data[1].ToString("x2") + this.data[0].ToString("x2") + ")";
-            }
-
-            return null;
-        }
 
         public override string ToString()
         {

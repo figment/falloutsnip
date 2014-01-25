@@ -523,5 +523,17 @@ namespace TESVSnip.Properties {
                 this["ExternalPythonEditor"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("True")]
+        public bool AutoUpdateNextFormID {
+            get {
+                return ((bool)(this["AutoUpdateNextFormID"]));
+            }
+            set {
+                this["AutoUpdateNextFormID"] = value;
+            }
+        }
     }
 }

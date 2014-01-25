@@ -48,7 +48,7 @@ namespace TESVSnip.UI.Forms {
             this.cmbGroupType.FormattingEnabled = true;
             this.cmbGroupType.Items.AddRange(new object[] {
             resources.GetString("cmbGroupType.Items"),
-            resources.GetString("cmbGroupType.Items1"),
+            resources.GetString("cmbGroupType.Items"),
             resources.GetString("cmbGroupType.Items2"),
             resources.GetString("cmbGroupType.Items3"),
             resources.GetString("cmbGroupType.Items4"),

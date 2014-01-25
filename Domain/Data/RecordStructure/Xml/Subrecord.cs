@@ -1,13 +1,13 @@
-namespace TESVSnip.Domain.Data.RecordStructure
-{
-    using System;
-    using System.CodeDom.Compiler;
-    using System.Collections.Generic;
-    using System.ComponentModel;
-    using System.Diagnostics;
-    using System.Xml.Schema;
-    using System.Xml.Serialization;
+using System.Linq;
+using System;
+using System.CodeDom.Compiler;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Diagnostics;
+using System.Xml.Serialization;
 
+namespace TESVSnip.Domain.Data.RecordStructure.Xml
+{
     /// <summary>
     /// The subrecord.
     /// </summary>
@@ -26,8 +26,9 @@ namespace TESVSnip.Domain.Data.RecordStructure
         /// </summary>
         /// <remarks>
         /// </remarks>
-        [XmlElement("Element", Form = XmlSchemaForm.Unqualified)]
-        public List<SubrecordElement> Elements = new List<SubrecordElement>();
+        [XmlElement("Group", typeof(ElementGroup))]
+        [XmlElement("Element", typeof(SubrecordElement))]
+        public List<ElementBase> Items = new List<ElementBase>();
 
         /// <summary>
         /// The condid.
@@ -119,5 +120,24 @@ namespace TESVSnip.Domain.Data.RecordStructure
             this.condvalue = string.Empty;
             this.size = 0;
         }
+
+        [XmlIgnore]
+        public IEnumerable<ElementGroup> Groups
+        {
+            get
+            {
+                return this.Items.OfType<ElementGroup>();
+            }
+        }
+
+        [XmlIgnore]
+        public IEnumerable<SubrecordElement> Elements
+        {
+            get
+            {
+                return this.Items.OfType<SubrecordElement>();
+            }
+        }
+
     }
 }
