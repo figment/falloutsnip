@@ -13,7 +13,7 @@ namespace TESVSnip.Properties {
     
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
     [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.VisualStudio.Editors.SettingsDesigner.SettingsSingleFileGenerator", "11.0.0.0")]
-    internal sealed partial class Settings : global::System.Configuration.ApplicationSettingsBase {
+    public sealed partial class Settings : global::System.Configuration.ApplicationSettingsBase {
         
         private static Settings defaultInstance = ((Settings)(global::System.Configuration.ApplicationSettingsBase.Synchronized(new Settings())));
         
@@ -193,42 +193,6 @@ namespace TESVSnip.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("English")]
-        public string LocalizationName {
-            get {
-                return ((string)(this["LocalizationName"]));
-            }
-            set {
-                this["LocalizationName"] = value;
-            }
-        }
-        
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("False")]
-        public bool SaveStringsFiles {
-            get {
-                return ((bool)(this["SaveStringsFiles"]));
-            }
-            set {
-                this["SaveStringsFiles"] = value;
-            }
-        }
-        
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("False")]
-        public bool MonitorStringsFolderForChanges {
-            get {
-                return ((bool)(this["MonitorStringsFolderForChanges"]));
-            }
-            set {
-                this["MonitorStringsFolderForChanges"] = value;
-            }
-        }
-        
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("True")]
         public bool UseMsftEdit {
             get {
@@ -260,66 +224,6 @@ namespace TESVSnip.Properties {
             }
             set {
                 this["UseOldSubRecordEditor"] = value;
-            }
-        }
-        
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("False")]
-        public bool UseDefaultRecordCompression {
-            get {
-                return ((bool)(this["UseDefaultRecordCompression"]));
-            }
-            set {
-                this["UseDefaultRecordCompression"] = value;
-            }
-        }
-        
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("False")]
-        public bool EnableAutoCompress {
-            get {
-                return ((bool)(this["EnableAutoCompress"]));
-            }
-            set {
-                this["EnableAutoCompress"] = value;
-            }
-        }
-        
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("REGN;NAVI;WRLD;DIAL;CELL;IMAD;WTHR")]
-        public string AutoCompressRecordsOld {
-            get {
-                return ((string)(this["AutoCompressRecordsOld"]));
-            }
-            set {
-                this["AutoCompressRecordsOld"] = value;
-            }
-        }
-        
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("False")]
-        public bool EnableCompressionLimit {
-            get {
-                return ((bool)(this["EnableCompressionLimit"]));
-            }
-            set {
-                this["EnableCompressionLimit"] = value;
-            }
-        }
-        
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("1024")]
-        public uint CompressionLimit {
-            get {
-                return ((uint)(this["CompressionLimit"]));
-            }
-            set {
-                this["CompressionLimit"] = value;
             }
         }
         
@@ -394,18 +298,6 @@ namespace TESVSnip.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("True")]
-        public bool UseUTF8 {
-            get {
-                return ((bool)(this["UseUTF8"]));
-            }
-            set {
-                this["UseUTF8"] = value;
-            }
-        }
-        
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("")]
         public string CultureCodeUI {
             get {
@@ -466,18 +358,6 @@ namespace TESVSnip.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("True")]
-        public bool UsePluginRecordCompression {
-            get {
-                return ((bool)(this["UsePluginRecordCompression"]));
-            }
-            set {
-                this["UsePluginRecordCompression"] = value;
-            }
-        }
-        
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("CELL;DIAL;IMAD;LAND;NAVI;NAVM;NPC_;REGN;WRLD;WTHR")]
         public string AutoCompressRecords {
             get {
@@ -521,18 +401,6 @@ namespace TESVSnip.Properties {
             }
             set {
                 this["ExternalPythonEditor"] = value;
-            }
-        }
-        
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("True")]
-        public bool AutoUpdateNextFormID {
-            get {
-                return ((bool)(this["AutoUpdateNextFormID"]));
-            }
-            set {
-                this["AutoUpdateNextFormID"] = value;
             }
         }
     }

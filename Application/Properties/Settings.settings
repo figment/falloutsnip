@@ -44,15 +44,6 @@
     <Setting Name="DisableHyperlinks" Type="System.Boolean" Scope="User">
       <Value Profile="(Default)">False</Value>
     </Setting>
-    <Setting Name="LocalizationName" Type="System.String" Scope="User">
-      <Value Profile="(Default)">English</Value>
-    </Setting>
-    <Setting Name="SaveStringsFiles" Type="System.Boolean" Scope="User">
-      <Value Profile="(Default)">False</Value>
-    </Setting>
-    <Setting Name="MonitorStringsFolderForChanges" Type="System.Boolean" Scope="User">
-      <Value Profile="(Default)">False</Value>
-    </Setting>
     <Setting Name="UseMsftEdit" Type="System.Boolean" Scope="User">
       <Value Profile="(Default)">True</Value>
     </Setting>
@@ -61,21 +52,6 @@
     </Setting>
     <Setting Name="UseOldSubRecordEditor" Type="System.Boolean" Scope="User">
       <Value Profile="(Default)">False</Value>
-    </Setting>
-    <Setting Name="UseDefaultRecordCompression" Type="System.Boolean" Scope="User">
-      <Value Profile="(Default)">False</Value>
-    </Setting>
-    <Setting Name="EnableAutoCompress" Type="System.Boolean" Scope="User">
-      <Value Profile="(Default)">False</Value>
-    </Setting>
-    <Setting Name="AutoCompressRecordsOld" Type="System.String" Scope="User">
-      <Value Profile="(Default)">REGN;NAVI;WRLD;DIAL;CELL;IMAD;WTHR</Value>
-    </Setting>
-    <Setting Name="EnableCompressionLimit" Type="System.Boolean" Scope="User">
-      <Value Profile="(Default)">False</Value>
-    </Setting>
-    <Setting Name="CompressionLimit" Type="System.UInt32" Scope="User">
-      <Value Profile="(Default)">1024</Value>
     </Setting>
     <Setting Name="UseHexSubRecordEditor" Type="System.Boolean" Scope="User">
       <Value Profile="(Default)">False</Value>
@@ -95,9 +71,6 @@
     <Setting Name="LastSearchType" Type="System.String" Scope="User">
       <Value Profile="(Default)" />
     </Setting>
-    <Setting Name="UseUTF8" Type="System.Boolean" Scope="User">
-      <Value Profile="(Default)">True</Value>
-    </Setting>
     <Setting Name="CultureCodeUI" Type="System.String" Scope="User">
       <Value Profile="(Default)" />
     </Setting>
@@ -113,9 +86,6 @@
     <Setting Name="PersonalOpenFolder" Type="System.String" Scope="User">
       <Value Profile="(Default)" />
     </Setting>
-    <Setting Name="UsePluginRecordCompression" Type="System.Boolean" Scope="User">
-      <Value Profile="(Default)">True</Value>
-    </Setting>
     <Setting Name="AutoCompressRecords" Type="System.String" Scope="User">
       <Value Profile="(Default)">CELL;DIAL;IMAD;LAND;NAVI;NAVM;NPC_;REGN;WRLD;WTHR</Value>
     </Setting>
@@ -127,9 +97,6 @@
     </Setting>
     <Setting Name="ExternalPythonEditor" Type="System.String" Scope="User">
       <Value Profile="(Default)" />
-    </Setting>
-    <Setting Name="AutoUpdateNextFormID" Type="System.Boolean" Scope="User">
-      <Value Profile="(Default)">True</Value>
     </Setting>
   </Settings>
 </SettingsFile>

@@ -7,7 +7,7 @@ namespace TESVSnip.Framework
     using Encoding = TESVSnip.Framework.Services.Encoding;
 
     [StructLayout(LayoutKind.Explicit)]
-    internal struct TypeConverter
+    public struct TypeConverter
     {
         [FieldOffset(0)]
         private uint i;

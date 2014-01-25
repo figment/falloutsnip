@@ -1,5 +1,6 @@
 using System.Configuration;
 using System.Text;
+using System.Linq;
 using System.Windows.Media.Animation;
 using IronPython.Runtime;
 using Microsoft.Win32;
@@ -141,11 +142,11 @@ namespace TESVSnip.UI.Forms
             this.noWindowsSoundsToolStripMenuItem.Checked = Settings.Default.NoWindowsSounds;
             this.disableHyperlinksToolStripMenuItem.Checked = Settings.Default.DisableHyperlinks;
             this.SelectedRichText.DetectUrls = !Settings.Default.DisableHyperlinks;
-            this.saveStringsFilesToolStripMenuItem.Checked = Settings.Default.SaveStringsFiles;
+            this.saveStringsFilesToolStripMenuItem.Checked = Domain.Properties.Settings.Default.SaveStringsFiles;
 
             this.useNewSubrecordEditorToolStripMenuItem.Checked = !Settings.Default.UseOldSubRecordEditor;
             this.hexModeToolStripMenuItem.Checked = Settings.Default.UseHexSubRecordEditor;
-            this.uTF8ModeToolStripMenuItem.Checked = Settings.Default.UseUTF8;
+            this.uTF8ModeToolStripMenuItem.Checked = Framework.Properties.Settings.Default.UseUTF8;
 
             this.Selection = new SelectionContext();
             this.Selection.formIDLookup = this.LookupFormIDI;
@@ -1128,7 +1129,7 @@ namespace TESVSnip.UI.Forms
             else
             {
                 FontLangInfo defLang;
-                if (!Encoding.TryGetFontInfo(Settings.Default.LocalizationName, out defLang))
+                if (!Encoding.TryGetFontInfo(Domain.Properties.Settings.Default.LocalizationName, out defLang))
                 {
                     defLang = new FontLangInfo(1252, 1033, 0);
                 }
@@ -1549,9 +1550,9 @@ namespace TESVSnip.UI.Forms
             {
                 if (e.ClickedItem == kvp.Value)
                 {
-                    if (Settings.Default.LocalizationName != kvp.Key)
+                    if (Domain.Properties.Settings.Default.LocalizationName != kvp.Key)
                     {
-                        Settings.Default.LocalizationName = kvp.Key;
+                        Domain.Properties.Settings.Default.LocalizationName = kvp.Key;
                         this.ReloadLanguageFiles();
                     }
 
@@ -1565,7 +1566,7 @@ namespace TESVSnip.UI.Forms
             foreach (var kvp in this.languageToolBarItems)
             {
                 kvp.Value.Checked =
-                    string.Compare(kvp.Key, Settings.Default.LocalizationName, StringComparison.OrdinalIgnoreCase) == 0;
+                    string.Compare(kvp.Key, Domain.Properties.Settings.Default.LocalizationName, StringComparison.OrdinalIgnoreCase) == 0;
             }
         }
 
@@ -1888,7 +1889,7 @@ namespace TESVSnip.UI.Forms
 
         private void saveStringsFilesToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            Settings.Default.SaveStringsFiles =
+            Domain.Properties.Settings.Default.SaveStringsFiles =
                 this.saveStringsFilesToolStripMenuItem.Checked = !this.saveStringsFilesToolStripMenuItem.Checked;
         }
 
@@ -2097,7 +2098,7 @@ namespace TESVSnip.UI.Forms
 
         private void uTF8ModeToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            Settings.Default.UseUTF8 = this.uTF8ModeToolStripMenuItem.Checked;
+            Framework.Properties.Settings.Default.UseUTF8 = this.uTF8ModeToolStripMenuItem.Checked;
             if (MessageBox.Show(Resources.RestartText, Resources.InfoText, MessageBoxButtons.YesNoCancel) ==
                 DialogResult.Yes)
             {

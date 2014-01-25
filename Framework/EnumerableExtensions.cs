@@ -4,7 +4,7 @@ namespace TESVSnip.Framework
     using System.Collections.Generic;
     using System.Linq;
 
-    internal static class EnumerableExtensions
+    public static class EnumerableExtensions
     {
         private static readonly Random rand = new Random();
 

@@ -4,7 +4,6 @@ namespace TESVSnip.Domain.Services
     using System.Collections.Generic;
     using System.IO;
     using System.Reflection;
-    using System.Windows.Forms;
     using Microsoft.Win32;
     using TESVSnip.Domain.Model;
 
@@ -165,7 +164,7 @@ namespace TESVSnip.Domain.Services
         /// </summary>
         private void SetupScriptHostDirectory()
         {
-            var path = Properties.Settings.Default.IronPythonPath;
+            var path = TESVSnip.Properties.Settings.Default.IronPythonPath;
             if (string.IsNullOrWhiteSpace(path) || !Directory.Exists(path))
             {
                 using (var key = Registry.LocalMachine.OpenSubKey(Environment.Is64BitOperatingSystem
@@ -216,7 +215,7 @@ namespace TESVSnip.Domain.Services
             catch (Exception ex)
             {
                 string msg = "Options.SetupGameDirectory" + Environment.NewLine + "Message: " + ex.Message + Environment.NewLine + "StackTrace: " + ex.StackTrace;
-                Clipboard.SetText(msg);
+                //Clipboard.SetText(msg);
                 throw new TESParserException(msg);
             }
         }

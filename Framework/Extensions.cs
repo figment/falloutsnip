@@ -2,14 +2,14 @@ namespace TESVSnip.Framework
 {
     using System;
 
-    internal static partial class Extensions
+    public static partial class Extensions
     {
-        internal static T CastValue<T>(object value)
+        public static T CastValue<T>(object value)
         {
             return CastValue<T>(value, default(T));
         }
 
-        internal static T CastValue<T>(object value, T defaultValue)
+        public static T CastValue<T>(object value, T defaultValue)
         {
             if (value != null && !(value is DBNull))
             {
@@ -51,7 +51,7 @@ namespace TESVSnip.Framework
             return default(T);
         }
 
-        internal static object CastValue(object value, Type type)
+        public static object CastValue(object value, Type type)
         {
             if (value != null && !(value is DBNull))
             {

@@ -14,8 +14,12 @@
   <PropertyGroup>
     <ProjectName>TESVSnip</ProjectName>
     <ProjectGuid>{E5EAE955-8751-46A5-9881-C68E7C508151}</ProjectGuid>
+    <FrameworkDir>$(SolutionDir)Framework\</FrameworkDir>
+    <FrameworkTargetDir>$(FrameworkDir)bin\$(Configuration)\</FrameworkTargetDir>
+    <DomainDir>$(SolutionDir)Domain\</DomainDir>
+    <DomainTargetDir>$(DomainDir)bin\$(Configuration)\</DomainTargetDir>
     <ApplicationDir>$(SolutionDir)Application\</ApplicationDir>
-    <ApplicationTargetDir>$(SolutionDir)Application\bin\$(Configuration)\</ApplicationTargetDir>
+    <ApplicationTargetDir>$(ApplicationDir)bin\$(Configuration)\</ApplicationTargetDir>
     <StageOutputDir>$(SolutionDir)Output\</StageOutputDir>
     <MergeOutputFile>$(StageOutputDir)\$(TargetName)$(TargetExt)</MergeOutputFile>
   </PropertyGroup>
@@ -42,7 +46,13 @@
     <CopyToStagingPlatform32 Include="$(SolutionDir)Platform\x86\ZLibMC.dll" />
   </ItemGroup>
   <Target Name="Build" DependsOnTargets="version_import">
-    <MSBuild Projects="$(ApplicationDir)tesvsnip.csproj" 
+    <MSBuild Projects="$(FrameworkDir)Framework.csproj" 
+		Properties="Configuration=$(Configuration);Platform=$(Platform);SolutionDir=$(SolutionDir)" 
+		Targets="Build"/>
+    <MSBuild Projects="$(DomainDir)Domain.csproj" 
+		Properties="Configuration=$(Configuration);Platform=$(Platform);SolutionDir=$(SolutionDir)" 
+		Targets="Build"/>
+    <MSBuild Projects="$(ApplicationDir)Application.csproj" 
 		Properties="Configuration=$(Configuration);Platform=$(Platform);SolutionDir=$(SolutionDir)" 
 		Targets="Build"/>
   </Target>

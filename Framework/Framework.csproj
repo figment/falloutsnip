@@ -4,7 +4,7 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Release</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{C771D1E1-8186-49A2-9AEB-997DAF106FFD}</ProjectGuid>
+    <ProjectGuid>{5F7E7E6A-866D-4312-9B4E-A0BE52B920C0}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>TESVSnip.Framework</RootNamespace>
@@ -80,7 +80,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Content Include="$(SolutionDir)\build\buildver.txt" />
   </ItemGroup>
-<ItemGroup>
+  <ItemGroup>
     <Compile Include="Collections\AdvancedList.cs" />
     <Compile Include="Collections\PropertyComparer.cs" />
     <Compile Include="Collections\PropertyComparerCollection.cs" />
@@ -100,14 +100,23 @@
     <Compile Include="Persistence\PersistableAttribute.cs" />
     <Compile Include="Persistence\SerializationInfoCache.cs" />
     <Compile Include="Persistence\serializationinfocachelist.cs" />
+    <Compile Include="Properties\Settings.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+      <DependentUpon>Settings.settings</DependentUpon>
+    </Compile>
     <Compile Include="Services\Encoding.cs" />
     <Compile Include="Services\FontLangInfo.cs" />
     <Compile Include="Services\Platform.cs" />
-    <Compile Include="Services\PluginBase.cs" />
-    <Compile Include="Services\PluginEngine.cs" />
-    <Compile Include="Services\Scripting.cs" />
     <Compile Include="TypeConverter.cs" />
-</ItemGroup>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="app.config" />
+    <None Include="Properties\Settings.settings">
+      <Generator>PublicSettingsSingleFileGenerator</Generator>
+      <LastGenOutput>Settings.Designer.cs</LastGenOutput>
+    </None>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

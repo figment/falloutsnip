@@ -24,7 +24,7 @@ namespace TESVSnip
             Platform.Initialize();
             Options.Initialize(args);
             Scripting.Initialize();
-            Encoding.Initalize(TESVSnip.Properties.Settings.Default.UseUTF8);
+            Encoding.Initalize(TESVSnip.Framework.Properties.Settings.Default.UseUTF8);
             try
             {
                 //AppDomain.CurrentDomain.UnhandledException += OnUnhandledException;

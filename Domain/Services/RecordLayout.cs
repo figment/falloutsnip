@@ -5,7 +5,7 @@ using System.Text;
 
 namespace TESVSnip.Domain.Services
 {
-    static class RecordLayout
+    public static class RecordLayout
     {
         /// <summary>
         /// When copy as New do not include these records.

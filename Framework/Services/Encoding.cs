@@ -38,7 +38,7 @@ namespace TESVSnip.Framework.Services
             useUtf8Encoding = useUtf8;
         }
 
-        internal static bool TryGetFontInfo(string name, out FontLangInfo langInfo)
+        public static bool TryGetFontInfo(string name, out FontLangInfo langInfo)
         {
             return LanguageMap.TryGetValue(name, out langInfo);
         }

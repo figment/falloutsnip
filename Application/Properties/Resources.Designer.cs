@@ -702,15 +702,6 @@ namespace TESVSnip.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Unable to backup and replace plugin. File not saved..
-        /// </summary>
-        internal static string Plugin_Save_UnableToBackup {
-            get {
-                return ResourceManager.GetString("Plugin_Save_UnableToBackup", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Plugin lacks a valid TES4 record. Cannot continue.
         /// </summary>
         internal static string PluginLacksAValidTes4RecordCannotContinue {

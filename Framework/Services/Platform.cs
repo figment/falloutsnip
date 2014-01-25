@@ -3,11 +3,10 @@ using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
 using System.Runtime.InteropServices;
-using TESVSnip.Domain.Services;
 
 namespace TESVSnip.Framework.Services
 {
-    class Platform
+    public class Platform
     {
 
         [DllImport("Kernel32.dll")]
@@ -26,7 +25,7 @@ namespace TESVSnip.Framework.Services
         [DllImport("kernel32.dll")]
         private static extern bool FreeLibrary(IntPtr dllPointer);
 
-
+        private static string assemblyDir;
         static HashSet<string> registeredLibraries = new HashSet<string>(StringComparer.InvariantCultureIgnoreCase);
 
         public static void Initialize()
@@ -35,9 +34,9 @@ namespace TESVSnip.Framework.Services
             {
                 // bootstrap zlib for correct platform
                 Assembly asm = Assembly.GetExecutingAssembly();
-                string exeDir = Path.GetDirectoryName(asm.Location);
+                assemblyDir = Path.GetDirectoryName(asm.Location);
                 //var platformPath = Path.Combine(exeDir, Path.Combine("platform", Environment.Is64BitProcess ? "x64" : "win32"));
-                var platformPath = Path.Combine(exeDir, "platform", Environment.Is64BitProcess ? "x64" : "x86"); // Environment.GetEnvironmentVariable("PROCESSOR_ARCHITECTURE")
+                var platformPath = Path.Combine(assemblyDir, "platform", Environment.Is64BitProcess ? "x64" : "x86"); // Environment.GetEnvironmentVariable("PROCESSOR_ARCHITECTURE")
                 SetDllDirectory(platformPath);
 
                 AppDomain.CurrentDomain.AssemblyResolve += CustomResolve;
@@ -71,7 +70,7 @@ namespace TESVSnip.Framework.Services
             if (registeredLibraries.Contains(args.Name))
             {
                 // Environment.GetEnvironmentVariable("PROCESSOR_ARCHITECTURE")
-                string fileName = Path.GetFullPath(Path.Combine(Options.Value.ApplicationDirectory,"platform", Environment.Is64BitProcess ? "x64" : "x86", args.Name));
+                string fileName = Path.GetFullPath(Path.Combine(assemblyDir, "platform", Environment.Is64BitProcess ? "x64" : "x86", args.Name));
                 if (File.Exists(fileName))
                 {
                     return Assembly.LoadFile(fileName);

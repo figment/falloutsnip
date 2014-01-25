@@ -524,7 +524,7 @@ namespace TESVSnip.UI.Forms
                 dlg.CheckPathExists = true;
                 dlg.AddExtension = true;
                 dlg.OverwritePrompt = true;
-                dlg.FileName = string.Format("{0}_{1}.xml", Path.GetFileNameWithoutExtension(plugin.Name), Settings.Default.LocalizationName);
+                dlg.FileName = string.Format("{0}_{1}.xml", Path.GetFileNameWithoutExtension(plugin.Name), TESVSnip.Domain.Properties.Settings.Default.LocalizationName);
                 if (dlg.ShowDialog(this) == DialogResult.OK)
                 {
                     var xs = new XmlSerializer(typeof (LocalizedStrings));
@@ -875,7 +875,7 @@ namespace TESVSnip.UI.Forms
                     dlg.CheckPathExists = true;
                     dlg.CheckFileExists = true;
                     dlg.AddExtension = true;
-                    dlg.FileName = string.Format("{0}_{1}.xml", Path.GetFileNameWithoutExtension(plugin.Name), Settings.Default.LocalizationName);
+                    dlg.FileName = string.Format("{0}_{1}.xml", Path.GetFileNameWithoutExtension(plugin.Name), TESVSnip.Domain.Properties.Settings.Default.LocalizationName);
                     if (dlg.ShowDialog(this) == DialogResult.OK)
                     {
                         var xs = new XmlSerializer(typeof (LocalizedStrings));
@@ -1124,7 +1124,7 @@ namespace TESVSnip.UI.Forms
                 dlg.CheckPathExists = true;
                 dlg.AddExtension = true;
                 dlg.OverwritePrompt = true;
-                dlg.FileName = string.Format("{0}_{1}.STRINGS", Path.GetFileNameWithoutExtension(plugin.Name), Settings.Default.LocalizationName);
+                dlg.FileName = string.Format("{0}_{1}.STRINGS", Path.GetFileNameWithoutExtension(plugin.Name), Domain.Properties.Settings.Default.LocalizationName);
                 if (dlg.ShowDialog(this) == DialogResult.OK)
                 {
                     plugin.SaveStrings(Path.Combine(Path.GetDirectoryName(dlg.FileName), Path.GetFileNameWithoutExtension(dlg.FileName)));

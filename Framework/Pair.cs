@@ -1,6 +1,6 @@
 namespace TESVSnip.Framework
 {
-    internal struct Pair<A, B>
+    public struct Pair<A, B>
     {
         public A a;
 

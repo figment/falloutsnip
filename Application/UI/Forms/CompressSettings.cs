@@ -19,15 +19,17 @@ namespace TESVSnip.UI.Forms
 
         private void LoadSettings_Load(object sender, EventArgs e)
         {
-            this.rdoNeverCompressRecords.Checked = !Settings.Default.UsePluginRecordCompression;
-            this.rdoDefaultCompressRecords.Checked = Settings.Default.UseDefaultRecordCompression;
-            this.rdoPluginCompressRecords.Checked = Settings.Default.UsePluginRecordCompression;
-            this.chkEnableAutoCompress.Checked = Settings.Default.EnableAutoCompress;
-            this.chkEnableCompressLimit.Checked = Settings.Default.EnableCompressionLimit;
-            this.txtCompressLimit.Text = Settings.Default.CompressionLimit.ToString(CultureInfo.InvariantCulture);
+            this.rdoNeverCompressRecords.Checked = !Domain.Properties.Settings.Default.UsePluginRecordCompression;
+            this.rdoDefaultCompressRecords.Checked = Domain.Properties.Settings.Default.UseDefaultRecordCompression;
+            this.rdoPluginCompressRecords.Checked = Domain.Properties.Settings.Default.UsePluginRecordCompression;
+            this.chkEnableAutoCompress.Checked = Domain.Properties.Settings.Default.EnableAutoCompress;
+            this.chkEnableCompressLimit.Checked = Domain.Properties.Settings.Default.EnableCompressionLimit;
+            this.txtCompressLimit.Text = Domain.Properties.Settings.Default.CompressionLimit.ToString(CultureInfo.InvariantCulture);
 
             // Groups
-            var records = Settings.Default.AutoCompressRecordsOld != null ? Settings.Default.AutoCompressRecordsOld.Trim().Split(new[] { ';', ',' }, StringSplitOptions.RemoveEmptyEntries) : new string[0];
+            var records = Domain.Properties.Settings.Default.AutoCompressRecords != null 
+                ? Settings.Default.AutoCompressRecords.Trim().Split(new[] { ';', ',' }, StringSplitOptions.RemoveEmptyEntries) 
+                : new string[0];
             var allGroups = Settings.Default.AllESMRecords != null
                                 ? Settings.Default.AllESMRecords.Trim().Split(new[] { ';', ',' }, StringSplitOptions.RemoveEmptyEntries).ToList()
                                 : new List<string>();
@@ -55,12 +57,12 @@ namespace TESVSnip.UI.Forms
 
         private void btnOk_Click(object sender, EventArgs e)
         {
-            Settings.Default.UseDefaultRecordCompression = this.rdoDefaultCompressRecords.Checked;
-            Settings.Default.UsePluginRecordCompression = this.rdoPluginCompressRecords.Checked;
-            Settings.Default.EnableCompressionLimit = this.chkEnableCompressLimit.Checked;
-            Settings.Default.CompressionLimit = uint.Parse(this.txtCompressLimit.Text);
-            Settings.Default.EnableAutoCompress = this.chkEnableAutoCompress.Checked;
-            Settings.Default.AutoCompressRecordsOld = string.Join(";", this.listRecordFilter.CheckedItems.Cast<string>().ToArray());
+            Domain.Properties.Settings.Default.UseDefaultRecordCompression = this.rdoDefaultCompressRecords.Checked;
+            Domain.Properties.Settings.Default.UsePluginRecordCompression = this.rdoPluginCompressRecords.Checked;
+            Domain.Properties.Settings.Default.EnableCompressionLimit = this.chkEnableCompressLimit.Checked;
+            Domain.Properties.Settings.Default.CompressionLimit = uint.Parse(this.txtCompressLimit.Text);
+            Domain.Properties.Settings.Default.EnableAutoCompress = this.chkEnableAutoCompress.Checked;
+            Domain.Properties.Settings.Default.AutoCompressRecords = string.Join(";", this.listRecordFilter.CheckedItems.Cast<string>().ToArray());
             Settings.Default.Save();
         }
 

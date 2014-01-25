@@ -34,7 +34,7 @@ namespace TESVSnip.UI.Docking
             }
 
             FontLangInfo defLang;
-            if (!Encoding.TryGetFontInfo(Settings.Default.LocalizationName, out defLang))
+            if (!Encoding.TryGetFontInfo(Domain.Properties.Settings.Default.LocalizationName, out defLang))
             {
                 defLang = new FontLangInfo(1252, 1033, 0);
             }
