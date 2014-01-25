@@ -1,0 +1,119 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Release</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{C771D1E1-8186-49A2-9AEB-997DAF106FFD}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>TESVSnip.Framework</RootNamespace>
+    <AssemblyName>TESVSnip.Framework</AssemblyName>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+  </PropertyGroup>
+  <PropertyGroup>
+    <BUILD_ROOT Condition="'$(BUILD_ROOT)' == '' AND Exists('$(MSBuildProjectDirectory)\..\build\')">$(MSBuildProjectDirectory)\..\</BUILD_ROOT>
+    <BUILD_ROOT Condition="'$(BUILD_ROOT)' == '' AND Exists('$(MSBuildProjectDirectory)\..\..\build\')">$(MSBuildProjectDirectory)\..\..\</BUILD_ROOT>
+    <BUILD_ROOT Condition="'$(BUILD_ROOT)' == '' AND Exists('$(MSBuildProjectDirectory)\..\..\..\build\')">$(MSBuildProjectDirectory)\..\..\..\</BUILD_ROOT>
+  </PropertyGroup>
+  <PropertyGroup>
+    <SignAssembly>false</SignAssembly>
+  </PropertyGroup>
+  <PropertyGroup>
+    <AssemblyOriginatorKeyFile>$(BUILD_ROOT)\build\tesvsnip.snk</AssemblyOriginatorKeyFile>
+  </PropertyGroup>
+  <Import Project="$(BUILD_ROOT)\build\tesvsnip.common.targets" />
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
+    <GenerateSerializationAssemblies>On</GenerateSerializationAssemblies>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <NoWarn>
+    </NoWarn>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
+    <GenerateSerializationAssemblies>On</GenerateSerializationAssemblies>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Xml" />
+    <Reference Include="IronPython, Version=2.7.0.40, Culture=neutral, PublicKeyToken=7f709c5b713576e1, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>$(SolutionDir)Vendor\IronPython-2.7.4\IronPython.dll</HintPath>
+    </Reference>
+    <Reference Include="IronPython.Modules, Version=2.7.0.40, Culture=neutral, PublicKeyToken=7f709c5b713576e1, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>$(SolutionDir)Vendor\IronPython-2.7.4\IronPython.Modules.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Dynamic, Version=1.1.0.20, Culture=neutral, PublicKeyToken=7f709c5b713576e1, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>$(SolutionDir)Vendor\IronPython-2.7.4\Microsoft.Dynamic.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Scripting, Version=1.1.0.20, Culture=neutral, PublicKeyToken=7f709c5b713576e1, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>$(SolutionDir)Vendor\IronPython-2.7.4\Microsoft.Scripting.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Scripting.Metadata, Version=1.1.0.20, Culture=neutral, PublicKeyToken=7f709c5b713576e1, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>$(SolutionDir)Vendor\IronPython-2.7.4\Microsoft.Scripting.Metadata.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Content Include="$(SolutionDir)\build\buildver.txt" />
+  </ItemGroup>
+<ItemGroup>
+    <Compile Include="Collections\AdvancedList.cs" />
+    <Compile Include="Collections\PropertyComparer.cs" />
+    <Compile Include="Collections\PropertyComparerCollection.cs" />
+    <Compile Include="Collections\ValueComparer.cs" />
+    <Compile Include="Collections\ordereddictionary.cs" />
+    <Compile Include="EnumerableExtensions.cs" />
+    <Compile Include="Extensions.cs" />
+    <Compile Include="ICloneable.cs" />
+    <Compile Include="Pair.cs" />
+    <Compile Include="Persistence\IPostSerializationCallback.cs" />
+    <Compile Include="Persistence\PersistAssist.cs" />
+    <Compile Include="Persistence\PersistContext.cs" />
+    <Compile Include="Persistence\PersistContextStates.cs" />
+    <Compile Include="Persistence\PersistObject.cs" />
+    <Compile Include="Persistence\PersistSurrogate.cs" />
+    <Compile Include="Persistence\PersistType.cs" />
+    <Compile Include="Persistence\PersistableAttribute.cs" />
+    <Compile Include="Persistence\SerializationInfoCache.cs" />
+    <Compile Include="Persistence\serializationinfocachelist.cs" />
+    <Compile Include="Services\Encoding.cs" />
+    <Compile Include="Services\FontLangInfo.cs" />
+    <Compile Include="Services\Platform.cs" />
+    <Compile Include="Services\PluginBase.cs" />
+    <Compile Include="Services\PluginEngine.cs" />
+    <Compile Include="Services\Scripting.cs" />
+    <Compile Include="TypeConverter.cs" />
+</ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>
