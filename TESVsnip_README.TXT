@@ -27,6 +27,7 @@ v 4.5
 - Add ElementGroup to handle repeating structures in subrecords like MO?T 
 - Fix some memory leaks in the Tree Control and History
 - Refactor out the Text formating from the models
+- Refactor Domain and Framework from the Application to allow for standalone access in IronPython console
 
 v 4.4.2a
 - Updated RecordStructure.xml

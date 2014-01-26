@@ -4,6 +4,10 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Application", "Application\Application.csproj", "{5FA31161-DDBB-430F-9E99-0ECE98B733DE}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{B4B2F683-07C5-4937-B0DD-FC5849A83F42}"
+	ProjectSection(SolutionItems) = preProject
+		conf\RecordStructure.xml = conf\RecordStructure.xml
+		conf\scripts.py = conf\scripts.py
+	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Domain", "Domain\Domain.csproj", "{C771D1E1-8186-49A2-9AEB-997DAF106FFD}"
 EndProject

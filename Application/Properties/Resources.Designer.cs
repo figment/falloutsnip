@@ -702,15 +702,6 @@ namespace TESVSnip.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Plugin lacks a valid TES4 record. Cannot continue.
-        /// </summary>
-        internal static string PluginLacksAValidTes4RecordCannotContinue {
-            get {
-                return ResourceManager.GetString("PluginLacksAValidTes4RecordCannotContinue", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Icon similar to (Icon).
         /// </summary>
         internal static System.Drawing.Icon py {

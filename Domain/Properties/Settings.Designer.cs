@@ -142,17 +142,5 @@ namespace TESVSnip.Domain.Properties {
                 this["UsePluginRecordCompression"] = value;
             }
         }
-        
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("conf")]
-        public string SettingsDirectory {
-            get {
-                return ((string)(this["SettingsDirectory"]));
-            }
-            set {
-                this["SettingsDirectory"] = value;
-            }
-        }
     }
 }

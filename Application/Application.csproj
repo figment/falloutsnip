@@ -125,14 +125,14 @@
     <Reference Include="WindowsFormsIntegration" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Domain\Services\Options.cs">
+    <Compile Include="UI\Services\Options.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Domain\Services\Settings.cs" />
-    <Compile Include="Framework\Services\PluginBase.cs" />
-    <Compile Include="Framework\Services\PluginEngine.cs" />
-    <Compile Include="Framework\Services\PluginStore.cs" />
-    <Compile Include="Framework\Services\Scripting.cs" />
+    <Compile Include="UI\Services\Settings.cs" />
+    <Compile Include="UI\Services\PluginBase.cs" />
+    <Compile Include="UI\Services\PluginEngine.cs" />
+    <Compile Include="UI\Services\PluginStore.cs" />
+    <Compile Include="UI\Services\Scripting.cs" />
     <Compile Include="TranslateUI\Localization.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -172,7 +172,6 @@
     <Compile Include="UI\RecordControls\IOuterElementControl.cs" />
     <Compile Include="UI\RecordControls\ITextElementControl.cs" />
     <Compile Include="UI\SelectionContext.cs" />
-    <Compile Include="UI\Spells.cs" />
     <Compile Include="Vendor\Controls\ballontooltip.cs">
       <SubType>Component</SubType>
     </Compile>
@@ -763,7 +762,9 @@
     <None Include="Resources\tesv_ico.ico" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="app.config" />
+    <None Include="app.config">
+      <SubType>Designer</SubType>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <Content Include="$(SolutionDir)\build\buildver.txt" />

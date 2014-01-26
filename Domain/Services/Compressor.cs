@@ -19,7 +19,6 @@ namespace TESVSnip.Domain.Services
 
         static CompressHelper()
         {
-
             Platform.RegisterLibrary("ZLibMC.dll");
             try
             {
@@ -50,9 +49,9 @@ namespace TESVSnip.Domain.Services
 
         public static void Initialize()
         {
+            Platform.Initialize();
             InitializeMethod.Invoke(null, new object[0]);
-            string version = (string)VersionMethod.Invoke(null, new object[0]);
-            Trace.WriteLine(version);
+            //string version = (string)VersionMethod.Invoke(null, new object[0]);
         }
 
         public static void Close()

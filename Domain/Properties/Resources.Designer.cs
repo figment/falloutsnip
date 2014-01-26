@@ -61,11 +61,38 @@ namespace TESVSnip.Domain.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to The subgroup structure of this plugins cell, world or dial records appears to be incorrect, and cannot be fixed automatically.
+        /// </summary>
+        public static string CannotSanitizeLooseGroups {
+            get {
+                return ResourceManager.GetString("CannotSanitizeLooseGroups", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The plugin contained records which were not recognized, and cannot be fixed automatically.
+        /// </summary>
+        public static string CannotSanitizeUnknownRecords {
+            get {
+                return ResourceManager.GetString("CannotSanitizeUnknownRecords", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Unable to backup and replace plugin. File not saved..
         /// </summary>
         public static string Plugin_Save_UnableToBackup {
             get {
                 return ResourceManager.GetString("Plugin_Save_UnableToBackup", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Plugin lacks a valid TES4 record. Cannot continue.
+        /// </summary>
+        public static string PluginLacksAValidTes4RecordCannotContinue {
+            get {
+                return ResourceManager.GetString("PluginLacksAValidTes4RecordCannotContinue", resourceCulture);
             }
         }
     }

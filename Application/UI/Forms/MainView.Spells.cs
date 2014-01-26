@@ -1,5 +1,6 @@
 ﻿using System.Text.RegularExpressions;
 using TESVSnip.Domain.Data.RecordStructure.Xml;
+using TESVSnip.UI.Services;
 
 namespace TESVSnip.UI.Forms
 {

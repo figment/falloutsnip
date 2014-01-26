@@ -1,10 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using TESVSnip.Domain.Services;
+﻿using System.Collections.Generic;
 
-namespace TESVSnip.Framework.Services
+namespace TESVSnip.UI.Services
 {
     public static class PluginStore
     {

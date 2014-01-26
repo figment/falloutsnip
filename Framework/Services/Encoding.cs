@@ -11,7 +11,7 @@ namespace TESVSnip.Framework.Services
         private static readonly Dictionary<string, FontLangInfo> LanguageMap = new Dictionary<string, FontLangInfo>(StringComparer.InvariantCultureIgnoreCase);
 
         private static System.Text.Encoding instance;
-        private static bool useUtf8Encoding;
+        private static bool useUtf8Encoding = true;
 
         static Encoding()
         {

@@ -56,7 +56,7 @@ namespace TESVSnip.Domain.Scripts
     /// </summary>
     public static class PyInterpreter
     {
-        private static readonly string ScriptsPyPath = Path.Combine(Properties.Settings.Default.SettingsDirectory, @"scripts.py");
+        private static readonly string ScriptsPyPath = Path.Combine(Folders.SettingsDirectory, @"scripts.py");
         private static System.Globalization.NumberFormatInfo _ni;
         private static Dictionary<string, PyFunctionDefinition> _pyDictionary;
 

@@ -25,21 +25,43 @@ namespace TESVSnip.Framework.Services
         [DllImport("kernel32.dll")]
         private static extern bool FreeLibrary(IntPtr dllPointer);
 
-        private static string assemblyDir;
+        private static string platformDir;
+        private static bool initialized;
         static HashSet<string> registeredLibraries = new HashSet<string>(StringComparer.InvariantCultureIgnoreCase);
 
         public static void Initialize()
         {
+            if (initialized)
+                return;
             try
             {
                 // bootstrap zlib for correct platform
                 Assembly asm = Assembly.GetExecutingAssembly();
-                assemblyDir = Path.GetDirectoryName(asm.Location);
-                //var platformPath = Path.Combine(exeDir, Path.Combine("platform", Environment.Is64BitProcess ? "x64" : "win32"));
-                var platformPath = Path.Combine(assemblyDir, "platform", Environment.Is64BitProcess ? "x64" : "x86"); // Environment.GetEnvironmentVariable("PROCESSOR_ARCHITECTURE")
-                SetDllDirectory(platformPath);
+                var assemblyDir = Path.GetDirectoryName(asm.Location);
+                var platformFolder = Path.Combine("platform", Environment.Is64BitProcess ? "x64" : "x86");
+                var platformPath = Path.Combine(assemblyDir, platformFolder);
+                if (!Directory.Exists(platformPath))
+                {
+                    var dir = new DirectoryInfo(assemblyDir);
+                    if (System.String.Compare(dir.Name, "Debug", System.StringComparison.OrdinalIgnoreCase) == 0
+                        || System.String.Compare(dir.Name, "Release", System.StringComparison.OrdinalIgnoreCase) == 0)
+                        dir = dir.Parent;
+                    if (System.String.Compare(dir.Name, "bin", System.StringComparison.OrdinalIgnoreCase) == 0)
+                        dir = dir.Parent;
+                    assemblyDir = dir.FullName;
+                }
+                platformPath = Path.Combine(assemblyDir, platformFolder);
+                if (!Directory.Exists(platformPath))
+                {
+                    platformPath = Path.GetFullPath(Path.Combine(assemblyDir, "..", platformFolder));
+                }
+                platformDir = platformPath;
+
+                SetDllDirectory(platformDir);
 
                 AppDomain.CurrentDomain.AssemblyResolve += CustomResolve;
+
+                initialized = true;
             }
             catch
             {
@@ -57,6 +79,7 @@ namespace TESVSnip.Framework.Services
         /// <param name="name">Complete library name including extension without path</param>
         public static void RegisterLibrary(string name)
         {
+            if (!initialized) Platform.Initialize();
             registeredLibraries.Add(name);
         }
 
@@ -69,8 +92,7 @@ namespace TESVSnip.Framework.Services
         {
             if (registeredLibraries.Contains(args.Name))
             {
-                // Environment.GetEnvironmentVariable("PROCESSOR_ARCHITECTURE")
-                string fileName = Path.GetFullPath(Path.Combine(assemblyDir, "platform", Environment.Is64BitProcess ? "x64" : "x86", args.Name));
+                string fileName = Path.GetFullPath(Path.Combine(platformDir, args.Name));
                 if (File.Exists(fileName))
                 {
                     return Assembly.LoadFile(fileName);

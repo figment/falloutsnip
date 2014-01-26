@@ -1,12 +1,11 @@
 using System.Globalization;
+using System.Drawing;
+using System.IO;
+using System.Windows.Forms;
+using System.Xml;
 
-namespace TESVSnip.Domain.Services
+namespace TESVSnip.UI.Services
 {
-    using System.Drawing;
-    using System.IO;
-    using System.Windows.Forms;
-    using System.Xml;
-
     internal static class Settings
     {
         private static readonly string XmlPath = Path.Combine(Options.Value.SettingsDirectory, "settings.xml");

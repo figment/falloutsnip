@@ -8,6 +8,7 @@ using PythonConsoleControl;
 using TESVSnip.Domain.Data.RecordStructure.Xml;
 using TESVSnip.Domain.Scripts;
 using TESVSnip.UI.Rendering.Extensions;
+using TESVSnip.UI.Services;
 
 namespace TESVSnip.UI.Forms
 {
@@ -125,11 +126,11 @@ namespace TESVSnip.UI.Forms
             {
                 if (!Settings.Default.IsFirstTimeOpening)
                 {
-                    Domain.Services.Settings.GetWindowPosition("TESsnip", this);
+                    Services.Settings.GetWindowPosition("TESsnip", this);
                 }
                 else
                 {
-                    Domain.Services.Settings.SetWindowPosition("TESsnip", this);
+                    Services.Settings.SetWindowPosition("TESsnip", this);
                     Settings.Default.IsFirstTimeOpening = false;
                     Settings.Default.Save();
                 }
@@ -1117,7 +1118,7 @@ namespace TESVSnip.UI.Forms
             this.RebuildSelection();
             this.CloseStringEditor();
             this.SaveDockingWindows();
-            Domain.Services.Settings.SetWindowPosition("TESsnip", this);
+            Services.Settings.SetWindowPosition("TESsnip", this);
         }
 
         private void UpdateMainText(BaseRecord rec)
@@ -2367,6 +2368,7 @@ namespace TESVSnip.UI.Forms
 
                             var runtime = engine.Runtime;
                             runtime.LoadAssembly(Assembly.GetExecutingAssembly());
+                            runtime.LoadAssembly(typeof (TESVSnip.Domain.Model.BaseRecord).Assembly);
                             runtime.LoadAssembly(typeof(String).Assembly);
                             runtime.LoadAssembly(typeof(System.Drawing.Icon).Assembly);
                             runtime.LoadAssembly(typeof(IronPython.Hosting.Python).Assembly);

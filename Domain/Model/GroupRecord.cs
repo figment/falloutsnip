@@ -45,7 +45,7 @@ namespace TESVSnip.Domain.Model
             this.UpdateShortDescription();
         }
 
-        internal GroupRecord(uint Size, BinaryReader br, bool Oblivion, string[] recFilter, bool filterAll)
+        internal GroupRecord(uint Size, BinaryReader br, bool Oblivion, Func<string,bool> recFilter, bool filterAll)
         {
             Name = "GRUP";
             this.data = br.ReadBytes(4);
@@ -66,7 +66,7 @@ namespace TESVSnip.Domain.Model
                 {
                     try
                     {
-                        bool skip = filterAll || (recFilter != null && Array.IndexOf(recFilter, contentType) >= 0);
+                        bool skip = filterAll || (recFilter != null && !recFilter(contentType));
                         var gr = new GroupRecord(recsize, br, Oblivion, recFilter, skip);
                         if (!filterAll)
                         {
@@ -84,7 +84,7 @@ namespace TESVSnip.Domain.Model
                 }
                 else
                 {
-                    bool skip = filterAll || (recFilter != null && Array.IndexOf(recFilter, s) >= 0);
+                    bool skip = filterAll || (recFilter != null && !recFilter(contentType));
                     if (skip)
                     {
                         long size = recsize + (Oblivion ? 12 : 16);

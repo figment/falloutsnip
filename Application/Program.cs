@@ -6,6 +6,7 @@ using TESVSnip.Domain.Services;
 using TESVSnip.Framework.Services;
 using TESVSnip.Properties;
 using TESVSnip.UI.Forms;
+using TESVSnip.UI.Services;
 using Settings = TESVSnip.Properties.Settings;
 
 namespace TESVSnip

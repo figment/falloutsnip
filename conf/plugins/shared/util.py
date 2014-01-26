@@ -5,15 +5,36 @@
 #
 import shared.required
 import System
-import TESVSnip
+import TESVSnip.Domain
 from TESVSnip.Domain.Model import BaseRecord, Record, Plugin, SubRecord, GroupRecord
 from System import Action, Func, Predicate, TimeSpan
 from System.Diagnostics import Stopwatch
-from System.Drawing import SystemColors, Color
-from TESVSnip.UI.Hosting import ScriptSupport as ss
 from System.Text.RegularExpressions import Regex
+#from TESVSnip.UI.Hosting import ScriptSupport as ss
 
 reWhite = Regex(r"[\n\t\r]") # can probably use re but user might not have full IronPython
+
+def newByteArray(items):
+	array = System.Array.CreateInstance(System.Byte, len(items))
+	for i,a in enumerate(items):
+		array[i] = a
+	return array
+
+def newPlugin():
+	p = Plugin()
+	r = Record()
+	r.Name = "TES4"
+	sr = SubRecord()
+	sr.Name = "HEDR"
+	sr.SetData(newByteArray([0xD7, 0xA3, 0x70, 0x3F, 0x00, 0x00, 0x00, 0x00, 0x00, 0x08, 0x00, 0x01]));
+	r.AddRecord(sr)
+	sr = SubRecord()
+	sr.Name = "CNAM";
+	sr.SetData(TESVSnip.Framework.Services.Encoding.Instance.GetBytes("Default\0"))
+	r.AddRecord(sr)
+	p.AddRecord(r)
+	#__plugins__.AddRecord(p)
+	return p
 
 # read the plugins.txt to a lower case dictionary
 def loadMasterPluginIndex():
@@ -60,6 +81,19 @@ def alternateLoadMasterPluginIndex():
 		p.append(t)
 	r.Close()
 
+	
+def getGameDirectory():
+	from System.IO import Path
+	from Microsoft.Win32 import Registry, RegistryValueOptions
+	key = Registry.LocalMachine.OpenSubKey(r"SOFTWARE\Wow6432Node\Bethesda Softworks\Skyrim")
+	if not key: key = Registry.LocalMachine.OpenSubKey(r"SOFTWARE\Bethesda Softworks\Skyrim")
+	if not key: key = Registry.LocalMachine.OpenSubKey(r"SOFTWARE\Bethesda Softworks\Skyrim")
+	result = key.GetValue("Installed Path", '', RegistryValueOptions.None)
+	if key: key.Dispose()
+	if not result: return None
+	return Path.Combine(result, "Data") + Path.DirectorySeparatorChar
+
+	
 def messageBox(owner, title, message):
 	from System.Windows.Forms import MessageBox
 	return MessageBox.Show(owner,title,message)

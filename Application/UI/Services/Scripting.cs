@@ -3,12 +3,9 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reflection;
-using System.Text;
 using PythonConsoleControl;
-using TESVSnip.Domain.Model;
-using TESVSnip.Domain.Services;
 
-namespace TESVSnip.Framework.Services
+namespace TESVSnip.UI.Services
 {
     /// <summary>
     /// Service Class for loading the IronPython Installation

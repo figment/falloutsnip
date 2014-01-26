@@ -47,7 +47,7 @@ namespace TESVSnip.Domain.Scripts
 
         private static readonly Dictionary<string, Operator> uniOps = new Dictionary<string, Operator>();
 
-        private static readonly string xmlPath = Path.Combine(Properties.Settings.Default.SettingsDirectory, @"ScriptFunctions.xml");
+        private static readonly string xmlPath = Path.Combine(Folders.SettingsDirectory, @"ScriptFunctions.xml");
 
         private static bool Inited;
 

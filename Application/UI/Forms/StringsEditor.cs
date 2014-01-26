@@ -12,7 +12,7 @@
     using TESVSnip.Framework.Collections;
     using TESVSnip.Properties;
 
-    using Settings = TESVSnip.Domain.Services.Settings;
+    using Settings = TESVSnip.Domain.Services.Folders;
 
     public partial class StringsEditor : Form
     {
@@ -198,12 +198,12 @@
 
         private void StringsEditor_FormClosing(object sender, FormClosingEventArgs e)
         {
-            Settings.SetWindowPosition("StringEditor", this);
+            Services.Settings.SetWindowPosition("StringEditor", this);
         }
 
         private void StringsEditor_Load(object sender, EventArgs e)
         {
-            Settings.GetWindowPosition("StringEditor", this);
+            Services.Settings.GetWindowPosition("StringEditor", this);
 
             this.Reload(this.Plugins);
         }

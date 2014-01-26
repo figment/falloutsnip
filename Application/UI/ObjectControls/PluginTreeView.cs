@@ -1,4 +1,6 @@
-﻿namespace TESVSnip.UI.ObjectControls
+﻿using TESVSnip.UI.Services;
+
+namespace TESVSnip.UI.ObjectControls
 {
     using System;
     using System.Collections;
@@ -234,7 +236,7 @@
 
         private bool IsValidNode(BaseRecord item)
         {
-            var p = TESVSnip.UI.Spells.GetPluginFromNode(item);
+            var p = TESVSnip.Domain.Services.Spells.GetPluginFromNode(item);
             return (p.Parent != null);
         }
 
@@ -317,7 +319,7 @@
                     dstNode.AddRecord(br);
                     if (asNew)
                     {
-                        Spells.giveRecordNewFormID((Record)br, false);
+                        TESVSnip.Domain.Services.Spells.giveRecordNewFormID((Record)br, false);
                     }
 
                     this.RebuildSelection();
@@ -343,7 +345,7 @@
                         node.AddRecord(br);
                         if (asNew)
                         {
-                            Spells.giveRecordNewFormID((Record)br, false);
+                            TESVSnip.Domain.Services.Spells.giveRecordNewFormID((Record)br, false);
                         }
                     }
 
@@ -823,7 +825,7 @@
             this.contextMenuRecordPasteNew.Enabled = enablePaste;
 
             bool hasAnyScripts =
-                TESVSnip.Framework.Services.PluginStore.Plugins.Any(x => x.SupportsSelection && x.IsValidSelection(recs));
+                PluginStore.Plugins.Any(x => x.SupportsSelection && x.IsValidSelection(recs));
             this.scriptsToolStripMenuItem.Enabled = hasAnyScripts;
             if (!this.scriptsToolStripMenuItem.HasDropDownItems)
                 this.scriptsToolStripMenuItem.DropDownItems.Add(""); // dummy item
@@ -910,7 +912,7 @@
                 {
                     var src = nodes[0] as BaseRecord[];
                     var dst = nodes[1] as IGroupRecord;
-                    Spells.CopyRecordsTo(src, dst);
+                    TESVSnip.Domain.Services.Spells.CopyRecordsTo(src, dst);
                 }
             }
             catch
@@ -1144,7 +1146,7 @@
 
                 var recs = this.PluginTree.SelectedRecords.ToArray();
 
-                foreach (var plugin in TESVSnip.Framework.Services.PluginStore.Plugins.Where(x => x.SupportsSelection && x.IsValidSelection(recs)))
+                foreach (var plugin in PluginStore.Plugins.Where(x => x.SupportsSelection && x.IsValidSelection(recs)))
                 {
                     // not valid 
                     if (string.IsNullOrWhiteSpace(plugin.Name))
@@ -1173,7 +1175,7 @@
 
             var name = e.ClickedItem.Tag as string;
             if (e.ClickedItem.Enabled)
-                TESVSnip.Framework.Services.PluginEngine.Default.ExecuteSelectionByName(name, recs);
+                PluginEngine.Default.ExecuteSelectionByName(name, recs);
         }
 
         public void EnableEvents(bool enable)

@@ -586,7 +586,6 @@ namespace TESVSnip.Domain.Model
                     strValue = value == null ? string.Empty : value.ToString();
                     break;
             }
-
             return value;
         }
 

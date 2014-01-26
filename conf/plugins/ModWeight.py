@@ -7,12 +7,10 @@
 from shared.util import *
 
 import System
-import TESVSnip
+import TESVSnip.Domain
 from TESVSnip.Domain.Model import BaseRecord, Record, Plugin, SubRecord, GroupRecord
 from System import Action, Func, Predicate, TimeSpan
 from System.Diagnostics import Stopwatch
-from System.Drawing import SystemColors, Color
-from TESVSnip.UI.Hosting import ScriptSupport as ss
 from System import Random
 rand = Random()
 
@@ -137,34 +135,39 @@ def modifyNPCWeights(records):
 	return sb.ToString()
 
 	
-class ScriptPlugin(TESVSnip.Framework.Services.PluginBase):
-	def Execute(self, recs):
-		sw = Stopwatch.StartNew()
-		str = None
-		if self.Name == 'listweight':
-			str = listNPCWeights(recs)
-		if self.Name == 'modweight':
-			str = modifyNPCWeights(recs)
-		
-		if str:
-			sw.Stop()
-			t = TimeSpan.FromMilliseconds(sw.ElapsedMilliseconds)            
-			toClipboard(__window__, str)
-			window = ss.CreateTextWindow("Script Output")
-			if window: 
-				window.Focus()
-				window.SetText(str)
-			ss.SendStatusText('Script took %s to complete. List added to clipboard'%t.ToString() , Color.Blue )
-		
-	def IsValidSelection(self, recs):
-		if recs is None or len(recs) == 0: return False
-		for rec in recs:
-			if not isinstance(rec, Plugin):
-				return False
-		return True
-		
 if __name__ == '<module>':
-	TESVSnip.Framework.Services.PluginStore.AddPlugins(
+	import TESVSnip
+	from TESVSnip.UI.Hosting import ScriptSupport
+	from System.Drawing import SystemColors, Color
+		
+	class ScriptPlugin(TESVSnip.UI.Services.PluginBase):
+
+		def Execute(self, recs):
+			sw = Stopwatch.StartNew()
+			str = None
+			if self.Name == 'listweight':
+				str = listNPCWeights(recs)
+			if self.Name == 'modweight':
+				str = modifyNPCWeights(recs)
+			
+			if str:
+				sw.Stop()
+				t = TimeSpan.FromMilliseconds(sw.ElapsedMilliseconds)            
+				toClipboard(__window__, str)
+				window = ScriptSupport.CreateTextWindow("Script Output")
+				if window: 
+					window.Focus()
+					window.SetText(str)
+				ScriptSupport.SendStatusText('Script took %s to complete. List added to clipboard'%t.ToString() , Color.Blue )
+			
+		def IsValidSelection(self, recs):
+			if recs is None or len(recs) == 0: return False
+			for rec in recs:
+				if not isinstance(rec, Plugin):
+					return False
+			return True
+		
+	TESVSnip.UI.Services.PluginStore.AddPlugins(
 		[ ScriptPlugin("listweight", "List &NPC Weights", supportSelection=True, supportGlobal=True) 
 		, ScriptPlugin("modweight", "&Modify NPC Weights", supportSelection=True, supportGlobal=False)  # only support for explicit selected plugin
 		]

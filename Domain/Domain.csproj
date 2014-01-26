@@ -79,6 +79,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Services\Folders.cs" />
+    <Compile Include="Services\Spells.cs" />
     <Content Include="$(SolutionDir)\build\buildver.txt" />
   </ItemGroup>
   <ItemGroup>
@@ -162,7 +164,9 @@
     <Compile Include="Services\RecordLayout.cs" />
     <Compile Include="Services\RecordsTrace.cs" />
     <Compile Include="Services\SaveReadStream.cs" />
-    <None Include="app.config" />
+    <None Include="app.config">
+      <SubType>Designer</SubType>
+    </None>
     <None Include="Data\RecordStructure.xsc">
       <DependentUpon>RecordStructure.xsd</DependentUpon>
     </None>

@@ -954,7 +954,7 @@
             var array = e.ClickedItem.Tag as object[];
             if (array != null && array.Length == 2)
             {
-                int count = Spells.CopyRecordsTo(array[0] as BaseRecord[], array[1] as IGroupRecord);
+                int count = TESVSnip.Domain.Services.Spells.CopyRecordsTo(array[0] as BaseRecord[], array[1] as IGroupRecord);
             }
         }
 

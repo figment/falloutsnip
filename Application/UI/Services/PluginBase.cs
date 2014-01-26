@@ -1,12 +1,8 @@
 ﻿using System;
 using System.Collections;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using Microsoft.Scripting;
-using TESVSnip.Domain.Model;
 
-namespace TESVSnip.Framework.Services
+namespace TESVSnip.UI.Services
 {
     public class PluginBase : IDisposable
     {

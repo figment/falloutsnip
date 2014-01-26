@@ -15,7 +15,7 @@ namespace TESVSnip.Domain.Data.RecordStructure
     {
         public static Dictionary<string, RecordStructure> Records = new Dictionary<string, RecordStructure>(StringComparer.InvariantCultureIgnoreCase);
 
-        private static readonly string xmlPath = Path.Combine(Properties.Settings.Default.SettingsDirectory, @"RecordStructure.xml");
+        private static readonly string xmlPath = Path.Combine(Folders.SettingsDirectory, @"RecordStructure.xml");
 
         private static bool loaded;
 
@@ -26,6 +26,12 @@ namespace TESVSnip.Domain.Data.RecordStructure
         public readonly SubrecordBase[] subrecordTree;
 
         public readonly SubrecordStructure[] subrecords;
+
+        static RecordStructure()
+        {
+            try { if (!loaded) Load(); }
+            catch { }
+        }
 
         private RecordStructure(RecordsRecord rec, SubrecordBase[] subrecordTree, SubrecordStructure[] subrecords)
         {

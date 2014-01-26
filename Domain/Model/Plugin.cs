@@ -67,28 +67,49 @@ namespace TESVSnip.Domain.Model
             Name = "New plugin.esp";
         }
 
-        public Plugin(string FilePath, bool headerOnly)
-            : this(FilePath, headerOnly, null)
+        public Plugin(string filePath) : this(filePath, false){}
+
+        public Plugin(string filePath, bool headerOnly) 
+            : this(filePath, headerOnly, (Func<string, bool>) null) { }
+
+        public Plugin(string filePath, string[] recExclusions)
+            : this(filePath, false, CreateFilter(recExclusions)) { }
+
+        public Plugin(string filePath, bool headerOnly, string[] recExclusions) 
+            : this(filePath, headerOnly, CreateFilter(recExclusions)){}
+
+        public Plugin(string filePath, Func<string, bool> includeFilter)
+            : this(filePath, false, includeFilter) {}
+
+        private static Func<string, bool> CreateFilter(string[] recExclusions)
         {
+            if (recExclusions == null || recExclusions.Length == 0)
+                return null;
+            return (key) => Array.IndexOf(recExclusions, key) < 0;
         }
 
-        public Plugin(string FilePath, bool headerOnly, string[] recFilter)
+        public Plugin(string filePath, bool headerOnly, Func<string, bool> includeFilter )
         {
-            Name = Path.GetFileName(FilePath);
-            PluginPath = Path.GetDirectoryName(FilePath);
-            var fi = new FileInfo(FilePath);
+            Name = Path.GetFileName(filePath);
+            PluginPath = Path.GetDirectoryName(filePath);
+            var fi = new FileInfo(filePath);
             using (var br = new BinaryReader(fi.OpenRead()))
             {
-                this.LoadPluginData(br, headerOnly, recFilter);
+                this.LoadPluginData(br, headerOnly, includeFilter);
             }
 
-            this.FileName = Path.GetFileNameWithoutExtension(FilePath);
+            this.FileName = Path.GetFileNameWithoutExtension(filePath);
             if (!headerOnly)
             {
-                this.StringsFolder = Path.Combine(Path.GetDirectoryName(FilePath), "Strings");
+                this.StringsFolder = Path.Combine(Path.GetDirectoryName(filePath), "Strings");
             }
 
             this.ReloadStrings();
+        }
+
+        public static Plugin Load(string filePath, Func<string, bool> includeFilter)
+        {
+            return new Plugin(filePath, false, includeFilter);
         }
 
         private Plugin(SerializationInfo info, StreamingContext context)
@@ -938,7 +959,7 @@ namespace TESVSnip.Domain.Model
             }
         }
 
-        private void LoadPluginData(BinaryReader br, bool headerOnly, string[] recFilter)
+        private void LoadPluginData(BinaryReader br, bool headerOnly, Func<string, bool> includeFilter)
         {
             bool oldHoldUpdates = HoldUpdates;
             try
@@ -947,7 +968,7 @@ namespace TESVSnip.Domain.Model
                 uint recsize;
                 bool IsOblivion = false;
 
-                this.Filtered = recFilter != null && recFilter.Length > 0;
+                this.Filtered = includeFilter != null;
 
                 HoldUpdates = true;
                 Decompressor.Init();
@@ -998,7 +1019,7 @@ namespace TESVSnip.Domain.Model
                         {
                             try
                             {
-                                this.AddRecord(new GroupRecord(recsize, br, IsOblivion, recFilter, false));
+                                this.AddRecord(new GroupRecord(recsize, br, IsOblivion, includeFilter, false));
                             }
                             catch (Exception e)
                             {
@@ -1007,7 +1028,7 @@ namespace TESVSnip.Domain.Model
                         }
                         else
                         {
-                            bool skip = recFilter != null && Array.IndexOf(recFilter, s) >= 0;
+                            bool skip = includeFilter != null && !includeFilter(s);
                             if (skip)
                             {
                                 long size = recsize + (IsOblivion ? 8 : 12);

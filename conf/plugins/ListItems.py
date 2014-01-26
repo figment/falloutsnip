@@ -11,12 +11,10 @@
 #
 from shared.util import *
 import System
-import TESVSnip
+import TESVSnip.Domain
 from TESVSnip.Domain.Model import BaseRecord, Record, Plugin, SubRecord, GroupRecord
 from System import Action, Func, Predicate, TimeSpan
 from System.Diagnostics import Stopwatch
-from System.Drawing import SystemColors, Color
-from TESVSnip.UI.Hosting import ScriptSupport as ss
 	
 def generateItemList(records):
 	from System.Text import StringBuilder
@@ -50,28 +48,34 @@ def generateItemList(records):
 					
 	return sb.ToString()
 
-class ScriptPlugin(TESVSnip.Framework.Services.PluginBase):
-	def Execute(self, recs):
-		sw = Stopwatch.StartNew()
-		str = generateItemList(recs)
-		if str:
-			sw.Stop()
-			t = TimeSpan.FromMilliseconds(sw.ElapsedMilliseconds)            
-			window = ss.CreateTextWindow("Script Output")
-			if window: 
-				window.Focus()
-				window.SetText(str)
-			ss.SendStatusText('Script took %s to complete'%t.ToString() , Color.Blue )
-	
-	def IsValidSelection(self, recs):
-		if recs is None or len(recs) == 0: return False
-		for rec in recs:
-			if not isinstance(rec, Plugin):
-				return False
-		return True
-
 if __name__ == '<module>':
-	TESVSnip.Framework.Services.PluginStore.AddPlugins(
+
+	import TESVSnip
+	class ScriptPlugin(TESVSnip.UI.Services.PluginBase):
+
+		def Execute(self, recs):
+			from TESVSnip.UI.Hosting import ScriptSupport
+			from System.Drawing import SystemColors, Color
+			
+			sw = Stopwatch.StartNew()
+			str = generateItemList(recs)
+			if str:
+				sw.Stop()
+				t = TimeSpan.FromMilliseconds(sw.ElapsedMilliseconds)            
+				window = ScriptSupport.CreateTextWindow("Script Output")
+				if window: 
+					window.Focus()
+					window.SetText(str)
+				ScriptSupport.SendStatusText('Script took %s to complete'%t.ToString() , Color.Blue )
+		
+		def IsValidSelection(self, recs):
+			if recs is None or len(recs) == 0: return False
+			for rec in recs:
+				if not isinstance(rec, Plugin):
+					return False
+			return True
+
+	TESVSnip.UI.Services.PluginStore.AddPlugins(
 		[ ScriptPlugin("listitems", "List &Item Script", supportSelection=True, supportGlobal=True) 
 		]
 	)

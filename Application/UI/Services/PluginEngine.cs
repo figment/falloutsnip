@@ -10,11 +10,10 @@ using IronPython.Hosting;
 using IronPython.Runtime.Exceptions;
 using Microsoft.Scripting;
 using Microsoft.Scripting.Hosting;
-using TESVSnip.Domain.Model;
-using TESVSnip.Domain.Services;
+using TESVSnip.Framework.Services;
 using TESVSnip.UI.Forms;
 
-namespace TESVSnip.Framework.Services
+namespace TESVSnip.UI.Services
 {
     internal class PluginEngine : IDisposable
     {
@@ -80,6 +79,7 @@ namespace TESVSnip.Framework.Services
             runtime.IO.SetErrorOutput(outputStream, System.Text.Encoding.UTF8);
 
             runtime.LoadAssembly(Assembly.GetExecutingAssembly());
+            runtime.LoadAssembly(typeof(TESVSnip.Domain.Model.BaseRecord).Assembly);
             runtime.LoadAssembly(typeof(String).Assembly);
             runtime.LoadAssembly(typeof(System.Drawing.Icon).Assembly);
             runtime.LoadAssembly(typeof(Python).Assembly);
@@ -179,12 +179,13 @@ namespace TESVSnip.Framework.Services
 
         public void ExecuteByName(string name)
         {
-            var plugins = Plugins.FindAll(x => x.SupportGlobal && x.Name == name).ToList();
+            var plugins = PluginStore.Plugins.FindAll(x => x.SupportGlobal && x.Name == name).ToList();
             foreach (var plugin in plugins)
             {
                 try
                 {
-                    var recs = TESVSnip.Domain.Model.PluginList.All.Records.Cast<PluginBase>().ToArray();
+                    var recs = TESVSnip.Domain.Model.PluginList.All.Records
+                        .Cast<TESVSnip.Domain.Model.Plugin>().ToArray();
                     plugin.Execute(recs);
                 }
                 catch (Exception e)
@@ -196,7 +197,7 @@ namespace TESVSnip.Framework.Services
 
         public bool IsValidSelectionByName(string name, IList selection)
         {
-            var plugins = Plugins.FindAll(x => x.SupportsSelection && x.Name == name).ToList();
+            var plugins = PluginStore.Plugins.FindAll(x => x.SupportsSelection && x.Name == name).ToList();
             foreach (var plugin in plugins)
             {
                 try
@@ -214,7 +215,7 @@ namespace TESVSnip.Framework.Services
 
         public void ExecuteSelectionByName(string name, IList selection)
         {
-            var plugins = Plugins.FindAll(x => x.SupportsSelection && x.Name == name).ToList();
+            var plugins = PluginStore.Plugins.FindAll(x => x.SupportsSelection && x.Name == name).ToList();
             foreach (var plugin in plugins)
             {
                 try

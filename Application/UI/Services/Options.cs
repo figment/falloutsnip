@@ -1,12 +1,12 @@
-namespace TESVSnip.Domain.Services
-{
-    using System;
-    using System.Collections.Generic;
-    using System.IO;
-    using System.Reflection;
-    using Microsoft.Win32;
-    using TESVSnip.Domain.Model;
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Reflection;
+using Microsoft.Win32;
+using TESVSnip.Domain.Model;
 
+namespace TESVSnip.UI.Services
+{
     /// <summary>
     /// Global program options.
     /// </summary>
@@ -52,7 +52,11 @@ namespace TESVSnip.Domain.Services
 
         public string IronPythonDirectory { get; private set; }
 
-        public string ScriptsDirectory { get; private set; } 
+        public string ScriptsDirectory
+        {
+            get { return Domain.Services.Folders.ScriptsDirectory; }
+            private set { Domain.Services.Folders.ScriptsDirectory = value; }
+        }
 
         /// <summary>
         /// Gets the list of plugins to pre-load specified using the command-line options.
@@ -62,7 +66,11 @@ namespace TESVSnip.Domain.Services
             get { return this._plugins; }
         }
 
-        public string SettingsDirectory { get; private set; }
+        public string SettingsDirectory 
+        {
+            get { return Domain.Services.Folders.SettingsDirectory; }
+            private set { Domain.Services.Folders.SettingsDirectory = value; }
+        }
 
         /// <summary>
         /// Initializes the global options parsing the given <paramref name="args"/> array.

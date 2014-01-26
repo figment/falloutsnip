@@ -19,8 +19,8 @@ REM 	goto exit
 REM )
 
 for %%I in (git.cmd) do @IF EXIST "%%~dp$PATH:I" set GIT_PATH=%%~dp$PATH:I
-IF NOT EXIST "%GIT_PATH%"  set ILMERGE_PATH=%ProgramFiles%\Git\cmd
-IF NOT EXIST "%GIT_PATH%"  set ILMERGE_PATH=%ProgramFiles(x86)%\Git\cmd
+IF NOT EXIST "%GIT_PATH%"  set GIT_PATH=%ProgramFiles%\Git\cmd
+IF NOT EXIST "%GIT_PATH%"  set GIT_PATH=%ProgramFiles(x86)%\Git\cmd
 IF NOT EXIST "%GIT_PATH%" (
 	Echo Git.CMD not found on PATH.  Build will not succeed.  Aborting
 	goto exit
@@ -63,7 +63,7 @@ IF EXIST "%SZA_PATH%" set BUILD_OPTIONS=%BUILD_OPTIONS%,package_7z
 
 REM 2 pass build since copy does not pickup source files generated or copied during build process
 msbuild build.proj /p:Configuration=Release /p:Platform="AnyCPU" /t:version_force,build,afterbuild
-msbuild build.proj /p:Configuration=Release /p:Platform="AnyCPU" /t:version_force,package%BUILD_OPTIONS%
+msbuild build.proj /p:Configuration=Release /p:Platform="AnyCPU" /t:version_import,package%BUILD_OPTIONS%
 
 :exit
 popd
