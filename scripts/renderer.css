@@ -1,0 +1,116 @@
+body
+{
+	line-height: 1.6em;
+	background-color: #F0F0F0;
+}
+p { margin: 0px; }
+#record-hdr
+{
+	border: thin solid #C0C0C0;
+	font-family: "Lucida Sans Unicode" , "Lucida Grande" , Sans-Serif;
+	font-size: 12px;
+	background: #fff;
+	margin: 5px;
+	width: 400px;
+	border-collapse: collapse;
+	text-align: left;
+}
+#record-hdr thead
+{
+	font-size: 12px;
+	font-weight: normal;
+	color: #039;
+	padding: 10px 8px;
+	text-align: left;
+}
+#record-hdr thead td
+{
+	font-size: 15px;
+	font-weight: bold;
+	text-align: center;
+}
+#record-hdr td
+{
+	color: #669;
+	padding: 2px 2px 0px 4px;
+	border: 1px solid #CCCCCC;
+	color: #000;
+}
+#record-hdr tbody tr:hover td
+{
+	border: 1px dashed #808080;
+	color: #009;
+}
+#record-hdr .header { color: #1e90ff;font-weight: bold; }
+#record-hdr .type { color: #000; font-weight: bold; }
+#record-hdr .label { color: #009; }
+#record-hdr .value { color: #1e90ff; }
+#record-hdr .flags { color: #000; }
+#record-hdr .formid
+{
+	color: #800000;
+	font-weight: bolder;
+}
+.danger { color: #800000; }
+
+#record-desc
+{
+	border: thin solid #C0C0C0;
+	font-family: "Lucida Sans Unicode" , "Lucida Grande" , Sans-Serif;
+	font-size: 12px;
+	background: #fff;
+	margin: 5px;
+	border-collapse: collapse;
+	text-align: left;
+	width: 95%
+}
+#record-desc thead
+{
+	font-size: 12px;
+	font-weight: normal;
+	color: #039;
+	padding: 10px 8px;
+	text-align: left;
+}
+#record-desc thead td
+{
+	font-size: 15px;
+	font-weight: bold;
+	text-align: center;
+}
+#record-desc td
+{
+	color: #669;
+	padding: 2px 2px 0px 4px;
+	border: 1px solid #CCCCCC;
+	color: #000;
+}
+#record-desc tbody tr:hover td
+{
+	border: 1px dashed #808080;
+	color: #009;
+}
+#record-desc .headerlabel
+{
+	color: #800080;
+	font-weight: bold;
+}
+#record-desc .header { color: #1e90ff;font-weight: bold; }
+#record-desc .type { color: #000; font-weight: bold; }
+#record-desc .label { color: #009; }
+#record-desc .value { color: #1e90ff; }
+#record-desc .flags { color: #000; }
+#record-desc .desc { color: #000; }
+#record-desc .formid
+{
+	color: #800000;
+	font-weight: bolder;
+}
+.hidden
+{
+	visibility: hidden;
+}
+#record-desc tfoot
+{
+	visibility: hidden;
+}
