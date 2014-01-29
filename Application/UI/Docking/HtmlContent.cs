@@ -1,4 +1,5 @@
-﻿using TESVSnip.UI.Rendering.Extensions;
+﻿using System;
+using TESVSnip.UI.Rendering.Extensions;
 
 namespace TESVSnip.UI.Docking
 {
@@ -15,14 +16,6 @@ namespace TESVSnip.UI.Docking
         public HtmlContent()
         {
             this.InitializeComponent();
-        }
-
-        public HtmlRenderer.HtmlPanel Html
-        {
-            get
-            {
-                return this.htmlInfo;
-            }
         }
 
         public void UpdateRecord(BaseRecord sc)
@@ -46,11 +39,30 @@ namespace TESVSnip.UI.Docking
             //sc.GetFormattedHeader(rb);
             //sc.GetFormattedData(rb);
             //this.rtfInfo.Text = rb.ToString();
+            //this.webBrowser1.DocumentText = text;
         }
 
         public void UpdateText(string text)
         {
-            this.htmlInfo.Text = text;
+            this.webBrowser1.DocumentText = text;
+            //this.htmlInfo.Text = text;
         }
+
+        private void webBrowser1_Navigating(object sender, WebBrowserNavigatingEventArgs e)
+        {
+            if (e.Url.ToString() == "about:blank") return;
+            e.Cancel = true;
+            if (OnLinkClicked != null)
+            {
+                OnLinkClicked(this, new LinkClickedEventArgs(e.Url.ToString()));
+            }
+        }
+
+        public event EventHandler<LinkClickedEventArgs> OnLinkClicked;
     }
+
+    //public class LinkClickedEventArgs : EventArgs
+    //{
+    //    public Uri Url { get; set; }
+    //}
 }

@@ -10,7 +10,7 @@ IF NOT EXIST "%IPY_PATH%" (
 	goto exit
 )
 set IRONPYTHONSTARTUP=%~dp0\startup.py
-set IRONPYTHONPATH=%~dp0\conf\plugins;%~dp0\lib
+set IRONPYTHONPATH=%~dp0\..\scripts\plugins;%~dp0\..\scripts\lib;%~dp0\..\scripts
 call "%IPY_PATH%\ipy.exe" %*
 popd
 endlocal

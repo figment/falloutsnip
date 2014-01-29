@@ -467,6 +467,16 @@ namespace TESVSnip.Domain.Model
         [DllImport("msvcrt.dll")]
         private static extern int memcmp(byte[] b1, byte[] b2, long count);
 
+        public Plugin GetPlugin()
+        {
+            BaseRecord tn = Parent;
+            while (!(tn is Plugin) && tn != null)
+                tn = tn.Parent;
+            if (tn != null)
+                return tn as Plugin;
+            return null;
+        }
+
         public override string ToString()
         {
             return string.Format("[Group] '{0}' : {1}", this.Name, this.DescriptiveName);

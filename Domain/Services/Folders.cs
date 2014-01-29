@@ -30,7 +30,7 @@ namespace TESVSnip.Domain.Services
                 if (!Directory.Exists(confFolder))
                     confFolder = Path.GetFullPath(Path.Combine(ModuleDirectory, "..", "conf"));
                 SettingsDirectory = confFolder;
-                ScriptsDirectory = Path.Combine(SettingsDirectory, "scripts");
+                ScriptsDirectory = Path.GetFullPath(Path.Combine(SettingsDirectory, "..","scripts"));
             }
         }
 

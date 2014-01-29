@@ -163,7 +163,7 @@ namespace TESVSnip.UI.Services
                 if (!Directory.Exists(confFolder))
                     confFolder = Path.GetFullPath(Path.Combine(applicationDirectory, "..", "conf"));
                 this.SettingsDirectory = confFolder;
-                this.ScriptsDirectory = Path.Combine(this.SettingsDirectory, "scripts");
+                this.ScriptsDirectory = Path.GetFullPath(Path.Combine(SettingsDirectory, "..", "scripts"));
             }
         }
 

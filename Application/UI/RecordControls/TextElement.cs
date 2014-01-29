@@ -1,4 +1,6 @@
 ﻿using TESVSnip.Domain.Scripts;
+using FunctionOperation = TESVSnip.Domain.Scripts.FunctionOperation;
+using PyInterpreter = TESVSnip.Domain.Scripts.PyInterpreter;
 
 namespace TESVSnip.UI.RecordControls
 {

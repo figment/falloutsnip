@@ -72,9 +72,6 @@
     <GenerateSerializationAssemblies>On</GenerateSerializationAssemblies>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="HtmlRenderer">
-      <HintPath>$(SolutionDir)thirdparty\HtmlRenderer.dll</HintPath>
-    </Reference>
     <Reference Include="ICSharpCode.AvalonEdit">
       <HintPath>$(SolutionDir)thirdparty\ICSharpCode.AvalonEdit.dll</HintPath>
     </Reference>
@@ -128,6 +125,7 @@
     <Compile Include="UI\Services\Options.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="UI\Rendering\HtmlRenderer.cs" />
     <Compile Include="UI\Services\Settings.cs" />
     <Compile Include="UI\Services\PluginBase.cs" />
     <Compile Include="UI\Services\PluginEngine.cs" />
@@ -158,7 +156,6 @@
     <Compile Include="UI\Docking\InterpreterConsole.Designer.cs">
       <DependentUpon>InterpreterConsole.cs</DependentUpon>
     </Compile>
-    <Compile Include="UI\Rendering\HtmlRenderer.cs" />
     <Compile Include="UI\Rendering\StringRenderer.cs" />
     <Compile Include="UI\Rendering\RTFRenderer.cs" />
     <Compile Include="UI\Hosting\ConsoleOptions.cs" />
@@ -611,6 +608,7 @@
     </EmbeddedResource>
     <EmbeddedResource Include="UI\Forms\GroupEditor.resx">
       <DependentUpon>GroupEditor.cs</DependentUpon>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="UI\Forms\HeaderEditor.resx">
       <DependentUpon>HeaderEditor.cs</DependentUpon>

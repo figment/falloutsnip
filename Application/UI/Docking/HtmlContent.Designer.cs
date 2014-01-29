@@ -28,21 +28,22 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.htmlInfo = new HtmlRenderer.HtmlPanel();
+            this.webBrowser1 = new System.Windows.Forms.WebBrowser();
             this.SuspendLayout();
             // 
-            // htmlInfo
+            // webBrowser1
             // 
-            this.htmlInfo.AutoScroll = true;
-            this.htmlInfo.AvoidGeometryAntialias = false;
-            this.htmlInfo.AvoidImagesLateLoading = false;
-            this.htmlInfo.BackColor = System.Drawing.SystemColors.Window;
-            this.htmlInfo.BaseStylesheet = null;
-            this.htmlInfo.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.htmlInfo.Location = new System.Drawing.Point(0, 0);
-            this.htmlInfo.Name = "htmlInfo";
-            this.htmlInfo.Size = new System.Drawing.Size(376, 504);
-            this.htmlInfo.TabIndex = 4;
+            this.webBrowser1.AllowWebBrowserDrop = false;
+            this.webBrowser1.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.webBrowser1.IsWebBrowserContextMenuEnabled = false;
+            this.webBrowser1.Location = new System.Drawing.Point(0, 0);
+            this.webBrowser1.MinimumSize = new System.Drawing.Size(20, 20);
+            this.webBrowser1.Name = "webBrowser1";
+            this.webBrowser1.ScriptErrorsSuppressed = true;
+            this.webBrowser1.Size = new System.Drawing.Size(376, 504);
+            this.webBrowser1.TabIndex = 1;
+            this.webBrowser1.WebBrowserShortcutsEnabled = false;
+            this.webBrowser1.Navigating += new System.Windows.Forms.WebBrowserNavigatingEventHandler(this.webBrowser1_Navigating);
             // 
             // HtmlContent
             // 
@@ -50,7 +51,7 @@
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(376, 504);
             this.ControlBox = false;
-            this.Controls.Add(this.htmlInfo);
+            this.Controls.Add(this.webBrowser1);
             this.MaximizeBox = false;
             this.MinimizeBox = false;
             this.Name = "HtmlContent";
@@ -63,6 +64,7 @@
 
         #endregion
 
-        private HtmlRenderer.HtmlPanel htmlInfo;
+        private System.Windows.Forms.WebBrowser webBrowser1;
+
     }
 }

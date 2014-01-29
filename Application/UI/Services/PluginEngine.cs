@@ -18,7 +18,7 @@ namespace TESVSnip.UI.Services
     internal class PluginEngine : IDisposable
     {
         // Path for dynamic UI scripts
-        public static readonly string ScriptsPyPath = Path.Combine(Options.Value.SettingsDirectory, @"plugins");
+        public static readonly string PluginsPyPath = Path.Combine(Options.Value.ScriptsDirectory, @"plugins");
 
         // Engine to access IronPython
         private ScriptEngine pyEngine;
@@ -72,7 +72,8 @@ namespace TESVSnip.UI.Services
             var runtime = pyEngine.Runtime;
 
             var paths = pyEngine.GetSearchPaths().ToList();
-            paths.Add(ScriptsPyPath);
+            paths.Add(PluginsPyPath);
+            paths.Add(Path.Combine(Options.Value.ScriptsDirectory, "lib"));
             pyEngine.SetSearchPaths(paths);
 
             runtime.IO.SetOutput(outputStream, System.Text.Encoding.UTF8);
@@ -112,9 +113,9 @@ namespace TESVSnip.UI.Services
 
         public void LoadPlugins()
         {
-            if (Directory.Exists(ScriptsPyPath))
+            if (Directory.Exists(PluginsPyPath))
             {
-                foreach (var file in Directory.EnumerateFiles(ScriptsPyPath, "*.py", SearchOption.TopDirectoryOnly))
+                foreach (var file in Directory.EnumerateFiles(PluginsPyPath, "*.py", SearchOption.TopDirectoryOnly))
                 {
                     RegisterPlugin(file);                   
                 }

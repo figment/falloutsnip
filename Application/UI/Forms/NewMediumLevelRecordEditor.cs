@@ -1,5 +1,7 @@
 using TESVSnip.Domain.Scripts;
 using TESVSnip.Framework;
+using FunctionOperation = TESVSnip.Domain.Scripts.FunctionOperation;
+using PyInterpreter = TESVSnip.Domain.Scripts.PyInterpreter;
 
 namespace TESVSnip.UI.Forms
 {

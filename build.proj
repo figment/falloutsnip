@@ -29,6 +29,7 @@
     <inputAssemblies Include="$(ApplicationTargetDir)*.exe" />
     <inputAssemblies Include="$(ApplicationTargetDir)*.dll" />
     <CopyToStagingConf Include="$(SolutionDir)conf\**" />
+    <CopyToStagingScripts Include="$(SolutionDir)scripts\**" />
     <CopyToStagingLang Include="$(ApplicationTargetDir)Lang\resource.resources" />
     <CopyToStagingLang Include="$(ApplicationTargetDir)Lang\resource.fr-FR.resources" />
     <CopyToStagingFr Include="$(ApplicationTargetDir)Lang\**" />
@@ -72,6 +73,7 @@
     <Copy SourceFiles="@(CopyToStaging)" DestinationFolder="$(StageOutputDir)" />
     <Copy SourceFiles="@(CopyToStagingConf)" DestinationFolder="$(StageOutputDir)conf\%(RecursiveDir)" />
     <Copy SourceFiles="@(CopyToStagingLang)" DestinationFolder="$(StageOutputDir)Lang\%(RecursiveDir)" />
+    <Copy SourceFiles="@(CopyToStagingScripts)" DestinationFolder="$(StageOutputDir)Scripts\%(RecursiveDir)" />
     <Copy SourceFiles="@(CopyToStagingFr)" DestinationFolder="$(StageOutputDir)fr-FR\%(RecursiveDir)" />
     <Copy SourceFiles="@(CopyToStagingPython)" DestinationFolder="$(StageOutputDir)" />
     <Copy SourceFiles="@(inputAssembliesConf)" DestinationFolder="$(StageOutputDir)" />

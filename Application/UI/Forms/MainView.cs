@@ -1,6 +1,7 @@
 using System.Configuration;
 using System.Text;
 using System.Linq;
+using System.Web;
 using System.Windows.Media.Animation;
 using IronPython.Runtime;
 using Microsoft.Win32;
@@ -9,6 +10,7 @@ using TESVSnip.Domain.Data.RecordStructure.Xml;
 using TESVSnip.Domain.Scripts;
 using TESVSnip.UI.Rendering.Extensions;
 using TESVSnip.UI.Services;
+using PyInterpreter = TESVSnip.Domain.Scripts.PyInterpreter;
 
 namespace TESVSnip.UI.Forms
 {
@@ -168,8 +170,11 @@ namespace TESVSnip.UI.Forms
             this.SubrecordList.OnSubrecordChanged += this.subrecordPanel_OnSubrecordChanged;
             this.SubrecordList.DataChanged += this.subrecordPanel_DataChanged;
             PluginList.ChildListChanged += PluginList_ChildListChanged;
+
+            this.htmlContent.OnLinkClicked += htmlContent_OnLinkClicked;
             this.LocalizeApp();
             PyInterpreter.InitPyInterpreter();
+            TESVSnip.UI.Rendering.HtmlRenderer.Initialize();
             mruMenu = new JWC.MruStripMenu(recentFilelToolStripMenuItem, new JWC.MruStripMenu.ClickedHandler(OnMruFile),
                                        mruRegKey + "\\MRU", true, 16);
         }
@@ -201,10 +206,6 @@ namespace TESVSnip.UI.Forms
         public RichTextBox SelectedRichText
         {
             get { return this.rtfTextContent.RtfInfo; }
-        }
-        public HtmlRenderer.HtmlPanel SelectedHtmlText
-        {
-            get { return this.htmlContent.Html;  }
         }
 
         private PluginTreeView PluginTree
@@ -1142,7 +1143,9 @@ namespace TESVSnip.UI.Forms
                     rec.GetFormattedData(rb);
                     this.SelectedRichText.Rtf = rb.ToString();
 
-                    this.SelectedHtmlText.Text = new UI.Rendering.HtmlRenderer().GetFormattedData(rec);
+
+                    string html = TESVSnip.UI.Rendering.HtmlRenderer.GetDescription(rec);
+                    this.htmlContent.UpdateText(html);
                 }
                 catch (Exception ex)
                 {
@@ -1155,7 +1158,7 @@ namespace TESVSnip.UI.Forms
         {
             // tbInfo.Text = text;
             this.SelectedRichText.Text = text;
-            this.SelectedHtmlText.Text = text;
+            this.htmlContent.UpdateText(text);
         }
 
         private void UpdateStringEditor()
@@ -1854,6 +1857,78 @@ namespace TESVSnip.UI.Forms
             }
         }
 
+        void htmlContent_OnLinkClicked(object sender, LinkClickedEventArgs e)
+        {
+            try
+            {
+                var uri = new Uri(e.LinkText);
+                if (uri.Scheme == "nav")
+                {
+                    var pluginName = uri.Host;
+                    if (pluginName == ".")
+                        pluginName = null;
+
+                    BaseRecord startNode = null;
+                    if (!string.IsNullOrEmpty(pluginName))
+                    {
+                        startNode = PluginList.All.Records.OfType<BaseRecord>().FirstOrDefault(x => x.Name == pluginName);
+                    }
+
+                    startNode = startNode ?? this.PluginTree.SelectedRecord ?? this.PluginTree.TopRecord;
+
+                    // System.Windows.Forms.Application.
+                    // Search current plugin and then wrap around.  
+                    // Should do it based on master plugin list first.
+
+                    var result = HttpUtility.ParseQueryString(uri.Query);
+                    var type = result["t"];
+
+                    var searchContext = new SearchSettings();
+                    searchContext.rectype = type == "XXXX" ? null : type;
+                    searchContext.text = result["v"];
+                    searchContext.type = SearchType.FormID;
+                    searchContext.startNode = startNode;
+                    searchContext.wrapAround = true;
+                    searchContext.partial = false;
+                    searchContext.forward = true;
+                    searchContext.first = true;
+                    uint formID = 0;
+                    uint.TryParse(result["v"], NumberStyles.HexNumber, null, out formID);
+
+                    if (ModifierKeys == Keys.Control)
+                    {
+                        // Cursor.Position
+                        var contextMenu = new ContextMenu();
+                        contextMenu.MenuItems.Add(
+                            "&Find In Tree",
+                            (o, args) =>
+                            {
+                                var node = this.PerformSearch(searchContext);
+                                if (node != null)
+                                {
+                                    this.PluginTree.SelectedRecord = node;
+                                }
+                            });
+                        contextMenu.MenuItems.Add("Find &References", (o, args) => this.ReferenceSearch(formID));
+                        contextMenu.Show(this, PointToClient(MousePosition));
+                    }
+                    else
+                    {
+                        var node = this.PerformSearch(searchContext);
+                        if (node != null)
+                        {
+                            this.PluginTree.SelectedRecord = node;
+                        }
+                    }
+                }
+            }
+            catch
+            {
+            }
+        }
+
+
+
         private void saveAsToolStripMenuItem_Click(object sender, EventArgs e)
         {
             if (this.PluginTree.SelectedRecord == null)
@@ -2363,7 +2438,8 @@ namespace TESVSnip.UI.Forms
                         {
                             var engine = c.ScriptScope.Engine;
                             var paths = engine.GetSearchPaths().ToList();
-                            paths.Add(PluginEngine.ScriptsPyPath);
+                            paths.Add(PluginEngine.PluginsPyPath);
+                            paths.Add(Path.Combine(Options.Value.ScriptsDirectory, "lib"));
                             engine.SetSearchPaths(paths);
 
                             var runtime = engine.Runtime;
@@ -2485,10 +2561,10 @@ namespace TESVSnip.UI.Forms
                 }
             }
 
-            var rootUri = new Uri(Path.Combine(PluginEngine.ScriptsPyPath,"."), UriKind.Absolute);
+            var rootUri = new Uri(Path.Combine(PluginEngine.PluginsPyPath,"."), UriKind.Absolute);
             foreach (
                 var filename in
-                    Directory.EnumerateFiles(PluginEngine.ScriptsPyPath, "*.py", SearchOption.TopDirectoryOnly))
+                    Directory.EnumerateFiles(PluginEngine.PluginsPyPath, "*.py", SearchOption.TopDirectoryOnly))
             {
                 var relativePath = rootUri.MakeRelativeUri(new Uri(filename, UriKind.Absolute)).ToString();
                 // was going to show subdirectories but will leave that alone for now
