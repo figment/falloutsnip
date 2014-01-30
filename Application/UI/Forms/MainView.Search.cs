@@ -348,11 +348,8 @@
                 searchFunction = (BaseRecord node) => {
                     var rec = node as Record;
                     if (ctx.updateFunc != null && ctx.updateFunc(node))
-                    {
                         return true;
-                    }
-
-                    return (rec != null) ? rec.FormID == searchID : false;
+                    return (rec != null) && rec.FormID == searchID;
                 };
             }
             else if (ctx.type == SearchType.EditorID || ctx.type == SearchType.TypeEditorIdSearch)

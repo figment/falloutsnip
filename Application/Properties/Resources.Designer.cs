@@ -557,6 +557,15 @@ namespace TESVSnip.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Load Reference.
+        /// </summary>
+        internal static string Load_Reference {
+            get {
+                return ResourceManager.GetString("Load_Reference", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to {\rtf1\adeflang1025\ansi\ansicpg1252\uc1\adeff31507\deff0\stshfdbch31505\stshfloch31506\stshfhich31506\stshfbi31507\deflang1033\deflangfe1033\themelang1033\themelangfe0\themelangcs0{\fonttbl{\f0\fbidi \froman\fcharset0\fprq2{\*\panose 02020603050405020304}Times New Roman;}{\f34\fbidi \froman\fcharset1\fprq2{\*\panose 02040503050406030204}Cambria Math;}
         ///{\f37\fbidi \fswiss\fcharset0\fprq2{\*\panose 020f0502020204030204}Calibri;}{\flomajor\f31500\fbidi \froman\fcharset0\fprq2{\*\panose 02020603050405020304}T [rest of string was truncated]&quot;;.
         /// </summary>
@@ -698,6 +707,15 @@ namespace TESVSnip.Properties {
             get {
                 object obj = ResourceManager.GetObject("Paste1", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Referenced Plugin &apos;{0}&apos; is not loaded. Do you want to load now?.
+        /// </summary>
+        internal static string Plugin_not_loaded__LoadNow {
+            get {
+                return ResourceManager.GetString("Plugin_not_loaded__LoadNow", resourceCulture);
             }
         }
         

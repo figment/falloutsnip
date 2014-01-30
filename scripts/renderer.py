@@ -1,11 +1,12 @@
 import markup
 from System import Single, SByte, Byte, Int16, UInt16, Int32, UInt32, Double
-from System import ArraySegment, Convert
+from System import ArraySegment, Convert, UriBuilder
 from System.Text import StringBuilder
+#from System.Web import HttpUtility
 import TESVSnip.Domain
 from TESVSnip.Domain.Model import BaseRecord, Record, Plugin, SubRecord, GroupRecord
 from TESVSnip.Domain.Data.RecordStructure import RecordStructure, ElementValueType
-from TESVSnip.Domain.Scripts import PyInterpreter
+from TESVSnip.Domain.Scripts import PyInterpreter, FunctionOperation
 from TESVSnip.Domain.Services import Spells
 from TESVSnip.Framework import TypeConverter
 from TESVSnip.Framework.Services import Encoding
@@ -49,12 +50,14 @@ def getEditorID(rec):
 	if not item: return None
 	return item.GetStrData()
 
-def createLink(plugin,formIDType,formID):
+def createLink(plugin,formIDType,formID,master=None):
 	fmt = "nav:%s?t=%s&v=%s"
+	fmt2 = "&m=%s"
 	if not plugin: plugin='.'
 	if not formIDType: formIDType='XXXX'
-	return fmt%(plugin,formIDType,formID)
-
+	result = fmt%(plugin,formIDType,formID)
+	if master: result = result + fmt2%(master)
+	return result
 
 class HTMLRenderer(): 
 	grouptypes = {0:"Top", 1:"World children", 2:"Interior Cell Block", 3:"Interior Cell Sub-Block"
@@ -249,7 +252,8 @@ class HTMLRenderer():
 			return
 
 		try:
-			plugin = rec.GetPlugin()		
+			plugin = rec.GetPlugin()
+			pluginFile = plugin.Name
 			elems = [elem for elem in rec.EnumerateElements(True) 
 				if elem.Structure != None and not elem.Structure.notininfo ]
 			if not elems:
@@ -286,13 +290,14 @@ class HTMLRenderer():
 								else:
 									formid = value.ToString("X8")
 									record = plugin.GetRecordByID(value)
-									if not record:
+									if not record: # lookup plugin name using the id
+										prefName = plugin.GetRecordMaster(value)
 										with p.td(class_='formid', colspan='4'):
-											p.a(formid,href=createLink(plugin,sselem.FormIDType,formid))
-									else:
+											p.a(formid,href=createLink(pluginFile,sselem.FormIDType,formid,prefName))
+									else: # lookup actual record to know actual type
 										pref = record.GetPlugin()
 										with p.td(class_='formid', width="15%"):
-											p.a(formid,href=createLink(pref,record.Name,record.FormID.ToString("X8")))
+											p.a(formid,href=createLink(pluginFile,record.Name,record.FormID.ToString("X8"),pref.Name))
 
 										if record.Name != sselem.FormIDType:
 											p.td(record.DescriptiveName, class_='text', width='20%')
@@ -408,6 +413,7 @@ class HTMLRenderer():
 		p = self.page
 		try:
 			pref = rec.GetPlugin()
+			prefFile = pref and pref.Name or ''
 			type = desc = ''
 			data = rec.GetReadonlyData()
 			if rec.groupType == 0:
@@ -432,7 +438,7 @@ class HTMLRenderer():
 								p.td(strValue, class_='value', colspan=4)
 							else:
 								with p.td(class_='formid', width="20%"):
-									p.a(strValue,href=createLink(pref,record.Name,record.FormID.ToString("X8")))
+									p.a(strValue,href=createLink(prefFile,record.Name,record.FormID.ToString("X8"),prefFile))
 								if record.Name != type:
 									p.td(record.DescriptiveName, class_='text', width='20%')
 								else:
@@ -461,7 +467,7 @@ class HTMLRenderer():
 									p.add('Parent ID:')
 									strValue = value.ToString("X8")
 									if not value: p.add(strValue)
-									else: p.a(strValue,href=createLink(pref,'XXXX',strValue))
+									else: p.a(strValue,href=createLink(prefFile,'XXXX',strValue,prefFile))
 							else:
 								p.td('', class_='value', colspan=1)
 							p.td("%d: %s"%(rec.groupType, HTMLRenderer.grouptypes.get(rec.GroupType, 'Unknown')), class_='value', colspan=2)

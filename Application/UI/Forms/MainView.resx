@@ -450,15 +450,6 @@
   <data name="noWindowsSoundsToolStripMenuItem.Visible" type="System.Boolean, mscorlib">
     <value>False</value>
   </data>
-  <data name="disableHyperlinksToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>208, 22</value>
-  </data>
-  <data name="disableHyperlinksToolStripMenuItem.Text" xml:space="preserve">
-    <value>Disable Hyperlinks</value>
-  </data>
-  <data name="disableHyperlinksToolStripMenuItem.ToolTipText" xml:space="preserve">
-    <value>Hyperlink processing code can be slow. Disable for better performance</value>
-  </data>
   <data name="resetDockingWindowsToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
     <value>208, 22</value>
   </data>
@@ -928,7 +919,7 @@
     <value>Editor ID</value>
   </data>
   <data name="toolStripIncrFindTypeFilter.Items1" xml:space="preserve">
-    <value>Form ID</value>
+    <value>Editor ID</value>
   </data>
   <data name="toolStripIncrFindTypeFilter.Size" type="System.Drawing.Size, System.Drawing">
     <value>80, 25</value>
@@ -970,7 +961,7 @@
     <value>Editor ID</value>
   </data>
   <data name="toolStripIncrFindType.Items1" xml:space="preserve">
-    <value>Form ID</value>
+    <value>Editor ID</value>
   </data>
   <data name="toolStripIncrFindType.Size" type="System.Drawing.Size, System.Drawing">
     <value>100, 25</value>
@@ -1755,12 +1746,6 @@
     <value>noWindowsSoundsToolStripMenuItem</value>
   </data>
   <data name="&gt;&gt;noWindowsSoundsToolStripMenuItem.Type" xml:space="preserve">
-    <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;disableHyperlinksToolStripMenuItem.Name" xml:space="preserve">
-    <value>disableHyperlinksToolStripMenuItem</value>
-  </data>
-  <data name="&gt;&gt;disableHyperlinksToolStripMenuItem.Type" xml:space="preserve">
     <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="&gt;&gt;resetDockingWindowsToolStripMenuItem.Name" xml:space="preserve">

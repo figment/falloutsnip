@@ -4,7 +4,6 @@ using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Windows.Forms;
-using RTF;
 using TESVSnip.Domain.Data.RecordStructure;
 using TESVSnip.Domain.Model;
 using TESVSnip.Domain.Scripts;

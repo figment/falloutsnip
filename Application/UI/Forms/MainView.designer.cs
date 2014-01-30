@@ -84,7 +84,6 @@ namespace TESVSnip.UI.Forms {
             this.uTF8ModeToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.useWindowsClipboardToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.noWindowsSoundsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.disableHyperlinksToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.resetDockingWindowsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.eSMFilterSettingsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.compressionSettingsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -450,7 +449,6 @@ namespace TESVSnip.UI.Forms {
             this.uTF8ModeToolStripMenuItem,
             this.useWindowsClipboardToolStripMenuItem,
             this.noWindowsSoundsToolStripMenuItem,
-            this.disableHyperlinksToolStripMenuItem,
             this.resetDockingWindowsToolStripMenuItem,
             this.eSMFilterSettingsToolStripMenuItem,
             this.compressionSettingsToolStripMenuItem,
@@ -505,12 +503,6 @@ namespace TESVSnip.UI.Forms {
             this.noWindowsSoundsToolStripMenuItem.Name = "noWindowsSoundsToolStripMenuItem";
             resources.ApplyResources(this.noWindowsSoundsToolStripMenuItem, "noWindowsSoundsToolStripMenuItem");
             this.noWindowsSoundsToolStripMenuItem.Click += new System.EventHandler(this.noWindowsSoundsToolStripMenuItem_Click);
-            // 
-            // disableHyperlinksToolStripMenuItem
-            // 
-            this.disableHyperlinksToolStripMenuItem.Name = "disableHyperlinksToolStripMenuItem";
-            resources.ApplyResources(this.disableHyperlinksToolStripMenuItem, "disableHyperlinksToolStripMenuItem");
-            this.disableHyperlinksToolStripMenuItem.Click += new System.EventHandler(this.disableHyperlinksToolStripMenuItem_Click);
             // 
             // resetDockingWindowsToolStripMenuItem
             // 
@@ -961,7 +953,7 @@ namespace TESVSnip.UI.Forms {
             this.toolStripIncrFindTypeFilter.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.toolStripIncrFindTypeFilter.Items.AddRange(new object[] {
             resources.GetString("toolStripIncrFindTypeFilter.Items"),
-            resources.GetString("toolStripIncrFindTypeFilter.Items")});
+            resources.GetString("toolStripIncrFindTypeFilter.Items1")});
             this.toolStripIncrFindTypeFilter.Name = "toolStripIncrFindTypeFilter";
             this.toolStripIncrFindTypeFilter.Overflow = System.Windows.Forms.ToolStripItemOverflow.Never;
             resources.ApplyResources(this.toolStripIncrFindTypeFilter, "toolStripIncrFindTypeFilter");
@@ -996,7 +988,7 @@ namespace TESVSnip.UI.Forms {
             this.toolStripIncrFindType.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.toolStripIncrFindType.Items.AddRange(new object[] {
             resources.GetString("toolStripIncrFindType.Items"),
-            resources.GetString("toolStripIncrFindType.Items")});
+            resources.GetString("toolStripIncrFindType.Items1")});
             this.toolStripIncrFindType.Name = "toolStripIncrFindType";
             resources.ApplyResources(this.toolStripIncrFindType, "toolStripIncrFindType");
             this.toolStripIncrFindType.SelectedIndexChanged += new System.EventHandler(this.toolStripIncrFindType_SelectedIndexChanged);
@@ -1283,7 +1275,6 @@ namespace TESVSnip.UI.Forms {
         private System.Windows.Forms.ToolStripLabel toolStripIncrFindStatus;
         private System.Windows.Forms.ToolStripComboBox toolStripIncrFindTypeFilter;
         private System.Windows.Forms.ToolStripMenuItem noWindowsSoundsToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem disableHyperlinksToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem toolsToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem languageToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem englishToolStripMenuItem;
