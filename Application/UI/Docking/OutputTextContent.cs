@@ -4,8 +4,6 @@ namespace TESVSnip.UI.Docking
 {
     using System.Windows.Forms;
 
-    using RTF;
-
     using TESVSnip.Domain.Model;
     using TESVSnip.Framework.Services;
     using TESVSnip.Properties;

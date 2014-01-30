@@ -751,6 +751,24 @@ namespace TESVSnip.Domain.Model
             return null;
         }
 
+        public string GetRecordMaster(uint id)
+        {
+            uint pluginid = (id & 0xff000000) >> 24;
+            if (pluginid == this.Masters.Length)
+                return this.FileName;
+            if (pluginid > this.Masters.Length)
+                return null;
+            var master = this.Masters[pluginid];
+            if (master != null)
+                return master.FileName;
+            var tes4 = this.Records.OfType<Record>().FirstOrDefault(x => x.Name == "TES4");
+            if (tes4 == null) return null;
+            var sr = tes4.SubRecords.Where(x => x.Name == "MAST").ElementAtOrDefault((int)pluginid);
+            if (sr == null) return null;
+            return sr.GetStrData();
+        }
+
+
         /// <summary>
         /// Lookup FormID by index.  Search via defined masters
         /// </summary>

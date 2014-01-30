@@ -1016,7 +1016,7 @@
 
             foreach (Record r in this.listSearchView.SelectedObjects.OfType<Record>())
             {
-                var form = new RichTextContent();
+                var form = new HtmlContent();
                 form.UpdateRecord(r);
                 form.StartPosition = FormStartPosition.CenterScreen;
                 if (dockParent != null)

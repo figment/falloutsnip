@@ -29,8 +29,6 @@ namespace TESVSnip.UI.Forms
     using System.Windows.Forms;
     using System.Xml.Serialization;
 
-    using RTF;
-
     using TESVSnip.Domain.Data.RecordStructure;
     using TESVSnip.Domain.Model;
     using TESVSnip.Domain.Services;
@@ -62,7 +60,6 @@ namespace TESVSnip.UI.Forms
         private readonly SelectionContext Selection;
 
         private readonly PluginTreeContent pluginTreeContent = new PluginTreeContent();
-        private readonly RichTextContent rtfTextContent = new RichTextContent();
         private readonly HtmlContent htmlContent = new HtmlContent();
 
         private OutputTextContent outputTextContent = null;
@@ -143,8 +140,6 @@ namespace TESVSnip.UI.Forms
 
             this.useWindowsClipboardToolStripMenuItem.Checked = Settings.Default.UseWindowsClipboard;
             this.noWindowsSoundsToolStripMenuItem.Checked = Settings.Default.NoWindowsSounds;
-            this.disableHyperlinksToolStripMenuItem.Checked = Settings.Default.DisableHyperlinks;
-            this.SelectedRichText.DetectUrls = !Settings.Default.DisableHyperlinks;
             this.saveStringsFilesToolStripMenuItem.Checked = Domain.Properties.Settings.Default.SaveStringsFiles;
 
             this.useNewSubrecordEditorToolStripMenuItem.Checked = !Settings.Default.UseOldSubRecordEditor;
@@ -201,11 +196,6 @@ namespace TESVSnip.UI.Forms
                     ClipboardChanged(null, EventArgs.Empty);
                 }
             }
-        }
-
-        public RichTextBox SelectedRichText
-        {
-            get { return this.rtfTextContent.RtfInfo; }
         }
 
         private PluginTreeView PluginTree
@@ -608,9 +598,10 @@ namespace TESVSnip.UI.Forms
                 return this.subrecordListContent;
             }
 
-            if (persistString == typeof (RichTextContent).ToString())
+
+            if (persistString == typeof (HtmlContent).ToString())
             {
-                return this.rtfTextContent;
+                return this.htmlContent;
             }
 
             return null;
@@ -765,7 +756,7 @@ namespace TESVSnip.UI.Forms
             try
             {
                 if (!force && IsVisible(this.pluginTreeContent) && IsVisible(this.subrecordListContent) &&
-                    IsVisible(this.rtfTextContent) && IsVisible(htmlContent))
+                    IsVisible(htmlContent))
                 {
                     return;
                 }
@@ -775,7 +766,6 @@ namespace TESVSnip.UI.Forms
                 {
                     this.pluginTreeContent.DockPanel = null;
                     this.subrecordListContent.DockPanel = null;
-                    this.rtfTextContent.DockPanel = null;
                     this.htmlContent.DockPanel = null;
                 }
 
@@ -790,10 +780,6 @@ namespace TESVSnip.UI.Forms
                     this.subrecordListContent.Show(this.pluginTreeContent.Pane, DockAlignment.Bottom, 0.5);
                 }
 
-                if (!IsVisible(this.rtfTextContent) || force)
-                {
-                    this.rtfTextContent.Show(this.dockPanel, DockState.Document);
-                }
                 if (!IsVisible(this.htmlContent) || force)
                 {
                     this.htmlContent.Show(this.dockPanel, DockState.Document);
@@ -1094,14 +1080,8 @@ namespace TESVSnip.UI.Forms
 
         private void ShowDockingWindows()
         {
-            this.rtfTextContent.RtfInfo.LinkClicked += this.rtfInfo_LinkClicked;
-            this.rtfTextContent.RtfInfo.PreviewKeyDown += this.tbInfo_PreviewKeyDown;
             this.pluginTreeContent.CloseButtonVisible = false;
             this.subrecordListContent.CloseButtonVisible = false;
-            this.rtfTextContent.MdiParent = this;
-            this.rtfTextContent.CloseButtonVisible = false;
-            this.rtfTextContent.CloseButton = false;
-            this.rtfTextContent.HideOnClose = true;
             this.htmlContent.MdiParent = this;
             this.htmlContent.CloseButtonVisible = false;
             this.htmlContent.CloseButton = false;
@@ -1130,20 +1110,8 @@ namespace TESVSnip.UI.Forms
             }
             else
             {
-                FontLangInfo defLang;
-                if (!Encoding.TryGetFontInfo(Domain.Properties.Settings.Default.LocalizationName, out defLang))
-                {
-                    defLang = new FontLangInfo(1252, 1033, 0);
-                }
-
                 try
                 {
-                    var rb = new RTFBuilder(RTFFont.Arial, 16, defLang.lcid, defLang.charset);
-                    rec.GetFormattedHeader(rb);
-                    rec.GetFormattedData(rb);
-                    this.SelectedRichText.Rtf = rb.ToString();
-
-
                     string html = TESVSnip.UI.Rendering.HtmlRenderer.GetDescription(rec);
                     this.htmlContent.UpdateText(html);
                 }
@@ -1156,8 +1124,6 @@ namespace TESVSnip.UI.Forms
 
         private void UpdateMainText(string text)
         {
-            // tbInfo.Text = text;
-            this.SelectedRichText.Text = text;
             this.htmlContent.UpdateText(text);
         }
 
@@ -1349,13 +1315,6 @@ namespace TESVSnip.UI.Forms
             {
                 this.SubrecordList.DeleteSelection();
             }
-        }
-
-        private void disableHyperlinksToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            Settings.Default.DisableHyperlinks =
-                this.disableHyperlinksToolStripMenuItem.Checked = !this.disableHyperlinksToolStripMenuItem.Checked;
-            this.SelectedRichText.DetectUrls = !Settings.Default.DisableHyperlinks;
         }
 
         private void eSMFilterSettingsToolStripMenuItem_Click(object sender, EventArgs e)
@@ -1793,95 +1752,79 @@ namespace TESVSnip.UI.Forms
             this.LayoutDockingWindows(force: true);
         }
 
-        private void rtfInfo_LinkClicked(object sender, LinkClickedEventArgs e)
-        {
-            try
-            {
-                var m = linkRegex.Match(e.LinkText);
-                if (m.Success)
-                {
-                    BaseRecord startNode = null;
-                    var pluginName = m.Groups["plugin"].Value;
-                    if (!string.IsNullOrEmpty(pluginName))
-                    {
-                        startNode = PluginList.All.Records.OfType<BaseRecord>().FirstOrDefault(x => x.Name == pluginName);
-                    }
-
-                    startNode = startNode ?? this.PluginTree.SelectedRecord ?? this.PluginTree.TopRecord;
-
-                    // System.Windows.Forms.Application.
-                    // Search current plugin and then wrap around.  
-                    // Should do it based on master plugin list first.
-                    var type = m.Groups["type"].Value;
-                    var searchContext = new SearchSettings();
-                    searchContext.rectype = type == "XXXX" ? null : type;
-                    searchContext.text = m.Groups["id"].Value;
-                    searchContext.type = SearchType.FormID;
-                    searchContext.startNode = startNode;
-                    searchContext.wrapAround = true;
-                    searchContext.partial = false;
-                    searchContext.forward = true;
-                    searchContext.first = true;
-                    uint formID = 0;
-                    uint.TryParse(m.Groups["id"].Value, NumberStyles.HexNumber, null, out formID);
-
-                    if (ModifierKeys == Keys.Control)
-                    {
-                        // Cursor.Position
-                        var contextMenu = new ContextMenu();
-                        contextMenu.MenuItems.Add(
-                            "&Find In Tree",
-                            (o, args) =>
-                                {
-                                    var node = this.PerformSearch(searchContext);
-                                    if (node != null)
-                                    {
-                                        this.PluginTree.SelectedRecord = node;
-                                    }
-                                });
-                        contextMenu.MenuItems.Add("Find &References", (o, args) => this.ReferenceSearch(formID));
-                        contextMenu.Show(this, PointToClient(MousePosition));
-                    }
-                    else
-                    {
-                        var node = this.PerformSearch(searchContext);
-                        if (node != null)
-                        {
-                            this.PluginTree.SelectedRecord = node;
-                        }
-                    }
-                }
-            }
-            catch
-            {
-            }
-        }
-
         void htmlContent_OnLinkClicked(object sender, LinkClickedEventArgs e)
         {
             try
             {
+                bool isControlPressed = ModifierKeys == Keys.Control;
+                
                 var uri = new Uri(e.LinkText);
                 if (uri.Scheme == "nav")
-                {
-                    var pluginName = uri.Host;
+                {                   
+                    var result = HttpUtility.ParseQueryString(uri.Query);
+                    var pluginName = uri.LocalPath;
+                    var masterName = result.Get("m");
                     if (pluginName == ".")
                         pluginName = null;
+                    var type = result["t"];
+                    uint formID = 0;
+                    uint.TryParse(result["v"], NumberStyles.HexNumber, null, out formID);
 
-                    BaseRecord startNode = null;
+                    Plugin startPlugin = null;
+                    Plugin masterPlugin = null;
                     if (!string.IsNullOrEmpty(pluginName))
+                        startPlugin = PluginList.All[pluginName];
+                    if (!string.IsNullOrEmpty(masterName))
+                        masterPlugin = PluginList.All[masterName];
+                    if (masterPlugin == null && !string.IsNullOrEmpty(masterName))
                     {
-                        startNode = PluginList.All.Records.OfType<BaseRecord>().FirstOrDefault(x => x.Name == pluginName);
+                        var ext = Path.GetExtension(masterName);
+                        if (string.Compare(ext, ".esm", false) == 0 
+                            || string.Compare(ext, ".esp", false) == 0)
+                        {
+                            var dr = MessageBox.Show(this
+                                , string.Format(Resources.Plugin_not_loaded__LoadNow, masterName)
+                                , Resources.Load_Reference
+                                , MessageBoxButtons.YesNo, MessageBoxIcon.Question
+                                ,MessageBoxDefaultButton.Button2);                            
+                            if (dr == DialogResult.Yes)
+                            {
+                                using (var dlg = new OpenFileDialog())
+                                {
+                                    dlg.Title = "Select Plugin to load";
+                                    dlg.InitialDirectory = Options.Value.GameDataDirectory;
+                                    dlg.FileName = masterName;
+                                    dlg.Filter = "Master|" + masterName;
+                                    dlg.FilterIndex = 0;
+                                    dlg.CheckFileExists = true;
+                                    if (dlg.ShowDialog(this) == DialogResult.OK)
+                                    {
+                                        if (string.Compare(Path.GetFileName(dlg.FileName), masterName, true) == 0)
+                                        {
+                                            LoadPluginFromListOfFileNames(new[] { masterName });
+                                            masterPlugin = PluginList.All[masterName];
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    // Use efficient search before exhaustive search
+                    if (startPlugin != null && masterPlugin != null)
+                    {
+                        var node = startPlugin.GetRecordByID(formID);
+                        if (node != null)
+                        {
+                            this.PluginTree.SelectedRecord = node;
+                            return;
+                        }
                     }
 
-                    startNode = startNode ?? this.PluginTree.SelectedRecord ?? this.PluginTree.TopRecord;
+                    var startNode = startPlugin ?? this.PluginTree.SelectedRecord ?? this.PluginTree.TopRecord;
 
                     // System.Windows.Forms.Application.
                     // Search current plugin and then wrap around.  
                     // Should do it based on master plugin list first.
-
-                    var result = HttpUtility.ParseQueryString(uri.Query);
-                    var type = result["t"];
 
                     var searchContext = new SearchSettings();
                     searchContext.rectype = type == "XXXX" ? null : type;
@@ -1892,10 +1835,8 @@ namespace TESVSnip.UI.Forms
                     searchContext.partial = false;
                     searchContext.forward = true;
                     searchContext.first = true;
-                    uint formID = 0;
-                    uint.TryParse(result["v"], NumberStyles.HexNumber, null, out formID);
 
-                    if (ModifierKeys == Keys.Control)
+                    if (isControlPressed)
                     {
                         // Cursor.Position
                         var contextMenu = new ContextMenu();

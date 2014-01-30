@@ -157,7 +157,6 @@
       <DependentUpon>InterpreterConsole.cs</DependentUpon>
     </Compile>
     <Compile Include="UI\Rendering\StringRenderer.cs" />
-    <Compile Include="UI\Rendering\RTFRenderer.cs" />
     <Compile Include="UI\Hosting\ConsoleOptions.cs" />
     <Compile Include="UI\Hosting\IronPythonConsole.xaml.cs">
       <DependentUpon>IronPythonConsole.xaml</DependentUpon>
@@ -334,12 +333,6 @@
     </Compile>
     <Compile Include="UI\Docking\BaseDockContent.Designer.cs">
       <DependentUpon>BaseDockContent.cs</DependentUpon>
-    </Compile>
-    <Compile Include="UI\Docking\RichTextContent.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="UI\Docking\RichTextContent.Designer.cs">
-      <DependentUpon>RichTextContent.cs</DependentUpon>
     </Compile>
     <Compile Include="UI\Docking\SubrecordListContent.cs">
       <SubType>Form</SubType>
@@ -545,9 +538,6 @@
     <EmbeddedResource Include="UI\Docking\BaseDockContent.resx">
       <DependentUpon>BaseDockContent.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="UI\Docking\RichTextContent.resx">
-      <DependentUpon>RichTextContent.cs</DependentUpon>
-    </EmbeddedResource>
     <EmbeddedResource Include="UI\Docking\SubrecordListContent.resx">
       <DependentUpon>SubrecordListContent.cs</DependentUpon>
       <SubType>Designer</SubType>
@@ -730,25 +720,6 @@
     <Compile Include="UI\RecordControls\TextElement.Designer.cs">
       <DependentUpon>TextElement.cs</DependentUpon>
     </Compile>
-    <Compile Include="Vendor\RTFLib\RTF\IRTFCell.cs" />
-    <Compile Include="Vendor\RTFLib\RTF\IRtfProcessor.cs" />
-    <Compile Include="Vendor\RTFLib\RTF\IRTFRow.cs" />
-    <Compile Include="Vendor\RTFLib\RTF\RTFAlignment.cs" />
-    <Compile Include="Vendor\RTFLib\RTF\RTFBorderSide.cs" />
-    <Compile Include="Vendor\RTFLib\RTF\RTFBuilder.cs" />
-    <Compile Include="Vendor\RTFLib\RTF\RTFBuilder.RTFFonts.cs" />
-    <Compile Include="Vendor\RTFLib\RTF\RTFBuilder.RTFFormatWrap.cs" />
-    <Compile Include="Vendor\RTFLib\RTF\RTFBuilder.RTFParaWrap.cs" />
-    <Compile Include="Vendor\RTFLib\RTF\RTFBuilder.UnWrapped.cs" />
-    <Compile Include="Vendor\RTFLib\RTF\RTFBuilderbase.cs" />
-    <Compile Include="Vendor\RTFLib\RTF\RTFCell.cs" />
-    <Compile Include="Vendor\RTFLib\RTF\RTFCellDefinition.cs" />
-    <Compile Include="Vendor\RTFLib\RTF\RTFCellDefinitionBuilder.cs" />
-    <Compile Include="Vendor\RTFLib\RTF\RTFFont.cs" />
-    <Compile Include="Vendor\RTFLib\RTF\RTFImage.cs" />
-    <Compile Include="Vendor\RTFLib\RTF\RTFRow.cs" />
-    <Compile Include="Vendor\RTFLib\RTF\RTFRowDefinition.cs" />
-    <Compile Include="Vendor\RTFLib\RTF\RTFUtil.cs" />
     <Compile Include="UI\Forms\MainView.cs">
       <SubType>Form</SubType>
     </Compile>

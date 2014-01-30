@@ -5,8 +5,6 @@ namespace TESVSnip.UI.Docking
 {
     using System.Windows.Forms;
 
-    using RTF;
-
     using TESVSnip.Domain.Model;
     using TESVSnip.Framework.Services;
     using TESVSnip.Properties;
@@ -16,36 +14,34 @@ namespace TESVSnip.UI.Docking
         public HtmlContent()
         {
             this.InitializeComponent();
+            this.webBrowser1.DocumentText = "";
         }
 
-        public void UpdateRecord(BaseRecord sc)
+        public void UpdateRecord(BaseRecord record)
         {
-            if (sc == null)
+            if (record == null)
             {
                 this.UpdateText(string.Empty);
                 return;
             }
 
-            FontLangInfo defLang;
-            if (!Encoding.TryGetFontInfo(Domain.Properties.Settings.Default.LocalizationName, out defLang))
+            try
             {
-                defLang = new FontLangInfo(1252, 1033, 0);
+                string html = TESVSnip.UI.Rendering.HtmlRenderer.GetDescription(record);
+                UpdateText(html);
             }
-
-            //var writer = new System.Web.UI.HtmlTextWriter();
-            
-            //var rb = new System.Web.UI;
-            //var rb = new RTFBuilder(RTFFont.Arial, 16, defLang.lcid, defLang.charset);
-            //sc.GetFormattedHeader(rb);
-            //sc.GetFormattedData(rb);
-            //this.rtfInfo.Text = rb.ToString();
-            //this.webBrowser1.DocumentText = text;
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message, Resources.WarningText);
+            }
         }
 
         public void UpdateText(string text)
         {
-            this.webBrowser1.DocumentText = text;
-            //this.htmlInfo.Text = text;
+            if (string.IsNullOrWhiteSpace(text))
+                this.webBrowser1.DocumentText = "";
+            else
+                this.webBrowser1.DocumentText = text;
         }
 
         private void webBrowser1_Navigating(object sender, WebBrowserNavigatingEventArgs e)
@@ -59,6 +55,31 @@ namespace TESVSnip.UI.Docking
         }
 
         public event EventHandler<LinkClickedEventArgs> OnLinkClicked;
+
+        private void asHTMLToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            System.Windows.Clipboard.SetText(this.webBrowser1.DocumentText, System.Windows.TextDataFormat.Html);
+        }
+
+        private void copyToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            var doc = this.webBrowser1.Document;
+            if (doc != null)
+            {
+                doc.ExecCommand("copy", false, null);
+            }
+            //System.Windows.Clipboard.SetText(this.webBrowser1.DocumentText, System.Windows.TextDataFormat.Html);
+        }
+
+        private void webBrowser1_PreviewKeyDown(object sender, PreviewKeyDownEventArgs e)
+        {
+            if (e.Control && !e.Alt && !e.Shift && e.KeyCode == Keys.C)
+            {
+                var doc = this.webBrowser1.Document;
+                if (doc != null)
+                    doc.ExecCommand("copy", false, null);
+            }
+        }
     }
 
     //public class LinkClickedEventArgs : EventArgs

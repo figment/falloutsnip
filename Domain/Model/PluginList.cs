@@ -173,7 +173,7 @@ namespace TESVSnip.Domain.Model
             {
                 return
                     this.Records.Cast<Plugin>()
-                        .First(x => 0 == string.Compare(x.Name, name, StringComparison.InvariantCultureIgnoreCase));
+                        .FirstOrDefault(x => 0 == string.Compare(x.Name, name, StringComparison.InvariantCultureIgnoreCase));
             }
         }
 

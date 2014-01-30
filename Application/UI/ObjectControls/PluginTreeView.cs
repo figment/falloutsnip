@@ -940,7 +940,7 @@ namespace TESVSnip.UI.ObjectControls
             var dockParent = this.FindDockContent(this);
             foreach (BaseRecord r in this.PluginTree.SelectedRecords.OfType<BaseRecord>())
             {
-                var form = new RichTextContent();
+                var form = new HtmlContent();
                 form.UpdateRecord(r);
                 form.StartPosition = FormStartPosition.CenterScreen;
 
