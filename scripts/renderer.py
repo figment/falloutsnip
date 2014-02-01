@@ -447,7 +447,7 @@ class HTMLRenderer():
 								if id == None:
 									p.td(fullStr, class_='text', colspan=2)
 								else:
-									p.td(fullStr, class_='textid', width="15%")
+									p.td(id, class_='textid', width="8%")
 									p.td(fullStr, class_='text')
 					elif isinstance(record, GroupRecord):
 						with p.tr():
