@@ -11,7 +11,7 @@ namespace TESVSnip.UI.Forms
     using System.Windows.Forms;
     using System.Linq;
 
-    using TESVSnip.Domain.Data.RecordStructure;
+    using Domain.Data.Structure;
     using TESVSnip.Domain.Model;
     using TESVSnip.Framework.Collections;
     using TESVSnip.Properties;

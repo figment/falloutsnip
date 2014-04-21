@@ -3,7 +3,7 @@ namespace TESVSnip.UI
     using System;
     using System.Collections.Generic;
 
-    using TESVSnip.Domain.Data.RecordStructure;
+    using Domain.Data.Structure;
     using TESVSnip.Domain.Model;
     using TESVSnip.Framework;
 

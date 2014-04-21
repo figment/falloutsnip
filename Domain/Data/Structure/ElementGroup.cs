@@ -1,4 +1,4 @@
-namespace TESVSnip.Domain.Data.RecordStructure
+namespace TESVSnip.Domain.Data.Structure
 {
     internal class ElementGroup : ElementBase
     {
@@ -12,10 +12,7 @@ namespace TESVSnip.Domain.Data.RecordStructure
 
         public override bool IsGroup
         {
-            get
-            {
-                return true;
-            }
+            get { return true; }
         }
     }
 }

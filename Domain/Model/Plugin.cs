@@ -1,6 +1,7 @@
 using System.ComponentModel;
 using Microsoft.Scripting.Runtime;
-using TESVSnip.Domain.Data.RecordStructure;
+using TESVSnip.Domain.Data;
+using TESVSnip.Domain.Data.Structure;
 
 namespace TESVSnip.Domain.Model
 {
@@ -46,6 +47,10 @@ namespace TESVSnip.Domain.Model
 
         private BaseRecord parent;
 
+        private DomainDefinition define;
+
+        public DomainDefinition Domain { get { return define; } }
+
         public Plugin(byte[] data, string name)
         {
             Name = name;
@@ -53,8 +58,8 @@ namespace TESVSnip.Domain.Model
             try
             {
                 this.LoadPluginData(br, false, null);
-
                 this.FileName = Path.GetFileNameWithoutExtension(name);
+                define = this.DetectVersion();
             }
             finally
             {
@@ -63,8 +68,14 @@ namespace TESVSnip.Domain.Model
         }
 
         public Plugin()
+            : this(DomainDefinition.LoadedDomains().FirstOrDefault())
+        {            
+        }
+
+        public Plugin(DomainDefinition define)
         {
-            Name = "New plugin.esp";
+            this.Name = "New plugin.esp";
+            this.define = define;
         }
 
         public Plugin(string filePath) : this(filePath, false){}
@@ -95,6 +106,8 @@ namespace TESVSnip.Domain.Model
             var fi = new FileInfo(filePath);
             using (var br = new BinaryReader(fi.OpenRead()))
             {
+                define = this.DetectVersion(br);
+                br.BaseStream.Position = 0;
                 this.LoadPluginData(br, headerOnly, includeFilter);
             }
 
@@ -115,6 +128,8 @@ namespace TESVSnip.Domain.Model
         private Plugin(SerializationInfo info, StreamingContext context)
             : base(info, context)
         {
+            // detect version
+            define = this.DetectVersion();
         }
 
         public override BaseRecord Parent
@@ -192,7 +207,7 @@ namespace TESVSnip.Domain.Model
 
         public bool AddMaster(string masterName)
         {
-            Record brcTES4 = this.Records.OfType<Record>().FirstOrDefault(x => x.Name == "TES4");
+            Record brcTES4 = this.Records.OfType<Record>().FirstOrDefault(x => x.Name.StartsWith("TES"));
             if (brcTES4 == null)
             {
                 throw new ApplicationException("Plugin lacks a valid TES4 record. Cannot continue.");
@@ -364,6 +379,8 @@ namespace TESVSnip.Domain.Model
 
             foreach (BaseRecord r in this.Records)
             {
+                if (match(r))
+                    yield return r;
                 foreach (var itm in r.Enumerate(match))
                 {
                     yield return itm;
@@ -382,7 +399,7 @@ namespace TESVSnip.Domain.Model
 
         public string[] GetMasters()
         {
-            Record brcTES4 = this.Records.OfType<Record>().FirstOrDefault(x => x.Name == "TES4");
+            Record brcTES4 = this.Records.OfType<Record>().FirstOrDefault(x => x.Name .StartsWith("TES"));
             if (brcTES4 == null)
             {
                 return new string[0];
@@ -442,7 +459,7 @@ namespace TESVSnip.Domain.Model
                 return;
             }
 
-            string locName = Domain.Properties.Settings.Default.LocalizationName;
+            string locName = TESVSnip.Domain.Properties.Settings.Default.LocalizationName;
 
             if (!Directory.GetFiles(this.StringsFolder, this.FileName + "_" + locName + "*").Any())
             {
@@ -455,7 +472,7 @@ namespace TESVSnip.Domain.Model
             }
 
             string prefix = Path.Combine(this.StringsFolder, this.FileName);
-            prefix += "_" + Domain.Properties.Settings.Default.LocalizationName;
+            prefix += "_" + TESVSnip.Domain.Properties.Settings.Default.LocalizationName;
 
             System.Text.Encoding enc = Encoding.Instance;
             FontLangInfo fontInfo;
@@ -686,7 +703,7 @@ namespace TESVSnip.Domain.Model
         public uint GetNewFormID(bool increment = false)
         {
             uint formID = 0;
-            var tes4 = this.Records.OfType<Record>().FirstOrDefault(x => x.Name == "TES4");
+            var tes4 = this.Records.OfType<Record>().FirstOrDefault(x => x.Name .StartsWith("TES"));
             if (tes4 != null && tes4.SubRecords.Count > 0)
             {
                 var masterCount = tes4.SubRecords.Count(x => x.Name == "MAST");
@@ -705,7 +722,7 @@ namespace TESVSnip.Domain.Model
 
         public void UpdateNextFormID(uint newid)
         {
-            var tes4 = this.Records.OfType<Record>().FirstOrDefault(x => x.Name == "TES4");
+            var tes4 = this.Records.OfType<Record>().FirstOrDefault(x => x.Name .StartsWith("TES"));
             if (tes4 != null && tes4.SubRecords.Count > 0)
             {
                 var masterCount = tes4.SubRecords.Count(x => x.Name == "MAST");
@@ -761,7 +778,7 @@ namespace TESVSnip.Domain.Model
             var master = this.Masters[pluginid];
             if (master != null)
                 return master.FileName;
-            var tes4 = this.Records.OfType<Record>().FirstOrDefault(x => x.Name == "TES4");
+            var tes4 = this.Records.OfType<Record>().FirstOrDefault(x => x.Name .StartsWith("TES"));
             if (tes4 == null) return null;
             var sr = tes4.SubRecords.Where(x => x.Name == "MAST").ElementAtOrDefault((int)pluginid);
             if (sr == null) return null;
@@ -895,13 +912,13 @@ namespace TESVSnip.Domain.Model
             }
 
             // if (StringsDirty)
-            var tes4 = this.Records.OfType<Record>().FirstOrDefault(x => x.Name == "TES4");
+            var tes4 = this.Records.OfType<Record>().FirstOrDefault(x => x.Name .StartsWith("TES"));
             if (tes4 != null && (tes4.Flags1 & 0x80) != 0)
             {
                 if (Properties.Settings.Default.SaveStringsFiles)
                 {
                     string prefix = Path.Combine(Path.Combine(Path.GetDirectoryName(filePath), "Strings"), Path.GetFileNameWithoutExtension(filePath));
-                    prefix += "_" + Domain.Properties.Settings.Default.LocalizationName;
+                    prefix += "_" + TESVSnip.Domain.Properties.Settings.Default.LocalizationName;
                     this.SaveStrings(prefix);
                 }
             }
@@ -937,7 +954,7 @@ namespace TESVSnip.Domain.Model
         {
             System.Text.Encoding enc = Encoding.Instance;
             FontLangInfo fontInfo;
-            if (Encoding.TryGetFontInfo(Domain.Properties.Settings.Default.LocalizationName, out fontInfo))
+            if (Encoding.TryGetFontInfo(TESVSnip.Domain.Properties.Settings.Default.LocalizationName, out fontInfo))
             {
                 if (fontInfo.CodePage != 1252)
                 {
@@ -953,7 +970,7 @@ namespace TESVSnip.Domain.Model
         public void UpdateRecordCount()
         {
             int reccount = -1 + this.Records.Cast<Rec>().Sum(r => r.CountRecords());
-            var tes4 = this.Records.OfType<Record>().FirstOrDefault(x => x.Name == "TES4");
+            var tes4 = this.Records.OfType<Record>().FirstOrDefault(x => x.Name .StartsWith("TES"));
             if (tes4 != null)
             {
                 var hedr = tes4.SubRecords[0];
@@ -976,6 +993,38 @@ namespace TESVSnip.Domain.Model
                 }
             }
         }
+        
+        private DomainDefinition DetectVersion(BinaryReader br)
+        {
+            var s = ReadRecName(br);
+            if (s == "TES3")
+                return DomainDefinition.Load("Morrowind"); // hardcoded?
+            if (s != "TES4")
+                throw new Exception("File is not a valid TES4 plugin (Missing TES4 record)");
+            // Check for file version by checking the position of the HEDR field in the file. (ie. how big are the record header.)
+            br.BaseStream.Position = 20;
+            s = ReadRecName(br);
+            if (s == "HEDR")
+                return DomainDefinition.Load("Oblivion"); // hardcoded?
+            s = ReadRecName(br);
+            if (s != "HEDR")
+                throw new Exception("File is not a valid TES4 plugin (Missing HEDR subrecord in the TES4 record)");
+            var recsize = br.ReadUInt16();
+            var version = br.ReadSingle();
+            return DomainDefinition.DetectDefinitionFromVersion(s, version);
+        }
+
+        private DomainDefinition DetectVersion()
+        {
+            Record brcTES = this.Records.OfType<Record>().FirstOrDefault(x => x.Name.StartsWith("TES"));
+            if (brcTES == null)
+                throw new ApplicationException("Plugin lacks a valid TES4 record. Cannot continue.");
+            var hdr = brcTES.SubRecords.FirstOrDefault(x => x.Name == "HEDR");
+            if (hdr == null)
+                throw new ApplicationException("Plugin lacks a valid HEDR subrecord. Cannot continue.");
+            var version = hdr.GetValue<float>(0);
+            return DomainDefinition.DetectDefinitionFromVersion(brcTES.Name, version);
+        }
 
         private void LoadPluginData(BinaryReader br, bool headerOnly, Func<string, bool> includeFilter)
         {
@@ -984,7 +1033,7 @@ namespace TESVSnip.Domain.Model
             {
                 string s;
                 uint recsize;
-                bool IsOblivion = false;
+                float version = 0.0f;
 
                 this.Filtered = includeFilter != null;
 
@@ -1003,7 +1052,6 @@ namespace TESVSnip.Domain.Model
                 if (s == "HEDR")
                 {
                     // Record Header is 20 bytes
-                    IsOblivion = true;
                 }
                 else
                 {
@@ -1012,20 +1060,22 @@ namespace TESVSnip.Domain.Model
                     {
                         throw new Exception("File is not a valid TES4 plugin (Missing HEDR subrecord in the TES4 record)");
                     }
-
                     // Record Header is 24 bytes. Or the file is illegal
                 }
+                br.ReadUInt16();
+                version = br.ReadSingle();
 
                 br.BaseStream.Position = 4;
                 recsize = br.ReadUInt32();
                 try
                 {
-                    this.AddRecord(new Record("TES4", recsize, br, IsOblivion));
+                    this.AddRecord(new Record("TES4", recsize, br, version));
                 }
                 catch (Exception e)
                 {
                     Alerts.Show(e.Message);
                 }
+                bool hasExtraFlags = Math.Abs(version - 1.0f) > float.Epsilon * 10.0f;
 
                 if (!headerOnly)
                 {
@@ -1037,7 +1087,7 @@ namespace TESVSnip.Domain.Model
                         {
                             try
                             {
-                                this.AddRecord(new GroupRecord(recsize, br, IsOblivion, includeFilter, false));
+                                this.AddRecord(new GroupRecord(recsize, br, version, includeFilter, false));
                             }
                             catch (Exception e)
                             {
@@ -1049,7 +1099,7 @@ namespace TESVSnip.Domain.Model
                             bool skip = includeFilter != null && !includeFilter(s);
                             if (skip)
                             {
-                                long size = recsize + (IsOblivion ? 8 : 12);
+                                long size = recsize + 8 + (hasExtraFlags ? 4 : 0);
                                 if ((br.ReadUInt32() & 0x00040000) > 0)
                                 {
                                     size += 4; // Add 4 bytes for compressed record since the decompressed size is not included in the record size.
@@ -1061,7 +1111,7 @@ namespace TESVSnip.Domain.Model
                             {
                                 try
                                 {
-                                    this.AddRecord(new Record(s, recsize, br, IsOblivion));
+                                    this.AddRecord(new Record(s, recsize, br, version));
                                 }
                                 catch (Exception e)
                                 {
@@ -1071,6 +1121,8 @@ namespace TESVSnip.Domain.Model
                         }
                     }
                 }
+                foreach (var rec in Enumerate(x => x is IGroupRecord || x is Record))
+                    rec.UpdateShortDescription();
                 this.UpdateRecordCount();
             }
             finally
@@ -1257,10 +1309,23 @@ namespace TESVSnip.Domain.Model
                 }
             }
         }
+
+        internal Dictionary<string, RecordStructure> GetRecordStructures()
+        {
+            return define.Records;
+        }
+
+        public override string DescriptiveName
+        {
+            get
+            {
+                return base.DescriptiveName + " (" + define.Name + ")";
+            }
+        }
+
         public override string ToString()
         {
             return string.Format("[Plugin] '{0}'", this.Name);
         }
-
     }
 }

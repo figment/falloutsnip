@@ -3,10 +3,10 @@ using System.ComponentModel;
 using System.Diagnostics;
 using System.Xml.Serialization;
 
-namespace TESVSnip.Domain.Data.RecordStructure.Xml
+namespace TESVSnip.Domain.Data.Structure.Xml
 {
     /// <summary>
-    /// The subrecord element.
+    ///     The subrecord element.
     /// </summary>
     /// <remarks>
     /// </remarks>
@@ -17,86 +17,83 @@ namespace TESVSnip.Domain.Data.RecordStructure.Xml
     public class SubrecordElement : ElementBase
     {
         /// <summary>
-        /// The condid.
+        ///     The condid.
         /// </summary>
         /// <remarks>
         /// </remarks>
-        [XmlAttribute] [DefaultValue(0)] 
-        public int condid;
+        [XmlAttribute] [DefaultValue(0)] public int condid;
 
         /// <summary>
-        /// The flags.
+        ///     The flags.
         /// </summary>
         /// <remarks>
         /// </remarks>
-        [XmlAttribute] [DefaultValue("")] 
-        public string flags;
+        [XmlAttribute] [DefaultValue("")] public string flags;
 
-        [XmlIgnore] [DefaultValue(0)] 
-        public int group;
+        [XmlIgnore] [DefaultValue(0)] public int group;
 
         /// <summary>
-        /// The hexview.
+        ///     The hexview.
         /// </summary>
         /// <remarks>
         /// </remarks>
         [XmlAttribute] [DefaultValue(false)] public bool hexview;
 
         /// <summary>
-        /// The hexview with decimal
+        ///     The hexview with decimal
         /// </summary>
         /// <remarks>
         /// </remarks>
         [XmlAttribute] [DefaultValue(false)] public bool hexviewwithdec;
 
         /// <summary>
-        /// The multiline.
+        ///     The multiline.
         /// </summary>
         /// <remarks>
         /// </remarks>
         [XmlAttribute] [DefaultValue(false)] public bool multiline;
 
         /// <summary>
-        /// The options.
+        ///     The options.
         /// </summary>
         /// <remarks>
         /// </remarks>
         [XmlAttribute] public string options;
 
         /// <summary>
-        /// The refid.
+        ///     The refid.
         /// </summary>
         /// <remarks>
         /// </remarks>
         [XmlAttribute] [DefaultValue("")] public string refid;
 
         /// <summary>
-        /// The reftype.
+        ///     The reftype.
         /// </summary>
         /// <remarks>
         /// </remarks>
         [XmlAttribute] [DefaultValue("")] public string reftype;
-        
+
         [XmlIgnore] [DefaultValue(0)] public int size;
 
         /// <summary>
-        /// The type.
+        ///     The type.
         /// </summary>
         /// <remarks>
         /// </remarks>
         [XmlAttribute] public string type;
 
         /// <summary>
-        /// The funcr.
-        /// For transform a value
+        ///     The funcr.
+        ///     For transform a value
         /// </summary>
         /// <remarks>
         /// </remarks>
         [XmlAttribute] [DefaultValue("")] public string funcr = string.Empty;
 
         /// <summary>
-        /// The funcw.
-        /// To write a transfromed value
+        ///     The funcw.
+        ///     To write a transfromed value
         /// </summary>
         /// <remarks>
         /// </remarks>

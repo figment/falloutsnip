@@ -4,7 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Windows.Forms;
 
-using TESVSnip.Domain.Data.RecordStructure;
+using TESVSnip.Domain.Data.Structure;
 using TESVSnip.Domain.Data.Strings;
 using TESVSnip.Domain.Model;
 using TESVSnip.Domain.Services;

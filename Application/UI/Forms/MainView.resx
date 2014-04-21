@@ -684,17 +684,11 @@
   <data name="createRecordStructureXmlToolStripMenuItem.Text" xml:space="preserve">
     <value>Guess Record Structure ...</value>
   </data>
-  <data name="createRecordStructureXmlToolStripMenuItem.Visible" type="System.Boolean, mscorlib">
-    <value>False</value>
-  </data>
   <data name="mergeRecordsXMLToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
     <value>264, 22</value>
   </data>
   <data name="mergeRecordsXMLToolStripMenuItem.Text" xml:space="preserve">
     <value>Merge Records XML ...</value>
-  </data>
-  <data name="mergeRecordsXMLToolStripMenuItem.Visible" type="System.Boolean, mscorlib">
-    <value>False</value>
   </data>
   <data name="reorderSubrecordsToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
     <value>264, 22</value>

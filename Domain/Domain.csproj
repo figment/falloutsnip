@@ -52,6 +52,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
+    <Reference Include="System.configuration" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="Microsoft.CSharp" />
@@ -78,31 +79,33 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Data\DomainDefinition.cs" />
+    <Compile Include="Data\Structure\Conditional.cs" />
+    <Compile Include="Data\Structure\CondType.cs" />
+    <Compile Include="Data\Structure\ElementBase.cs" />
+    <Compile Include="Data\Structure\ElementGroup.cs" />
+    <Compile Include="Data\Structure\ElementStructure.cs" />
+    <Compile Include="Data\Structure\ElementValueType.cs" />
+    <Compile Include="Data\Structure\RecordStructure.cs" />
+    <Compile Include="Data\Structure\SubrecordBase.cs" />
+    <Compile Include="Data\Structure\SubrecordGroup.cs" />
+    <Compile Include="Data\Structure\SubrecordStructure.cs" />
+    <Compile Include="Data\Structure\Xml\ElementBase.cs" />
+    <Compile Include="Data\Structure\Xml\ElementGroup.cs" />
+    <Compile Include="Data\Structure\Xml\Group.cs" />
+    <Compile Include="Data\Structure\Xml\Records.cs" />
+    <Compile Include="Data\Structure\Xml\RecordsRecord.cs" />
+    <Compile Include="Data\Structure\Xml\RecordXmlException.cs" />
+    <Compile Include="Data\Structure\Xml\Subrecord.cs" />
+    <Compile Include="Data\Structure\Xml\SubrecordElement.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Rendering\IRenderer.cs" />
     <Compile Include="Services\Folders.cs" />
     <Compile Include="Services\Spells.cs" />
+    <Compile Include="Settings.cs" />
     <Content Include="$(SolutionDir)\build\buildver.txt" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Data\RecordStructure\CondType.cs" />
-    <Compile Include="Data\RecordStructure\Conditional.cs" />
-    <Compile Include="Data\RecordStructure\ElementBase.cs" />
-    <Compile Include="Data\RecordStructure\ElementGroup.cs" />
-    <Compile Include="Data\RecordStructure\ElementStructure.cs" />
-    <Compile Include="Data\RecordStructure\ElementValueType.cs" />
-    <Compile Include="Data\RecordStructure\RecordStructure.cs" />
-    <Compile Include="Data\RecordStructure\SubrecordBase.cs" />
-    <Compile Include="Data\RecordStructure\SubrecordGroup.cs" />
-    <Compile Include="Data\RecordStructure\SubrecordStructure.cs" />
-    <Compile Include="Data\RecordStructure\Xml\ElementBase.cs" />
-    <Compile Include="Data\RecordStructure\Xml\ElementGroup.cs" />
-    <Compile Include="Data\RecordStructure\Xml\Group.cs" />
-    <Compile Include="Data\RecordStructure\Xml\RecordXmlException.cs" />
-    <Compile Include="Data\RecordStructure\Xml\Records.cs" />
-    <Compile Include="Data\RecordStructure\Xml\RecordsRecord.cs" />
-    <Compile Include="Data\RecordStructure\Xml\Subrecord.cs" />
-    <Compile Include="Data\RecordStructure\Xml\SubrecordElement.cs" />
     <Compile Include="Data\Strings\LocalizedString.cs" />
     <Compile Include="Data\Strings\LocalizedStringDict.cs" />
     <Compile Include="Data\Strings\LocalizedStringFormat.cs" />

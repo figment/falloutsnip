@@ -4,7 +4,7 @@ namespace TESVSnip.Domain.Model
     using System.Globalization;
     using System.Linq;
 
-    using TESVSnip.Domain.Data.RecordStructure;
+    using Data.Structure;
     using TESVSnip.Framework.Collections;
 
     public class BatchElement : BatchCriteria

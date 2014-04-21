@@ -6,7 +6,7 @@ namespace TESVSnip.UI.Forms
     using System.Globalization;
     using System.Windows.Forms;
 
-    using TESVSnip.Domain.Data.RecordStructure;
+    using Domain.Data.Structure;
     using TESVSnip.Domain.Model;
     using TESVSnip.Framework;
     using TESVSnip.Framework.Services;

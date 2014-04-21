@@ -4,7 +4,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Runtime.Serialization;
-using TESVSnip.Domain.Data.RecordStructure;
+using TESVSnip.Domain.Data.Structure;
 using TESVSnip.Domain.Services;
 using TESVSnip.Framework.Collections;
 using TESVSnip.Framework.Persistence;
@@ -47,8 +47,9 @@ namespace TESVSnip.Domain.Model
             this.FixSubrecordOwner();
         }
 
-        internal Record(string name, uint dataSize, BinaryReader recordReader, bool oblivion)
+        internal Record(string name, uint dataSize, BinaryReader recordReader, float version)
         {
+            bool isOblivion = Math.Abs(version - 1.0f) <= float.Epsilon*10.0f;
             this.dataSize = dataSize;
 
             int estimatedCount = Math.Max( Math.Min(16, (int)dataSize/10), 0 );
@@ -58,7 +59,7 @@ namespace TESVSnip.Domain.Model
             Flags1 = recordReader.ReadUInt32();
             FormID = recordReader.ReadUInt32();
             Flags2 = recordReader.ReadUInt32();
-            if (!oblivion)
+            if (!isOblivion)
             {
                 Flags3 = recordReader.ReadUInt32();
             }
@@ -295,13 +296,12 @@ namespace TESVSnip.Domain.Model
         {
             try
             {
-                if (RecordStructure.Records == null)
-                {
+                var records = GetStructures();
+                if (records == null)
                     return false;
-                }
 
                 RecordStructure rs;
-                if (!RecordStructure.Records.TryGetValue(Name, out rs))
+                if (!records.TryGetValue(Name, out rs))
                 {
                     return false;
                 }
@@ -835,6 +835,17 @@ namespace TESVSnip.Domain.Model
         public SubRecord[] GetSubRecords(string type)
         {
             return this.SubRecords.Where(x => x.Name == type).ToArray();
+        }
+
+        public Dictionary<string, RecordStructure> GetStructures()
+        {
+            var p = GetPlugin();
+            return p.GetRecordStructures();
+        }
+
+        public RecordStructure GetStructure()
+        {
+            return GetStructures()[this.Name];
         }
 
         public override string ToString()

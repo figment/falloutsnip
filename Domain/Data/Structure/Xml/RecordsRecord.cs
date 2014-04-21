@@ -7,10 +7,10 @@ using System.Diagnostics;
 using System.Linq;
 using System.Xml.Serialization;
 
-namespace TESVSnip.Domain.Data.RecordStructure.Xml
+namespace TESVSnip.Domain.Data.Structure.Xml
 {
     /// <summary>
-    /// The records record.
+    ///     The records record.
     /// </summary>
     /// <remarks>
     /// </remarks>
@@ -27,26 +27,22 @@ namespace TESVSnip.Domain.Data.RecordStructure.Xml
         ///// <remarks/>
         // [System.Xml.Serialization.XmlElementAttribute("Group")]
         // public List<Group> Groups = new List<Group>();
-        [XmlElement("Group", typeof(Group))]
-        [XmlElement("Subrecord", typeof(Subrecord))]
-        public ArrayList Items = new ArrayList();
+        [XmlElement("Group", typeof (Group))] [XmlElement("Subrecord", typeof (Subrecord))] public ArrayList Items =
+            new ArrayList();
 
         /// <summary>
-        /// The desc.
+        ///     The desc.
         /// </summary>
         /// <remarks>
         /// </remarks>
-        [XmlAttribute]
-        [DefaultValue("")]
-        public string desc;
+        [XmlAttribute] [DefaultValue("")] public string desc;
 
         /// <summary>
-        /// The name.
+        ///     The name.
         /// </summary>
         /// <remarks>
         /// </remarks>
-        [XmlAttribute]
-        public string name;
+        [XmlAttribute] public string name;
 
         public RecordsRecord()
         {
@@ -56,28 +52,19 @@ namespace TESVSnip.Domain.Data.RecordStructure.Xml
         [XmlIgnore]
         public IEnumerable<Subrecord> AllSubrecords
         {
-            get
-            {
-                return GetSubrecords(this.Items);
-            }
+            get { return GetSubrecords(this.Items); }
         }
 
         [XmlIgnore]
         public IEnumerable<Group> Groups
         {
-            get
-            {
-                return this.Items.OfType<Group>();
-            }
+            get { return this.Items.OfType<Group>(); }
         }
 
         [XmlIgnore]
         public IEnumerable<Subrecord> Subrecords
         {
-            get
-            {
-                return this.Items.OfType<Subrecord>();
-            }
+            get { return this.Items.OfType<Subrecord>(); }
         }
 
         private static IEnumerable<Subrecord> GetSubrecords(ICollection itr)
@@ -86,11 +73,11 @@ namespace TESVSnip.Domain.Data.RecordStructure.Xml
             {
                 if (item is Subrecord)
                 {
-                    yield return (Subrecord)item;
+                    yield return (Subrecord) item;
                 }
                 else if (item is Group)
                 {
-                    foreach (var itm in GetSubrecords(((Group)item).Items))
+                    foreach (var itm in GetSubrecords(((Group) item).Items))
                     {
                         yield return itm;
                     }

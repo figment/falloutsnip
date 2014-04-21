@@ -16,7 +16,7 @@ creatureKYWDs = (0x0001397A, 0x00013798, 0x00013797, 0x00013795) #0x00013796 (un
 def getNPCRaces(plugins):
 	""" Get List of NPC Races.  Basically exclude the creature keywords
 	"""
-	from TESVSnip.Domain.Data.RecordStructure import ElementValueType
+	from TESVSnip.Domain.Data.Structure import ElementValueType
 	result = []
 	for plugin in plugins:
 		races = plugin.GetRecordList('RACE')
@@ -37,7 +37,7 @@ def getNPCRaces(plugins):
 def getNonCreatureNPCs(plugins):
 	""" Get List of NPC Races.  Basically exclude the creature keywords
 	"""
-	from TESVSnip.Domain.Data.RecordStructure import ElementValueType
+	from TESVSnip.Domain.Data.Structure import ElementValueType
 	result = []
 	for plugin in plugins:
 		races = plugin.GetRecordList('NPC_')

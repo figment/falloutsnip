@@ -6,7 +6,7 @@ using System.Linq;
 using System.Runtime.InteropServices;
 using System.Runtime.Serialization;
 using System.Text;
-using TESVSnip.Domain.Data.RecordStructure;
+using TESVSnip.Domain.Data.Structure;
 using TESVSnip.Framework;
 using TESVSnip.Framework.Persistence;
 
@@ -351,6 +351,7 @@ namespace TESVSnip.Domain.Model
         {
             foreach (var es in elements)
             {
+                int count = 0;
                 while (true)
                 {
                     int startoffset = offset;
@@ -370,7 +371,9 @@ namespace TESVSnip.Domain.Model
                         var elem = Element.CreateElement((ElementStructure) es, data, ref offset, rawData);
                         yield return new Tuple<int, Element>(offset, elem);
                     }
-                    if (es.repeat > 0 && startoffset < offset)
+                    if (es.repeat == 0) break;
+                    ++count;
+                    if ((es.repeat == 1 || count < es.repeat) && startoffset < offset)
                         continue;
                     break;
                 }

@@ -1,6 +1,6 @@
 using System;
 
-namespace TESVSnip.Domain.Data.RecordStructure.Xml
+namespace TESVSnip.Domain.Data.Structure.Xml
 {
     internal class RecordXmlException : Exception
     {

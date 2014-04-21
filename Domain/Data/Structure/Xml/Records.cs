@@ -6,10 +6,10 @@ using System.Diagnostics;
 using System.Xml.Schema;
 using System.Xml.Serialization;
 
-namespace TESVSnip.Domain.Data.RecordStructure.Xml
+namespace TESVSnip.Domain.Data.Structure.Xml
 {
     /// <summary>
-    /// The records.
+    ///     The records.
     /// </summary>
     /// <remarks>
     /// </remarks>
@@ -22,13 +22,10 @@ namespace TESVSnip.Domain.Data.RecordStructure.Xml
     public class Records
     {
         /// <summary>
-        /// The items.
+        ///     The items.
         /// </summary>
         /// <remarks>
         /// </remarks>
-        [XmlElement("Group", typeof(Group))]
-        [XmlElement("Record", typeof(RecordsRecord), Form = XmlSchemaForm.Unqualified)]
-        [XmlElement("Subrecord", typeof(Subrecord))]
-        public ArrayList Items = new ArrayList();
+        [XmlElement("Group", typeof (Group))] [XmlElement("Record", typeof (RecordsRecord), Form = XmlSchemaForm.Unqualified)] [XmlElement("Subrecord", typeof (Subrecord))] public ArrayList Items = new ArrayList();
     }
 }

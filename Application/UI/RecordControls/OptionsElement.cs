@@ -3,7 +3,7 @@
     using System;
     using System.Windows.Forms;
 
-    using TESVSnip.Domain.Data.RecordStructure;
+    using Domain.Data.Structure;
     using TESVSnip.Framework;
 
     internal partial class OptionsElement : TextElement

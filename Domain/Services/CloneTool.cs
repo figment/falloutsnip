@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using TESVSnip.Domain.Data.RecordStructure;
+using TESVSnip.Domain.Data.Structure;
 using TESVSnip.Domain.Model;
 using TESVSnip.Framework;
 using TESVSnip.Framework.Collections;

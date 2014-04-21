@@ -1,15 +1,16 @@
-using TESVSnip.Domain.Data.RecordStructure.Xml;
+#region
+
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using TESVSnip.Domain.Data.Structure.Xml;
+using TESVSnip.Domain.Model;
+using TESVSnip.Framework;
+
+#endregion
 
 namespace TESVSnip.UI
 {
-    using System;
-    using System.Collections.Generic;
-    using System.Linq;
-
-    using TESVSnip.Domain.Data.RecordStructure;
-    using TESVSnip.Domain.Model;
-    using TESVSnip.Framework;
-
     internal class RecordBuilder
     {
         private readonly Dictionary<string, RecordsRecord> rdict = new Dictionary<string, RecordsRecord>();
@@ -43,10 +44,7 @@ namespace TESVSnip.UI
 
         private bool IsCanceled
         {
-            get
-            {
-                return this.CancelAction();
-            }
+            get { return CancelAction(); }
         }
 
         private int totalRecordCount;
@@ -80,7 +78,7 @@ namespace TESVSnip.UI
             bool isAscii = true;
             for (int i = 0; i < data.Count - 1 && isAscii; ++i)
             {
-                isAscii = !char.IsControl((char)data.Array[data.Offset + i]);
+                isAscii = !char.IsControl((char) data.Array[data.Offset + i]);
             }
 
             return isAscii && data.Array[data.Count - 1] == 0;
@@ -98,7 +96,7 @@ namespace TESVSnip.UI
 
         public SubrecordElement CreateType(int index, string type)
         {
-            return this.CreateType((index > 0) ? "Unknown " + index.ToString() : null, type);
+            return CreateType((index > 0) ? "Unknown " + index.ToString() : null, type);
         }
 
         public SubrecordElement CreateType(string name, string type)
@@ -111,12 +109,12 @@ namespace TESVSnip.UI
 
         public SubrecordElement CreateType(string type)
         {
-            return this.CreateType(null, type);
+            return CreateType(null, type);
         }
 
         public SubrecordElement CreateBlob()
         {
-            return this.CreateType("blob");
+            return CreateType("blob");
         }
 
         public void Start(Plugin p)
@@ -125,17 +123,18 @@ namespace TESVSnip.UI
             // p.While(r => { if (r is Record) { UpdateProgress(); return Process((Record)r); } });
             var recordList = new List<Record>();
             p.ForEach(
-                r => {
-                    if (r is Record)
+                r =>
                     {
-                        recordList.Add((Record)r);
-                    }
-                });
-            this.totalRecordCount = recordList.Count;
+                        if (r is Record)
+                        {
+                            recordList.Add((Record) r);
+                        }
+                    });
+            totalRecordCount = recordList.Count;
 
             foreach (var kvp in recordList.ToLookup((a) => a.Name))
             {
-                if (!this.Process(kvp.Key, kvp.ToArray()))
+                if (!Process(kvp.Key, kvp.ToArray()))
                 {
                     return;
                 }
@@ -145,18 +144,16 @@ namespace TESVSnip.UI
         public bool Process(string name, Record[] records)
         {
             RecordsRecord rr;
-            if (!this.rdict.TryGetValue(name, out rr))
+            if (!rdict.TryGetValue(name, out rr))
             {
-                rr = new RecordsRecord();
-                rr.name = name;
-                rr.desc = name;
-                this.rdict.Add(name, rr);
+                rr = new RecordsRecord {name = name, desc = name};
+                rdict.Add(name, rr);
             }
 
             foreach (var r in records)
             {
-                this.UpdateProgress();
-                if (!this.CreateSubrecords(rr, r))
+                UpdateProgress();
+                if (!CreateSubrecords(rr, r))
                 {
                     return false;
                 }
@@ -168,11 +165,11 @@ namespace TESVSnip.UI
                 // list of all subrecords matching the given name
                 var ss = (from r in records from s in r.SubRecords where s.Name == sr.name select s).ToArray();
 
-                this.ProcessSubRecord(sr, ss);
+                ProcessSubRecord(sr, ss);
             }
 
             // Post Process
-            IEnumerable<Subrecord> srs = rr.Subrecords;
+            var srs = rr.Subrecords;
             var itr = srs.GetEnumerator();
             for (bool atEnd = itr.MoveNext(); !atEnd;)
             {
@@ -246,12 +243,12 @@ namespace TESVSnip.UI
                     continue;
                 }
 
-                byte[] data = ss.GetReadonlyData();
-                if (IsLikelyString(new ArraySegment<byte>(data, 0, (int)ss.Size)))
+                var data = ss.GetReadonlyData();
+                if (IsLikelyString(new ArraySegment<byte>(data, 0, (int) ss.Size)))
                 {
                     if (++szCount > 10)
                     {
-                        SubrecordElement elem = this.CreateType(null, "string");
+                        var elem = CreateType(null, "string");
                         sr.Items.Add(elem);
                         break;
                     }
@@ -262,14 +259,14 @@ namespace TESVSnip.UI
                 }
             }
 
-            if (!sr.Elements.Any())
+            if (sr.Elements.Any())
             {
                 return; // found string
             }
 
             if (minSize == maxSize && maxSize < 256)
             {
-                sr.size = (int)maxSize;
+                sr.size = (int) maxSize;
                 int index = 0;
 
                 // Walk through each element guessing the data type
@@ -287,7 +284,7 @@ namespace TESVSnip.UI
                     {
                         if (maxSize >= 2)
                         {
-                            var elem = this.CreateType(index++, "short");
+                            var elem = CreateType(index++, "short");
                             elem.size = 2;
                             sr.Items.Add(elem);
                             elemSize = 2;
@@ -295,7 +292,7 @@ namespace TESVSnip.UI
                         }
                         else
                         {
-                            var elem = this.CreateType(index++, "byte");
+                            var elem = CreateType(index++, "byte");
                             elem.size = 1;
                             sr.Items.Add(elem);
                             elemSize = 1;
@@ -307,7 +304,7 @@ namespace TESVSnip.UI
                     {
                         // .Random(srs.Length < 10 ? 0 : srs.Length / 10)
                         ++numTotal;
-                        byte[] data = ss.GetReadonlyData();
+                        var data = ss.GetReadonlyData();
                         uint ui4 = TypeConverter.h2i(data[offset], data[offset + 1], data[offset + 2], data[offset + 3]);
                         if (ui4 == 0)
                         {
@@ -330,7 +327,7 @@ namespace TESVSnip.UI
 
                         if (ui4 > 100)
                         {
-                            Record r = this.FormLookup(ui4);
+                            var r = FormLookup(ui4);
                             if (r != null)
                             {
                                 if (string.IsNullOrEmpty(reftype))
@@ -344,7 +341,7 @@ namespace TESVSnip.UI
                                 }
                             }
 
-                            if (!string.IsNullOrEmpty(this.StringLookup(ui4)))
+                            if (!string.IsNullOrEmpty(StringLookup(ui4)))
                             {
                                 ++isLString;
                             }
@@ -353,41 +350,41 @@ namespace TESVSnip.UI
 
                     if (numTotal > 0)
                     {
-                        float floatPct = (numFloat + numZero) / (float)numTotal;
-                        float shortPct = (num2Short + numZero) / (float)numTotal;
-                        float formPct = (isFormID + numZero) / (float)numTotal;
-                        float lstrPct = (isLString + numZero) / (float)numTotal;
+                        float floatPct = (numFloat + numZero)/(float) numTotal;
+                        float shortPct = (num2Short + numZero)/(float) numTotal;
+                        float formPct = (isFormID + numZero)/(float) numTotal;
+                        float lstrPct = (isLString + numZero)/(float) numTotal;
 
                         if (numFloat > 0 && floatPct > 0.5f)
                         {
-                            var elem = this.CreateType(index++, "float");
+                            var elem = CreateType(index++, "float");
                             elem.size = 4;
                             sr.Items.Add(elem);
                         }
                         else if (num2Short > 0 && shortPct > 0.5f)
                         {
-                            var elem = this.CreateType(index++, "short");
+                            var elem = CreateType(index++, "short");
                             elem.size = 2;
                             sr.Items.Add(elem);
                             sr.Items.Add(elem);
-                            this.UpdateSize(sr);
+                            UpdateSize(sr);
                         }
                         else if (isFormID > 0 && formPct > 0.5f)
                         {
-                            var elem = this.CreateType(index++, "formid");
+                            var elem = CreateType(index++, "formid");
                             elem.reftype = reftype;
                             elem.size = 4;
                             sr.Items.Add(elem);
                         }
                         else if (isLString > 0 && lstrPct > 0.5f)
                         {
-                            var elem = this.CreateType(index++, "lstring");
+                            var elem = CreateType(index++, "lstring");
                             elem.size = 4;
                             sr.Items.Add(elem);
                         }
                         else
                         {
-                            var elem = this.CreateType(index++, "int");
+                            var elem = CreateType(index++, "int");
                             elem.size = 4;
                             sr.Items.Add(elem);
                         }
@@ -399,14 +396,14 @@ namespace TESVSnip.UI
                 // guess dynamically sized object... default to blob
                 if (!sr.Elements.Any())
                 {
-                    long modSum = srs.Sum(a => a.Size % 4); // useful if we suspect this is an array of integers
+                    long modSum = srs.Sum(a => a.Size%4); // useful if we suspect this is an array of integers
                     if (modSum == 0)
                     {
                         int count = 0;
                         string reftype = null;
                         foreach (var ss in srs)
                         {
-                            byte[] data = ss.GetReadonlyData();
+                            var data = ss.GetReadonlyData();
                             int offset = 0;
                             uint ui4 = GetUInt32(data, offset);
                             if (ui4 < 100)
@@ -414,7 +411,7 @@ namespace TESVSnip.UI
                                 continue;
                             }
 
-                            Record r = this.FormLookup(ui4);
+                            var r = FormLookup(ui4);
                             if (r != null)
                             {
                                 if (string.IsNullOrEmpty(reftype))
@@ -437,7 +434,7 @@ namespace TESVSnip.UI
 
                         if (count > 0)
                         {
-                            var elem = this.CreateType("ID", "formid");
+                            var elem = CreateType("ID", "formid");
                             elem.reftype = reftype;
                             elem.size = 4;
                             elem.repeat = 1;
@@ -452,7 +449,7 @@ namespace TESVSnip.UI
 
                 if (!sr.Elements.Any())
                 {
-                    sr.Items.Add(this.CreateBlob());
+                    sr.Items.Add(CreateBlob());
                 }
             }
         }
@@ -460,13 +457,15 @@ namespace TESVSnip.UI
         private bool CreateSubrecords(RecordsRecord rr, Record r)
         {
             // int srIdx = 0;
-            var groups = from psr in r.SubRecords group psr by psr.Name into g select new { Name = g.Key, Records = g.ToArray() };
+            var groups = from psr in r.SubRecords
+                         group psr by psr.Name
+                         into g select new {Name = g.Key, Records = g.ToArray()};
 
             int lastIndex = 0;
             var dict = new Dictionary<string, Subrecord>();
             foreach (var kvp in groups)
             {
-                if (this.IsCanceled)
+                if (IsCanceled)
                 {
                     return false;
                 }
@@ -474,7 +473,7 @@ namespace TESVSnip.UI
                 // if (kvp.Name.Count(a => !Char.IsLetterOrDigit(a)) > 0) continue;
                 int n = kvp.Records.Length;
 
-                Subrecord sr = rr.Subrecords.FirstOrDefault(x => x.name == kvp.Name);
+                var sr = rr.Subrecords.FirstOrDefault(x => x.name == kvp.Name);
                 if (sr == null)
                 {
                     sr = new Subrecord();
@@ -526,11 +525,11 @@ namespace TESVSnip.UI
 
         private void UpdateProgress()
         {
-            var counter = (int)(++this.currentRecordIndex / (float)this.totalRecordCount * 100.0f);
-            if (counter != this.progressCount)
+            var counter = (int) (++currentRecordIndex/(float) totalRecordCount*100.0f);
+            if (counter != progressCount)
             {
-                this.progressCount = counter;
-                this.UpdateProgressAction(this.progressCount);
+                progressCount = counter;
+                UpdateProgressAction(progressCount);
             }
         }
 
@@ -796,7 +795,7 @@ namespace TESVSnip.UI
         public Records Complete()
         {
             var records = new Records();
-            foreach (var rr in this.rdict.Values)
+            foreach (var rr in rdict.Values)
             {
                 var itr = rr.Subrecords.GetEnumerator();
                 for (bool atEnd = itr.MoveNext(); !atEnd;)
@@ -833,35 +832,35 @@ namespace TESVSnip.UI
                 }
             }
 
-            records.Items.AddRange(this.rdict.Values);
+            records.Items.AddRange(rdict.Values);
             return records;
         }
 
         /// <summary>
-        /// Update records using another record list.
+        ///     Update records using another record list.
         /// </summary>
         /// <param name="baseRecords">
-        /// Records to use as base records. 
+        ///     Records to use as base records.
         /// </param>
         /// <param name="updateRecords">
-        /// Inplace records to update. 
+        ///     Inplace records to update.
         /// </param>
         internal void MergeRecords(IEnumerable<RecordsRecord> baseRecords, IEnumerable<RecordsRecord> updateRecords)
         {
             foreach (var r in updateRecords)
             {
-                this.MergeRecord(baseRecords.FirstOrDefault(a => a.name == r.name), r);
+                MergeRecord(baseRecords.FirstOrDefault(a => a.name == r.name), r);
             }
         }
 
         /// <summary>
-        /// Update records using another record list.
+        ///     Update records using another record list.
         /// </summary>
         /// <param name="baseRecord">
-        /// The base Record.
+        ///     The base Record.
         /// </param>
         /// <param name="updateRecord">
-        /// The update Record.
+        ///     The update Record.
         /// </param>
         internal void MergeRecord(RecordsRecord baseRecord, RecordsRecord updateRecord)
         {
@@ -877,7 +876,7 @@ namespace TESVSnip.UI
 
             foreach (var sr in updateRecord.AllSubrecords)
             {
-                this.MergeRecord(baseRecord.AllSubrecords.FirstOrDefault(a => a.name == sr.name), sr);
+                MergeRecord(baseRecord.AllSubrecords.FirstOrDefault(a => a.name == sr.name), sr);
             }
         }
 

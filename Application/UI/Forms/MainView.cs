@@ -1,48 +1,51 @@
+#region
+
+using System;
+using System.Collections;
+using System.Collections.Generic;
+using System.ComponentModel;
 using System.Configuration;
-using System.Text;
+using System.Diagnostics;
+using System.Drawing;
+using System.Dynamic;
+using System.Globalization;
+using System.IO;
 using System.Linq;
+using System.Reflection;
+using System.Runtime.InteropServices;
+using System.Text;
+using System.Text.RegularExpressions;
+using System.Threading;
 using System.Web;
-using System.Windows.Media.Animation;
-using IronPython.Runtime;
+using System.Windows.Forms;
+using System.Xml.Serialization;
+using IronPython.Hosting;
+using JWC;
 using Microsoft.Win32;
-using PythonConsoleControl;
-using TESVSnip.Domain.Data.RecordStructure.Xml;
+using TESVSnip.Domain.Data;
+using TESVSnip.Domain.Data.Structure;
+using TESVSnip.Domain.Data.Structure.Xml;
+using TESVSnip.Domain.Model;
 using TESVSnip.Domain.Scripts;
-using TESVSnip.UI.Rendering.Extensions;
+using TESVSnip.Domain.Services;
+using TESVSnip.Framework;
+using TESVSnip.Properties;
+using TESVSnip.TranslateUI;
+using TESVSnip.UI.Docking;
+using TESVSnip.UI.ObjectControls;
+using TESVSnip.UI.Rendering;
 using TESVSnip.UI.Services;
-using PyInterpreter = TESVSnip.Domain.Scripts.PyInterpreter;
+using WeifenLuo.WinFormsUI.Docking;
+using Encoding = TESVSnip.Framework.Services.Encoding;
+using OpenFileDialog = System.Windows.Forms.OpenFileDialog;
+using SaveFileDialog = System.Windows.Forms.SaveFileDialog;
+using Settings = TESVSnip.Properties.Settings;
+using Timer = System.Threading.Timer;
+
+#endregion
 
 namespace TESVSnip.UI.Forms
 {
-    using System;
-    using System.Collections.Generic;
-    using System.ComponentModel;
-    using System.Diagnostics;
-    using System.Drawing;
-    using System.Globalization;
-    using System.IO;
-    using System.Linq;
-    using System.Reflection;
-    using System.Runtime.InteropServices;
-    using System.Text.RegularExpressions;
-    using System.Threading;
-    using System.Windows.Forms;
-    using System.Xml.Serialization;
-
-    using TESVSnip.Domain.Data.RecordStructure;
-    using TESVSnip.Domain.Model;
-    using TESVSnip.Domain.Services;
-    using TESVSnip.Framework;
-    using TESVSnip.Framework.Services;
-    using TESVSnip.Properties;
-    using TESVSnip.UI.Docking;
-    using TESVSnip.UI.ObjectControls;
-
-    using WeifenLuo.WinFormsUI.Docking;
-
-    using Settings = TESVSnip.Properties.Settings;
-    using Timer = System.Threading.Timer;
-
     internal partial class MainView : Form
     {
         private const int WM_SETREDRAW = 0x0b;
@@ -53,71 +56,66 @@ namespace TESVSnip.UI.Forms
                 RegexOptions.None);
 
         private static object s_clipboard;
-
-        internal Dictionary<string, ToolStripMenuItem> languageToolBarItems =
-            new Dictionary<string, ToolStripMenuItem>(StringComparer.InvariantCultureIgnoreCase);
-
+        private static string mruRegKey = "SOFTWARE\\TESVSnip (Skyrim Edition)\\MRU";
         private readonly SelectionContext Selection;
-
-        private readonly PluginTreeContent pluginTreeContent = new PluginTreeContent();
         private readonly HtmlContent htmlContent = new HtmlContent();
-
-        private OutputTextContent outputTextContent = null;
-
+        private readonly MruStripMenu mruMenu;
+        private readonly PluginTreeContent pluginTreeContent = new PluginTreeContent();
         private readonly SubrecordListContent subrecordListContent = new SubrecordListContent();
 
         private volatile bool backgroundWorkCanceled;
 
         private bool inRebuildSelection;
 
+        internal Dictionary<string, ToolStripMenuItem> languageToolBarItems =
+            new Dictionary<string, ToolStripMenuItem>(StringComparer.InvariantCultureIgnoreCase);
         private DeserializeDockContent mDeserializeDockContent;
-
+        private OutputTextContent outputTextContent;
         private Timer statusTimer;
-
         private StringsEditor stringEditor;
-
-        private JWC.MruStripMenu mruMenu;
-        private static string mruRegKey = "SOFTWARE\\TESVSnip (Skyrim Edition)\\MRU";
 
         public MainView()
         {
-            if (!RecordStructure.Loaded)
-            {
-                try
-                {
-                    RecordStructure.Load();
-                }
-                catch (Exception ex)
-                {
-                    MessageBox.Show(Resources.CannotParseRecordStructure + ex.Message, Resources.WarningText);
-                }
-            }
+            // TODO: Load Record Structure?
+            //if (!RecordStructure.Loaded)
+            //{
+            //    try
+            //    {
+            //        RecordStructure.Load();
+            //    }
+            //    catch (Exception ex)
+            //    {
+            //        MessageBox.Show(Resources.CannotParseRecordStructure + ex.Message, Resources.WarningText);
+            //    }
+            //}
 
-            this.InitializeComponent();
-            this.InitializeToolStripFind();
-            this.InitializeDockingWindows();
-            this.RegisterMessageFilter();
+            DomainDefinition.DomainLoaded += DomainDefinitionOnDomainLoaded;
 
-            this.PluginTree.SelectionChanged += (o, e) => this.RebuildSelection();
+            InitializeComponent();
+            InitializeToolStripFind();
+            InitializeDockingWindows();
+            RegisterMessageFilter();
+
+            PluginTree.SelectionChanged += (o, e) => RebuildSelection();
 
             if (string.IsNullOrEmpty(Settings.Default.DefaultSaveFolder) ||
                 !Directory.Exists(Settings.Default.DefaultSaveFolder))
             {
-                this.SaveModDialog.InitialDirectory = Options.Value.GameDataDirectory;
+                SaveModDialog.InitialDirectory = Options.Value.GameDataDirectory;
             }
             else
             {
-                this.SaveModDialog.InitialDirectory = Settings.Default.DefaultSaveFolder;
+                SaveModDialog.InitialDirectory = Settings.Default.DefaultSaveFolder;
             }
 
             if (string.IsNullOrEmpty(Settings.Default.DefaultOpenFolder) ||
                 !Directory.Exists(Settings.Default.DefaultOpenFolder))
             {
-                this.OpenModDialog.InitialDirectory = Options.Value.GameDataDirectory;
+                OpenModDialog.InitialDirectory = Options.Value.GameDataDirectory;
             }
             else
             {
-                this.OpenModDialog.InitialDirectory = Settings.Default.DefaultOpenFolder;
+                OpenModDialog.InitialDirectory = Settings.Default.DefaultOpenFolder;
             }
 
             Icon = Resources.tesv_ico;
@@ -138,51 +136,41 @@ namespace TESVSnip.UI.Forms
             {
             }
 
-            this.useWindowsClipboardToolStripMenuItem.Checked = Settings.Default.UseWindowsClipboard;
-            this.noWindowsSoundsToolStripMenuItem.Checked = Settings.Default.NoWindowsSounds;
-            this.saveStringsFilesToolStripMenuItem.Checked = Domain.Properties.Settings.Default.SaveStringsFiles;
+            useWindowsClipboardToolStripMenuItem.Checked = Settings.Default.UseWindowsClipboard;
+            noWindowsSoundsToolStripMenuItem.Checked = Settings.Default.NoWindowsSounds;
+            saveStringsFilesToolStripMenuItem.Checked = Domain.Properties.Settings.Default.SaveStringsFiles;
 
-            this.useNewSubrecordEditorToolStripMenuItem.Checked = !Settings.Default.UseOldSubRecordEditor;
-            this.hexModeToolStripMenuItem.Checked = Settings.Default.UseHexSubRecordEditor;
-            this.uTF8ModeToolStripMenuItem.Checked = Framework.Properties.Settings.Default.UseUTF8;
+            useNewSubrecordEditorToolStripMenuItem.Checked = !Settings.Default.UseOldSubRecordEditor;
+            hexModeToolStripMenuItem.Checked = Settings.Default.UseHexSubRecordEditor;
+            uTF8ModeToolStripMenuItem.Checked = Framework.Properties.Settings.Default.UseUTF8;
 
-            this.Selection = new SelectionContext();
-            this.Selection.formIDLookup = this.LookupFormIDI;
-            this.Selection.strLookup = this.LookupFormStrings;
-            this.Selection.formIDLookupR = this.GetRecordByID;
+            Selection = new SelectionContext();
+            Selection.formIDLookup = LookupFormIDI;
+            Selection.strLookup = LookupFormStrings;
+            Selection.formIDLookupR = GetRecordByID;
 
-            this.SubrecordList.SetContext(this.Selection);
-            this.InitializeLanguage();
+            SubrecordList.SetContext(Selection);
+            InitializeLanguage();
 
-            ClipboardChanged += (o, e) => this.RebuildSelection();
-            this.Selection.RecordChanged += (o, a) => this.RebuildSelection();
-            this.Selection.SubRecordChanged += (o, a) => this.RebuildSelection();
+            ClipboardChanged += (o, e) => RebuildSelection();
+            Selection.RecordChanged += (o, a) => RebuildSelection();
+            Selection.SubRecordChanged += (o, a) => RebuildSelection();
 
-            this.PluginTree.OnSelectionUpdated += this.PluginTree_OnSelectionUpdated;
+            PluginTree.OnSelectionUpdated += PluginTree_OnSelectionUpdated;
 
-            this.PluginTree.SelectionChanged += this.PluginTree_SelectionChanged;
-            this.SubrecordList.SelectionChanged += this.subrecordPanel_SelectionChanged;
-            this.SubrecordList.OnSubrecordChanged += this.subrecordPanel_OnSubrecordChanged;
-            this.SubrecordList.DataChanged += this.subrecordPanel_DataChanged;
-            PluginList.ChildListChanged += PluginList_ChildListChanged;
+            PluginTree.SelectionChanged += PluginTree_SelectionChanged;
+            SubrecordList.SelectionChanged += subrecordPanel_SelectionChanged;
+            SubrecordList.OnSubrecordChanged += subrecordPanel_OnSubrecordChanged;
+            SubrecordList.DataChanged += subrecordPanel_DataChanged;
+            BaseRecord.ChildListChanged += PluginList_ChildListChanged;
 
-            this.htmlContent.OnLinkClicked += htmlContent_OnLinkClicked;
-            this.LocalizeApp();
+            htmlContent.OnLinkClicked += htmlContent_OnLinkClicked;
+            LocalizeApp();
             PyInterpreter.InitPyInterpreter();
-            TESVSnip.UI.Rendering.HtmlRenderer.Initialize();
-            mruMenu = new JWC.MruStripMenu(recentFilelToolStripMenuItem, new JWC.MruStripMenu.ClickedHandler(OnMruFile),
+            HtmlRenderer.Initialize();
+            mruMenu = new MruStripMenu(recentFilelToolStripMenuItem, OnMruFile,
                                        mruRegKey + "\\MRU", true, 16);
         }
-
-        void PluginList_ChildListChanged(object sender, RecordChangeEventArgs e)
-        {
-            this.RebuildSelection();
-            this.UpdateStringEditor();
-            this.FixMasters();
-            this.PluginTree.UpdateRoots();
-        }
-
-        public static event EventHandler ClipboardChanged;
 
         public static object Clipboard
         {
@@ -200,13 +188,28 @@ namespace TESVSnip.UI.Forms
 
         private PluginTreeView PluginTree
         {
-            get { return this.pluginTreeContent.PluginTree; }
+            get { return pluginTreeContent.PluginTree; }
         }
 
         private SubrecordListEditor SubrecordList
         {
-            get { return this.subrecordListContent.SubrecordList; }
+            get { return subrecordListContent.SubrecordList; }
         }
+
+        private void DomainDefinitionOnDomainLoaded(object sender, EventArgs eventArgs)
+        {
+            ReinitializeToolStripFind();
+        }
+
+        private void PluginList_ChildListChanged(object sender, RecordChangeEventArgs e)
+        {
+            RebuildSelection();
+            UpdateStringEditor();
+            FixMasters();
+            PluginTree.UpdateRoots();
+        }
+
+        public static event EventHandler ClipboardChanged;
 
         public static void PostStatusText(string text)
         {
@@ -229,8 +232,8 @@ namespace TESVSnip.UI.Forms
 
         public void CancelBackgroundProcess()
         {
-            this.backgroundWorkCanceled = true;
-            this.backgroundWorker1.CancelAsync();
+            backgroundWorkCanceled = true;
+            backgroundWorker1.CancelAsync();
         }
 
         public RecordSearchForm CreateSearchWindow()
@@ -254,13 +257,13 @@ namespace TESVSnip.UI.Forms
             }
             else
             {
-                if (this.dockPanel.ActiveDocumentPane != null)
+                if (dockPanel.ActiveDocumentPane != null)
                 {
-                    form.Show(this.dockPanel.ActiveDocumentPane, DockAlignment.Bottom, 0.33);
+                    form.Show(dockPanel.ActiveDocumentPane, DockAlignment.Bottom, 0.33);
                 }
                 else
                 {
-                    form.Show(this.dockPanel, DockState.Document);
+                    form.Show(dockPanel, DockState.Document);
                 }
             }
 
@@ -269,17 +272,17 @@ namespace TESVSnip.UI.Forms
 
         public bool IsBackroundProcessCanceled()
         {
-            return this.backgroundWorkCanceled;
+            return backgroundWorkCanceled;
         }
 
         /// <summary>
-        /// Send text to status and then clear 5 seconds later.
+        ///     Send text to status and then clear 5 seconds later.
         /// </summary>
         /// <param name="text">
         /// </param>
         public void SendStatusText(string text)
         {
-            this.SendStatusText(text, SystemColors.ControlText);
+            SendStatusText(text, SystemColors.ControlText);
         }
 
         public void SendStatusText(string text, Color color)
@@ -288,23 +291,23 @@ namespace TESVSnip.UI.Forms
             {
                 if (InvokeRequired)
                 {
-                    Invoke(new Action<string, Color>(this.SendStatusText), new object[] {text, color});
+                    Invoke(new Action<string, Color>(SendStatusText), new object[] {text, color});
                 }
                 else
                 {
-                    this.toolStripStatusLabel.ForeColor = color;
-                    this.toolStripStatusLabel.Text = text;
-                    if (this.statusTimer == null)
+                    toolStripStatusLabel.ForeColor = color;
+                    toolStripStatusLabel.Text = text;
+                    if (statusTimer == null)
                     {
-                        this.statusTimer = new Timer(
+                        statusTimer = new Timer(
                             o =>
-                            Invoke(new TimerCallback(o2 => { this.toolStripStatusLabel.Text = string.Empty; }),
+                            Invoke(new TimerCallback(o2 => { toolStripStatusLabel.Text = string.Empty; }),
                                    new object[] {string.Empty}), string.Empty, TimeSpan.FromSeconds(15),
                             TimeSpan.FromMilliseconds(-1));
                     }
                     else
                     {
-                        this.statusTimer.Change(TimeSpan.FromSeconds(15), TimeSpan.FromMilliseconds(-1));
+                        statusTimer.Change(TimeSpan.FromSeconds(15), TimeSpan.FromMilliseconds(-1));
                     }
                 }
             }
@@ -315,22 +318,22 @@ namespace TESVSnip.UI.Forms
 
         public void StartBackgroundWork(Action workAction, Action completedAction)
         {
-            if (this.backgroundWorker1.IsBusy)
+            if (backgroundWorker1.IsBusy)
             {
                 return;
             }
 
-            this.EnableUserInterface(false);
-            this.backgroundWorkCanceled = false;
-            this.toolStripStatusProgressBar.ProgressBar.Value = this.toolStripStatusProgressBar.Minimum;
-            this.toolStripStatusProgressBar.Visible = true;
-            this.toolStripStopProgress.Visible = true;
-            this.backgroundWorker1.RunWorkerAsync(new[] {workAction, completedAction});
+            EnableUserInterface(false);
+            backgroundWorkCanceled = false;
+            toolStripStatusProgressBar.ProgressBar.Value = toolStripStatusProgressBar.Minimum;
+            toolStripStatusProgressBar.Visible = true;
+            toolStripStopProgress.Visible = true;
+            backgroundWorker1.RunWorkerAsync(new[] {workAction, completedAction});
         }
 
         public void UpdateBackgroundProgress(int percentProgress)
         {
-            this.backgroundWorker1.ReportProgress(percentProgress);
+            backgroundWorker1.ReportProgress(percentProgress);
         }
 
         internal static object GetClipboardData()
@@ -435,7 +438,7 @@ namespace TESVSnip.UI.Forms
         {
             try
             {
-                var p = new Plugin(s, false, this.GetRecordFilter(s));
+                var p = new Plugin(s, false, GetRecordFilter(s));
                 PluginList.All.AddRecord(p);
                 //this.UpdateStringEditor();
                 //this.FixMasters();
@@ -447,7 +450,7 @@ namespace TESVSnip.UI.Forms
             }
             finally
             {
-                this.ClearCachedInfo();
+                ClearCachedInfo();
             }
         }
 
@@ -458,7 +461,7 @@ namespace TESVSnip.UI.Forms
             {
                 if (m.WParam == new IntPtr((int) Keys.F6))
                 {
-                    var current = this.dockPanel.ActiveContent;
+                    var current = dockPanel.ActiveContent;
                     if (current != null)
                     {
                         var next = current.DockHandler.NextActive;
@@ -522,16 +525,16 @@ namespace TESVSnip.UI.Forms
         private void CloseAllContents()
         {
             // we don't want to create another instance of tool window, set DockPanel to null
-            this.pluginTreeContent.DockPanel = null;
-            this.subrecordListContent.DockPanel = null;
+            pluginTreeContent.DockPanel = null;
+            subrecordListContent.DockPanel = null;
         }
 
         private void CloseStringEditor()
         {
-            if (this.stringEditor != null)
+            if (stringEditor != null)
             {
-                StringsEditor editor = this.stringEditor;
-                this.stringEditor = null;
+                var editor = stringEditor;
+                stringEditor = null;
                 try
                 {
                     if (!editor.IsDisposed)
@@ -547,7 +550,7 @@ namespace TESVSnip.UI.Forms
 
         private void CopySelectedSubRecord()
         {
-            var sr = this.GetSelectedSubrecords();
+            var sr = GetSelectedSubrecords();
             if (sr == null)
             {
                 return;
@@ -559,15 +562,15 @@ namespace TESVSnip.UI.Forms
         private void CopySelection()
         {
             // Route to focused control.
-            if (this.PluginTree.ContainsFocus)
+            if (PluginTree.ContainsFocus)
             {
-                this.PluginTree.CopySelectedRecord();
+                PluginTree.CopySelectedRecord();
             }
-            else if (this.SubrecordList.ContainsFocus)
+            else if (SubrecordList.ContainsFocus)
             {
-                if (this.Selection.SelectedSubrecord)
+                if (Selection.SelectedSubrecord)
                 {
-                    this.CopySelectedSubRecord();
+                    CopySelectedSubRecord();
                 }
             }
         }
@@ -576,9 +579,9 @@ namespace TESVSnip.UI.Forms
         {
             // ControlEnable(this.splitHorizontal, enable);
             // ControlEnable(this.splitVertical, enable);
-            ControlEnable(this.menuStrip1, enable);
-            ControlEnable(this.toolStripIncrFind, enable);
-            ControlEnable(this.toolStripIncrInvalidRec, enable);
+            ControlEnable(menuStrip1, enable);
+            ControlEnable(toolStripIncrFind, enable);
+            ControlEnable(toolStripIncrInvalidRec, enable);
         }
 
         private void FixMasters()
@@ -590,18 +593,18 @@ namespace TESVSnip.UI.Forms
         {
             if (persistString == typeof (PluginTreeContent).ToString())
             {
-                return this.pluginTreeContent;
+                return pluginTreeContent;
             }
 
             if (persistString == typeof (SubrecordListContent).ToString())
             {
-                return this.subrecordListContent;
+                return subrecordListContent;
             }
 
 
             if (persistString == typeof (HtmlContent).ToString())
             {
-                return this.htmlContent;
+                return htmlContent;
             }
 
             return null;
@@ -609,7 +612,7 @@ namespace TESVSnip.UI.Forms
 
         private Plugin GetPluginFromNode(BaseRecord node)
         {
-            BaseRecord tn = node;
+            var tn = node;
             if (tn is Plugin)
             {
                 return (Plugin) tn;
@@ -630,9 +633,9 @@ namespace TESVSnip.UI.Forms
 
         private Record GetRecordByID(uint id)
         {
-            if (this.Selection != null && this.Selection.Record != null)
+            if (Selection != null && Selection.Record != null)
             {
-                var p = this.GetPluginFromNode(this.Selection.Record);
+                var p = GetPluginFromNode(Selection.Record);
                 if (p != null)
                 {
                     return p.GetRecordByID(id);
@@ -650,7 +653,7 @@ namespace TESVSnip.UI.Forms
             {
                 if (string.Compare(Path.GetFileName(s), "skyrim.esm", StringComparison.OrdinalIgnoreCase) == 0)
                 {
-                    DialogResult result = MessageBox.Show(
+                    var result = MessageBox.Show(
                         this, Resources.MainView_FirstTimeSkyrimLoad_ExcludeInquiry, Resources.FirstLoadOptions,
                         MessageBoxButtons.YesNoCancel, MessageBoxIcon.Question, MessageBoxDefaultButton.Button1);
                     if (result == DialogResult.Yes)
@@ -700,7 +703,7 @@ namespace TESVSnip.UI.Forms
 
                 if (applyfilter && bAskToApplyFilter && !Settings.Default.DontAskUserAboutFiltering)
                 {
-                    DialogResult result = MessageBox.Show(
+                    var result = MessageBox.Show(
                         this, Resources.ESM_Large_File_Size_Inquiry, Resources.Filter_Options_Text,
                         MessageBoxButtons.YesNo, MessageBoxIcon.Question, MessageBoxDefaultButton.Button1);
                     applyfilter = result == DialogResult.Yes;
@@ -718,7 +721,7 @@ namespace TESVSnip.UI.Forms
 
         private SelectionContext GetSelectedContext()
         {
-            return this.Selection;
+            return Selection;
 
             // context.Record = this.parentRecord
             // context.SubRecord = GetSelectedSubrecord();
@@ -726,63 +729,63 @@ namespace TESVSnip.UI.Forms
 
         private SubRecord GetSelectedSubrecord()
         {
-            return this.SubrecordList.GetSelectedSubrecord();
+            return SubrecordList.GetSelectedSubrecord();
         }
 
         private IEnumerable<SubRecord> GetSelectedSubrecords()
         {
-            return this.SubrecordList.GetSelectedSubrecords();
+            return SubrecordList.GetSelectedSubrecords();
         }
 
         private void InitializeDockingWindows()
         {
-            this.mDeserializeDockContent = this.GetContentFromPersistString;
+            mDeserializeDockContent = GetContentFromPersistString;
         }
 
         private void InitializeLanguage()
         {
-            this.languageToolBarItems.Add("English", this.englishToolStripMenuItem);
-            this.languageToolBarItems.Add("Czech", this.czechToolStripMenuItem);
-            this.languageToolBarItems.Add("French", this.frenchToolStripMenuItem);
-            this.languageToolBarItems.Add("German", this.germanToolStripMenuItem);
-            this.languageToolBarItems.Add("Italian", this.italianToolStripMenuItem);
-            this.languageToolBarItems.Add("Spanish", this.spanishToolStripMenuItem);
-            this.languageToolBarItems.Add("Russian", this.russianToolStripMenuItem);
-            this.languageToolBarItems.Add("Polish", this.polishToolStripMenuItem);
+            languageToolBarItems.Add("English", englishToolStripMenuItem);
+            languageToolBarItems.Add("Czech", czechToolStripMenuItem);
+            languageToolBarItems.Add("French", frenchToolStripMenuItem);
+            languageToolBarItems.Add("German", germanToolStripMenuItem);
+            languageToolBarItems.Add("Italian", italianToolStripMenuItem);
+            languageToolBarItems.Add("Spanish", spanishToolStripMenuItem);
+            languageToolBarItems.Add("Russian", russianToolStripMenuItem);
+            languageToolBarItems.Add("Polish", polishToolStripMenuItem);
         }
 
         private void LayoutDockingWindows(bool force)
         {
             try
             {
-                if (!force && IsVisible(this.pluginTreeContent) && IsVisible(this.subrecordListContent) &&
+                if (!force && IsVisible(pluginTreeContent) && IsVisible(subrecordListContent) &&
                     IsVisible(htmlContent))
                 {
                     return;
                 }
 
-                this.dockPanel.SuspendLayout(true);
+                dockPanel.SuspendLayout(true);
                 if (force)
                 {
-                    this.pluginTreeContent.DockPanel = null;
-                    this.subrecordListContent.DockPanel = null;
-                    this.htmlContent.DockPanel = null;
+                    pluginTreeContent.DockPanel = null;
+                    subrecordListContent.DockPanel = null;
+                    htmlContent.DockPanel = null;
                 }
 
-                if (!IsVisible(this.pluginTreeContent) || force)
+                if (!IsVisible(pluginTreeContent) || force)
                 {
-                    this.pluginTreeContent.Show(this.dockPanel, DockState.DockLeft);
-                    this.dockPanel.Width = Math.Max(this.dockPanel.Width, this.pluginTreeContent.MinimumSize.Width);
+                    pluginTreeContent.Show(dockPanel, DockState.DockLeft);
+                    dockPanel.Width = Math.Max(dockPanel.Width, pluginTreeContent.MinimumSize.Width);
                 }
 
-                if (!IsVisible(this.subrecordListContent) || force)
+                if (!IsVisible(subrecordListContent) || force)
                 {
-                    this.subrecordListContent.Show(this.pluginTreeContent.Pane, DockAlignment.Bottom, 0.5);
+                    subrecordListContent.Show(pluginTreeContent.Pane, DockAlignment.Bottom, 0.5);
                 }
 
-                if (!IsVisible(this.htmlContent) || force)
+                if (!IsVisible(htmlContent) || force)
                 {
-                    this.htmlContent.Show(this.dockPanel, DockState.Document);
+                    htmlContent.Show(dockPanel, DockState.Document);
                 }
             }
             catch
@@ -790,7 +793,7 @@ namespace TESVSnip.UI.Forms
             }
             finally
             {
-                this.dockPanel.ResumeLayout(true, true);
+                dockPanel.ResumeLayout(true, true);
             }
         }
 
@@ -801,8 +804,8 @@ namespace TESVSnip.UI.Forms
             {
                 try
                 {
-                    this.dockPanel.SuspendLayout(true);
-                    this.dockPanel.LoadFromXml(configFile, this.mDeserializeDockContent);
+                    dockPanel.SuspendLayout(true);
+                    dockPanel.LoadFromXml(configFile, mDeserializeDockContent);
                 }
                 catch
                 {
@@ -819,23 +822,23 @@ namespace TESVSnip.UI.Forms
                 }
                 finally
                 {
-                    this.dockPanel.ResumeLayout(true, true);
+                    dockPanel.ResumeLayout(true, true);
                 }
             }
 
-            this.LayoutDockingWindows(force: false);
+            LayoutDockingWindows(force: false);
         }
 
         private string LookupFormIDI(uint id)
         {
-            return this.LookupFormIDI(this.Selection, id);
+            return LookupFormIDI(Selection, id);
         }
 
         private string LookupFormIDI(SelectionContext context, uint id)
         {
             if (context != null && context.Record != null)
             {
-                var p = this.GetPluginFromNode(context.Record);
+                var p = GetPluginFromNode(context.Record);
                 if (p != null)
                 {
                     p.LookupFormID(id);
@@ -847,9 +850,9 @@ namespace TESVSnip.UI.Forms
 
         private string LookupFormStrings(uint id)
         {
-            if (this.Selection != null && this.Selection.Record != null)
+            if (Selection != null && Selection.Record != null)
             {
-                var p = this.GetPluginFromNode(this.Selection.Record);
+                var p = GetPluginFromNode(Selection.Record);
                 if (p != null)
                 {
                     return p.LookupFormStrings(id);
@@ -861,12 +864,12 @@ namespace TESVSnip.UI.Forms
 
         private void MainView_Load(object sender, EventArgs e)
         {
-            this.LoadDockingWindows();
-            this.FixMasters();
-            this.toolStripIncrFind.Visible = false;
-            this.toolStripIncrFind.Enabled = false;
-            this.toolStripIncrInvalidRec.Visible = false;
-            this.toolStripIncrInvalidRec.Enabled = false;
+            LoadDockingWindows();
+            FixMasters();
+            toolStripIncrFind.Visible = false;
+            //toolStripIncrFind.Enabled = false;
+            toolStripIncrInvalidRec.Visible = false;
+            //toolStripIncrInvalidRec.Enabled = false;
             BuildDynamicScriptsMenu();
         }
 
@@ -876,13 +879,13 @@ namespace TESVSnip.UI.Forms
             // dockingManagerExtender.DockingManager.ContentHiding +=
             // delegate(Content c, CancelEventArgs cea) { cea.Cancel = true; };
             // dockingManagerExtender.DockingManager.ShowAllContents();
-            this.ShowDockingWindows();
+            ShowDockingWindows();
 
             if (!DesignMode)
             {
                 try
                 {
-                    Assembly asm = Assembly.GetExecutingAssembly();
+                    var asm = Assembly.GetExecutingAssembly();
                     var attr =
                         asm.GetCustomAttributes(true).OfType<AssemblyInformationalVersionAttribute>().FirstOrDefault();
                     if (attr != null)
@@ -897,14 +900,14 @@ namespace TESVSnip.UI.Forms
         }
 
         /// <summary>
-        /// This routine assigns Structure definitions to subrecords.
+        ///     This routine assigns Structure definitions to subrecords.
         /// </summary>
         /// <returns>
-        /// The System.Boolean.
+        ///     The System.Boolean.
         /// </returns>
         private bool MatchRecordStructureToRecord()
         {
-            var rec = this.Selection.Record as Record;
+            var rec = Selection.Record as Record;
             if (rec == null)
             {
                 return false;
@@ -921,45 +924,45 @@ namespace TESVSnip.UI.Forms
                 return;
             }
 
-            if (this.PluginTree.ContainsFocus)
+            if (PluginTree.ContainsFocus)
             {
-                this.PluginTree.PasteFromClipboard(recordOnly, asNew);
+                PluginTree.PasteFromClipboard(recordOnly, asNew);
             }
-            else if (this.SubrecordList.ContainsFocus)
+            else if (SubrecordList.ContainsFocus)
             {
-                this.SubrecordList.PasteFromClipboard();
+                SubrecordList.PasteFromClipboard();
             }
         }
 
         private void PluginTree_OnSelectionUpdated(object sender, EventArgs e)
         {
             // fix EDID if relevant
-            this.UpdateMainText(this.PluginTree.SelectedRecord);
-            this.PluginTree.RefreshObject(this.PluginTree.SelectedRecord);
+            UpdateMainText(PluginTree.SelectedRecord);
+            PluginTree.RefreshObject(PluginTree.SelectedRecord);
         }
 
         private void PluginTree_SelectionChanged(object sender, EventArgs e)
         {
-            this.UpdateMainText(this.PluginTree.SelectedRecord);
+            UpdateMainText(PluginTree.SelectedRecord);
         }
 
         private void RebuildSelection()
         {
-            if (this.inRebuildSelection)
+            if (inRebuildSelection)
             {
                 return;
             }
 
-            bool oldInRebuildSelection = this.inRebuildSelection;
+            bool oldInRebuildSelection = inRebuildSelection;
             try
             {
-                this.inRebuildSelection = true;
-                var rec = this.PluginTree.SelectedRecord;
+                inRebuildSelection = true;
+                var rec = PluginTree.SelectedRecord;
                 if (rec == null)
                 {
-                    this.SubrecordList.Record = null;
-                    this.Selection.Record = null;
-                    this.UpdateMainText(string.Empty);
+                    SubrecordList.Record = null;
+                    Selection.Record = null;
+                    UpdateMainText(string.Empty);
                     return;
                 }
 
@@ -967,69 +970,69 @@ namespace TESVSnip.UI.Forms
 
                 if (rec is Plugin)
                 {
-                    this.SubrecordList.Record = null;
-                    this.Selection.Record = null;
-                    this.cutToolStripMenuItem.Enabled = false;
-                    this.copyToolStripMenuItem.Enabled = false;
-                    this.deleteToolStripMenuItem.Enabled = false;
-                    this.pasteToolStripMenuItem.Enabled = hasClipboard;
-                    this.pasteNewToolStripMenuItem.Enabled = hasClipboard;
-                    this.insertGroupToolStripMenuItem.Enabled = true;
-                    this.insertRecordToolStripMenuItem.Enabled = true;
-                    this.insertSubrecordToolStripMenuItem.Enabled = false;
+                    SubrecordList.Record = null;
+                    Selection.Record = null;
+                    cutToolStripMenuItem.Enabled = false;
+                    copyToolStripMenuItem.Enabled = false;
+                    deleteToolStripMenuItem.Enabled = false;
+                    pasteToolStripMenuItem.Enabled = hasClipboard;
+                    pasteNewToolStripMenuItem.Enabled = hasClipboard;
+                    insertGroupToolStripMenuItem.Enabled = true;
+                    insertRecordToolStripMenuItem.Enabled = true;
+                    insertSubrecordToolStripMenuItem.Enabled = false;
                 }
                 else if (rec is Record)
                 {
-                    this.cutToolStripMenuItem.Enabled = true;
-                    this.copyToolStripMenuItem.Enabled = true;
-                    this.deleteToolStripMenuItem.Enabled = true;
-                    this.pasteToolStripMenuItem.Enabled = hasClipboard;
-                    this.pasteNewToolStripMenuItem.Enabled = hasClipboard;
-                    this.insertGroupToolStripMenuItem.Enabled = false;
-                    this.insertRecordToolStripMenuItem.Enabled = true;
-                    this.insertSubrecordToolStripMenuItem.Enabled = true;
-                    this.Selection.Record = rec as Rec;
-                    this.SubrecordList.Record = this.Selection.Record as Record;
-                    this.MatchRecordStructureToRecord();
+                    cutToolStripMenuItem.Enabled = true;
+                    copyToolStripMenuItem.Enabled = true;
+                    deleteToolStripMenuItem.Enabled = true;
+                    pasteToolStripMenuItem.Enabled = hasClipboard;
+                    pasteNewToolStripMenuItem.Enabled = hasClipboard;
+                    insertGroupToolStripMenuItem.Enabled = false;
+                    insertRecordToolStripMenuItem.Enabled = true;
+                    insertSubrecordToolStripMenuItem.Enabled = true;
+                    Selection.Record = rec as Rec;
+                    SubrecordList.Record = Selection.Record as Record;
+                    MatchRecordStructureToRecord();
                 }
                 else if (rec is GroupRecord)
                 {
-                    this.Selection.Record = null;
-                    this.SubrecordList.Record = null;
-                    this.cutToolStripMenuItem.Enabled = true;
-                    this.copyToolStripMenuItem.Enabled = true;
-                    this.deleteToolStripMenuItem.Enabled = true;
-                    this.pasteToolStripMenuItem.Enabled = hasClipboard;
-                    this.pasteNewToolStripMenuItem.Enabled = hasClipboard;
-                    this.insertGroupToolStripMenuItem.Enabled = true;
-                    this.insertRecordToolStripMenuItem.Enabled = true;
-                    this.insertSubrecordToolStripMenuItem.Enabled = false;
+                    Selection.Record = null;
+                    SubrecordList.Record = null;
+                    cutToolStripMenuItem.Enabled = true;
+                    copyToolStripMenuItem.Enabled = true;
+                    deleteToolStripMenuItem.Enabled = true;
+                    pasteToolStripMenuItem.Enabled = hasClipboard;
+                    pasteNewToolStripMenuItem.Enabled = hasClipboard;
+                    insertGroupToolStripMenuItem.Enabled = true;
+                    insertRecordToolStripMenuItem.Enabled = true;
+                    insertSubrecordToolStripMenuItem.Enabled = false;
                 }
                 else
                 {
-                    this.Selection.Record = null;
-                    this.SubrecordList.Record = null;
-                    this.cutToolStripMenuItem.Enabled = false;
-                    this.copyToolStripMenuItem.Enabled = false;
-                    this.deleteToolStripMenuItem.Enabled = false;
-                    this.pasteToolStripMenuItem.Enabled = false;
-                    this.pasteNewToolStripMenuItem.Enabled = false;
-                    this.insertGroupToolStripMenuItem.Enabled = false;
-                    this.insertRecordToolStripMenuItem.Enabled = false;
-                    this.insertSubrecordToolStripMenuItem.Enabled = false;
+                    Selection.Record = null;
+                    SubrecordList.Record = null;
+                    cutToolStripMenuItem.Enabled = false;
+                    copyToolStripMenuItem.Enabled = false;
+                    deleteToolStripMenuItem.Enabled = false;
+                    pasteToolStripMenuItem.Enabled = false;
+                    pasteNewToolStripMenuItem.Enabled = false;
+                    insertGroupToolStripMenuItem.Enabled = false;
+                    insertRecordToolStripMenuItem.Enabled = false;
+                    insertSubrecordToolStripMenuItem.Enabled = false;
                 }
 
-                this.Selection.SubRecord = this.GetSelectedSubrecord();
+                Selection.SubRecord = GetSelectedSubrecord();
             }
             finally
             {
-                this.inRebuildSelection = oldInRebuildSelection;
+                inRebuildSelection = oldInRebuildSelection;
             }
         }
 
         private void ReferenceSearch(uint formid)
         {
-            var search = this.CreateSearchWindow();
+            var search = CreateSearchWindow();
             search.ReferenceSearch(formid);
         }
 
@@ -1059,9 +1062,8 @@ namespace TESVSnip.UI.Forms
             string configFile = null;
             try
             {
-
                 configFile = Path.Combine(Options.Value.SettingsDirectory, "DockPanel.config");
-                this.dockPanel.SaveAsXml(configFile);
+                dockPanel.SaveAsXml(configFile);
             }
             catch
             {
@@ -1080,25 +1082,25 @@ namespace TESVSnip.UI.Forms
 
         private void ShowDockingWindows()
         {
-            this.pluginTreeContent.CloseButtonVisible = false;
-            this.subrecordListContent.CloseButtonVisible = false;
-            this.htmlContent.MdiParent = this;
-            this.htmlContent.CloseButtonVisible = false;
-            this.htmlContent.CloseButton = false;
-            this.htmlContent.HideOnClose = true;
-            this.LayoutDockingWindows(force: false);
+            pluginTreeContent.CloseButtonVisible = false;
+            subrecordListContent.CloseButtonVisible = false;
+            htmlContent.MdiParent = this;
+            htmlContent.CloseButtonVisible = false;
+            htmlContent.CloseButton = false;
+            htmlContent.HideOnClose = true;
+            LayoutDockingWindows(force: false);
         }
 
         private void TESsnip_FormClosing(object sender, FormClosingEventArgs e)
         {
-            Settings.Default.UseWindowsClipboard = this.useWindowsClipboardToolStripMenuItem.Checked;
+            Settings.Default.UseWindowsClipboard = useWindowsClipboardToolStripMenuItem.Checked;
             PluginList.All.Clear();
-            this.PluginTree.UpdateRoots();
+            PluginTree.UpdateRoots();
             Clipboard = null;
-            this.Selection.Record = null;
-            this.RebuildSelection();
-            this.CloseStringEditor();
-            this.SaveDockingWindows();
+            Selection.Record = null;
+            RebuildSelection();
+            CloseStringEditor();
+            SaveDockingWindows();
             Services.Settings.SetWindowPosition("TESsnip", this);
         }
 
@@ -1106,14 +1108,14 @@ namespace TESVSnip.UI.Forms
         {
             if (rec == null)
             {
-                this.UpdateMainText(string.Empty);
+                UpdateMainText(string.Empty);
             }
             else
             {
                 try
                 {
-                    string html = TESVSnip.UI.Rendering.HtmlRenderer.GetDescription(rec);
-                    this.htmlContent.UpdateText(html);
+                    string html = HtmlRenderer.GetDescription(rec);
+                    htmlContent.UpdateText(html);
                 }
                 catch (Exception ex)
                 {
@@ -1124,21 +1126,21 @@ namespace TESVSnip.UI.Forms
 
         private void UpdateMainText(string text)
         {
-            this.htmlContent.UpdateText(text);
+            htmlContent.UpdateText(text);
         }
 
         private void UpdateStringEditor()
         {
-            if (this.stringEditor != null)
+            if (stringEditor != null)
             {
                 var plugins = PluginList.All.Records.OfType<Plugin>().ToList();
                 if (plugins.Count == 0)
                 {
-                    this.CloseStringEditor();
+                    CloseStringEditor();
                 }
                 else
                 {
-                    this.stringEditor.Reload(plugins.ToArray());
+                    stringEditor.Reload(plugins.ToArray());
                 }
             }
         }
@@ -1149,7 +1151,7 @@ namespace TESVSnip.UI.Forms
             {
                 if (amfNewMaster.ShowDialog(this) == DialogResult.OK)
                 {
-                    Plugin plugin = this.GetPluginFromNode(this.PluginTree.SelectedRecord);
+                    var plugin = GetPluginFromNode(PluginTree.SelectedRecord);
                     if (plugin == null)
                     {
                         MessageBox.Show(this, "No plugin selected. Cannot continue.", "Missing Plugin",
@@ -1161,8 +1163,8 @@ namespace TESVSnip.UI.Forms
                     {
                         if (plugin.AddMaster(amfNewMaster.MasterName))
                         {
-                            this.FixMasters();
-                            this.RebuildSelection();
+                            FixMasters();
+                            RebuildSelection();
                         }
                     }
                     catch (ApplicationException ex)
@@ -1189,14 +1191,14 @@ namespace TESVSnip.UI.Forms
 
         private void backgroundWorker1_ProgressChanged(object sender, ProgressChangedEventArgs e)
         {
-            this.toolStripStatusProgressBar.Value = e.ProgressPercentage%this.toolStripStatusProgressBar.Maximum;
+            toolStripStatusProgressBar.Value = e.ProgressPercentage%toolStripStatusProgressBar.Maximum;
         }
 
         private void backgroundWorker1_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
         {
-            this.EnableUserInterface(true);
-            this.toolStripStatusProgressBar.Visible = false;
-            this.toolStripStopProgress.Visible = false;
+            EnableUserInterface(true);
+            toolStripStatusProgressBar.Visible = false;
+            toolStripStopProgress.Visible = false;
             if (e.Cancelled || e.Error != null)
             {
                 return;
@@ -1222,29 +1224,29 @@ namespace TESVSnip.UI.Forms
         private void CloseAllPlugins()
         {
             PluginList.All.Records.Clear();
-            this.PluginTree.UpdateRoots();
-            this.Selection.Reset();
-            this.SubrecordList.Record = null;
+            PluginTree.UpdateRoots();
+            Selection.Reset();
+            SubrecordList.Record = null;
             Clipboard = null;
-            this.CloseStringEditor();
-            this.UpdateMainText(string.Empty);
+            CloseStringEditor();
+            UpdateMainText(string.Empty);
             ClearCachedInfo();
         }
 
         private void ClearCachedInfo()
         {
             // Following is mostly about cleaning up leaked / referenced memory
-            this.SubrecordList.SetContext(this.Selection);
-            this.RebuildSelection();
-            this.PluginTree.UpdateRoots();
-            this.Selection.Reset();
-            this.SubrecordList.SetContext(this.Selection);
-            GC.Collect();            
+            SubrecordList.SetContext(Selection);
+            RebuildSelection();
+            PluginTree.UpdateRoots();
+            Selection.Reset();
+            SubrecordList.SetContext(Selection);
+            GC.Collect();
         }
 
         private void closeToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            if (this.PluginTree.SelectedRecord == null)
+            if (PluginTree.SelectedRecord == null)
             {
                 MessageBox.Show(Resources.NoPluginSelectedToSave, Resources.ErrorText);
                 return;
@@ -1256,24 +1258,24 @@ namespace TESVSnip.UI.Forms
                 return;
             }
 
-            var p = this.GetPluginFromNode(this.PluginTree.SelectedRecord);
+            var p = GetPluginFromNode(PluginTree.SelectedRecord);
             PluginList.All.DeleteRecord(p);
-            this.UpdateStringEditor();
-            this.UpdateMainText(string.Empty);
-            this.FixMasters();
-            this.PluginTree.UpdateRoots();
-            this.RebuildSelection();
+            UpdateStringEditor();
+            UpdateMainText(string.Empty);
+            FixMasters();
+            PluginTree.UpdateRoots();
+            RebuildSelection();
             ClearCachedInfo();
         }
 
         private void collapseAllToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            this.PluginTree.CollapseAll();
+            PluginTree.CollapseAll();
         }
 
         private void collapseBranchToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            this.PluginTree.CollapseAll(this.PluginTree.SelectedRecord);
+            PluginTree.CollapseAll(PluginTree.SelectedRecord);
         }
 
         private void compressionSettingsToolStripMenuItem_Click(object sender, EventArgs e)
@@ -1289,31 +1291,31 @@ namespace TESVSnip.UI.Forms
 
         private void copyToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            this.CopySelection();
+            CopySelection();
         }
 
         private void cutToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            if (!this.Selection.SelectedSubrecord && this.PluginTree.SelectedRecord != null &&
-                this.PluginTree.SelectedRecord is Plugin)
+            if (!Selection.SelectedSubrecord && PluginTree.SelectedRecord != null &&
+                PluginTree.SelectedRecord is Plugin)
             {
                 MessageBox.Show(Resources.Cannot_cut_a_plugin, Resources.ErrorText);
                 return;
             }
 
-            this.copyToolStripMenuItem_Click(null, null);
-            this.deleteToolStripMenuItem_Click(null, null);
+            copyToolStripMenuItem_Click(null, null);
+            deleteToolStripMenuItem_Click(null, null);
         }
 
         private void deleteToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            if (this.PluginTree.ContainsFocus)
+            if (PluginTree.ContainsFocus)
             {
-                this.PluginTree.DeleteSelection();
+                PluginTree.DeleteSelection();
             }
-            else if (this.SubrecordList.ContainsFocus)
+            else if (SubrecordList.ContainsFocus)
             {
-                this.SubrecordList.DeleteSelection();
+                SubrecordList.DeleteSelection();
             }
         }
 
@@ -1349,8 +1351,8 @@ namespace TESVSnip.UI.Forms
                         });
             }
 
-            RecordStructure.Load();
-            var allRecords = RecordStructure.Records.Select(kvp => kvp.Key).ToList();
+
+            var allRecords = DomainDefinition.GetRecordNames().Select(x => x.ToString()).ToList();
             foreach (var str in allRecords)
             {
                 int idx = groups.BinarySearch(str);
@@ -1374,31 +1376,31 @@ namespace TESVSnip.UI.Forms
 
         private void editHeaderToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            if (this.PluginTree.ContainsFocus)
+            if (PluginTree.ContainsFocus)
             {
-                this.PluginTree.EditSelectedHeader();
+                PluginTree.EditSelectedHeader();
             }
-            else if (this.SubrecordList.ContainsFocus)
+            else if (SubrecordList.ContainsFocus)
             {
-                this.SubrecordList.EditSelectedSubrecordHex();
+                SubrecordList.EditSelectedSubrecordHex();
             }
         }
 
         private void editSelectedToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            if (this.PluginTree.ContainsFocus)
+            if (PluginTree.ContainsFocus)
             {
-                this.PluginTree.EditSelectedRecord();
+                PluginTree.EditSelectedRecord();
             }
-            else if (this.SubrecordList.ContainsFocus)
+            else if (SubrecordList.ContainsFocus)
             {
-                this.SubrecordList.EditSelectedSubrecord();
+                SubrecordList.EditSelectedSubrecord();
             }
         }
 
         private void editStringsToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            if (this.stringEditor == null)
+            if (stringEditor == null)
             {
                 var plugins = PluginList.All.Records.OfType<Plugin>().ToList();
                 if (plugins.Count == 0)
@@ -1408,16 +1410,16 @@ namespace TESVSnip.UI.Forms
                     return;
                 }
 
-                this.stringEditor = new StringsEditor();
-                this.stringEditor.FormClosed += delegate { this.CloseStringEditor(); };
-                this.stringEditor.Plugins = plugins.ToArray();
-                this.stringEditor.Show(this); // modeless. Close if the tree is modified.
+                stringEditor = new StringsEditor();
+                stringEditor.FormClosed += delegate { CloseStringEditor(); };
+                stringEditor.Plugins = plugins.ToArray();
+                stringEditor.Show(this); // modeless. Close if the tree is modified.
             }
         }
 
         private void editToolStripMenuItem_DropDownOpening(object sender, EventArgs e)
         {
-            this.pasteToolStripMenuItem.Enabled = HasClipboardData();
+            pasteToolStripMenuItem.Enabled = HasClipboardData();
         }
 
         private void exitToolStripMenuItem_Click(object sender, EventArgs e)
@@ -1427,54 +1429,54 @@ namespace TESVSnip.UI.Forms
 
         private void expandAllToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            this.PluginTree.ExpandAll();
+            PluginTree.ExpandAll();
         }
 
         private void expandBranchToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            this.PluginTree.ExpandAll(this.PluginTree.SelectedRecord);
+            PluginTree.ExpandAll(PluginTree.SelectedRecord);
         }
 
         private void findInRecordsToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            this.CreateSearchWindow();
+            CreateSearchWindow();
         }
 
         private void findToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            if (!this.toolStripIncrFind.Visible)
+            if (!toolStripIncrFind.Visible)
             {
-                this.toolStripIncrFind.Enabled = true;
-                this.toolStripIncrFind.Visible = true;
-                this.toolStripIncrFind.Focus();
-                this.toolStripIncrFindText.Select();
-                this.toolStripIncrFindText.SelectAll();
-                this.toolStripIncrFindText.Focus();
+                toolStripIncrFind.Enabled = true;
+                toolStripIncrFind.Visible = true;
+                toolStripIncrFind.Focus();
+                toolStripIncrFindText.Select();
+                toolStripIncrFindText.SelectAll();
+                toolStripIncrFindText.Focus();
             }
             else
             {
-                this.toolStripIncrFind.Visible = false;
-                this.toolStripIncrFind.Enabled = false;
+                toolStripIncrFind.Visible = false;
+                //toolStripIncrFind.Enabled = false;
             }
         }
 
         private void hexModeToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            Settings.Default.UseHexSubRecordEditor = this.hexModeToolStripMenuItem.Checked;
+            Settings.Default.UseHexSubRecordEditor = hexModeToolStripMenuItem.Checked;
         }
 
         private void insertGroupToolStripMenuItem3_Click(object sender, EventArgs e)
         {
-            var node = this.PluginTree.SelectedRecord;
+            var node = PluginTree.SelectedRecord;
             var p = new GroupRecord("NEW_");
             node.AddRecord(p);
-            this.GetPluginFromNode(this.PluginTree.SelectedRecord).InvalidateCache();
-            this.PluginTree.RefreshObject(node);
+            GetPluginFromNode(PluginTree.SelectedRecord).InvalidateCache();
+            PluginTree.RefreshObject(node);
         }
 
         private void insertRecordToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            var node = this.PluginTree.SelectedRecord;
+            var node = PluginTree.SelectedRecord;
 
             if (node is Record && (node.Parent is GroupRecord || node.Parent is Plugin))
             {
@@ -1493,30 +1495,30 @@ namespace TESVSnip.UI.Forms
 
             node.AddRecord(record);
             Spells.giveRecordNewFormID(record, false);
-            this.GetPluginFromNode(this.PluginTree.SelectedRecord).InvalidateCache();
-            this.PluginTree.RefreshObject(node);
+            GetPluginFromNode(PluginTree.SelectedRecord).InvalidateCache();
+            PluginTree.RefreshObject(node);
         }
 
         private void insertSubrecordToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            BaseRecord node = this.PluginTree.SelectedRecord;
+            var node = PluginTree.SelectedRecord;
             var p = new SubRecord();
             node.AddRecord(p);
-            this.GetPluginFromNode(this.PluginTree.SelectedRecord).InvalidateCache();
-            this.PluginTree.RefreshObject(node);
-            this.RebuildSelection();
+            GetPluginFromNode(PluginTree.SelectedRecord).InvalidateCache();
+            PluginTree.RefreshObject(node);
+            RebuildSelection();
         }
 
         private void languageToolStripMenuItem_DropDownItemClicked(object sender, ToolStripItemClickedEventArgs e)
         {
-            foreach (var kvp in this.languageToolBarItems)
+            foreach (var kvp in languageToolBarItems)
             {
                 if (e.ClickedItem == kvp.Value)
                 {
                     if (Domain.Properties.Settings.Default.LocalizationName != kvp.Key)
                     {
                         Domain.Properties.Settings.Default.LocalizationName = kvp.Key;
-                        this.ReloadLanguageFiles();
+                        ReloadLanguageFiles();
                     }
 
                     break;
@@ -1526,98 +1528,39 @@ namespace TESVSnip.UI.Forms
 
         private void languageToolStripMenuItem_DropDownOpening(object sender, EventArgs e)
         {
-            foreach (var kvp in this.languageToolBarItems)
+            foreach (var kvp in languageToolBarItems)
             {
                 kvp.Value.Checked =
-                    string.Compare(kvp.Key, Domain.Properties.Settings.Default.LocalizationName, StringComparison.OrdinalIgnoreCase) == 0;
+                    string.Compare(kvp.Key, Domain.Properties.Settings.Default.LocalizationName,
+                                   StringComparison.OrdinalIgnoreCase) == 0;
             }
         }
 
         private void lookupFormidsToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            if (this.lookupFormidsToolStripMenuItem.Checked)
+            if (lookupFormidsToolStripMenuItem.Checked)
             {
-                this.Selection.formIDLookup = this.LookupFormIDI;
-                this.Selection.strLookup = this.LookupFormStrings;
-                this.Selection.formIDLookupR = this.GetRecordByID;
+                Selection.formIDLookup = LookupFormIDI;
+                Selection.strLookup = LookupFormStrings;
+                Selection.formIDLookupR = GetRecordByID;
             }
             else
             {
-                this.Selection.formIDLookup = null;
-                this.Selection.strLookup = null;
-                this.Selection.formIDLookupR = null;
+                Selection.formIDLookup = null;
+                Selection.strLookup = null;
+                Selection.formIDLookupR = null;
             }
         }
 
-        private void mergeRecordsXMLToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            Records baseRecords;
-            Records updateRecords;
-
-            var xs = new XmlSerializer(typeof (Records));
-            using (var dlg = new OpenFileDialog())
-            {
-                dlg.Title = "Select Base Record Structure";
-                dlg.InitialDirectory = Options.Value.SettingsDirectory;
-                dlg.FileName = "RecordStructure.xml";
-                if (dlg.ShowDialog(this) != DialogResult.OK)
-                {
-                    return;
-                }
-
-                using (FileStream fs = File.OpenRead(dlg.FileName))
-                {
-                    baseRecords = xs.Deserialize(fs) as Records;
-                }
-            }
-
-            using (var dlg = new OpenFileDialog())
-            {
-                dlg.Title = "Select Record Structure XML To Merge";
-                dlg.InitialDirectory = Path.GetTempPath();
-                dlg.FileName = "RecordStructure.xml";
-                if (dlg.ShowDialog(this) != DialogResult.OK)
-                {
-                    return;
-                }
-
-                using (FileStream fs = File.OpenRead(dlg.FileName))
-                {
-                    updateRecords = xs.Deserialize(fs) as Records;
-                }
-            }
-
-            if (updateRecords != null && baseRecords != null)
-            {
-                var builder = new RecordBuilder();
-                builder.MergeRecords(baseRecords.Items.OfType<RecordsRecord>(),
-                                     updateRecords.Items.OfType<RecordsRecord>());
-
-                using (var dlg = new SaveFileDialog())
-                {
-                    dlg.Title = "Select Record Structure To Save";
-                    dlg.InitialDirectory = Path.GetTempPath();
-                    dlg.FileName = "RecordStructure.xml";
-                    dlg.OverwritePrompt = false;
-                    if (dlg.ShowDialog(this) == DialogResult.OK)
-                    {
-                        using (StreamWriter fs = File.CreateText(dlg.FileName))
-                        {
-                            xs.Serialize(fs, updateRecords);
-                        }
-                    }
-                }
-            }
-        }
 
         private void newFormIDNoReferenceUpdateToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            this.giveSelectionNewFormID(false);
+            giveSelectionNewFormID(false);
         }
 
         private void newFormIDToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            this.giveSelectionNewFormID(true);
+            giveSelectionNewFormID(true);
         }
 
         private void newToolStripMenuItem_Click(object sender, EventArgs e)
@@ -1627,7 +1570,8 @@ namespace TESVSnip.UI.Forms
 
         public Plugin NewPlugin()
         {
-            var p = new Plugin();
+            var define = DomainDefinition.Load("Skyrim");
+            var p = new Plugin(define);
             var r = new Record {Name = "TES4"};
             var sr = new SubRecord {Name = "HEDR"};
             sr.SetData(new byte[] {0xD7, 0xA3, 0x70, 0x3F, 0x00, 0x00, 0x00, 0x00, 0x00, 0x08, 0x00, 0x01});
@@ -1642,23 +1586,23 @@ namespace TESVSnip.UI.Forms
 
         public void RefreshPlugins()
         {
-            this.RebuildSelection();
-            this.UpdateStringEditor();
-            this.FixMasters();
-            this.PluginTree.UpdateRoots();
+            RebuildSelection();
+            UpdateStringEditor();
+            FixMasters();
+            PluginTree.UpdateRoots();
         }
 
         private void noWindowsSoundsToolStripMenuItem_Click(object sender, EventArgs e)
         {
             Settings.Default.NoWindowsSounds =
-                this.noWindowsSoundsToolStripMenuItem.Checked = !this.noWindowsSoundsToolStripMenuItem.Checked;
+                noWindowsSoundsToolStripMenuItem.Checked = !noWindowsSoundsToolStripMenuItem.Checked;
         }
 
         private void openNewPluginToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            if (this.OpenModDialog.ShowDialog(this) == DialogResult.OK)
+            if (OpenModDialog.ShowDialog(this) == DialogResult.OK)
             {
-                LoadPluginFromListOfFileNames(this.OpenModDialog.FileNames);
+                LoadPluginFromListOfFileNames(OpenModDialog.FileNames);
             }
         }
 
@@ -1666,27 +1610,27 @@ namespace TESVSnip.UI.Forms
         {
             try
             {
-                Stopwatch sw = Stopwatch.StartNew();
-                this.PluginTree.EnableEvents(false);
+                var sw = Stopwatch.StartNew();
+                PluginTree.EnableEvents(false);
 
                 try
                 {
-                    foreach (string s in fileNames)
+                    foreach (var s in fileNames)
                     {
-                        this.LoadPlugin(s);
+                        LoadPlugin(s);
                         mruMenu.AddFileAndSaveToRegistry(s);
                     }
                 }
                 finally
                 {
-                    this.FixMasters();
-                    this.PluginTree.UpdateRoots();
-                    this.PluginTree.EnableEvents(true);
-                    this.ClearCachedInfo();
+                    FixMasters();
+                    PluginTree.UpdateRoots();
+                    PluginTree.EnableEvents(true);
+                    ClearCachedInfo();
                     sw.Stop();
-                    TimeSpan t = TimeSpan.FromMilliseconds(sw.ElapsedMilliseconds);
+                    var t = TimeSpan.FromMilliseconds(sw.ElapsedMilliseconds);
                     toolStripStatusLabel.Text =
-                        string.Format(TranslateUI.TranslateUiGlobalization.ResManager.GetString("MSG_LoadPluginIn"), t.ToString());                    
+                        string.Format(TranslateUiGlobalization.ResManager.GetString("MSG_LoadPluginIn"), t.ToString());
                 }
             }
             catch (Exception ex)
@@ -1701,12 +1645,12 @@ namespace TESVSnip.UI.Forms
                     "Source: " + ex.Source +
                     Environment.NewLine +
                     Environment.NewLine +
-                    "GetType: " + ex.GetType().ToString();
+                    "GetType: " + ex.GetType();
 
                 System.Windows.Forms.Clipboard.SetDataObject(errMsg, true);
 
                 // Create an EventLog instance and assign its source.
-                EventLog myLog = new EventLog();
+                var myLog = new EventLog();
                 myLog.Source = "ThreadException";
                 myLog.WriteEntry(errMsg);
 
@@ -1716,30 +1660,31 @@ namespace TESVSnip.UI.Forms
 
         private void pasteNewToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            this.PasteFromClipboard(false, true);
+            PasteFromClipboard(false, true);
         }
 
         private void pasteToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            this.PasteFromClipboard(false, false);
+            PasteFromClipboard(false, false);
         }
 
         private void reloadStringsToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            this.ReloadLanguageFiles();
+            ReloadLanguageFiles();
         }
 
         private void reloadXmlToolStripMenuItem_Click(object sender, EventArgs e)
         {
             try
             {
-                RecordStructure.Load();
+                TESVSnip.Domain.Data.DomainDefinition.Reload();
+
                 foreach (var rec in PluginList.All.Enumerate(x => x is Record).OfType<Record>())
                 {
                     rec.MatchRecordStructureToRecord();
                 }
 
-                this.RebuildSelection();
+                RebuildSelection();
             }
             catch (Exception ex)
             {
@@ -1749,18 +1694,18 @@ namespace TESVSnip.UI.Forms
 
         private void resetDockingWindowsToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            this.LayoutDockingWindows(force: true);
+            LayoutDockingWindows(force: true);
         }
 
-        void htmlContent_OnLinkClicked(object sender, LinkClickedEventArgs e)
+        private void htmlContent_OnLinkClicked(object sender, LinkClickedEventArgs e)
         {
             try
             {
                 bool isControlPressed = ModifierKeys == Keys.Control;
-                
+
                 var uri = new Uri(e.LinkText);
                 if (uri.Scheme == "nav")
-                {                   
+                {
                     var result = HttpUtility.ParseQueryString(uri.Query);
                     var pluginName = uri.LocalPath;
                     var masterName = result.Get("m");
@@ -1779,14 +1724,14 @@ namespace TESVSnip.UI.Forms
                     if (masterPlugin == null && !string.IsNullOrEmpty(masterName))
                     {
                         var ext = Path.GetExtension(masterName);
-                        if (string.Compare(ext, ".esm", false) == 0 
+                        if (string.Compare(ext, ".esm", false) == 0
                             || string.Compare(ext, ".esp", false) == 0)
                         {
                             var dr = MessageBox.Show(this
-                                , string.Format(Resources.Plugin_not_loaded__LoadNow, masterName)
-                                , Resources.Load_Reference
-                                , MessageBoxButtons.YesNo, MessageBoxIcon.Question
-                                ,MessageBoxDefaultButton.Button2);                            
+                                                     , string.Format(Resources.Plugin_not_loaded__LoadNow, masterName)
+                                                     , Resources.Load_Reference
+                                                     , MessageBoxButtons.YesNo, MessageBoxIcon.Question
+                                                     , MessageBoxDefaultButton.Button2);
                             if (dr == DialogResult.Yes)
                             {
                                 using (var dlg = new OpenFileDialog())
@@ -1801,7 +1746,7 @@ namespace TESVSnip.UI.Forms
                                     {
                                         if (string.Compare(Path.GetFileName(dlg.FileName), masterName, true) == 0)
                                         {
-                                            LoadPluginFromListOfFileNames(new[] { masterName });
+                                            LoadPluginFromListOfFileNames(new[] {masterName});
                                             masterPlugin = PluginList.All[masterName];
                                         }
                                     }
@@ -1815,12 +1760,12 @@ namespace TESVSnip.UI.Forms
                         var node = startPlugin.GetRecordByID(formID);
                         if (node != null)
                         {
-                            this.PluginTree.SelectedRecord = node;
+                            PluginTree.SelectedRecord = node;
                             return;
                         }
                     }
 
-                    var startNode = startPlugin ?? this.PluginTree.SelectedRecord ?? this.PluginTree.TopRecord;
+                    var startNode = startPlugin ?? PluginTree.SelectedRecord ?? PluginTree.TopRecord;
 
                     // System.Windows.Forms.Application.
                     // Search current plugin and then wrap around.  
@@ -1843,22 +1788,22 @@ namespace TESVSnip.UI.Forms
                         contextMenu.MenuItems.Add(
                             "&Find In Tree",
                             (o, args) =>
-                            {
-                                var node = this.PerformSearch(searchContext);
-                                if (node != null)
                                 {
-                                    this.PluginTree.SelectedRecord = node;
-                                }
-                            });
-                        contextMenu.MenuItems.Add("Find &References", (o, args) => this.ReferenceSearch(formID));
+                                    var node = PerformSearch(searchContext);
+                                    if (node != null)
+                                    {
+                                        PluginTree.SelectedRecord = node;
+                                    }
+                                });
+                        contextMenu.MenuItems.Add("Find &References", (o, args) => ReferenceSearch(formID));
                         contextMenu.Show(this, PointToClient(MousePosition));
                     }
                     else
                     {
-                        var node = this.PerformSearch(searchContext);
+                        var node = PerformSearch(searchContext);
                         if (node != null)
                         {
-                            this.PluginTree.SelectedRecord = node;
+                            PluginTree.SelectedRecord = node;
                         }
                     }
                 }
@@ -1869,19 +1814,18 @@ namespace TESVSnip.UI.Forms
         }
 
 
-
         private void saveAsToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            if (this.PluginTree.SelectedRecord == null)
+            if (PluginTree.SelectedRecord == null)
             {
                 MessageBox.Show(Resources.NoPluginSelectedToSave, Resources.ErrorText);
                 return;
             }
 
-            var p = this.GetPluginFromNode(this.PluginTree.SelectedRecord);
+            var p = GetPluginFromNode(PluginTree.SelectedRecord);
             if (p.Filtered)
             {
-                DialogResult result = MessageBox.Show(
+                var result = MessageBox.Show(
                     this, Resources.SavePluginWithFilterAppliedInquiry, Resources.WarningText, MessageBoxButtons.YesNo,
                     MessageBoxIcon.Warning, MessageBoxDefaultButton.Button2);
                 if (result == DialogResult.No)
@@ -1890,38 +1834,38 @@ namespace TESVSnip.UI.Forms
                 }
             }
 
-            this.SaveModDialog.FileName = p.Name;
-            if (this.SaveModDialog.ShowDialog(this) == DialogResult.OK)
+            SaveModDialog.FileName = p.Name;
+            if (SaveModDialog.ShowDialog(this) == DialogResult.OK)
             {
-                Stopwatch sw = Stopwatch.StartNew();
-                p.Save(this.SaveModDialog.FileName);
-                mruMenu.AddFileAndSaveToRegistry(this.SaveModDialog.FileName);
-                this.FixMasters();
+                var sw = Stopwatch.StartNew();
+                p.Save(SaveModDialog.FileName);
+                mruMenu.AddFileAndSaveToRegistry(SaveModDialog.FileName);
+                FixMasters();
                 sw.Stop();
-                TimeSpan t = TimeSpan.FromMilliseconds(sw.ElapsedMilliseconds);
+                var t = TimeSpan.FromMilliseconds(sw.ElapsedMilliseconds);
                 toolStripStatusLabel.Text =
-                    string.Format(TranslateUI.TranslateUiGlobalization.ResManager.GetString("MSG_SavePluginIn"), t.ToString());
+                    string.Format(TranslateUiGlobalization.ResManager.GetString("MSG_SavePluginIn"), t.ToString());
             }
         }
 
         private void saveStringsFilesToolStripMenuItem_Click(object sender, EventArgs e)
         {
             Domain.Properties.Settings.Default.SaveStringsFiles =
-                this.saveStringsFilesToolStripMenuItem.Checked = !this.saveStringsFilesToolStripMenuItem.Checked;
+                saveStringsFilesToolStripMenuItem.Checked = !saveStringsFilesToolStripMenuItem.Checked;
         }
 
         private void saveToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            if (this.PluginTree.SelectedRecord == null)
+            if (PluginTree.SelectedRecord == null)
             {
                 MessageBox.Show(Resources.NoPluginSelectedToSave, Resources.ErrorText);
                 return;
             }
 
-            var p = this.GetPluginFromNode(this.PluginTree.SelectedRecord);
+            var p = GetPluginFromNode(PluginTree.SelectedRecord);
             if (p.Filtered)
             {
-                DialogResult result = MessageBox.Show(
+                var result = MessageBox.Show(
                     this, Resources.SavePluginWithFilterAppliedInquiry, Resources.WarningText, MessageBoxButtons.YesNo,
                     MessageBoxIcon.Warning, MessageBoxDefaultButton.Button2);
                 if (result == DialogResult.No)
@@ -1934,21 +1878,21 @@ namespace TESVSnip.UI.Forms
             string pluginFilPath = Path.Combine(p.PluginPath, p.Name);
             p.Save(pluginFilPath);
             mruMenu.AddFileAndSaveToRegistry(Path.Combine(p.PluginPath, p.Name));
-            this.FixMasters();
+            FixMasters();
         }
 
         private void searchAdvancedToolStripMenuItem_Click(object sender, EventArgs e)
         {
             RecordStructure recStruct = null;
-            var rec = this.PluginTree.SelectedRecord;
+            var rec = PluginTree.SelectedRecord;
             if (rec is Record)
             {
-                RecordStructure.Records.TryGetValue(rec.Name, out recStruct);
+                recStruct = ((Record) rec).GetStructure();
             }
 
             if (recStruct == null)
             {
-                recStruct = RecordStructure.Records.Values.Random(RecordStructure.Records.Count).First();
+                recStruct = DomainDefinition.LoadedDomains().First().Records.Values.Random(1).First();
             }
 
             using (var dlg = new SearchFilterAdvanced(recStruct))
@@ -1959,34 +1903,40 @@ namespace TESVSnip.UI.Forms
 
         private void searchToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            var settings = this.searchToolStripMenuItem.Tag as SearchCriteriaSettings;
+            var settings = searchToolStripMenuItem.Tag as SearchCriteriaSettings;
             using (var dlg = new SearchFilterBasic())
             {
+                var recStructs = DomainDefinition.LoadedDomains().First().Records;
                 RecordStructure recStruct = null;
                 if (settings != null)
                 {
-                    if (RecordStructure.Records.TryGetValue(settings.Type, out recStruct))
+                    foreach (var domain in DomainDefinition.LoadedDomains())
                     {
-                        dlg.SetRecordStructure(recStruct);
-                        dlg.Criteria = settings;
+                        if (domain.Records.TryGetValue(settings.Type, out recStruct))
+                        {
+                            recStructs = domain.Records;
+                            dlg.SetRecordStructure(recStruct);
+                            dlg.Criteria = settings;
+                            break;
+                        }
                     }
                 }
 
                 if (recStruct == null)
                 {
-                    var rec = this.PluginTree.SelectedRecord;
+                    var rec = PluginTree.SelectedRecord;
                     if (rec is GroupRecord)
                     {
                         var gr = rec as GroupRecord;
                         var ct = gr.ContentsType;
                         if (!string.IsNullOrEmpty(ct))
                         {
-                            RecordStructure.Records.TryGetValue(ct, out recStruct);
+                            recStructs.TryGetValue(ct, out recStruct);
                         }
                     }
                     else if (rec is Record)
                     {
-                        RecordStructure.Records.TryGetValue(rec.Name, out recStruct);
+                        recStructs.TryGetValue(rec.Name, out recStruct);
                     }
 
                     dlg.SetRecordStructure(recStruct);
@@ -1995,8 +1945,8 @@ namespace TESVSnip.UI.Forms
                 dlg.EnableFindAll(false); // hide final all since we will open 
                 if (DialogResult.Cancel != dlg.ShowDialog(this))
                 {
-                    this.searchToolStripMenuItem.Tag = dlg.Criteria;
-                    var window = this.CreateSearchWindow();
+                    searchToolStripMenuItem.Tag = dlg.Criteria;
+                    var window = CreateSearchWindow();
                     window.SetSearchCriteria(dlg.Criteria, doSearch: true);
                 }
             }
@@ -2004,10 +1954,10 @@ namespace TESVSnip.UI.Forms
 
         private void subrecordPanel_DataChanged(object sender, EventArgs e)
         {
-            var sr = this.SubrecordList.GetSelectedSubrecord();
+            var sr = SubrecordList.GetSelectedSubrecord();
             if (sr != null)
             {
-                this.UpdateMainText(sr);
+                UpdateMainText(sr);
             }
         }
 
@@ -2017,16 +1967,16 @@ namespace TESVSnip.UI.Forms
             {
                 if (e.Record.Parent is Record)
                 {
-                    this.PluginTree.RefreshObject(e.Record.Parent);
+                    PluginTree.RefreshObject(e.Record.Parent);
                 }
 
-                this.SubrecordList.RefreshObject(e.Record);
+                SubrecordList.RefreshObject(e.Record);
             }
         }
 
         private void subrecordPanel_SelectionChanged(object sender, EventArgs e)
         {
-            this.UpdateMainText(this.SubrecordList.SubRecord);
+            UpdateMainText(SubrecordList.SubRecord);
         }
 
         private void tbInfo_PreviewKeyDown(object sender, PreviewKeyDownEventArgs e)
@@ -2056,30 +2006,30 @@ namespace TESVSnip.UI.Forms
 
         private void toolStripIncrInvalidRecCancel_Click(object sender, EventArgs e)
         {
-            this.toolStripIncrInvalidRec.Visible = false;
-            this.toolStripIncrInvalidRec.Enabled = false;
+            toolStripIncrInvalidRec.Visible = false;
+            //toolStripIncrInvalidRec.Enabled = false;
         }
 
         private void toolStripIncrInvalidRecNext_Click(object sender, EventArgs e)
         {
-            if (this.PluginTree.SelectedRecord == null)
+            if (PluginTree.SelectedRecord == null)
             {
                 return;
             }
 
-            this.BackgroundNonConformingRecordIncrementalSearch(this.PluginTree.SelectedRecord, true,
-                                                                this.toolStripIncrInvalidRecWrapAround.Checked);
+            BackgroundNonConformingRecordIncrementalSearch(PluginTree.SelectedRecord, true,
+                                                           toolStripIncrInvalidRecWrapAround.Checked);
         }
 
         private void toolStripIncrInvalidRecPrev_Click(object sender, EventArgs e)
         {
-            if (this.PluginTree.SelectedRecord == null)
+            if (PluginTree.SelectedRecord == null)
             {
                 return;
             }
 
-            this.BackgroundNonConformingRecordIncrementalSearch(this.PluginTree.SelectedRecord, false,
-                                                                this.toolStripIncrInvalidRecWrapAround.Checked);
+            BackgroundNonConformingRecordIncrementalSearch(PluginTree.SelectedRecord, false,
+                                                           toolStripIncrInvalidRecWrapAround.Checked);
         }
 
         private void toolStripIncrInvalidRecRestart_Click(object sender, EventArgs e)
@@ -2090,7 +2040,7 @@ namespace TESVSnip.UI.Forms
                 return;
             }
 
-            this.BackgroundNonConformingRecordIncrementalSearch(rec, true, false);
+            BackgroundNonConformingRecordIncrementalSearch(rec, true, false);
         }
 
         private void toolStripIncrInvalidRec_ItemClicked(object sender, ToolStripItemClickedEventArgs e)
@@ -2099,14 +2049,14 @@ namespace TESVSnip.UI.Forms
 
         private void toolStripIncrInvalidRec_VisibleChanged(object sender, EventArgs e)
         {
-            this.findNonconformingRecordToolStripMenuItem.Checked = this.toolStripIncrInvalidRec.Visible;
-            this.toolStripIncrInvalidRecStatus.Text = "Select Next or Prev to start search.";
-            this.toolStripIncrInvalidRecStatus.ForeColor = Color.DarkGray;
+            findNonconformingRecordToolStripMenuItem.Checked = toolStripIncrInvalidRec.Visible;
+            toolStripIncrInvalidRecStatus.Text = "Select Next or Prev to start search.";
+            toolStripIncrInvalidRecStatus.ForeColor = Color.DarkGray;
         }
 
         private void toolStripStopProgress_Click(object sender, EventArgs e)
         {
-            this.CancelBackgroundProcess();
+            CancelBackgroundProcess();
         }
 
         private void toolsToolStripMenuItem_DropDownOpening(object sender, EventArgs e)
@@ -2115,7 +2065,7 @@ namespace TESVSnip.UI.Forms
 
         private void uTF8ModeToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            Framework.Properties.Settings.Default.UseUTF8 = this.uTF8ModeToolStripMenuItem.Checked;
+            Framework.Properties.Settings.Default.UseUTF8 = uTF8ModeToolStripMenuItem.Checked;
             if (MessageBox.Show(Resources.RestartText, Resources.InfoText, MessageBoxButtons.YesNoCancel) ==
                 DialogResult.Yes)
             {
@@ -2125,13 +2075,13 @@ namespace TESVSnip.UI.Forms
 
         private void useNewSubrecordEditorToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            Settings.Default.UseOldSubRecordEditor = !this.useNewSubrecordEditorToolStripMenuItem.Checked;
+            Settings.Default.UseOldSubRecordEditor = !useNewSubrecordEditorToolStripMenuItem.Checked;
         }
 
         private void useWindowsClipboardToolStripMenuItem_Click(object sender, EventArgs e)
         {
             Settings.Default.UseWindowsClipboard =
-                this.useWindowsClipboardToolStripMenuItem.Checked = !this.useWindowsClipboardToolStripMenuItem.Checked;
+                useWindowsClipboardToolStripMenuItem.Checked = !useWindowsClipboardToolStripMenuItem.Checked;
         }
 
         private void openListToolStripMenuItem_Click(object sender, EventArgs e)
@@ -2149,16 +2099,17 @@ namespace TESVSnip.UI.Forms
                 if (dlg.ShowDialog(this) != DialogResult.OK)
                     return;
 
-                Cursor origCursor = Cursor.Current;
+                var origCursor = Cursor.Current;
                 Cursor.Current = Cursors.WaitCursor;
-                Stopwatch sw = Stopwatch.StartNew();
-                this.PluginTree.EnableEvents(false);
+                var sw = Stopwatch.StartNew();
+                PluginTree.EnableEvents(false);
                 try
                 {
-                    using (StreamReader fs = File.OpenText(dlg.FileName))
+                    using (var fs = File.OpenText(dlg.FileName))
                     {
                         CloseAllPlugins();
-                        bool checkSkyrim = string.Compare(dlg.FileName, defaultFile, StringComparison.InvariantCultureIgnoreCase) == 0;
+                        bool checkSkyrim =
+                            string.Compare(dlg.FileName, defaultFile, StringComparison.InvariantCultureIgnoreCase) == 0;
                         while (true)
                         {
                             string line = fs.ReadLine();
@@ -2169,11 +2120,14 @@ namespace TESVSnip.UI.Forms
                             {
                                 checkSkyrim = false;
                                 // skyrim is not first item in plugins.txt so load it first
-                                if (string.Compare(Path.GetFileName(file), "skyrim.esm", StringComparison.InvariantCultureIgnoreCase) != 0)
+                                if (
+                                    string.Compare(Path.GetFileName(file), "skyrim.esm",
+                                                   StringComparison.InvariantCultureIgnoreCase) != 0)
                                 {
                                     var skyrimFile = Path.Combine(Options.Value.GameDataDirectory, "skyrim.esm");
                                     if (File.Exists(skyrimFile))
-                                        PluginList.All.AddRecord(new Plugin(skyrimFile, false, GetRecordFilter(skyrimFile)));
+                                        PluginList.All.AddRecord(new Plugin(skyrimFile, false,
+                                                                            GetRecordFilter(skyrimFile)));
                                 }
                             }
                             if (File.Exists(file))
@@ -2189,15 +2143,15 @@ namespace TESVSnip.UI.Forms
                     UpdateStringEditor();
                     FixMasters();
                     PluginTree.UpdateRoots();
-                    this.PluginTree.EnableEvents(true);
-                    this.ClearCachedInfo();
+                    PluginTree.EnableEvents(true);
+                    ClearCachedInfo();
 
                     Cursor.Current = origCursor;
 
                     sw.Stop();
-                    TimeSpan t = TimeSpan.FromMilliseconds(sw.ElapsedMilliseconds);
+                    var t = TimeSpan.FromMilliseconds(sw.ElapsedMilliseconds);
                     toolStripStatusLabel.Text =
-                        string.Format(TranslateUI.TranslateUiGlobalization.ResManager.GetString("MSG_LoadPluginIn"), t.ToString());
+                        string.Format(TranslateUiGlobalization.ResManager.GetString("MSG_LoadPluginIn"), t.ToString());
                 }
             }
         }
@@ -2213,7 +2167,7 @@ namespace TESVSnip.UI.Forms
                 if (dlg.ShowDialog(this) != DialogResult.OK)
                     return;
 
-                using (FileStream fs = File.OpenWrite(dlg.FileName))
+                using (var fs = File.OpenWrite(dlg.FileName))
                 using (var sw = new StreamWriter(fs))
                 {
                     foreach (Plugin p in PluginList.All.Records)
@@ -2225,98 +2179,23 @@ namespace TESVSnip.UI.Forms
             }
         }
 
-        #region MessageFilter
-        public class MainViewMessageFilter : IMessageFilter
-        {
-            public const int WM_CHAR = 0x102;
-
-            public const int WM_KEYDOWN = 0x100;
-
-            public const int WM_KEYUP = 0x101;
-
-            private const ushort KEY_PRESSED = 0x8000;
-
-            private readonly MainView owner = null;
-
-            public MainViewMessageFilter(MainView owner)
-            {
-                this.owner = owner;
-            }
-
-            internal enum VirtualKeyStates : int
-            {
-                VK_LBUTTON = 0x01,
-                VK_RBUTTON = 0x02,
-                VK_CANCEL = 0x03,
-                VK_MBUTTON = 0x04,
-                VK_LSHIFT = 0xA0,
-                VK_RSHIFT = 0xA1,
-                VK_LCONTROL = 0xA2,
-                VK_RCONTROL = 0xA3,
-                VK_LMENU = 0xA4,
-                VK_RMENU = 0xA5,
-                VK_LEFT = 0x25,
-                VK_UP = 0x26,
-                VK_RIGHT = 0x27,
-                VK_DOWN = 0x28,
-                VK_SHIFT = 0x10,
-                VK_CONTROL = 0x11,
-                VK_MENU = 0x12,
-            }
-
-            [DllImport("user32.dll")]
-            public static extern ushort GetAsyncKeyState(VirtualKeyStates nVirtKey);
-
-            [DllImport("user32.dll")]
-            public static extern ushort GetKeyState(VirtualKeyStates nVirtKey);
-
-            public static bool IsAltDown()
-            {
-                return 1 == GetKeyState(VirtualKeyStates.VK_MENU);
-            }
-
-            public static bool IsControlDown()
-            {
-                return 1 == GetKeyState(VirtualKeyStates.VK_CONTROL);
-            }
-
-            public static bool IsShiftDown()
-            {
-                return 1 == GetKeyState(VirtualKeyStates.VK_SHIFT);
-            }
-
-            public bool PreFilterMessage(ref Message m)
-            {
-                try
-                {
-                    return this.owner.PreFilterMessage(ref m);
-                }
-                catch
-                {
-                }
-
-                return true;
-            }
-        }
-        #endregion
-
         /// <summary>
-        /// Event for MRU List
+        ///     Event for MRU List
         /// </summary>
         /// <param name="number"></param>
         /// <param name="filename"></param>
         private void OnMruFile(int number, String filename)
         {
-            if (System.IO.File.Exists(filename))
+            if (File.Exists(filename))
             {
-                string[] fileNames = new string[] {filename};
+                var fileNames = new[] {filename};
                 mruMenu.SetFirstFile(number);
-                this.Update();
+                Update();
                 LoadPluginFromListOfFileNames(fileNames);
             }
             else
             {
-                string msg = string.Format(TranslateUI.TranslateUiGlobalization.ResManager.GetString("UI_MRU_FileNotExist"),
+                string msg = string.Format(TranslateUiGlobalization.ResManager.GetString("UI_MRU_FileNotExist"),
                                            filename);
                 MessageBox.Show(msg, "Tesvsnip", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 mruMenu.RemoveFile(number);
@@ -2325,7 +2204,7 @@ namespace TESVSnip.UI.Forms
 
         private void resetSettingsToDefaultsToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            Configuration conf = System.Configuration.ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.PerUserRoamingAndLocal);
+            var conf = ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.PerUserRoamingAndLocal);
             string pathUserConfig = conf.FilePath;
             try
             {
@@ -2342,7 +2221,7 @@ namespace TESVSnip.UI.Forms
         }
 
 
-        public TESVSnip.UI.Docking.InterpreterConsole CreateInterpreterWindow()
+        public InterpreterConsole CreateInterpreterWindow()
         {
             int id = Application.OpenForms.OfType<InterpreterConsole>().Count() + 1;
             var form = new InterpreterConsole {Text = string.Format("Console {0}", id)};
@@ -2361,7 +2240,7 @@ namespace TESVSnip.UI.Forms
             }
             else
             {
-                form.Show(this.dockPanel, DockState.Document);
+                form.Show(dockPanel, DockState.Document);
             }
 
             return form;
@@ -2385,12 +2264,12 @@ namespace TESVSnip.UI.Forms
 
                             var runtime = engine.Runtime;
                             runtime.LoadAssembly(Assembly.GetExecutingAssembly());
-                            runtime.LoadAssembly(typeof (TESVSnip.Domain.Model.BaseRecord).Assembly);
-                            runtime.LoadAssembly(typeof(String).Assembly);
-                            runtime.LoadAssembly(typeof(System.Drawing.Icon).Assembly);
-                            runtime.LoadAssembly(typeof(IronPython.Hosting.Python).Assembly);
-                            runtime.LoadAssembly(typeof(System.Dynamic.DynamicObject).Assembly);
-                            runtime.LoadAssembly(typeof(System.Windows.Forms.Cursor).Assembly);
+                            runtime.LoadAssembly(typeof (BaseRecord).Assembly);
+                            runtime.LoadAssembly(typeof (String).Assembly);
+                            runtime.LoadAssembly(typeof (Icon).Assembly);
+                            runtime.LoadAssembly(typeof (Python).Assembly);
+                            runtime.LoadAssembly(typeof (DynamicObject).Assembly);
+                            runtime.LoadAssembly(typeof (Cursor).Assembly);
 
                             c.ScriptScope.SetVariable("__window__", this);
                             c.ScriptScope.SetVariable("__plugins__", PluginList.All);
@@ -2401,9 +2280,8 @@ namespace TESVSnip.UI.Forms
                         });
                 }
             }
-            catch 
+            catch
             {
-                
             }
         }
 
@@ -2412,22 +2290,85 @@ namespace TESVSnip.UI.Forms
         {
             return Application.OpenForms.OfType<T>().FirstOrDefault(x => string.Compare(x.Text, name, false) == 0);
         }
+
         public T GetOrCreateWindowByName<T>(string name) where T : BaseDockContent, new()
         {
             var form = Application.OpenForms.OfType<T>().FirstOrDefault(x => string.Compare(x.Text, name, false) == 0);
             if (form == null)
             {
-                form = new T() { Text = name };
-                form.Show(this.dockPanel, DockState.Document);
+                form = new T {Text = name};
+                form.Show(dockPanel, DockState.Document);
             }
             if (!form.Visible)
             {
-                form.Show(this.dockPanel, DockState.Document);
+                form.Show(dockPanel, DockState.Document);
             }
             return form;
         }
 
+        [DllImport("shell32.dll")]
+        private static extern int FindExecutable(string lpFile, string lpDirectory, [Out] StringBuilder lpResult);
+
+        private void editScriptsToolStripMenuItem_DropDownItemClicked(object sender, ToolStripItemClickedEventArgs e)
+        {
+            var filename = e.ClickedItem.Tag as string;
+            if (!string.IsNullOrEmpty(filename))
+            {
+                if (!string.IsNullOrEmpty(Settings.Default.ExternalPythonEditor))
+                {
+                    Process.Start(Settings.Default.ExternalPythonEditor, filename);
+                }
+                else
+                {
+                    var info = new ProcessStartInfo(filename);
+                    if (info.Verbs.Length > 0)
+                    {
+                        // try to find default editor via Open With. as usually python is default "open" which just runs it
+                        //  after that try to find "edit" then one of the "edit with using notepad" then any edit with
+                        using (var key = Registry.CurrentUser.OpenSubKey(
+                            @"Software\Microsoft\Windows\CurrentVersion\Explorer\FileExts\" +
+                            Path.GetExtension(filename) + @"\OpenWithList", false))
+                        {
+                            if (key != null)
+                            {
+                                foreach (var item in key.GetValue("MRUList", "").ToString())
+                                {
+                                    var process = key.GetValue(item.ToString(), "").ToString();
+                                    if (!string.IsNullOrEmpty(process) && !process.StartsWith("python") &&
+                                        !process.StartsWith("py.exe"))
+                                    {
+                                        var tmpinfo = new ProcessStartInfo(process, filename) {Verb = "open"};
+                                        if (tmpinfo.Verbs.Contains("open", StringComparer.InvariantCultureIgnoreCase))
+                                            // make sure open is a valid verb
+                                        {
+                                            info = tmpinfo;
+                                            break;
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                        if (string.IsNullOrEmpty(info.Verb))
+                            info.Verb = info.Verbs.FirstOrDefault(
+                                (v) => 0 == string.Compare(v, "edit", StringComparison.InvariantCultureIgnoreCase));
+                        if (string.IsNullOrEmpty(info.Verb))
+                            info.Verb = info.Verbs.FirstOrDefault(
+                                (v) => v.StartsWith("edit", StringComparison.InvariantCultureIgnoreCase)
+                                       && v.IndexOf("notepad", StringComparison.InvariantCultureIgnoreCase) > 0
+                                );
+                        if (string.IsNullOrEmpty(info.Verb))
+                            info.Verb = info.Verbs.FirstOrDefault(
+                                (v) => v.StartsWith("edit", StringComparison.InvariantCultureIgnoreCase));
+                    }
+                    info.WorkingDirectory = Path.GetDirectoryName(filename);
+                    info.WindowStyle = ProcessWindowStyle.Normal;
+                    Process.Start(info);
+                }
+            }
+        }
+
         #region Scripting Output Window
+
         private void outputWindowToolStripMenuItem_Click(object sender, EventArgs e)
         {
             if (outputTextContent == null)
@@ -2442,21 +2383,25 @@ namespace TESVSnip.UI.Forms
                 }
             }
         }
-        void outputWindow_Closed(object sender, EventArgs e)
+
+        private void outputWindow_Closed(object sender, EventArgs e)
         {
             outputTextContent = null;
             PluginEngine.Default.OnConsoleMessage -= pluginEngine_OnConsoleMessage;
         }
-        void pluginEngine_OnConsoleMessage(object sender, PluginEngine.MessageEventArgs e)
+
+        private void pluginEngine_OnConsoleMessage(object sender, PluginEngine.MessageEventArgs e)
         {
             if (outputTextContent != null)
             {
                 outputTextContent.AppendText(e.Text);
             }
         }
+
         #endregion
 
         #region Dynamic IronPython Plugin Scripts
+
         private void LoadDynamicScripts()
         {
             if (!PluginEngine.Default.Plugins.Any())
@@ -2472,54 +2417,54 @@ namespace TESVSnip.UI.Forms
 
                 if (plugin.SupportsSelection)
                 {
-                    var item = new ToolStripMenuItem()
-                    {
-                        Name = plugin.Name,
-                        Text = string.IsNullOrWhiteSpace(plugin.DisplayName) ? plugin.Name : plugin.DisplayName,
-                        Image = plugin.DisplayImage,
-                        ToolTipText = plugin.ToolTipText,
-                        AutoToolTip = !string.IsNullOrWhiteSpace(plugin.ToolTipText),
-                        Visible = true,
-                        Enabled = true,
-                        Tag = plugin.Name,
-                    };
+                    var item = new ToolStripMenuItem
+                        {
+                            Name = plugin.Name,
+                            Text = string.IsNullOrWhiteSpace(plugin.DisplayName) ? plugin.Name : plugin.DisplayName,
+                            Image = plugin.DisplayImage,
+                            ToolTipText = plugin.ToolTipText,
+                            AutoToolTip = !string.IsNullOrWhiteSpace(plugin.ToolTipText),
+                            Visible = true,
+                            Enabled = true,
+                            Tag = plugin.Name,
+                        };
                     selectionScriptsToolStripMenuItem.DropDownItems.Add(item);
                 }
                 if (plugin.SupportGlobal)
                 {
-                    var item = new ToolStripMenuItem()
-                    {
-                        Name = plugin.Name,
-                        Text = string.IsNullOrWhiteSpace(plugin.DisplayName) ? plugin.Name : plugin.DisplayName,
-                        Image = plugin.DisplayImage,
-                        ToolTipText = plugin.ToolTipText,
-                        AutoToolTip = !string.IsNullOrWhiteSpace(plugin.ToolTipText),
-                        Visible = true,
-                        Enabled = true,
-                        Tag = plugin.Name,
-                    };
+                    var item = new ToolStripMenuItem
+                        {
+                            Name = plugin.Name,
+                            Text = string.IsNullOrWhiteSpace(plugin.DisplayName) ? plugin.Name : plugin.DisplayName,
+                            Image = plugin.DisplayImage,
+                            ToolTipText = plugin.ToolTipText,
+                            AutoToolTip = !string.IsNullOrWhiteSpace(plugin.ToolTipText),
+                            Visible = true,
+                            Enabled = true,
+                            Tag = plugin.Name,
+                        };
                     globalScriptsToolStripMenuItem.DropDownItems.Add(item);
                 }
             }
 
-            var rootUri = new Uri(Path.Combine(PluginEngine.PluginsPyPath,"."), UriKind.Absolute);
+            var rootUri = new Uri(Path.Combine(PluginEngine.PluginsPyPath, "."), UriKind.Absolute);
             foreach (
                 var filename in
                     Directory.EnumerateFiles(PluginEngine.PluginsPyPath, "*.py", SearchOption.TopDirectoryOnly))
             {
                 var relativePath = rootUri.MakeRelativeUri(new Uri(filename, UriKind.Absolute)).ToString();
                 // was going to show subdirectories but will leave that alone for now
-                var item = new ToolStripMenuItem()
-                {
-                    Name = Path.GetFileNameWithoutExtension(relativePath),
-                    Text = Path.GetFileNameWithoutExtension(relativePath),
-                    Image = Properties.Resources.PythonScript32x32,
-                    ToolTipText = string.Format("Open in {0} in default python editor", relativePath),
-                    AutoToolTip = true,
-                    Visible = true,
-                    Enabled = true,
-                    Tag = Path.GetFullPath(filename),
-                };
+                var item = new ToolStripMenuItem
+                    {
+                        Name = Path.GetFileNameWithoutExtension(relativePath),
+                        Text = Path.GetFileNameWithoutExtension(relativePath),
+                        Image = Resources.PythonScript32x32,
+                        ToolTipText = string.Format("Open in {0} in default python editor", relativePath),
+                        AutoToolTip = true,
+                        Visible = true,
+                        Enabled = true,
+                        Tag = Path.GetFullPath(filename),
+                    };
                 editScriptsToolStripMenuItem.DropDownItems.Add(item);
             }
 
@@ -2536,13 +2481,14 @@ namespace TESVSnip.UI.Forms
 
         private void BuildDynamicScriptsMenu()
         {
-            this.ClearDynamicScripts();
+            ClearDynamicScripts();
             var outputWindow = GetWindowByName<OutputTextContent>("Output");
             if (outputWindow != null)
                 outputWindow.UpdateText("");
             PluginEngine.Default.Reinitialize();
-            this.LoadDynamicScripts();
+            LoadDynamicScripts();
         }
+
         private void reloadToolStripMenuItem_Click(object sender, EventArgs e)
         {
             BuildDynamicScriptsMenu();
@@ -2553,7 +2499,7 @@ namespace TESVSnip.UI.Forms
             selectionScriptsToolStripMenuItem.Enabled =
                 scriptsToolStripMenuItem.Enabled &&
                 selectionScriptsToolStripMenuItem.HasDropDownItems &&
-                this.PluginTree.SelectedRecord != null;
+                PluginTree.SelectedRecord != null;
         }
 
         private void globalScriptsToolStripMenuItem_DropDownItemClicked(object sender, ToolStripItemClickedEventArgs e)
@@ -2565,9 +2511,9 @@ namespace TESVSnip.UI.Forms
             }
         }
 
-        private System.Collections.IList BuildSelectionList()
+        private IList BuildSelectionList()
         {
-            var recs = this.PluginTree.SelectedRecords;
+            var recs = PluginTree.SelectedRecords;
             return recs != null ? recs.ToArray() : new object[0];
         }
 
@@ -2575,15 +2521,16 @@ namespace TESVSnip.UI.Forms
         {
             var recs = BuildSelectionList();
             if (recs.Count == 0) return;
-            foreach (ToolStripMenuItem menu in this.selectionScriptsToolStripMenuItem.DropDownItems)
+            foreach (ToolStripMenuItem menu in selectionScriptsToolStripMenuItem.DropDownItems)
             {
                 var name = menu.Tag as string;
                 menu.Enabled = !string.IsNullOrEmpty(name) &&
-                                PluginEngine.Default.IsValidSelectionByName(name, recs);
+                               PluginEngine.Default.IsValidSelectionByName(name, recs);
             }
         }
 
-        private void selectionScriptsToolStripMenuItem_DropDownItemClicked(object sender, ToolStripItemClickedEventArgs e)
+        private void selectionScriptsToolStripMenuItem_DropDownItemClicked(object sender,
+                                                                           ToolStripItemClickedEventArgs e)
         {
             var recs = BuildSelectionList();
             if (recs.Count == 0) return;
@@ -2592,65 +2539,84 @@ namespace TESVSnip.UI.Forms
             if (e.ClickedItem.Enabled)
                 PluginEngine.Default.ExecuteSelectionByName(name, recs);
         }
+
         #endregion
 
-        [DllImport("shell32.dll")]
-        static extern int FindExecutable(string lpFile, string lpDirectory, [Out] System.Text.StringBuilder lpResult);
+        #region MessageFilter
 
-        private void editScriptsToolStripMenuItem_DropDownItemClicked(object sender, ToolStripItemClickedEventArgs e)
+        public class MainViewMessageFilter : IMessageFilter
         {
-            var filename = e.ClickedItem.Tag as string;
-            if (!string.IsNullOrEmpty(filename))
+            public const int WM_CHAR = 0x102;
+
+            public const int WM_KEYDOWN = 0x100;
+
+            public const int WM_KEYUP = 0x101;
+
+            private const ushort KEY_PRESSED = 0x8000;
+
+            private readonly MainView owner;
+
+            public MainViewMessageFilter(MainView owner)
             {
-                if (!string.IsNullOrEmpty(Properties.Settings.Default.ExternalPythonEditor))
+                this.owner = owner;
+            }
+
+            public bool PreFilterMessage(ref Message m)
+            {
+                try
                 {
-                    Process.Start(Properties.Settings.Default.ExternalPythonEditor, filename);
+                    return owner.PreFilterMessage(ref m);
                 }
-                else
+                catch
                 {
-                    var info = new ProcessStartInfo(filename);
-                    if (info.Verbs.Length > 0)
-                    {
-                        // try to find default editor via Open With. as usually python is default "open" which just runs it
-                        //  after that try to find "edit" then one of the "edit with using notepad" then any edit with
-                        using (var key = Registry.CurrentUser.OpenSubKey(
-                            @"Software\Microsoft\Windows\CurrentVersion\Explorer\FileExts\" + Path.GetExtension(filename) + @"\OpenWithList", false))
-                        {
-                            if (key != null)
-                            {
-                                foreach (var item in key.GetValue("MRUList", "").ToString())
-                                {
-                                    var process = key.GetValue(item.ToString(), "").ToString();
-                                    if (!string.IsNullOrEmpty(process) && !process.StartsWith("python") && !process.StartsWith("py.exe"))
-                                    {
-                                        var tmpinfo = new ProcessStartInfo(process, filename) { Verb = "open" };
-                                        if (tmpinfo.Verbs.Contains("open", StringComparer.InvariantCultureIgnoreCase)) // make sure open is a valid verb
-                                        {
-                                            info = tmpinfo;
-                                            break;
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                        if (string.IsNullOrEmpty(info.Verb))
-                            info.Verb = info.Verbs.FirstOrDefault(
-                                (v) => 0 == string.Compare(v, "edit", StringComparison.InvariantCultureIgnoreCase));
-                        if (string.IsNullOrEmpty(info.Verb))
-                            info.Verb = info.Verbs.FirstOrDefault(
-                                (v) => v.StartsWith("edit", StringComparison.InvariantCultureIgnoreCase)
-                                    && v.IndexOf("notepad", StringComparison.InvariantCultureIgnoreCase) > 0
-                                );
-                        if (string.IsNullOrEmpty(info.Verb))
-                            info.Verb = info.Verbs.FirstOrDefault(
-                                (v) => v.StartsWith("edit", StringComparison.InvariantCultureIgnoreCase) );
-                    }
-                    info.WorkingDirectory = Path.GetDirectoryName(filename);
-                    info.WindowStyle = ProcessWindowStyle.Normal;
-                    Process.Start(info);
                 }
+
+                return true;
+            }
+
+            [DllImport("user32.dll")]
+            public static extern ushort GetAsyncKeyState(VirtualKeyStates nVirtKey);
+
+            [DllImport("user32.dll")]
+            public static extern ushort GetKeyState(VirtualKeyStates nVirtKey);
+
+            public static bool IsAltDown()
+            {
+                return 1 == GetKeyState(VirtualKeyStates.VK_MENU);
+            }
+
+            public static bool IsControlDown()
+            {
+                return 1 == GetKeyState(VirtualKeyStates.VK_CONTROL);
+            }
+
+            public static bool IsShiftDown()
+            {
+                return 1 == GetKeyState(VirtualKeyStates.VK_SHIFT);
+            }
+
+            internal enum VirtualKeyStates
+            {
+                VK_LBUTTON = 0x01,
+                VK_RBUTTON = 0x02,
+                VK_CANCEL = 0x03,
+                VK_MBUTTON = 0x04,
+                VK_LSHIFT = 0xA0,
+                VK_RSHIFT = 0xA1,
+                VK_LCONTROL = 0xA2,
+                VK_RCONTROL = 0xA3,
+                VK_LMENU = 0xA4,
+                VK_RMENU = 0xA5,
+                VK_LEFT = 0x25,
+                VK_UP = 0x26,
+                VK_RIGHT = 0x27,
+                VK_DOWN = 0x28,
+                VK_SHIFT = 0x10,
+                VK_CONTROL = 0x11,
+                VK_MENU = 0x12,
             }
         }
 
+        #endregion
     }
 }

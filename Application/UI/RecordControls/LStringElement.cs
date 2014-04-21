@@ -4,7 +4,7 @@
     using System.Globalization;
     using System.Windows.Forms;
 
-    using TESVSnip.Domain.Data.RecordStructure;
+    using Domain.Data.Structure;
     using TESVSnip.Framework;
     using TESVSnip.Properties;
     using TESVSnip.UI.Forms;

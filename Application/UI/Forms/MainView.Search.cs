@@ -1,4 +1,6 @@
-﻿namespace TESVSnip.UI.Forms
+﻿using TESVSnip.Domain.Data;
+
+namespace TESVSnip.UI.Forms
 {
     using System;
     using System.Collections;
@@ -10,7 +12,7 @@
     using System.Media;
     using System.Windows.Forms;
 
-    using TESVSnip.Domain.Data.RecordStructure;
+    using Domain.Data.Structure;
     using TESVSnip.Domain.Model;
     using TESVSnip.Framework;
 
@@ -290,22 +292,18 @@
             // toolStripIncrFindType.SelectedItem = toolStripIncrFindType.Items[0];
             this.ResetSearch();
             this.toolStripIncrFindStatus.Text = string.Empty;
-
-            if (!RecordStructure.Loaded)
-            {
-                RecordStructure.Load();
-            }
-
-            var recitems = RecordStructure.Records.Keys.OfType<object>().ToArray();
-
-            // var recitems = TESVSnip.Properties.Settings.Default.AllESMRecords != null
-            // ? TESVSnip.Properties.Settings.Default.AllESMRecords.Trim().Split(new char[] { ';', ',' }, StringSplitOptions.RemoveEmptyEntries).OfType<object>().ToArray()
-            // : new object[0];
+            ReinitializeToolStripFind();
+        }
+        private void ReinitializeToolStripFind()
+        {
+            var recitems = DomainDefinition.GetRecordNames();
             this.toolStripIncrFindTypeFilter.Sorted = true;
             this.toolStripIncrFindTypeFilter.Items.Clear();
             this.toolStripIncrFindTypeFilter.Items.AddRange(recitems);
-            this.toolStripIncrFindTypeFilter.SelectedIndex = 0;
+            if (this.toolStripIncrFindTypeFilter.SelectedIndex <0 && recitems.Length > 0) 
+                this.toolStripIncrFindTypeFilter.SelectedIndex = 0;            
         }
+
 
         private bool IsNonConformingRecord(BaseRecord tn)
         {

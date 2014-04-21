@@ -10,7 +10,7 @@
 
     using BrightIdeasSoftware;
 
-    using TESVSnip.Domain.Data.RecordStructure;
+    using Domain.Data.Structure;
     using TESVSnip.Domain.Model;
     using TESVSnip.Framework.Collections;
     using TESVSnip.Properties;
@@ -831,8 +831,8 @@
                 var sr = this.Selection.SubRecord;
                 if (br != null)
                 {
-                    RecordStructure rs;
-                    if (RecordStructure.Records.TryGetValue(br.Name, out rs))
+                    RecordStructure rs = br.GetStructure();
+                    if (rs != null)
                     {
                         var usedNames = new StringDictionary();
                         var delayedAddItems = new List<ToolStripMenuItem>();

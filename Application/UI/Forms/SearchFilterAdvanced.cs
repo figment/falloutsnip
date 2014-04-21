@@ -6,7 +6,7 @@
 
     using BrightIdeasSoftware;
 
-    using TESVSnip.Domain.Data.RecordStructure;
+    using Domain.Data.Structure;
     using TESVSnip.Domain.Model;
     using TESVSnip.Properties;
 

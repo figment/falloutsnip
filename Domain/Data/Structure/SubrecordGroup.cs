@@ -1,6 +1,6 @@
-using TESVSnip.Domain.Data.RecordStructure.Xml;
+using TESVSnip.Domain.Data.Structure.Xml;
 
-namespace TESVSnip.Domain.Data.RecordStructure
+namespace TESVSnip.Domain.Data.Structure
 {
     internal class SubrecordGroup : SubrecordBase
     {
@@ -14,10 +14,7 @@ namespace TESVSnip.Domain.Data.RecordStructure
 
         public override bool IsGroup
         {
-            get
-            {
-                return true;
-            }
+            get { return true; }
         }
     }
 }

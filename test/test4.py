@@ -11,7 +11,7 @@ from System.IO import Path
 import TESVSnip.Domain
 from TESVSnip.Domain.Services import Spells
 from TESVSnip.Domain.Model import BaseRecord, Record, Plugin, SubRecord, GroupRecord
-from TESVSnip.Domain.Data.RecordStructure import RecordStructure, ElementValueType
+from TESVSnip.Domain.Data.Structure import RecordStructure, ElementValueType
 from TESVSnip.Domain.Scripts import PyInterpreter
 from TESVSnip.Domain.Services import Spells
 

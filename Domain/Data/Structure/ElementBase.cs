@@ -1,11 +1,9 @@
-using TESVSnip.Domain.Data.RecordStructure.Xml;
+using System;
+using System.Globalization;
 
-namespace TESVSnip.Domain.Data.RecordStructure
+namespace TESVSnip.Domain.Data.Structure
 {
-    using System;
-    using System.Globalization;
-
-    public class SubrecordBase
+    public class ElementBase
     {
         public readonly string desc;
 
@@ -15,12 +13,20 @@ namespace TESVSnip.Domain.Data.RecordStructure
 
         public readonly int repeat;
 
-        protected SubrecordBase(SubrecordBase src, int optional, int repeat)
+        protected ElementBase()
+        {
+            this.name = "DATA";
+            this.desc = "Data";
+            this.optional = 0;
+            this.repeat = 0;
+        }
+
+        protected ElementBase(ElementBase src, int optional, int repeat)
         {
             if (src.name.StartsWith("&#x"))
             {
-                string[] val = src.name.Split(new[] { ';' }, 2, StringSplitOptions.None);
-                var c = (char)int.Parse(val[0].Substring(3), NumberStyles.HexNumber, null);
+                string[] val = src.name.Split(new[] {';'}, 2, StringSplitOptions.None);
+                var c = (char) int.Parse(val[0].Substring(3), NumberStyles.HexNumber, null);
                 this.name = c + val[1];
             }
             else
@@ -33,12 +39,12 @@ namespace TESVSnip.Domain.Data.RecordStructure
             this.repeat = repeat;
         }
 
-        protected SubrecordBase(Xml.Subrecord node)
+        protected ElementBase(Xml.SubrecordElement node)
         {
             if (node.name.StartsWith("&#x"))
             {
-                string[] val = node.name.Split(new[] { ';' }, 2, StringSplitOptions.None);
-                var c = (char)int.Parse(val[0].Substring(3), NumberStyles.HexNumber, null);
+                string[] val = node.name.Split(new[] {';'}, 2, StringSplitOptions.None);
+                var c = (char) int.Parse(val[0].Substring(3), NumberStyles.HexNumber, null);
                 this.name = c + val[1];
             }
             else
@@ -51,12 +57,12 @@ namespace TESVSnip.Domain.Data.RecordStructure
             this.desc = node.desc;
         }
 
-        protected SubrecordBase(Xml.Group node)
+        protected ElementBase(Xml.ElementGroup node)
         {
             if (node.name.StartsWith("&#x"))
             {
-                string[] val = node.name.Split(new[] { ';' }, 2, StringSplitOptions.None);
-                var c = (char)int.Parse(val[0].Substring(3), NumberStyles.HexNumber, null);
+                string[] val = node.name.Split(new[] {';'}, 2, StringSplitOptions.None);
+                var c = (char) int.Parse(val[0].Substring(3), NumberStyles.HexNumber, null);
                 this.name = c + val[1];
             }
             else
@@ -71,10 +77,7 @@ namespace TESVSnip.Domain.Data.RecordStructure
 
         public virtual bool IsGroup
         {
-            get
-            {
-                return false;
-            }
+            get { return false; }
         }
 
         public override string ToString()

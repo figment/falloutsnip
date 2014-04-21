@@ -1,24 +1,15 @@
-using TESVSnip.Domain.Data.RecordStructure.Xml;
+using System;
+using System.Collections;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Xml.Serialization;
+using TESVSnip.Domain.Data.Structure.Xml;
 
-namespace TESVSnip.Domain.Data.RecordStructure
+namespace TESVSnip.Domain.Data.Structure
 {
-    using System;
-    using System.Collections;
-    using System.Collections.Generic;
-    using System.IO;
-    using System.Linq;
-    using System.Xml.Serialization;
-
-    using TESVSnip.Domain.Services;
-
     public class RecordStructure
     {
-        public static Dictionary<string, RecordStructure> Records = new Dictionary<string, RecordStructure>(StringComparer.InvariantCultureIgnoreCase);
-
-        private static readonly string xmlPath = Path.Combine(Folders.SettingsDirectory, @"RecordStructure.xml");
-
-        private static bool loaded;
-
         public readonly string description;
 
         public readonly string name;
@@ -27,51 +18,12 @@ namespace TESVSnip.Domain.Data.RecordStructure
 
         public readonly SubrecordStructure[] subrecords;
 
-        static RecordStructure()
-        {
-            try { if (!loaded) Load(); }
-            catch { }
-        }
-
         private RecordStructure(RecordsRecord rec, SubrecordBase[] subrecordTree, SubrecordStructure[] subrecords)
         {
             this.name = rec.name;
             this.description = rec.desc;
             this.subrecordTree = subrecordTree;
             this.subrecords = subrecords;
-        }
-
-        public static bool Loaded
-        {
-            get
-            {
-                return loaded;
-            }
-        }
-
-        public static void Load()
-        {
-            if (loaded)
-            {
-                Records.Clear();
-            }
-            else
-            {
-                loaded = true;
-            }
-
-            var xs = new XmlSerializer(typeof(Records));
-            using (FileStream fs = File.OpenRead(xmlPath))
-            {
-                var baseRec = xs.Deserialize(fs) as Records;
-                var groups = baseRec.Items.OfType<Group>().ToDictionary(x => x.id, StringComparer.InvariantCultureIgnoreCase);
-                foreach (var rec in baseRec.Items.OfType<RecordsRecord>())
-                {
-                    List<SubrecordBase> subrecords = GetSubrecordStructures(rec.Items, groups);
-                    var sss = BuildSubrecordStructure(subrecords);
-                    Records[rec.name] = new RecordStructure(rec, subrecords.ToArray(), sss.ToArray());
-                }
-            }
         }
 
         public override string ToString()
@@ -85,13 +37,13 @@ namespace TESVSnip.Domain.Data.RecordStructure
         }
 
         /// <summary>
-        /// Build the Subrecord array with groups expanded.
+        ///     Build the Subrecord array with groups expanded.
         /// </summary>
         /// <param name="list">
-        /// The list.
+        ///     The list.
         /// </param>
         /// <returns>
-        /// The System.Collections.Generic.List`1[T -&gt; TESVSnip.SubrecordStructure].
+        ///     The System.Collections.Generic.List`1[T -&gt; TESVSnip.SubrecordStructure].
         /// </returns>
         private static List<SubrecordStructure> BuildSubrecordStructure(IEnumerable<SubrecordBase> list)
         {
@@ -100,7 +52,7 @@ namespace TESVSnip.Domain.Data.RecordStructure
             {
                 if (sr is SubrecordStructure)
                 {
-                    subrecords.Add((SubrecordStructure)sr);
+                    subrecords.Add((SubrecordStructure) sr);
                 }
                 else if (sr is SubrecordGroup)
                 {
@@ -132,7 +84,7 @@ namespace TESVSnip.Domain.Data.RecordStructure
             {
                 if (sr is Subrecord)
                 {
-                    subrecords.Add(new SubrecordStructure((Subrecord)sr));
+                    subrecords.Add(new SubrecordStructure((Subrecord) sr));
                 }
                 else if (sr is Group)
                 {
@@ -151,5 +103,26 @@ namespace TESVSnip.Domain.Data.RecordStructure
 
             return subrecords;
         }
+
+        public static Dictionary<string, RecordStructure> Load(string xmlPath)
+        {
+            var records = new Dictionary<string, RecordStructure>(StringComparer.InvariantCultureIgnoreCase);
+
+            var xs = new XmlSerializer(typeof(Records));
+            using (var fs = File.OpenRead(xmlPath))
+            {
+                var baseRec = xs.Deserialize(fs) as Records;
+                var groups = baseRec.Items.OfType<Group>()
+                                    .ToDictionary(x => x.id, StringComparer.InvariantCultureIgnoreCase);
+                foreach (var rec in baseRec.Items.OfType<RecordsRecord>())
+                {
+                    List<SubrecordBase> subrecords = RecordStructure.GetSubrecordStructures(rec.Items, groups);
+                    var sss = RecordStructure.BuildSubrecordStructure(subrecords);
+                    records[rec.name] = new RecordStructure(rec, subrecords.ToArray(), sss.ToArray());
+                }
+            }
+            return records;
+        }
+
     }
 }

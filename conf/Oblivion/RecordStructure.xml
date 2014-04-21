@@ -1,0 +1,2662 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Records xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <Group id="CONDITIONAL" optional="1" repeat="1">
+    <Subrecord name="CTDA" desc="Conditional" optional="1" repeat="1">
+      <Element name="Comparison Type" type="byte" options="equal;0;or equal;1;not equal;32;or not equal;33;greater;64;or greater;65;greater/equal;96;or greater/equal;97;less;128;or less;129;less/equal;160;or less/equal;161" flags="OR;Run on target;Use global" />
+      <Element name="Unknown 1" type="byte" hexview="true" />
+      <Element name="Unknown 2" type="byte" hexview="true" />
+      <Element name="Unknown 3" type="byte" hexview="true" />
+      <Element name="Comparison Value" type="float" />
+      <Element name="Function (+4096)" type="short" />
+      <Element name="unused" type="short" notininfo="true" />
+      <Element name="Param 1 (can be int / float / formID)" type="formid" />
+      <Element name="Param 2 (can be int / float / formID)" type="formid" />
+      <Element name="Param 3 (can be int / float / formID)" type="formid" />
+      <Element name="Reference" type="int" />
+      <Element name="Unknown (always -1)" type="int" notininfo="true" />
+    </Subrecord>
+    <Subrecord name="CIS1" desc="CIS1" optional="1">
+      <Element name="Unknown" type="int" />
+      <Element name="Unknown 1" type="int" />
+      <Element name="Unknown 2" type="int" />
+    </Subrecord>
+    <Subrecord name="CIS2" desc="CIS2" optional="1">
+      <Element name="Unknown" type="string" />
+    </Subrecord>
+  </Group>
+  <Group id="EFFECT" optional="1" repeat="1">
+    <Subrecord name="EFID" desc="EFID" size="4">
+      <Element name="ID" type="formid" reftype="MGEF" />
+    </Subrecord>
+    <Subrecord name="EFIT" desc="EFIT" optional="1">
+      <Element name="Magnitude" type="float" />
+      <Element name="Unknown" type="int" />
+      <Element name="Duration" type="uint" />
+    </Subrecord>
+    <Group id="CONDITIONAL" optional="1" repeat="1" />
+  </Group>
+  <Group id="KEYWORDS" optional="1">
+    <Subrecord name="KSIZ" desc="Number of Keywords" optional="1" size="4">
+      <Element name="Count" type="int" />
+    </Subrecord>
+    <Subrecord name="KWDA" desc="Keyword List" optional="1">
+      <Element name="ID" type="formid" reftype="KYWD" repeat="1" optional="1" />
+    </Subrecord>
+  </Group>
+  <Group id="TINTING" optional="1" repeat="1">
+    <Subrecord name="TINI" desc="TINI" size="2">
+      <Element name="Unknown" type="short" />
+    </Subrecord>
+    <Subrecord name="TINT" desc="TINT" optional="1">
+      <Element name="Name" type="string" />
+    </Subrecord>
+    <Subrecord name="TINP" desc="TINP" optional="1" size="2">
+      <Element name="Unknown" type="short" />
+    </Subrecord>
+    <Subrecord name="TIND" desc="TIND" optional="1" size="4">
+      <Element name="ID" type="formid" reftype="CLFM" />
+    </Subrecord>
+    <Group optional="1" repeat="1">
+      <Subrecord name="TINC" desc="TINC" size="4">
+        <Element name="ID" type="formid" reftype="CLFM" />
+      </Subrecord>
+      <Subrecord name="TINV" desc="TINV" optional="1" size="4">
+        <Element name="Unknown" type="float" />
+      </Subrecord>
+      <Subrecord name="TIRS" desc="TIRS" optional="1" size="2">
+        <Element name="Unknown" type="short" />
+      </Subrecord>
+    </Group>
+  </Group>
+  <Group id="ICONIMAGE" optional="1">
+    <Subrecord name="ICON" desc="Icon/Inventory Image (DDS)" optional="1">
+      <Element name="Path\Filename" type="string" />
+    </Subrecord>
+    <Subrecord name="MICO" desc="Message/Inventory Image (DDS)" optional="1">
+      <Element name="Path\Filename" type="string" />
+    </Subrecord>
+    <Subrecord name="ICO2" desc="Icon/Inventory Image (DDS)" optional="1">
+      <Element name="Path\Filename" type="string" />
+    </Subrecord>
+    <Subrecord name="MIC2" desc="Message/Inventory Image (DDS)" optional="1">
+      <Element name="Path\Filename" type="string" />
+    </Subrecord>
+  </Group>
+  <!-- Repetitive Subrecords -->
+  <Group id="COED" optional="1">
+    <!-- Snip doesn't support repeating element-groups yet -->
+    <Subrecord name="COED" desc="Faction and Health" optional="1">
+      <Element name="FACT or NPC_ FormID" type="formid" />
+      <Element name="Faction Rank * (rank=this #+1)" type="uint" desc="(formID if NPC_ assigned with a globalVariable)" />
+      <!-- would be a formID if globVar assigned -->
+      <Element name="Health (this #x100)" type="float" />
+    </Subrecord>
+  </Group>
+  <Group id="CNAM" optional="1">
+    <Subrecord name="CNAM" desc="Marker Color">
+      <Element name="Red" type="byte" />
+      <Element name="Green" type="byte" />
+      <Element name="Blue" type="byte" />
+      <Element name="Unknown" type="byte" notininfo="1" />
+    </Subrecord>
+  </Group>
+  <Group id="DESC" optional="1">
+    <!-- localized -->
+    <Subrecord name="DESC" desc="Description" optional="1">
+      <Element name="Text" type="string" />
+    </Subrecord>
+  </Group>
+  <Group id="EDID" optional="1">
+    <Subrecord name="EDID" desc="Editor ID Name">
+      <Element name="Name" type="string" condid="1" />
+    </Subrecord>
+  </Group>
+  <Group id="ETYP" optional="1">
+    <Subrecord name="ETYP" desc="Equip Type (EQUP)" optional="1">
+      <Element name="EQUP FormID" type="formid" reftype="EQUP" />
+    </Subrecord>
+  </Group>
+  <Group id="FULL" optional="1">
+    <!-- localized -->
+    <Subrecord name="FULL" desc="Full In-Game Name" optional="1">
+      <Element name="Name" type="string" />
+    </Subrecord>
+  </Group>
+  <Group id="NAME" optional="1">
+    <Subrecord name="NAME" desc="Base Object" optional="1">
+      <Element name="FormID" type="formid" />
+    </Subrecord>
+  </Group>
+
+  <Record desc="Main plugin header" name="TES4">
+    <Subrecord desc="The main plugin header" name="HEDR" optional="1" size="12">
+      <Element name="File version" type="float" />
+      <Element name="Record Count" type="int" />
+      <Element name="Next ObjectID" type="int" />
+    </Subrecord>
+    <Subrecord desc="OFST" name="OFST" optional="1">
+      <Element name="Unknown" type="blob" />
+    </Subrecord>
+    <Subrecord desc="DELE" name="DELE" optional="1" size="8">
+      <Element name="Unknown" type="int" />
+      <Element name="Unknown 1" type="int" />
+    </Subrecord>
+    <Subrecord desc="Plugin author" name="CNAM" optional="1" size="8">
+      <Element name="Author" type="string" />
+      <Element name="Unknown 1" type="int" />
+    </Subrecord>
+    <Subrecord desc="Plugin description" name="SNAM" optional="1" size="2">
+      <Element name="Description" type="short" />
+    </Subrecord>
+  </Record>
+  
+  <Record name="GMST" desc="Game setting">
+    <!-- localized -->
+    <Group id="EDID" optional="1" />
+    <Subrecord name="DATA" desc="Setting value" condid="1" condition="startswith" condvalue="s">
+      <!-- localized -->
+      <Element name="String Value" type="string" />
+    </Subrecord>
+    <Subrecord name="DATA" desc="Setting value" condid="1" condition="startswith" condvalue="f">
+      <Element name="Float Value" type="float" />
+    </Subrecord>
+    <Subrecord name="DATA" desc="Setting value" condid="1" condition="startswith" condvalue="i">
+      <Element name="Integer Value" type="uint" />
+    </Subrecord>
+    <Subrecord name="DATA" desc="Setting value" condid="1" condition="startswith" condvalue="b">
+      <Element name="Boolean Value" type="uint" options="True;1;False;0" />
+    </Subrecord>
+  </Record>
+  <Record name="GLOB" desc="Global Variable">
+    <Group id="EDID" optional="1" />
+    <Subrecord name="FNAM" desc="Value Type" optional="1">
+      <Element name="Value Type" type="byte" options="ushort;115;Long;108;Float;102" />
+    </Subrecord>
+    <Subrecord name="FLTV" desc="Value" optional="1">
+      <Element name="Value" type="float" />
+    </Subrecord>
+  </Record>
+  
+  <Record name="CLAS" desc="Character Class">
+    <!-- localized -->
+    <Group id="EDID" optional="1" />
+    <Group id="FULL" optional="1" />
+    <!-- localized -->
+    <Group id="DESC" optional="1" />
+    <!-- localized -->
+    <Group id="ICONIMAGE" optional="1" />
+    <Subrecord name="DATA" desc="Class Data" optional="1">
+      <Element name="Primary Skills" type="uint" repeat="2"
+        options="Strength;0;Intelligence;1;Willpower;2;Agility;3;Speed;4;Endurance;5;Personality;6;Luck;7;"/>
+      <Element name="Specialization" type="uint"
+        options="Combat;0;Magic;1;Stealth;2;"/>
+      <Element name="Major Skills" type="uint" repeat="7"
+        options="Armorer;12;Athletics;13;Blade;14;Block;15;Blunt;16;Hand to Hand;17;Heavy Armor;18;Alchemy;19;Alteration;20;Acrobatics;26;"
+        />
+      <Element name="Flags" type="uint" flags="Playable;Guard;"/>
+      <Element name="Trades" desc="Auto-Calc Buys/Sells" type="uint" 
+        flags="Weapons;Armor;Clothing;Books;Ingredients;;;Lights;Apparatus;;Miscellaneous;Spells;Magic Items;Potions;Training;;Recharge;Repair;;;"/>
+      <Element name="Training Skill" type="byte"
+        options="Armorer;0;Athletics;1;Blade;2;Block;3;Blunt;4;Hand to Hand;5;Heavy Armor;6;Alchemy;7;Alteration;8;Acrobatics;14;"
+      />
+      <Element name="Training Level" type="byte"/>
+      <Element name="Unknown" type="byte"/>
+      <Element name="Unknown" type="byte"/>
+    </Subrecord>
+  </Record>  
+  
+  <Record desc="Faction" name="FACT">
+    <Subrecord desc="Editor ID" name="EDID" optional="1">
+      <Element name="Name" type="string" />
+    </Subrecord>
+    <Subrecord desc="XNAM" name="XNAM" optional="1" repeat="1" size="8">
+      <Element name="ID" type="int" />
+      <Element name="Unknown 1" type="int" />
+    </Subrecord>
+    <Subrecord desc="Full Name" name="FULL" optional="1">
+      <Element name="Name" type="string" />
+    </Subrecord>
+    <Subrecord desc="DATA" name="DATA" optional="1" size="1">
+      <Element name="Name" type="byte" />
+    </Subrecord>
+    <Subrecord desc="CNAM" name="CNAM" optional="1" size="4">
+      <Element name="Unknown" type="float" />
+    </Subrecord>
+    <Subrecord desc="Rank ID" name="RNAM" optional="4" repeat="4" size="4">
+      <Element name="Unknown" type="int" />
+    </Subrecord>
+    <Subrecord desc="Rank Name?" name="MNAM" optional="4" repeat="4">
+      <Element name="Name" type="string" />
+    </Subrecord>
+    <Subrecord desc="FNAM" name="FNAM" optional="4" repeat="4">
+      <Element name="Name" type="string" />
+    </Subrecord>
+    <Subrecord desc="INAM" name="INAM" optional="4" repeat="4">
+      <Element name="Unknown" type="string" />
+    </Subrecord>
+  </Record>
+  <Record desc="HAIR" name="HAIR">
+    <Subrecord desc="Editor ID" name="EDID" optional="1">
+      <Element name="Name" type="string" />
+    </Subrecord>
+    <Subrecord desc="FULL" name="FULL" optional="1">
+      <Element name="Unknown" type="string" />
+    </Subrecord>
+    <Subrecord desc="MODL" name="MODL" optional="1">
+      <Element name="Unknown" type="string" />
+    </Subrecord>
+    <Subrecord desc="MODB" name="MODB" optional="1" size="4">
+      <Element name="Unknown" type="int" />
+    </Subrecord>
+    <Subrecord desc="ICON" name="ICON" optional="1">
+      <Element name="Unknown" type="string" />
+    </Subrecord>
+    <Subrecord desc="DATA" name="DATA" optional="1" size="1">
+      <Element name="Unknown" type="byte" />
+    </Subrecord>
+  </Record>
+  <Record desc="Eyes" name="EYES">
+    <Subrecord desc="Editor ID" name="EDID" optional="1">
+      <Element name="Name" type="string" />
+    </Subrecord>
+    <Subrecord desc="Full Name" name="FULL" optional="1">
+      <Element name="Name" type="string" />
+    </Subrecord>
+    <Subrecord desc="ICON" name="ICON" optional="1">
+      <Element name="Name" type="string" />
+    </Subrecord>
+    <Subrecord desc="DATA" name="DATA" optional="1" size="1">
+      <Element name="Unknown" options="None;0;Both Genders;1;Female;3;Male;5;" type="byte" />
+    </Subrecord>
+  </Record>
+  <Record desc="Race / Creature Type" name="RACE">
+    <Subrecord desc="Editor ID" name="EDID" optional="1">
+      <Element name="Name" type="string" />
+    </Subrecord>
+    <Subrecord desc="Full Name" name="FULL" optional="1">
+      <Element name="Name" type="string" />
+    </Subrecord>
+    <Subrecord desc="Description" name="DESC" optional="1">
+      <Element name="Name" type="blob" />
+    </Subrecord>
+    <Subrecord desc="Learned Spell" name="SPLO" optional="1" repeat="1" size="4">
+      <Element name="ID" type="int" />
+    </Subrecord>
+    <Subrecord desc="XNAM" name="XNAM" optional="1" repeat="1" size="8">
+      <Element name="Unknown" type="int" />
+      <Element name="Unknown 1" type="int" />
+    </Subrecord>
+    <Subrecord desc="Actor Values" name="DATA" optional="1" size="36">
+      <Element name="Unknown Value 1" type="int" />
+      <Element name="Unknown Value 2" type="int" />
+      <Element name="Unknown Value 3" type="int" />
+      <Element name="Unknown Value 4" type="int" />
+      <Element name="Unknown Value 5" type="float" />
+      <Element name="Unknown Value 6" type="float" />
+      <Element name="Unknown Value 7" type="float" />
+      <Element name="Unknown Value 8" type="float" />
+      <Element name="Unknown Value 8" type="int" />
+    </Subrecord>
+    <Subrecord desc="VNAM" name="VNAM" optional="1" size="8">
+      <Element name="Unknown" type="int" />
+      <Element name="Unknown 1" type="int" />
+    </Subrecord>
+    <Subrecord desc="Decapitated Head" name="DNAM" optional="1" size="8">
+      <Element name="Male ID" type="int" />
+      <Element name="Female ID" type="int" />
+    </Subrecord>
+    <Subrecord desc="CNAM" name="CNAM" optional="1" size="1">
+      <Element name="Unknown" type="byte" />
+    </Subrecord>
+    <Subrecord desc="PNAM" name="PNAM" optional="1" size="4">
+      <Element name="Unknown" type="float" />
+    </Subrecord>
+    <Subrecord desc="UNAM" name="UNAM" optional="1" size="4">
+      <Element name="Unknown" type="float" />
+    </Subrecord>
+    <Subrecord desc="ATTR" name="ATTR" optional="1" size="16">
+      <Element name="Unknown" type="int" />
+      <Element name="Unknown 1" type="int" />
+      <Element name="Unknown 2" type="int" />
+      <Element name="Unknown 3" type="int" />
+    </Subrecord>
+    <Subrecord desc="NAM0" name="NAM0" optional="1" size="-1" />
+    <Subrecord desc="INDX" name="INDX" optional="5" repeat="5" size="4">
+      <Element name="Unknown" type="int" />
+    </Subrecord>
+    <Subrecord desc="MODL" name="MODL" optional="5" repeat="5">
+      <Element name="Unknown" type="string" />
+    </Subrecord>
+    <Subrecord desc="MODB" name="MODB" optional="5" repeat="5" size="4">
+      <Element name="Unknown" type="int" />
+    </Subrecord>
+    <Subrecord desc="ICON" name="ICON" optional="6" repeat="6">
+      <Element name="Unknown" type="string" />
+    </Subrecord>
+    <Subrecord desc="NAM1" name="NAM1" optional="1" size="-1" />
+    <Subrecord desc="MNAM" name="MNAM" optional="1" size="-1" />
+    <Subrecord desc="FNAM" name="FNAM" optional="1" size="-1" />
+    <Subrecord desc="HNAM" name="HNAM" optional="1">
+      <Element name="Unknown" type="blob" />
+    </Subrecord>
+    <Subrecord desc="ENAM" name="ENAM" optional="1">
+      <Element name="Unknown" type="blob" />
+    </Subrecord>
+    <Subrecord desc="FGGS" name="FGGS" optional="1" size="200">
+      <Element name="Unknown" type="float" />
+      <Element name="Unknown 1" type="float" />
+      <Element name="Unknown 2" type="float" />
+      <Element name="Unknown 3" type="float" />
+      <Element name="Unknown 4" type="float" />
+      <Element name="Unknown 5" type="float" />
+      <Element name="Unknown 6" type="float" />
+      <Element name="Unknown 7" type="float" />
+      <Element name="Unknown 8" type="float" />
+      <Element name="Unknown 9" type="float" />
+      <Element name="Unknown 10" type="float" />
+      <Element name="Unknown 11" type="float" />
+      <Element name="Unknown 12" type="float" />
+      <Element name="Unknown 13" type="float" />
+      <Element name="Unknown 14" type="float" />
+      <Element name="Unknown 15" type="float" />
+      <Element name="Unknown 16" type="float" />
+      <Element name="Unknown 17" type="float" />
+      <Element name="Unknown 18" type="float" />
+      <Element name="Unknown 19" type="float" />
+      <Element name="Unknown 20" type="float" />
+      <Element name="Unknown 21" type="float" />
+      <Element name="Unknown 22" type="float" />
+      <Element name="Unknown 23" type="float" />
+      <Element name="Unknown 24" type="float" />
+      <Element name="Unknown 25" type="float" />
+      <Element name="Unknown 26" type="float" />
+      <Element name="Unknown 27" type="float" />
+      <Element name="Unknown 28" type="float" />
+      <Element name="Unknown 29" type="float" />
+      <Element name="Unknown 30" type="float" />
+      <Element name="Unknown 31" type="float" />
+      <Element name="Unknown 32" type="float" />
+      <Element name="Unknown 33" type="float" />
+      <Element name="Unknown 34" type="float" />
+      <Element name="Unknown 35" type="float" />
+      <Element name="Unknown 36" type="float" />
+      <Element name="Unknown 37" type="float" />
+      <Element name="Unknown 38" type="float" />
+      <Element name="Unknown 39" type="float" />
+      <Element name="Unknown 40" type="float" />
+      <Element name="Unknown 41" type="float" />
+      <Element name="Unknown 42" type="float" />
+      <Element name="Unknown 43" type="float" />
+      <Element name="Unknown 44" type="float" />
+      <Element name="Unknown 45" type="float" />
+      <Element name="Unknown 46" type="float" />
+      <Element name="Unknown 47" type="float" />
+      <Element name="Unknown 48" type="float" />
+      <Element name="Unknown 49" type="float" />
+    </Subrecord>
+    <Subrecord desc="FGGA" name="FGGA" optional="1" size="120">
+      <Element name="Unknown" type="float" />
+      <Element name="Unknown 1" type="float" />
+      <Element name="Unknown 2" type="float" />
+      <Element name="Unknown 3" type="float" />
+      <Element name="Unknown 4" type="float" />
+      <Element name="Unknown 5" type="float" />
+      <Element name="Unknown 6" type="float" />
+      <Element name="Unknown 7" type="float" />
+      <Element name="Unknown 8" type="float" />
+      <Element name="Unknown 9" type="float" />
+      <Element name="Unknown 10" type="float" />
+      <Element name="Unknown 11" type="float" />
+      <Element name="Unknown 12" type="float" />
+      <Element name="Unknown 13" type="float" />
+      <Element name="Unknown 14" type="float" />
+      <Element name="Unknown 15" type="float" />
+      <Element name="Unknown 16" type="float" />
+      <Element name="Unknown 17" type="float" />
+      <Element name="Unknown 18" type="float" />
+      <Element name="Unknown 19" type="float" />
+      <Element name="Unknown 20" type="float" />
+      <Element name="Unknown 21" type="float" />
+      <Element name="Unknown 22" type="float" />
+      <Element name="Unknown 23" type="float" />
+      <Element name="Unknown 24" type="float" />
+      <Element name="Unknown 25" type="float" />
+      <Element name="Unknown 26" type="float" />
+      <Element name="Unknown 27" type="float" />
+      <Element name="Unknown 28" type="float" />
+      <Element name="Unknown 29" type="float" />
+    </Subrecord>
+    <Subrecord desc="FGTS" name="FGTS" optional="1" size="200">
+      <Element name="Unknown" type="float" />
+      <Element name="Unknown 1" type="float" />
+      <Element name="Unknown 2" type="float" />
+      <Element name="Unknown 3" type="float" />
+      <Element name="Unknown 4" type="float" />
+      <Element name="Unknown 5" type="float" />
+      <Element name="Unknown 6" type="float" />
+      <Element name="Unknown 7" type="float" />
+      <Element name="Unknown 8" type="float" />
+      <Element name="Unknown 9" type="float" />
+      <Element name="Unknown 10" type="float" />
+      <Element name="Unknown 11" type="float" />
+      <Element name="Unknown 12" type="float" />
+      <Element name="Unknown 13" type="float" />
+      <Element name="Unknown 14" type="float" />
+      <Element name="Unknown 15" type="float" />
+      <Element name="Unknown 16" type="float" />
+      <Element name="Unknown 17" type="float" />
+      <Element name="Unknown 18" type="float" />
+      <Element name="Unknown 19" type="float" />
+      <Element name="Unknown 20" type="float" />
+      <Element name="Unknown 21" type="float" />
+      <Element name="Unknown 22" type="float" />
+      <Element name="Unknown 23" type="float" />
+      <Element name="Unknown 24" type="float" />
+      <Element name="Unknown 25" type="float" />
+      <Element name="Unknown 26" type="float" />
+      <Element name="Unknown 27" type="float" />
+      <Element name="Unknown 28" type="float" />
+      <Element name="Unknown 29" type="float" />
+      <Element name="Unknown 30" type="float" />
+      <Element name="Unknown 31" type="float" />
+      <Element name="Unknown 32" type="float" />
+      <Element name="Unknown 33" type="float" />
+      <Element name="Unknown 34" type="float" />
+      <Element name="Unknown 35" type="float" />
+      <Element name="Unknown 36" type="float" />
+      <Element name="Unknown 37" type="float" />
+      <Element name="Unknown 38" type="float" />
+      <Element name="Unknown 39" type="float" />
+      <Element name="Unknown 40" type="float" />
+      <Element name="Unknown 41" type="float" />
+      <Element name="Unknown 42" type="float" />
+      <Element name="Unknown 43" type="float" />
+      <Element name="Unknown 44" type="float" />
+      <Element name="Unknown 45" type="float" />
+      <Element name="Unknown 46" type="float" />
+      <Element name="Unknown 47" type="float" />
+      <Element name="Unknown 48" type="float" />
+      <Element name="Unknown 49" type="float" />
+    </Subrecord>
+    <Subrecord desc="SNAM" name="SNAM" optional="1" size="2">
+      <Element name="Unknown" type="short" />
+    </Subrecord>
+  </Record>
+  <Record desc="Sound" name="SOUN">
+    <Subrecord desc="Editor ID" name="EDID" optional="1">
+      <Element name="Name" type="string" />
+    </Subrecord>
+    <Subrecord desc="File name" name="FNAM" optional="1">
+      <Element name="Name" type="string" />
+    </Subrecord>
+    <Subrecord desc="Sound Data?" name="SNDD" optional="1" size="8">
+      <Element name="Unknown" type="int" />
+      <Element name="Unknown 1" type="int" />
+    </Subrecord>
+    <Subrecord desc="SNDX" name="SNDX" optional="1" size="12">
+      <Element name="Unknown" type="int" />
+      <Element name="Unknown 1" type="int" />
+      <Element name="Unknown 2" type="int" />
+    </Subrecord>
+  </Record>
+  <Record desc="SKIL" name="SKIL">
+    <Subrecord desc="Editor ID" name="EDID" optional="1">
+      <Element name="Name" type="string" />
+    </Subrecord>
+    <Subrecord desc="INDX" name="INDX" optional="1" size="4">
+      <Element name="Unknown" type="int" />
+    </Subrecord>
+    <Subrecord desc="DESC" name="DESC" optional="1">
+      <Element name="Unknown" type="string" />
+    </Subrecord>
+    <Subrecord desc="ICON" name="ICON" optional="1">
+      <Element name="Unknown" type="string" />
+    </Subrecord>
+    <Subrecord desc="DATA" name="DATA" optional="1" size="20">
+      <Element name="Unknown" type="int" />
+      <Element name="Unknown 1" type="int" />
+      <Element name="Unknown 2" type="int" />
+      <Element name="Unknown 3" type="float" />
+      <Element name="Unknown 4" type="float" />
+    </Subrecord>
+    <Subrecord desc="ANAM" name="ANAM" optional="1">
+      <Element name="Unknown" type="string" />
+    </Subrecord>
+    <Subrecord desc="JNAM" name="JNAM" optional="1">
+      <Element name="Unknown" type="string" />
+    </Subrecord>
+    <Subrecord desc="ENAM" name="ENAM" optional="1">
+      <Element name="Unknown" type="string" />
+    </Subrecord>
+    <Subrecord desc="MNAM" name="MNAM" optional="1">
+      <Element name="Unknown" type="string" />
+    </Subrecord>
+  </Record>
+  <Record desc="Magic Effect" name="MGEF">
+    <Subrecord desc="Editor ID" name="EDID" optional="1">
+      <Element name="Editor ID" type="string" />
+    </Subrecord>
+    <Subrecord desc="Full Name" name="FULL" optional="1">
+      <Element name="Name" type="string" />
+    </Subrecord>
+    <Subrecord desc="DESC" name="DESC" optional="1">
+      <Element name="Unknown" type="string" />
+    </Subrecord>
+    <Subrecord desc="ICON" name="ICON" optional="1">
+      <Element name="Unknown" type="string" />
+    </Subrecord>
+    <Subrecord desc="MODL" name="MODL" optional="1">
+      <Element name="Unknown" type="string" />
+    </Subrecord>
+    <Subrecord desc="MODB" name="MODB" optional="1" size="4">
+      <Element name="Unknown" type="int" />
+    </Subrecord>
+    <Subrecord desc="Effect data" name="DATA" optional="1">
+      <Element name="flags" type="blob" />
+    </Subrecord>
+    <Subrecord desc="ESCE" name="ESCE" optional="1">
+      <Element name="Unknown" type="blob" />
+    </Subrecord>
+  </Record>
+  <Record desc="Script" name="SCPT">
+    <Subrecord desc="Editor ID" name="EDID" optional="1">
+      <Element name="Name" type="string" />
+    </Subrecord>
+    <Subrecord desc="SCHR" name="SCHR" optional="1" size="20">
+      <Element name="Unknown" type="int" />
+      <Element name="Unknown 1" type="int" />
+      <Element name="Unknown 2" type="int" />
+      <Element name="Unknown 3" type="int" />
+      <Element name="Unknown 4" type="int" />
+    </Subrecord>
+    <Subrecord desc="SCDA" name="SCDA" optional="1">
+      <Element name="Unknown" type="blob" />
+    </Subrecord>
+    <Subrecord desc="Script Text" name="SCTX" optional="1">
+      <Element name="Script" type="blob" />
+    </Subrecord>
+    <Subrecord desc="SLSD" name="SLSD" optional="2" repeat="2" size="24">
+      <Element name="Unknown" type="int" />
+      <Element name="Unknown 1" type="float" />
+      <Element name="Unknown 2" type="int" />
+      <Element name="Unknown 3" type="int" />
+      <Element name="Unknown 4" type="int" />
+      <Element name="Unknown 5" type="int" />
+    </Subrecord>
+    <Subrecord desc="SCVR" name="SCVR" optional="2" repeat="2">
+      <Element name="Unknown" type="string" />
+    </Subrecord>
+    <Subrecord desc="SCRV" name="SCRV" optional="2" repeat="2" size="4">
+      <Element name="Unknown" type="int" />
+    </Subrecord>
+    <Subrecord desc="SCRO" name="SCRO" optional="2" repeat="2" size="4">
+      <Element name="Unknown" type="int" />
+    </Subrecord>
+  </Record>
+  <Record desc="Land Texture" name="LTEX">
+    <Subrecord desc="Editor ID" name="EDID" optional="1">
+      <Element name="Name" type="string" />
+    </Subrecord>
+    <Subrecord desc="ICON" name="ICON" optional="1">
+      <Element name="Unknown" type="string" />
+    </Subrecord>
+    <Subrecord desc="Havok Data?" name="HNAM" optional="1" size="3">
+      <Element name="Unknown" type="short" />
+      <Element name="Unknown 1" type="short" />
+    </Subrecord>
+    <Subrecord desc="Texture Specular Exponent?" name="SNAM" optional="1" size="1">
+      <Element name="Value" type="byte" />
+    </Subrecord>
+    <Subrecord desc="Grass" name="GNAM" optional="1" repeat="1" size="4">
+      <Element name="ID" type="int" />
+    </Subrecord>
+  </Record>
+  <Record desc="Enchantment" name="ENCH">
+    <Subrecord desc="Editor ID" name="EDID" optional="1">
+      <Element name="Editor ID" type="string" />
+    </Subrecord>
+    <Subrecord desc="Enchantment Info and Type ??" name="ENIT" optional="1" size="16">
+      <Element name="BaseCost" type="int" />
+      <Element name="Flags" flags="Manual Cost Calc;PC Start Spell;ExtendDurationOnRecast?;Area Effect Ignores Line of Sight;Ignore Resistance;No Absorb/Reflect;6;No Dual Cast Modification;8;9;10;11;12;13;14;15;16;" type="int" />
+      <Element name="CastType" options="ConstantEffect;0;ProjectileFire;1;Concentration;2;" type="int" />
+      <Element name="ChargeAmount" type="int" />
+    </Subrecord>
+    <Subrecord desc="EFID" name="EFID" optional="4" repeat="4" size="4">
+      <Element name="Unknown" type="int" />
+    </Subrecord>
+    <Subrecord desc="EFIT" name="EFIT" optional="4" repeat="4" size="24">
+      <Element name="Unknown" type="int" />
+      <Element name="Unknown 1" type="int" />
+      <Element name="Unknown 2" type="float" />
+      <Element name="Unknown 3" type="int" />
+      <Element name="Unknown 4" type="int" />
+      <Element name="Unknown 5" type="int" />
+    </Subrecord>
+    <Subrecord desc="SCIT" name="SCIT" optional="1">
+      <Element name="Unknown" type="blob" />
+    </Subrecord>
+    <Subrecord desc="Name" name="FULL" optional="1">
+      <Element name="Name" type="string" />
+    </Subrecord>
+  </Record>
+  <Record desc="Spell" name="SPEL">
+    <Subrecord desc="Editor ID" name="EDID" optional="1">
+      <Element name="Editor ID" type="string" />
+    </Subrecord>
+    <Subrecord desc="Name" name="FULL" optional="5" repeat="5">
+      <Element name="Name" type="string" />
+    </Subrecord>
+    <Subrecord desc="Spell Info and Type ??" name="SPIT" optional="1" size="16">
+      <Element name="Base Cost" type="int" />
+      <Element name="Flags" type="int" />
+      <Element name="Type" options="Spell;0;Disease;1;Power;2;Lesser Power;3;Ability;4;Addition;10;Shout;11" type="int" />
+      <Element name="Cast time" type="int" />
+    </Subrecord>
+    <Subrecord desc="EFID" name="EFID" optional="4" repeat="4" size="4">
+      <Element name="Unknown" type="int" />
+    </Subrecord>
+    <Subrecord desc="EFIT" name="EFIT" optional="4" repeat="4" size="24">
+      <Element name="Unknown" type="int" />
+      <Element name="Unknown 1" type="int" />
+      <Element name="Unknown 2" type="int" />
+      <Element name="Unknown 3" type="int" />
+      <Element name="Unknown 4" type="int" />
+      <Element name="Unknown 5" type="int" />
+    </Subrecord>
+    <Subrecord desc="SCIT" name="SCIT" optional="1">
+      <Element name="Unknown" type="blob" />
+    </Subrecord>
+  </Record>
+  <Record desc="BSGN" name="BSGN">
+    <Subrecord desc="Editor ID" name="EDID" optional="1">
+      <Element name="Name" type="string" />
+    </Subrecord>
+    <Subrecord desc="FULL" name="FULL" optional="1">
+      <Element name="Unknown" type="string" />
+    </Subrecord>
+    <Subrecord desc="ICON" name="ICON" optional="1">
+      <Element name="Unknown" type="string" />
+    </Subrecord>
+    <Subrecord desc="DESC" name="DESC" optional="1">
+      <Element name="Unknown" type="blob" />
+    </Subrecord>
+    <Subrecord desc="SPLO" name="SPLO" optional="1" repeat="1" size="4">
+      <Element name="Unknown" type="int" />
+    </Subrecord>
+  </Record>
+  <Record desc="Activator" name="ACTI">
+    <Subrecord desc="Editor ID" name="EDID" optional="1">
+      <Element name="Name" type="string" />
+    </Subrecord>
+    <Subrecord desc="Full Name" name="FULL" optional="1">
+      <Element name="Name" type="string" />
+    </Subrecord>
+    <Subrecord desc="Model Name" name="MODL" optional="1">
+      <Element name="Name" type="string" />
+    </Subrecord>
+    <Subrecord desc="MODB" name="MODB" optional="1" size="4">
+      <Element name="Unknown" type="float" />
+    </Subrecord>
+    <Subrecord desc="Model Data" name="MODT" optional="1">
+      <Element name="Unknown" type="blob" />
+    </Subrecord>
+    <Subrecord desc="Ambient? Sound" name="SNAM" optional="1" size="4">
+      <Element name="ID" type="int" />
+    </Subrecord>
+    <Subrecord desc="SCRI" name="SCRI" optional="1" size="4">
+      <Element name="Unknown" type="int" />
+    </Subrecord>
+  </Record>
+  <Record desc="Apparatus" name="APPA">
+    <Subrecord desc="Editor ID" name="EDID" optional="1">
+      <Element name="Name" type="string" />
+    </Subrecord>
+    <Subrecord desc="Full Name" name="FULL" optional="1">
+      <Element name="Name" type="string" />
+    </Subrecord>
+    <Subrecord desc="MODL" name="MODL" optional="1">
+      <Element name="Unknown" type="string" />
+    </Subrecord>
+    <Subrecord desc="MODB" name="MODB" optional="1" size="4">
+      <Element name="Unknown" type="float" />
+    </Subrecord>
+    <Subrecord desc="MODT" name="MODT" optional="1">
+      <Element name="Unknown" type="blob" />
+    </Subrecord>
+    <Subrecord desc="ICON" name="ICON" optional="1">
+      <Element name="Unknown" type="string" />
+    </Subrecord>
+    <Subrecord desc="SCRI" name="SCRI" optional="1" size="4">
+      <Element name="Unknown" type="int" />
+    </Subrecord>
+    <Subrecord desc="DATA" name="DATA" optional="1" size="13">
+      <Element name="Unknown" type="int" />
+      <Element name="Unknown 1" type="int" />
+      <Element name="Unknown 2" type="int" />
+      <Element name="Unknown 3" type="short" />
+    </Subrecord>
+  </Record>
+  <Record desc="Armor" name="ARMO">
+    <Subrecord desc="Editor ID" name="EDID" optional="1">
+      <Element name="Editor ID" type="string" />
+    </Subrecord>
+    <Subrecord desc="Full Item Name" name="FULL" optional="1">
+      <Element name="Name" type="string" />
+    </Subrecord>
+    <Subrecord desc="SCRI" name="SCRI" optional="1" size="4">
+      <Element name="Unknown" type="int" />
+    </Subrecord>
+    <Subrecord desc="ENAM" name="ENAM" optional="1" size="4">
+      <Element name="Unknown" type="int" />
+    </Subrecord>
+    <Subrecord desc="ANAM" name="ANAM" optional="1" size="2">
+      <Element name="Unknown" type="short" />
+    </Subrecord>
+    <Subrecord desc="BMDT" name="BMDT" optional="1" size="4">
+      <Element name="Unknown" type="int" />
+    </Subrecord>
+    <Subrecord desc="Model Path" name="MODL" optional="1">
+      <Element name="Model ID" type="string" />
+    </Subrecord>
+    <Subrecord desc="MODB" name="MODB" optional="1" size="4">
+      <Element name="Unknown" type="float" />
+    </Subrecord>
+    <Subrecord desc="MODT" name="MODT" optional="1">
+      <Element name="Unknown" type="blob" />
+    </Subrecord>
+    <Subrecord desc="Male Ground Model Path" name="MOD2" optional="1">
+      <Element name="Model Path 2" type="string" />
+    </Subrecord>
+    <Subrecord desc="MO2B" name="MO2B" optional="1" size="4">
+      <Element name="Unknown" type="float" />
+    </Subrecord>
+    <Subrecord desc="Model Data 2" name="MO2T" optional="1">
+      <Element name="Model Data 2" type="blob" />
+    </Subrecord>
+    <Subrecord desc="ICON" name="ICON" optional="1">
+      <Element name="Unknown" type="string" />
+    </Subrecord>
+    <Subrecord desc="MOD3" name="MOD3" optional="1">
+      <Element name="Unknown" type="string" />
+    </Subrecord>
+    <Subrecord desc="MO3B" name="MO3B" optional="1" size="4">
+      <Element name="Unknown" type="float" />
+    </Subrecord>
+    <Subrecord desc="MO3T" name="MO3T" optional="1">
+      <Element name="Unknown" type="blob" />
+    </Subrecord>
+    <Subrecord desc="Female Ground Model Path" name="MOD4" optional="1">
+      <Element name="Model Path 4" type="string" />
+    </Subrecord>
+    <Subrecord desc="MO4B" name="MO4B" optional="1" size="4">
+      <Element name="Unknown" type="float" />
+    </Subrecord>
+    <Subrecord desc="Model Data 4" name="MO4T" optional="1">
+      <Element name="Model Data 4" type="blob" />
+    </Subrecord>
+    <Subrecord desc="ICO2" name="ICO2" optional="1">
+      <Element name="Unknown" type="string" />
+    </Subrecord>
+    <Subrecord desc="Armor Data" name="DATA" optional="1" size="14">
+      <Element name="Value" type="int" />
+      <Element name="Weight(WG)" type="int" />
+      <Element name="Unknown 2" type="int" />
+      <Element name="Unknown 3" type="short" />
+    </Subrecord>
+  </Record>
+  <Record desc="Book" name="BOOK">
+    <Subrecord desc="Editor ID" name="EDID" optional="1">
+      <Element name="Editor ID" type="string" />
+    </Subrecord>
+    <Subrecord desc="Book Name" name="FULL" optional="1">
+      <Element name="Name" type="string" />
+    </Subrecord>
+    <Subrecord desc="Book Model" name="MODL" optional="1">
+      <Element name="Model ID" type="string" />
+    </Subrecord>
+    <Subrecord desc="MODB" name="MODB" optional="1" size="4">
+      <Element name="Unknown" type="float" />
+    </Subrecord>
+    <Subrecord desc="Model Data ?? Blob" name="MODT" optional="1">
+      <Element name="Unknown" type="blob" />
+    </Subrecord>
+    <Subrecord desc="ICON" name="ICON" optional="1">
+      <Element name="Unknown" type="string" />
+    </Subrecord>
+    <Subrecord desc="ENAM" name="ENAM" optional="1" size="4">
+      <Element name="Unknown" type="int" />
+    </Subrecord>
+    <Subrecord desc="ANAM" name="ANAM" optional="1" size="2">
+      <Element name="Unknown" type="short" />
+    </Subrecord>
+    <Subrecord desc="SCRI" name="SCRI" optional="1" size="4">
+      <Element name="Unknown" type="int" />
+    </Subrecord>
+    <Subrecord desc="Book Description - Sometimes a copy of the book name." name="DESC" optional="1">
+      <Element name="Description" type="blob" />
+    </Subrecord>
+    <Subrecord desc="Book Settings" name="DATA" optional="1" size="10">
+      <Element name="Flags" type="int" />
+      <Element name="Flags 2" type="int" />
+      <Element name="Flags 3" type="short" />
+    </Subrecord>
+  </Record>
+  <Record desc="CLOT" name="CLOT">
+    <Subrecord desc="Editor ID" name="EDID" optional="1">
+      <Element name="Name" type="string" />
+    </Subrecord>
+    <Subrecord desc="FULL" name="FULL" optional="1">
+      <Element name="Unknown" type="string" />
+    </Subrecord>
+    <Subrecord desc="SCRI" name="SCRI" optional="1" size="4">
+      <Element name="Unknown" type="int" />
+    </Subrecord>
+    <Subrecord desc="ENAM" name="ENAM" optional="1" size="4">
+      <Element name="Unknown" type="int" />
+    </Subrecord>
+    <Subrecord desc="ANAM" name="ANAM" optional="1" size="2">
+      <Element name="Unknown" type="short" />
+    </Subrecord>
+    <Subrecord desc="BMDT" name="BMDT" optional="1" size="4">
+      <Element name="Unknown" type="int" />
+    </Subrecord>
+    <Subrecord desc="MODL" name="MODL" optional="1">
+      <Element name="Unknown" type="string" />
+    </Subrecord>
+    <Subrecord desc="MODB" name="MODB" optional="1" size="4">
+      <Element name="Unknown" type="float" />
+    </Subrecord>
+    <Subrecord desc="MODT" name="MODT" optional="1">
+      <Element name="Unknown" type="blob" />
+    </Subrecord>
+    <Subrecord desc="MOD2" name="MOD2" optional="1">
+      <Element name="Unknown" type="string" />
+    </Subrecord>
+    <Subrecord desc="MO2B" name="MO2B" optional="1" size="4">
+      <Element name="Unknown" type="float" />
+    </Subrecord>
+    <Subrecord desc="MO2T" name="MO2T" optional="1">
+      <Element name="Unknown" type="blob" />
+    </Subrecord>
+    <Subrecord desc="MOD3" name="MOD3" optional="1">
+      <Element name="Unknown" type="string" />
+    </Subrecord>
+    <Subrecord desc="MO3B" name="MO3B" optional="1" size="4">
+      <Element name="Unknown" type="float" />
+    </Subrecord>
+    <Subrecord desc="MO3T" name="MO3T" optional="1">
+      <Element name="Unknown" type="blob" />
+    </Subrecord>
+    <Subrecord desc="MOD4" name="MOD4" optional="1">
+      <Element name="Unknown" type="string" />
+    </Subrecord>
+    <Subrecord desc="MO4B" name="MO4B" optional="1" size="4">
+      <Element name="Unknown" type="float" />
+    </Subrecord>
+    <Subrecord desc="MO4T" name="MO4T" optional="1">
+      <Element name="Unknown" type="blob" />
+    </Subrecord>
+    <Subrecord desc="ICO2" name="ICO2" optional="1">
+      <Element name="Unknown" type="string" />
+    </Subrecord>
+    <Subrecord desc="ICON" name="ICON" optional="1">
+      <Element name="Unknown" type="string" />
+    </Subrecord>
+    <Subrecord desc="DATA" name="DATA" optional="1" size="8">
+      <Element name="Unknown" type="int" />
+      <Element name="Unknown 1" type="float" />
+    </Subrecord>
+  </Record>
+  <Record desc="Container" name="CONT">
+    <Subrecord desc="Editor ID" name="EDID" optional="1">
+      <Element name="Editor ID" type="string" />
+    </Subrecord>
+    <Subrecord desc="Name" name="FULL" optional="1">
+      <Element name="Name" type="string" />
+    </Subrecord>
+    <Subrecord desc="Model NIF" name="MODL" optional="1">
+      <Element name="Model ID" type="string" />
+    </Subrecord>
+    <Subrecord desc="MODB" name="MODB" optional="1" size="4">
+      <Element name="Unknown" type="float" />
+    </Subrecord>
+    <Subrecord desc="Model Data" name="MODT" optional="1">
+      <Element name="Unknown" type="blob" />
+    </Subrecord>
+    <Subrecord desc="SCRI" name="SCRI" optional="1" size="4">
+      <Element name="Unknown" type="int" />
+    </Subrecord>
+    <Subrecord desc="Container List Item" name="CNTO" optional="1" repeat="1" size="8">
+      <Element name="Item Form ID" type="int" />
+      <Element name="Count" type="int" />
+    </Subrecord>
+    <Subrecord desc="Container Data" name="DATA" optional="1" size="5">
+      <Element name="Unknown" type="int" />
+      <Element name="Unknown" type="short" />
+    </Subrecord>
+    <Subrecord desc="Sound Record - Open" name="SNAM" optional="1" size="4">
+      <Element name="Sound Form ID" type="int" />
+    </Subrecord>
+    <Subrecord desc="Sound Record - Close" name="QNAM" optional="1" size="4">
+      <Element name="Sound Form ID" type="int" />
+    </Subrecord>
+  </Record>
+  <Record desc="Door" name="DOOR">
+    <Subrecord desc="Editor ID" name="EDID" optional="1">
+      <Element name="Name" type="string" />
+    </Subrecord>
+    <Subrecord desc="Full Name" name="FULL" optional="1">
+      <Element name="Name" type="string" />
+    </Subrecord>
+    <Subrecord desc="Model File" name="MODL" optional="1">
+      <Element name="Name" type="string" />
+    </Subrecord>
+    <Subrecord desc="MODB" name="MODB" optional="1" size="4">
+      <Element name="Unknown" type="float" />
+    </Subrecord>
+    <Subrecord desc="Model Data" name="MODT" optional="1">
+      <Element name="Unknown" type="blob" />
+    </Subrecord>
+    <Subrecord desc="SCRI" name="SCRI" optional="1" size="4">
+      <Element name="Unknown" type="int" />
+    </Subrecord>
+    <Subrecord desc="SNAM" name="SNAM" optional="1" size="4">
+      <Element name="ID" type="int" />
+    </Subrecord>
+    <Subrecord desc="ANAM" name="ANAM" optional="1" size="4">
+      <Element name="ID" type="int" />
+    </Subrecord>
+    <Subrecord desc="BNAM" name="BNAM" optional="1" size="4">
+      <Element name="Unknown" type="int" />
+    </Subrecord>
+    <Subrecord desc="Flags" name="FNAM" optional="1" size="1">
+      <Element name="Flags" flags="0;Automatic;Hidden;Minimal Use;4;5;6;7" type="byte" />
+    </Subrecord>
+    <Subrecord desc="TNAM" name="TNAM" optional="1" repeat="1" size="4">
+      <Element name="Unknown" type="int" />
+    </Subrecord>
+  </Record>
+  <Record desc="Ingredient" name="INGR">
+    <Subrecord desc="Editor ID" name="EDID" optional="1">
+      <Element name="Name" type="string" />
+    </Subrecord>
+    <Subrecord desc="Full Name" name="FULL" optional="10" repeat="10">
+      <Element name="Name" type="string" />
+    </Subrecord>
+    <Subrecord desc="Model Name" name="MODL" optional="1">
+      <Element name="Name" type="string" />
+    </Subrecord>
+    <Subrecord desc="MODB" name="MODB" optional="1" size="4">
+      <Element name="Unknown" type="float" />
+    </Subrecord>
+    <Subrecord desc="Model Data" name="MODT" optional="1">
+      <Element name="Unknown" type="blob" />
+    </Subrecord>
+    <Subrecord desc="ICON" name="ICON" optional="1">
+      <Element name="Unknown" type="string" />
+    </Subrecord>
+    <Subrecord desc="SCRI" name="SCRI" optional="1" size="4">
+      <Element name="Unknown" type="int" />
+    </Subrecord>
+    <Subrecord desc="DATA" name="DATA" optional="1" size="4">
+      <Element name="Value" type="float" />
+    </Subrecord>
+    <Subrecord desc="ENIT" name="ENIT" optional="1" size="8">
+      <Element name="Unknown" type="int" />
+      <Element name="Unknown 1" type="int" />
+    </Subrecord>
+    <Subrecord desc="EFID" name="EFID" optional="2" repeat="2" size="4">
+      <Element name="Unknown" type="int" />
+    </Subrecord>
+    <Subrecord desc="EFIT" name="EFIT" optional="2" repeat="2" size="24">
+      <Element name="Unknown" type="int" />
+      <Element name="Unknown 1" type="int" />
+      <Element name="Unknown 2" type="int" />
+      <Element name="Unknown 3" type="int" />
+      <Element name="Unknown 4" type="int" />
+      <Element name="Unknown 5" type="int" />
+    </Subrecord>
+    <Subrecord desc="SCIT" name="SCIT" optional="1" size="16">
+      <Element name="Unknown" type="int" />
+      <Element name="Unknown 1" type="int" />
+      <Element name="Unknown 2" type="int" />
+      <Element name="Unknown 3" type="int" />
+    </Subrecord>
+  </Record>
+  <Record desc="Light Template" name="LIGH">
+    <Subrecord desc="Editor ID" name="EDID" optional="1">
+      <Element name="Name" type="string" />
+    </Subrecord>
+    <Subrecord desc="Model Name" name="MODL" optional="1">
+      <Element name="Unknown" type="string" />
+    </Subrecord>
+    <Subrecord desc="MODB" name="MODB" optional="1" size="4">
+      <Element name="Unknown" type="float" />
+    </Subrecord>
+    <Subrecord desc="Model Data" name="MODT" optional="1">
+      <Element name="Unknown" type="blob" />
+    </Subrecord>
+    <Subrecord desc="Full Name" name="FULL" optional="1" size="6">
+      <Element name="Name" type="int" />
+      <Element name="Unknown 1" type="short" />
+    </Subrecord>
+    <Subrecord desc="ICON" name="ICON" optional="1" size="23">
+      <Element name="Unknown" type="int" />
+      <Element name="Unknown 1" type="int" />
+      <Element name="Unknown 2" type="int" />
+      <Element name="Unknown 3" type="int" />
+      <Element name="Unknown 4" type="int" />
+      <Element name="Unknown 5" type="short" />
+      <Element name="Unknown 6" type="short" />
+    </Subrecord>
+    <Subrecord desc="SCRI" name="SCRI" optional="1" size="4">
+      <Element name="Unknown" type="int" />
+    </Subrecord>
+    <Subrecord desc="DATA" name="DATA" optional="1">
+      <Element name="Time (-1 = Infinite)" type="blob" />
+    </Subrecord>
+    <Subrecord desc="FNAM" name="FNAM" optional="1" size="4">
+      <Element name="Unknown" type="float" />
+    </Subrecord>
+    <Subrecord desc="SNAM" name="SNAM" optional="1" size="4">
+      <Element name="ID" type="int" />
+    </Subrecord>
+  </Record>
+  <Record desc="Misc Item" name="MISC">
+    <Subrecord desc="Editor ID" name="EDID" optional="1">
+      <Element name="Editor ID" type="string" />
+    </Subrecord>
+    <Subrecord desc="Item Name" name="FULL" optional="1">
+      <Element name="Name" type="string" />
+    </Subrecord>
+    <Subrecord desc="Item Model" name="MODL" optional="1">
+      <Element name="Model ID" type="string" />
+    </Subrecord>
+    <Subrecord desc="MODB" name="MODB" optional="1" size="4">
+      <Element name="Unknown" type="float" />
+    </Subrecord>
+    <Subrecord desc="Model Data" name="MODT" optional="1">
+      <Element name="Unknown" type="blob" />
+    </Subrecord>
+    <Subrecord desc="Item Icon" name="ICON" optional="1">
+      <Element name="File Path" type="string" />
+    </Subrecord>
+    <Subrecord desc="SCRI" name="SCRI" optional="1" size="4">
+      <Element name="Unknown" type="int" />
+    </Subrecord>
+    <Subrecord desc="Item Data" name="DATA" optional="1" size="8">
+      <Element name="Value" type="int" />
+      <Element name="Weight" type="float" />
+    </Subrecord>
+  </Record>
+  <Record desc="Static" name="STAT">
+    <Subrecord desc="Editor ID" name="EDID" optional="1">
+      <Element name="Name" type="string" />
+    </Subrecord>
+    <Subrecord desc="Model Name" name="MODL" optional="1">
+      <Element name="Name" type="string" />
+    </Subrecord>
+    <Subrecord desc="MODB" name="MODB" optional="1" size="4">
+      <Element name="Unknown" type="float" />
+    </Subrecord>
+    <Subrecord desc="Model Data" name="MODT" optional="1">
+      <Element name="Unknown" type="blob" />
+    </Subrecord>
+  </Record>
+  <Record desc="Grass" name="GRAS">
+    <Subrecord desc="Editor ID" name="EDID" optional="1">
+      <Element name="Name" type="string" />
+    </Subrecord>
+    <Subrecord desc="Model Name" name="MODL" optional="1">
+      <Element name="Name" type="string" />
+    </Subrecord>
+    <Subrecord desc="MODB" name="MODB" optional="1" size="4">
+      <Element name="Unknown" type="float" />
+    </Subrecord>
+    <Subrecord desc="Model Data" name="MODT" optional="1" size="24">
+      <Element name="Unknown" type="int" />
+      <Element name="Unknown 1" type="int" />
+      <Element name="Unknown 2" type="int" />
+      <Element name="Unknown 3" type="int" />
+      <Element name="Unknown 4" type="int" />
+      <Element name="Unknown 5" type="int" />
+    </Subrecord>
+    <Subrecord desc="DATA" name="DATA" optional="1" size="32">
+      <Element name="Unknown" type="int" />
+      <Element name="Unknown 1" type="float" />
+      <Element name="Unknown 2" type="int" />
+      <Element name="Unknown 3" type="float" />
+      <Element name="Unknown 4" type="float" />
+      <Element name="Unknown 5" type="float" />
+      <Element name="Unknown 6" type="float" />
+      <Element name="Unknown 7" type="int" />
+    </Subrecord>
+  </Record>
+  <Record desc="Tree" name="TREE">
+    <Subrecord desc="Editor ID" name="EDID" optional="1">
+      <Element name="Name" type="string" />
+    </Subrecord>
+    <Subrecord desc="Model Name" name="MODL" optional="1">
+      <Element name="Name" type="string" />
+    </Subrecord>
+    <Subrecord desc="MODB" name="MODB" optional="1" size="4">
+      <Element name="Unknown" type="float" />
+    </Subrecord>
+    <Subrecord desc="Model Data" name="MODT" optional="1" size="48">
+      <Element name="Unknown" type="int" />
+      <Element name="Unknown 1" type="int" />
+      <Element name="Unknown 2" type="int" />
+      <Element name="Unknown 3" type="int" />
+      <Element name="Unknown 4" type="int" />
+      <Element name="Unknown 5" type="int" />
+      <Element name="Unknown 6" type="int" />
+      <Element name="Unknown 7" type="int" />
+      <Element name="Unknown 8" type="int" />
+      <Element name="Unknown 9" type="int" />
+      <Element name="Unknown 10" type="int" />
+      <Element name="Unknown 11" type="int" />
+    </Subrecord>
+    <Subrecord desc="ICON" name="ICON" optional="1">
+      <Element name="Unknown" type="string" />
+    </Subrecord>
+    <Subrecord desc="Use Sound" name="SNAM" optional="1">
+      <Element name="ID" type="blob" />
+    </Subrecord>
+    <Subrecord desc="CNAM" name="CNAM" optional="1" size="32">
+      <Element name="Unknown" type="float" />
+      <Element name="Unknown 1" type="float" />
+      <Element name="Unknown 2" type="float" />
+      <Element name="Unknown 3" type="float" />
+      <Element name="Unknown 4" type="float" />
+      <Element name="Unknown 5" type="int" />
+      <Element name="Unknown 6" type="float" />
+      <Element name="Unknown 7" type="float" />
+    </Subrecord>
+    <Subrecord desc="BNAM" name="BNAM" optional="1" size="8">
+      <Element name="Unknown" type="float" />
+      <Element name="Unknown 1" type="float" />
+    </Subrecord>
+  </Record>
+  <Record desc="Flora" name="FLOR">
+    <Subrecord desc="Editor ID" name="EDID" optional="1">
+      <Element name="Name" type="string" />
+    </Subrecord>
+    <Subrecord desc="Full Name" name="FULL" optional="1">
+      <Element name="Name" type="string" />
+    </Subrecord>
+    <Subrecord desc="Model Name" name="MODL" optional="1">
+      <Element name="Name" type="string" />
+    </Subrecord>
+    <Subrecord desc="MODB" name="MODB" optional="1" size="4">
+      <Element name="Unknown" type="float" />
+    </Subrecord>
+    <Subrecord desc="Model Data" name="MODT" optional="1">
+      <Element name="Unknown" type="blob" />
+    </Subrecord>
+    <Subrecord desc="SCRI" name="SCRI" optional="1" size="4">
+      <Element name="Unknown" type="int" />
+    </Subrecord>
+    <Subrecord desc="Result Item" name="PFIG" optional="1" size="4">
+      <Element name="ID" type="int" />
+    </Subrecord>
+    <Subrecord desc="Percent Chance?" name="PFPC" optional="1" size="4">
+      <Element name="Unknown" type="int" />
+    </Subrecord>
+  </Record>
+  <Record desc="Furniture" name="FURN">
+    <Subrecord desc="Editor ID" name="EDID" optional="1">
+      <Element name="Name" type="string" />
+    </Subrecord>
+    <Subrecord desc="Full Name" name="FULL" optional="1">
+      <Element name="Name" type="string" />
+    </Subrecord>
+    <Subrecord desc="Model Name" name="MODL" optional="1">
+      <Element name="Name" type="string" />
+    </Subrecord>
+    <Subrecord desc="MODB" name="MODB" optional="1" size="4">
+      <Element name="Unknown" type="float" />
+    </Subrecord>
+    <Subrecord desc="Model Data" name="MODT" optional="1">
+      <Element name="Unknown" type="blob" />
+    </Subrecord>
+    <Subrecord desc="SCRI" name="SCRI" optional="1" size="4">
+      <Element name="Unknown" type="int" />
+    </Subrecord>
+    <Subrecord desc="MNAM" name="MNAM" optional="1" size="4">
+      <Element name="Unknown" type="float" />
+    </Subrecord>
+  </Record>
+  <Record desc="Weapon" name="WEAP">
+    <Subrecord desc="Editor ID" name="EDID" optional="1">
+      <Element name="Editor ID" type="string" />
+    </Subrecord>
+    <Subrecord desc="Name" name="FULL" optional="1">
+      <Element name="Name" type="string" />
+    </Subrecord>
+    <Subrecord desc="Model NIF" name="MODL" optional="1">
+      <Element name="Model Path" type="string" />
+    </Subrecord>
+    <Subrecord desc="MODB" name="MODB" optional="1" size="4">
+      <Element name="Unknown" type="float" />
+    </Subrecord>
+    <Subrecord desc="Model Data" name="MODT" optional="1">
+      <Element name="Unknown" type="blob" />
+    </Subrecord>
+    <Subrecord desc="ICON" name="ICON" optional="1">
+      <Element name="Unknown" type="string" />
+    </Subrecord>
+    <Subrecord desc="SCRI" name="SCRI" optional="1" size="4">
+      <Element name="Unknown" type="int" />
+    </Subrecord>
+    <Subrecord desc="ENAM" name="ENAM" optional="1" size="4">
+      <Element name="Unknown" type="int" />
+    </Subrecord>
+    <Subrecord desc="ANAM" name="ANAM" optional="1" size="2">
+      <Element name="Unknown" type="short" />
+    </Subrecord>
+    <Subrecord desc="Weapon Data" name="DATA" optional="1" size="30">
+      <Element name="Item Value" type="int" />
+      <Element name="Item Weight" type="float" />
+      <Element name="Weapon Damage" type="float" />
+      <Element name="Unknown 3" type="int" />
+      <Element name="Unknown 4" type="int" />
+      <Element name="Unknown 5" type="int" />
+      <Element name="Unknown 6" type="float" />
+      <Element name="Unknown 7" type="short" />
+    </Subrecord>
+  </Record>
+  <Record desc="Ammunition Type" name="AMMO">
+    <Subrecord desc="Editor ID" name="EDID" optional="1">
+      <Element name="Editor ID" type="string" />
+    </Subrecord>
+    <Subrecord desc="Full Name" name="FULL" optional="1">
+      <Element name="Name" type="string" />
+    </Subrecord>
+    <Subrecord desc="Ammo Model" name="MODL" optional="1">
+      <Element name="Model ID" type="string" />
+    </Subrecord>
+    <Subrecord desc="MODB" name="MODB" optional="1" size="4">
+      <Element name="Unknown" type="float" />
+    </Subrecord>
+    <Subrecord desc="Model Data" name="MODT" optional="1" size="24">
+      <Element name="Unknown" type="int" />
+      <Element name="Unknown 1" type="int" />
+      <Element name="Unknown 2" type="int" />
+      <Element name="Unknown 3" type="int" />
+      <Element name="Unknown 4" type="int" />
+      <Element name="Unknown 5" type="int" />
+    </Subrecord>
+    <Subrecord desc="ICON" name="ICON" optional="1">
+      <Element name="Unknown" type="string" />
+    </Subrecord>
+    <Subrecord desc="ANAM" name="ANAM" optional="1">
+      <Element name="Unknown" type="string" />
+    </Subrecord>
+    <Subrecord desc="ENAM" name="ENAM" optional="1" size="4">
+      <Element name="Unknown" type="int" />
+    </Subrecord>
+    <Subrecord desc="Ammo Settings" name="DATA" optional="1" size="18">
+      <Element name="ProjectileID" type="float" />
+      <Element name="Flags" flags="Ignores Resistance;Vanishes In Flight;" type="int" />
+      <Element name="Damage" type="int" />
+      <Element name="Value" type="float" />
+      <Element name="Unknown 4" type="short" />
+    </Subrecord>
+  </Record>
+  <Record desc="NPC Package" name="NPC_">
+    <Subrecord desc="Editor ID" name="EDID" optional="1">
+      <Element name="Editor ID" type="string" />
+    </Subrecord>
+    <Subrecord desc="Full Name" name="FULL" optional="1">
+      <Element name="Name" type="string" />
+    </Subrecord>
+    <Subrecord desc="MODL" name="MODL" optional="1">
+      <Element name="Unknown" type="string" />
+    </Subrecord>
+    <Subrecord desc="MODB" name="MODB" optional="1" size="4">
+      <Element name="Unknown" type="float" />
+    </Subrecord>
+    <Subrecord desc="ACBS Data" name="ACBS" optional="1" size="12">
+      <Element name="Flags ??" type="int" />
+      <Element name="spell points" type="short" />
+      <Element name="fatigue" type="short" />
+      <Element name="base level" type="short" />
+      <Element name="start level" type="short" />
+      <Element name="alt level" type="int" />
+    </Subrecord>
+    <Subrecord desc="Faction" name="SNAM" optional="1" repeat="1" size="8">
+      <Element name="Faction" type="int" />
+      <Element name="Rank" type="float" />
+    </Subrecord>
+    <Subrecord desc="Death Item" name="INAM" optional="1" size="4">
+      <Element name="ID" type="int" />
+    </Subrecord>
+    <Subrecord desc="Race" name="RNAM" optional="1" size="4">
+      <Element name="ID" type="int" />
+    </Subrecord>
+    <Subrecord desc="Spell Book List" name="SPLO" optional="1" repeat="1" size="4">
+      <Element name="ID" type="int" />
+    </Subrecord>
+    <Subrecord desc="SCRI" name="SCRI" optional="1" size="4">
+      <Element name="Unknown" type="int" />
+    </Subrecord>
+    <Subrecord desc="Container Item" name="CNTO" optional="1" repeat="1" size="8">
+      <Element name="Item Form ID" type="int" />
+      <Element name="Count" type="int" />
+    </Subrecord>
+    <Subrecord desc="AIDT" name="AIDT" optional="1" size="8">
+      <Element name="Aggression" type="int" />
+      <Element name="Confidence" type="short" />
+      <Element name="Energy?" type="short" />
+      <Element name="Morality" type="int" />
+    </Subrecord>
+    <Subrecord desc="KFFZ" name="KFFZ" optional="1" size="94">
+      <Element name="Unknown" type="int" />
+      <Element name="Unknown 1" type="int" />
+      <Element name="Unknown 2" type="int" />
+      <Element name="Unknown 3" type="int" />
+      <Element name="Unknown 4" type="int" />
+      <Element name="Unknown 5" type="int" />
+      <Element name="Unknown 6" type="int" />
+      <Element name="Unknown 7" type="int" />
+      <Element name="Unknown 8" type="int" />
+      <Element name="Unknown 9" type="int" />
+      <Element name="Unknown 10" type="int" />
+      <Element name="Unknown 11" type="int" />
+      <Element name="Unknown 12" type="int" />
+      <Element name="Unknown 13" type="int" />
+      <Element name="Unknown 14" type="int" />
+      <Element name="Unknown 15" type="int" />
+      <Element name="Unknown 16" type="int" />
+      <Element name="Unknown 17" type="int" />
+      <Element name="Unknown 18" type="int" />
+      <Element name="Unknown 19" type="int" />
+      <Element name="Unknown 20" type="int" />
+      <Element name="Unknown 21" type="int" />
+      <Element name="Unknown 22" type="int" />
+      <Element name="Unknown 23" type="short" />
+    </Subrecord>
+    <Subrecord desc="PKID" name="PKID" optional="1" repeat="1" size="4">
+      <Element name="ID" type="int" />
+    </Subrecord>
+    <Subrecord desc="Class Name" name="CNAM" optional="1" size="4">
+      <Element name="ID" type="int" />
+    </Subrecord>
+    <Subrecord desc="Data" name="DATA" optional="1" size="33">
+      <Element name="Unknown" type="int" />
+      <Element name="Unknown 1" type="int" />
+      <Element name="Unknown 2" type="int" />
+      <Element name="Unknown 3" type="int" />
+      <Element name="Unknown 4" type="int" />
+      <Element name="Unknown 5" type="int" />
+      <Element name="Unknown 6" type="int" />
+      <Element name="Unknown 7" type="int" />
+      <Element name="Unknown 8" type="short" />
+    </Subrecord>
+    <Subrecord desc="HNAM" name="HNAM" optional="1" size="4">
+      <Element name="Unknown" type="int" />
+    </Subrecord>
+    <Subrecord desc="LNAM" name="LNAM" optional="1" size="4">
+      <Element name="Unknown" type="float" />
+    </Subrecord>
+    <Subrecord desc="ENAM" name="ENAM" optional="1" size="4">
+      <Element name="Unknown" type="int" />
+    </Subrecord>
+    <Subrecord desc="HCLR" name="HCLR" optional="1" size="4">
+      <Element name="Unknown" type="int" />
+    </Subrecord>
+    <Subrecord desc="ZNAM" name="ZNAM" optional="1" size="4">
+      <Element name="ID" type="int" />
+    </Subrecord>
+    <Subrecord desc="FGGS" name="FGGS" optional="1" size="200">
+      <Element name="Unknown" type="float" />
+      <Element name="Unknown 1" type="float" />
+      <Element name="Unknown 2" type="float" />
+      <Element name="Unknown 3" type="float" />
+      <Element name="Unknown 4" type="float" />
+      <Element name="Unknown 5" type="float" />
+      <Element name="Unknown 6" type="float" />
+      <Element name="Unknown 7" type="float" />
+      <Element name="Unknown 8" type="float" />
+      <Element name="Unknown 9" type="float" />
+      <Element name="Unknown 10" type="float" />
+      <Element name="Unknown 11" type="float" />
+      <Element name="Unknown 12" type="float" />
+      <Element name="Unknown 13" type="float" />
+      <Element name="Unknown 14" type="float" />
+      <Element name="Unknown 15" type="float" />
+      <Element name="Unknown 16" type="float" />
+      <Element name="Unknown 17" type="float" />
+      <Element name="Unknown 18" type="float" />
+      <Element name="Unknown 19" type="float" />
+      <Element name="Unknown 20" type="float" />
+      <Element name="Unknown 21" type="float" />
+      <Element name="Unknown 22" type="float" />
+      <Element name="Unknown 23" type="float" />
+      <Element name="Unknown 24" type="float" />
+      <Element name="Unknown 25" type="float" />
+      <Element name="Unknown 26" type="float" />
+      <Element name="Unknown 27" type="float" />
+      <Element name="Unknown 28" type="float" />
+      <Element name="Unknown 29" type="float" />
+      <Element name="Unknown 30" type="float" />
+      <Element name="Unknown 31" type="float" />
+      <Element name="Unknown 32" type="float" />
+      <Element name="Unknown 33" type="float" />
+      <Element name="Unknown 34" type="float" />
+      <Element name="Unknown 35" type="float" />
+      <Element name="Unknown 36" type="float" />
+      <Element name="Unknown 37" type="float" />
+      <Element name="Unknown 38" type="float" />
+      <Element name="Unknown 39" type="float" />
+      <Element name="Unknown 40" type="float" />
+      <Element name="Unknown 41" type="float" />
+      <Element name="Unknown 42" type="float" />
+      <Element name="Unknown 43" type="float" />
+      <Element name="Unknown 44" type="float" />
+      <Element name="Unknown 45" type="float" />
+      <Element name="Unknown 46" type="float" />
+      <Element name="Unknown 47" type="float" />
+      <Element name="Unknown 48" type="float" />
+      <Element name="Unknown 49" type="float" />
+    </Subrecord>
+    <Subrecord desc="FGGA" name="FGGA" optional="1" size="120">
+      <Element name="Unknown" type="float" />
+      <Element name="Unknown 1" type="float" />
+      <Element name="Unknown 2" type="float" />
+      <Element name="Unknown 3" type="float" />
+      <Element name="Unknown 4" type="float" />
+      <Element name="Unknown 5" type="float" />
+      <Element name="Unknown 6" type="float" />
+      <Element name="Unknown 7" type="float" />
+      <Element name="Unknown 8" type="float" />
+      <Element name="Unknown 9" type="float" />
+      <Element name="Unknown 10" type="float" />
+      <Element name="Unknown 11" type="float" />
+      <Element name="Unknown 12" type="float" />
+      <Element name="Unknown 13" type="float" />
+      <Element name="Unknown 14" type="float" />
+      <Element name="Unknown 15" type="float" />
+      <Element name="Unknown 16" type="float" />
+      <Element name="Unknown 17" type="float" />
+      <Element name="Unknown 18" type="float" />
+      <Element name="Unknown 19" type="float" />
+      <Element name="Unknown 20" type="float" />
+      <Element name="Unknown 21" type="float" />
+      <Element name="Unknown 22" type="float" />
+      <Element name="Unknown 23" type="float" />
+      <Element name="Unknown 24" type="float" />
+      <Element name="Unknown 25" type="float" />
+      <Element name="Unknown 26" type="float" />
+      <Element name="Unknown 27" type="float" />
+      <Element name="Unknown 28" type="float" />
+      <Element name="Unknown 29" type="float" />
+    </Subrecord>
+    <Subrecord desc="FGTS" name="FGTS" optional="1" size="200">
+      <Element name="Unknown" type="float" />
+      <Element name="Unknown 1" type="float" />
+      <Element name="Unknown 2" type="float" />
+      <Element name="Unknown 3" type="float" />
+      <Element name="Unknown 4" type="float" />
+      <Element name="Unknown 5" type="float" />
+      <Element name="Unknown 6" type="float" />
+      <Element name="Unknown 7" type="float" />
+      <Element name="Unknown 8" type="float" />
+      <Element name="Unknown 9" type="float" />
+      <Element name="Unknown 10" type="float" />
+      <Element name="Unknown 11" type="float" />
+      <Element name="Unknown 12" type="float" />
+      <Element name="Unknown 13" type="float" />
+      <Element name="Unknown 14" type="float" />
+      <Element name="Unknown 15" type="float" />
+      <Element name="Unknown 16" type="float" />
+      <Element name="Unknown 17" type="float" />
+      <Element name="Unknown 18" type="float" />
+      <Element name="Unknown 19" type="float" />
+      <Element name="Unknown 20" type="float" />
+      <Element name="Unknown 21" type="float" />
+      <Element name="Unknown 22" type="float" />
+      <Element name="Unknown 23" type="float" />
+      <Element name="Unknown 24" type="float" />
+      <Element name="Unknown 25" type="float" />
+      <Element name="Unknown 26" type="float" />
+      <Element name="Unknown 27" type="float" />
+      <Element name="Unknown 28" type="float" />
+      <Element name="Unknown 29" type="float" />
+      <Element name="Unknown 30" type="float" />
+      <Element name="Unknown 31" type="float" />
+      <Element name="Unknown 32" type="float" />
+      <Element name="Unknown 33" type="float" />
+      <Element name="Unknown 34" type="float" />
+      <Element name="Unknown 35" type="float" />
+      <Element name="Unknown 36" type="float" />
+      <Element name="Unknown 37" type="float" />
+      <Element name="Unknown 38" type="float" />
+      <Element name="Unknown 39" type="float" />
+      <Element name="Unknown 40" type="float" />
+      <Element name="Unknown 41" type="float" />
+      <Element name="Unknown 42" type="float" />
+      <Element name="Unknown 43" type="float" />
+      <Element name="Unknown 44" type="float" />
+      <Element name="Unknown 45" type="float" />
+      <Element name="Unknown 46" type="float" />
+      <Element name="Unknown 47" type="float" />
+      <Element name="Unknown 48" type="float" />
+      <Element name="Unknown 49" type="float" />
+    </Subrecord>
+    <Subrecord desc="FNAM" name="FNAM" optional="1" size="2">
+      <Element name="Unknown" type="short" />
+    </Subrecord>
+  </Record>
+  <Record desc="CREA" name="CREA">
+    <Subrecord desc="Editor ID" name="EDID" optional="1">
+      <Element name="Name" type="string" />
+    </Subrecord>
+    <Subrecord desc="FULL" name="FULL" optional="1">
+      <Element name="Unknown" type="string" />
+    </Subrecord>
+    <Subrecord desc="MODL" name="MODL" optional="1">
+      <Element name="Unknown" type="string" />
+    </Subrecord>
+    <Subrecord desc="MODB" name="MODB" optional="1" size="4">
+      <Element name="Unknown" type="float" />
+    </Subrecord>
+    <Subrecord desc="MODT" name="MODT" optional="1">
+      <Element name="Unknown" type="blob" />
+    </Subrecord>
+    <Subrecord desc="SPLO" name="SPLO" optional="1" repeat="1" size="4">
+      <Element name="Unknown" type="int" />
+    </Subrecord>
+    <Subrecord desc="NIFZ" name="NIFZ" optional="1">
+      <Element name="Unknown" type="blob" />
+    </Subrecord>
+    <Subrecord desc="NIFT" name="NIFT" optional="1" size="4">
+      <Element name="Unknown" type="int" />
+    </Subrecord>
+    <Subrecord desc="ACBS" name="ACBS" optional="1" size="16">
+      <Element name="Unknown" type="int" />
+      <Element name="Unknown 1" type="int" />
+      <Element name="Unknown 2" type="int" />
+      <Element name="Unknown 3" type="short" />
+      <Element name="Unknown 3" type="short" />
+    </Subrecord>
+    <Subrecord desc="SNAM" name="SNAM" optional="1" repeat="1" size="8">
+      <Element name="Unknown" type="int" />
+      <Element name="Unknown 1" type="int" />
+    </Subrecord>
+    <Subrecord desc="INAM" name="INAM" optional="1" size="4">
+      <Element name="Unknown" type="int" />
+    </Subrecord>
+    <Subrecord desc="SCRI" name="SCRI" optional="1" size="4">
+      <Element name="Unknown" type="int" />
+    </Subrecord>
+    <Subrecord desc="CNTO" name="CNTO" optional="1" repeat="1" size="8">
+      <Element name="Unknown" type="int" />
+      <Element name="Unknown 1" type="int" />
+    </Subrecord>
+    <Subrecord desc="AIDT" name="AIDT" optional="1" size="12">
+      <Element name="Unknown" type="int" />
+      <Element name="Unknown 1" type="int" />
+      <Element name="Unknown 2" type="int" />
+    </Subrecord>
+    <Subrecord desc="PKID" name="PKID" optional="1" repeat="1" size="4">
+      <Element name="Unknown" type="int" />
+    </Subrecord>
+    <Subrecord desc="KFFZ" name="KFFZ" optional="1">
+      <Element name="Unknown" type="blob" />
+    </Subrecord>
+    <Subrecord desc="DATA" name="DATA" optional="1" size="8">
+      <Element name="Unknown" type="int" />
+      <Element name="Unknown 1" type="short" />
+      <Element name="Unknown 1" type="short" />
+      <Element name="Unknown 2" type="int" />
+      <Element name="Unknown 3" type="int" />
+      <Element name="Unknown 4" type="int" />
+    </Subrecord>
+    <Subrecord desc="RNAM" name="RNAM" optional="1" size="1">
+      <Element name="Unknown" type="byte" />
+    </Subrecord>
+    <Subrecord desc="ZNAM" name="ZNAM" optional="1" size="4">
+      <Element name="Unknown" type="int" />
+    </Subrecord>
+    <Subrecord desc="TNAM" name="TNAM" optional="1" size="4">
+      <Element name="Unknown" type="float" />
+    </Subrecord>
+    <Subrecord desc="BNAM" name="BNAM" optional="1" size="4">
+      <Element name="Unknown" type="float" />
+    </Subrecord>
+    <Subrecord desc="WNAM" name="WNAM" optional="1" size="4">
+      <Element name="Unknown" type="float" />
+    </Subrecord>
+    <Subrecord desc="NAM1" name="NAM1" optional="1">
+      <Element name="Unknown" type="blob" />
+    </Subrecord>
+    <Subrecord desc="CSDT" name="CSDT" optional="3" repeat="3" size="4">
+      <Element name="Unknown" type="int" />
+    </Subrecord>
+    <Subrecord desc="CSDI" name="CSDI" optional="3" repeat="3" size="4">
+      <Element name="Unknown" type="int" />
+    </Subrecord>
+    <Subrecord desc="CSDC" name="CSDC" optional="3" repeat="3" size="1">
+      <Element name="Unknown" type="byte" />
+    </Subrecord>
+    <Subrecord desc="NAM0" name="NAM0" optional="1">
+      <Element name="Unknown" type="string" />
+    </Subrecord>
+    <Subrecord desc="CSCR" name="CSCR" optional="1" size="4">
+      <Element name="Unknown" type="int" />
+    </Subrecord>
+  </Record>
+  <Record desc="LVLC" name="LVLC">
+    <Subrecord desc="Editor ID" name="EDID" optional="1">
+      <Element name="Name" type="string" />
+    </Subrecord>
+    <Subrecord desc="LVLD" name="LVLD" optional="1">
+      <Element name="Unknown" type="string" />
+    </Subrecord>
+    <Subrecord desc="LVLF" name="LVLF" optional="1" size="1">
+      <Element name="Unknown" type="byte" />
+    </Subrecord>
+    <Subrecord desc="LVLO" name="LVLO" optional="1" repeat="1">
+      <Element name="Unknown" type="blob" />
+    </Subrecord>
+    <Subrecord desc="SCRI" name="SCRI" optional="1" size="4">
+      <Element name="Unknown" type="int" />
+    </Subrecord>
+    <Subrecord desc="TNAM" name="TNAM" optional="1" size="4">
+      <Element name="Unknown" type="int" />
+    </Subrecord>
+  </Record>
+  <Record desc="Soul Gem" name="SLGM">
+    <Subrecord desc="Editor ID" name="EDID" optional="1">
+      <Element name="Name" type="string" />
+    </Subrecord>
+    <Subrecord desc="Full Name" name="FULL" optional="1">
+      <Element name="Name" type="string" />
+    </Subrecord>
+    <Subrecord desc="Model Name" name="MODL" optional="1">
+      <Element name="Name" type="string" />
+    </Subrecord>
+    <Subrecord desc="MODB" name="MODB" optional="1" size="4">
+      <Element name="Unknown" type="float" />
+    </Subrecord>
+    <Subrecord desc="Model Data" name="MODT" optional="1" size="24">
+      <Element name="Unknown" type="int" />
+      <Element name="Unknown 1" type="int" />
+      <Element name="Unknown 2" type="int" />
+      <Element name="Unknown 3" type="int" />
+      <Element name="Unknown 4" type="int" />
+      <Element name="Unknown 5" type="int" />
+    </Subrecord>
+    <Subrecord desc="ICON" name="ICON" optional="1">
+      <Element name="Unknown" type="string" />
+    </Subrecord>
+    <Subrecord desc="SCRI" name="SCRI" optional="1" size="4">
+      <Element name="Unknown" type="int" />
+    </Subrecord>
+    <Subrecord desc="DATA" name="DATA" optional="1" size="8">
+      <Element name="Value" type="int" />
+      <Element name="Weight" type="float" />
+    </Subrecord>
+    <Subrecord desc="Current Soul" name="SOUL" optional="1" size="1">
+      <Element name="Level" options="None;0;Petty;1;Lesser;2;Common;3;Greater;4;Grand;5" type="byte" />
+    </Subrecord>
+    <Subrecord desc="Soul Gem Capacity" name="SLCP" optional="1" size="1">
+      <Element name="Level" options="None;0;Petty;1;Lesser;2;Common;3;Greater;4;Grand;5" type="byte" />
+    </Subrecord>
+  </Record>
+  <Record desc="Key" name="KEYM">
+    <Subrecord desc="Editor ID" name="EDID" optional="1">
+      <Element name="Name" type="string" />
+    </Subrecord>
+    <Subrecord desc="Full Name" name="FULL" optional="1">
+      <Element name="Name" type="string" />
+    </Subrecord>
+    <Subrecord desc="Model Name" name="MODL" optional="1">
+      <Element name="Name" type="string" />
+    </Subrecord>
+    <Subrecord desc="MODB" name="MODB" optional="1" size="4">
+      <Element name="Unknown" type="float" />
+    </Subrecord>
+    <Subrecord desc="Model Data" name="MODT" optional="1">
+      <Element name="Unknown" type="blob" />
+    </Subrecord>
+    <Subrecord desc="ICON" name="ICON" optional="1">
+      <Element name="Unknown" type="string" />
+    </Subrecord>
+    <Subrecord desc="SCRI" name="SCRI" optional="1" size="4">
+      <Element name="Unknown" type="int" />
+    </Subrecord>
+    <Subrecord desc="DATA" name="DATA" optional="1" size="8">
+      <Element name="Unknown" type="int" />
+      <Element name="Unknown 1" type="float" />
+    </Subrecord>
+  </Record>
+  <Record desc="Potion" name="ALCH">
+    <Subrecord desc="Editor ID" name="EDID" optional="1">
+      <Element name="Editor ID" type="string" />
+    </Subrecord>
+    <Subrecord desc="Name" name="FULL" optional="10" repeat="10">
+      <Element name="Name" type="string" />
+    </Subrecord>
+    <Subrecord desc="Model NIF" name="MODL" optional="1">
+      <Element name="File Path" type="string" />
+    </Subrecord>
+    <Subrecord desc="MODB" name="MODB" optional="1" size="4">
+      <Element name="Unknown" type="float" />
+    </Subrecord>
+    <Subrecord desc="MODT ??" name="MODT" optional="1">
+      <Element type="blob" />
+    </Subrecord>
+    <Subrecord desc="ICON" name="ICON" optional="1">
+      <Element name="Unknown" type="string" />
+    </Subrecord>
+    <Subrecord desc="SCRI" name="SCRI" optional="1" size="4">
+      <Element name="Unknown" type="int" />
+    </Subrecord>
+    <Subrecord desc="Item Data" name="DATA" optional="1" size="4">
+      <Element name="Item Weight" type="float" />
+    </Subrecord>
+    <Subrecord desc="'Enchantment' Info and Type" name="ENIT" optional="1" size="8">
+      <Element name="Item Value" type="int" />
+      <Element name="Item Type" type="int" />
+    </Subrecord>
+    <Subrecord desc="EFID" name="EFID" optional="2" repeat="2" size="4">
+      <Element name="Unknown" type="int" />
+    </Subrecord>
+    <Subrecord desc="EFIT" name="EFIT" optional="2" repeat="2" size="24">
+      <Element name="Unknown" type="int" />
+      <Element name="Unknown 1" type="int" />
+      <Element name="Unknown 2" type="int" />
+      <Element name="Unknown 3" type="int" />
+      <Element name="Unknown 4" type="int" />
+      <Element name="Unknown 5" type="int" />
+    </Subrecord>
+    <Subrecord desc="SCIT" name="SCIT" optional="1" size="16">
+      <Element name="Unknown" type="int" />
+      <Element name="Unknown 1" type="int" />
+      <Element name="Unknown 2" type="float" />
+      <Element name="Unknown 3" type="int" />
+    </Subrecord>
+  </Record>
+  <Record desc="SBSP" name="SBSP">
+    <Subrecord desc="Editor ID" name="EDID" optional="1">
+      <Element name="Name" type="string" />
+    </Subrecord>
+    <Subrecord desc="DNAM" name="DNAM" optional="1" size="12">
+      <Element name="Unknown" type="float" />
+      <Element name="Unknown 1" type="float" />
+      <Element name="Unknown 2" type="float" />
+    </Subrecord>
+  </Record>
+  <Record desc="SGST" name="SGST">
+    <Subrecord desc="EDID" name="EDID" optional="1">
+      <Element name="Unknown" type="string" />
+    </Subrecord>
+    <Subrecord desc="FULL" name="FULL" optional="1">
+      <Element name="Unknown" type="string" />
+    </Subrecord>
+    <Subrecord desc="MODL" name="MODL" optional="1">
+      <Element name="Unknown" type="string" />
+    </Subrecord>
+    <Subrecord desc="MODB" name="MODB" optional="1" size="4">
+      <Element name="Unknown" type="float" />
+    </Subrecord>
+    <Subrecord desc="MODT" name="MODT" optional="1" size="96">
+      <Element name="Unknown" type="int" />
+      <Element name="Unknown 1" type="int" />
+      <Element name="Unknown 2" type="int" />
+      <Element name="Unknown 3" type="int" />
+      <Element name="Unknown 4" type="int" />
+      <Element name="Unknown 5" type="int" />
+      <Element name="Unknown 6" type="int" />
+      <Element name="Unknown 7" type="int" />
+      <Element name="Unknown 8" type="int" />
+      <Element name="Unknown 9" type="int" />
+      <Element name="Unknown 10" type="int" />
+      <Element name="Unknown 11" type="int" />
+      <Element name="Unknown 12" type="int" />
+      <Element name="Unknown 13" type="int" />
+      <Element name="Unknown 14" type="int" />
+      <Element name="Unknown 15" type="int" />
+      <Element name="Unknown 16" type="int" />
+      <Element name="Unknown 17" type="int" />
+      <Element name="Unknown 18" type="int" />
+      <Element name="Unknown 19" type="int" />
+      <Element name="Unknown 20" type="int" />
+      <Element name="Unknown 21" type="int" />
+      <Element name="Unknown 22" type="int" />
+      <Element name="Unknown 23" type="int" />
+    </Subrecord>
+    <Subrecord desc="ICON" name="ICON" optional="1">
+      <Element name="Unknown" type="string" />
+    </Subrecord>
+    <Subrecord desc="EFID" name="EFID" optional="2" repeat="2" size="4">
+      <Element name="Unknown" type="int" />
+    </Subrecord>
+    <Subrecord desc="EFIT" name="EFIT" optional="2" repeat="2" size="24">
+      <Element name="Unknown" type="int" />
+      <Element name="Unknown 1" type="int" />
+      <Element name="Unknown 2" type="int" />
+      <Element name="Unknown 3" type="int" />
+      <Element name="Unknown 4" type="int" />
+      <Element name="Unknown 5" type="int" />
+    </Subrecord>
+    <Subrecord desc="DATA" name="DATA" optional="1" size="9">
+      <Element name="Unknown" type="int" />
+      <Element name="Unknown 1" type="int" />
+      <Element name="Unknown 2" type="short" />
+    </Subrecord>
+  </Record>
+  <Record desc="Leveled Item" name="LVLI">
+    <Subrecord desc="Editor ID" name="EDID" optional="1">
+      <Element name="Editor ID" type="string" />
+    </Subrecord>
+    <Subrecord desc="Chance None Value" name="LVLD" optional="1" size="1">
+      <Element name="Chance None in Percent" type="byte" />
+    </Subrecord>
+    <Subrecord desc="List Flags" name="LVLF" optional="1" size="1">
+      <Element name="Flags" type="byte" />
+    </Subrecord>
+    <Subrecord desc="List Item" name="LVLO" optional="1" repeat="1">
+      <Element name="Level" type="blob" />
+    </Subrecord>
+    <Subrecord desc="DATA" name="DATA" optional="1">
+      <Element name="Unknown" type="string" />
+    </Subrecord>
+  </Record>
+  <Record desc="Weather" name="WTHR">
+    <Subrecord desc="Editor ID" name="EDID" optional="1">
+      <Element name="Name" type="string" />
+    </Subrecord>
+    <Subrecord desc="CNAM" name="CNAM" optional="1">
+      <Element name="Unknown" type="string" />
+    </Subrecord>
+    <Subrecord desc="DNAM" name="DNAM" optional="1">
+      <Element name="Unknown" type="string" />
+    </Subrecord>
+    <Subrecord desc="MODL" name="MODL" optional="1">
+      <Element name="Unknown" type="blob" />
+    </Subrecord>
+    <Subrecord desc="MODB" name="MODB" optional="1" size="4">
+      <Element name="Unknown" type="int" />
+    </Subrecord>
+    <Subrecord desc="NAM0" name="NAM0" optional="1" size="160">
+      <Element name="Unknown" type="int" />
+      <Element name="Unknown 1" type="int" />
+      <Element name="Unknown 2" type="int" />
+      <Element name="Unknown 3" type="int" />
+      <Element name="Unknown 4" type="int" />
+      <Element name="Unknown 5" type="int" />
+      <Element name="Unknown 6" type="int" />
+      <Element name="Unknown 7" type="int" />
+      <Element name="Unknown 8" type="int" />
+      <Element name="Unknown 9" type="int" />
+      <Element name="Unknown 10" type="int" />
+      <Element name="Unknown 11" type="int" />
+      <Element name="Unknown 12" type="int" />
+      <Element name="Unknown 13" type="int" />
+      <Element name="Unknown 14" type="int" />
+      <Element name="Unknown 15" type="int" />
+      <Element name="Unknown 16" type="int" />
+      <Element name="Unknown 17" type="int" />
+      <Element name="Unknown 18" type="int" />
+      <Element name="Unknown 19" type="int" />
+      <Element name="Unknown 20" type="int" />
+      <Element name="Unknown 21" type="int" />
+      <Element name="Unknown 22" type="int" />
+      <Element name="Unknown 23" type="int" />
+      <Element name="Unknown 24" type="int" />
+      <Element name="Unknown 25" type="int" />
+      <Element name="Unknown 26" type="int" />
+      <Element name="Unknown 27" type="int" />
+      <Element name="Unknown 28" type="int" />
+      <Element name="Unknown 29" type="int" />
+      <Element name="Unknown 30" type="int" />
+      <Element name="Unknown 31" type="int" />
+      <Element name="Unknown 32" type="int" />
+      <Element name="Unknown 33" type="int" />
+      <Element name="Unknown 34" type="int" />
+      <Element name="Unknown 35" type="int" />
+      <Element name="Unknown 36" type="int" />
+      <Element name="Unknown 37" type="int" />
+      <Element name="Unknown 38" type="int" />
+      <Element name="Unknown 39" type="int" />
+    </Subrecord>
+    <Subrecord desc="FNAM" name="FNAM" optional="1" size="16">
+      <Element name="Unknown" type="float" />
+      <Element name="Unknown 1" type="float" />
+      <Element name="Unknown 2" type="float" />
+      <Element name="Unknown 3" type="float" />
+    </Subrecord>
+    <Subrecord desc="HNAM" name="HNAM" optional="1" size="56">
+      <Element name="Unknown" type="float" />
+      <Element name="Unknown 1" type="float" />
+      <Element name="Unknown 2" type="float" />
+      <Element name="Unknown 3" type="float" />
+      <Element name="Unknown 4" type="float" />
+      <Element name="Unknown 5" type="float" />
+      <Element name="Unknown 6" type="float" />
+      <Element name="Unknown 7" type="float" />
+      <Element name="Unknown 8" type="float" />
+      <Element name="Unknown 9" type="int" />
+      <Element name="Unknown 10" type="int" />
+      <Element name="Unknown 11" type="float" />
+      <Element name="Unknown 12" type="float" />
+      <Element name="Unknown 13" type="float" />
+    </Subrecord>
+    <Subrecord desc="DATA" name="DATA" optional="1" size="15">
+      <Element name="Unknown" type="int" />
+      <Element name="Unknown 1" type="int" />
+      <Element name="Unknown 2" type="int" />
+      <Element name="Unknown 3" type="short" />
+      <Element name="Unknown 4" type="short" />
+    </Subrecord>
+    <Subrecord desc="Sound Reference" name="SNAM" optional="1" repeat="1" size="8">
+      <Element name="ID" type="int" />
+      <Element name="Repeat" type="int" />
+    </Subrecord>
+  </Record>
+  <Record desc="Climate" name="CLMT">
+    <Subrecord desc="Editor ID" name="EDID" optional="1">
+      <Element name="Name" type="string" />
+    </Subrecord>
+    <Subrecord desc="WLST" name="WLST" optional="1">
+      <Element name="ID" type="blob" />
+    </Subrecord>
+    <Subrecord desc="FNAM" name="FNAM" optional="1">
+      <Element name="Unknown" type="string" />
+    </Subrecord>
+    <Subrecord desc="GNAM" name="GNAM" optional="1">
+      <Element name="Unknown" type="string" />
+    </Subrecord>
+    <Subrecord desc="Model Name" name="MODL" optional="1">
+      <Element name="Name" type="string" />
+    </Subrecord>
+    <Subrecord desc="MODB" name="MODB" optional="1" size="4">
+      <Element name="Unknown" type="int" />
+    </Subrecord>
+    <Subrecord desc="TNAM" name="TNAM" optional="1" size="6">
+      <Element name="Unknown" type="int" />
+      <Element name="Unknown 1" type="short" />
+    </Subrecord>
+  </Record>
+  <Record desc="Region (Audio/Weather)" name="REGN">
+    <Subrecord desc="Editor ID" name="EDID" optional="1">
+      <Element name="Name" type="string" />
+    </Subrecord>
+    <Subrecord desc="RCLR" name="RCLR" optional="1" size="4">
+      <Element name="Unknown" type="int" />
+    </Subrecord>
+    <Subrecord desc="WNAM" name="WNAM" optional="1" size="4">
+      <Element name="Unknown" type="int" />
+    </Subrecord>
+    <Subrecord desc="RPLI" name="RPLI" optional="2" repeat="2" size="4">
+      <Element name="Name" type="int" />
+    </Subrecord>
+    <Subrecord desc="RPLD" name="RPLD" optional="2" repeat="2">
+      <Element name="Unknown" type="blob" />
+    </Subrecord>
+    <Subrecord desc="RDAT" name="RDAT" optional="3" repeat="3" size="8">
+      <Element name="Unknown" type="int" />
+      <Element name="Unknown 1" type="int" />
+    </Subrecord>
+    <Subrecord desc="RDGS" name="RDGS" optional="1" size="32">
+      <Element name="Unknown" type="int" />
+      <Element name="Unknown 1" type="int" />
+      <Element name="Unknown 2" type="int" />
+      <Element name="Unknown 3" type="int" />
+      <Element name="Unknown 4" type="int" />
+      <Element name="Unknown 5" type="int" />
+      <Element name="Unknown 6" type="int" />
+      <Element name="Unknown 7" type="int" />
+    </Subrecord>
+    <Subrecord desc="ICON" name="ICON" optional="1" size="23">
+      <Element name="Name" type="string" />
+      <Element name="Unknown 1" type="int" />
+      <Element name="Unknown 2" type="int" />
+      <Element name="Unknown 3" type="int" />
+      <Element name="Unknown 4" type="int" />
+      <Element name="Unknown 5" type="short" />
+      <Element name="Unknown 6" type="short" />
+    </Subrecord>
+    <Subrecord desc="RDMP" name="RDMP" optional="1">
+      <Element name="Name" type="string" />
+    </Subrecord>
+    <Subrecord desc="RDWT" name="RDWT" optional="1">
+      <Element name="ID" type="blob" />
+    </Subrecord>
+    <Subrecord desc="RDOT" name="RDOT" optional="1">
+      <Element name="Unknown" type="blob" />
+    </Subrecord>
+    <Subrecord desc="RDMD" name="RDMD" optional="1" size="4">
+      <Element name="Unknown" type="int" />
+    </Subrecord>
+    <Subrecord desc="RDSD" name="RDSD" optional="1">
+      <Element name="Unknown" type="blob" />
+    </Subrecord>
+  </Record>
+  <Record desc="Cell" name="CELL">
+    <Subrecord desc="Editor ID" name="EDID" optional="1">
+      <Element name="ID" type="string" />
+    </Subrecord>
+    <Subrecord desc="Full name" name="FULL" optional="1">
+      <Element name="Name" type="string" />
+    </Subrecord>
+    <Subrecord desc="DATA" name="DATA" optional="1" size="1">
+      <Element name="Unknown" type="byte" />
+    </Subrecord>
+    <Subrecord desc="Grid Location" name="XCLC" optional="1" size="8">
+      <Element name="X" type="int" />
+      <Element name="Y" type="int" />
+    </Subrecord>
+    <Subrecord desc="XCLR" name="XCLR" optional="1">
+      <Element name="ID" type="blob" />
+    </Subrecord>
+    <Subrecord desc="Interior Cell Lighting" name="XCLL" optional="1" size="36">
+      <Element name="Unknown" type="int" />
+      <Element name="Unknown 1" type="int" />
+      <Element name="Unknown 2" type="int" />
+      <Element name="Unknown 3" type="float" />
+      <Element name="Unknown 4" type="float" />
+      <Element name="Unknown 5" type="int" />
+      <Element name="Unknown 6" type="int" />
+      <Element name="Unknown 7" type="float" />
+      <Element name="Unknown 8" type="float" />
+    </Subrecord>
+    <Subrecord desc="Interior Cell Climate" name="XCCM" optional="1" size="4">
+      <Element name="ID" type="int" />
+    </Subrecord>
+    <Subrecord desc="XCMT" name="XCMT" optional="1" size="1">
+      <Element name="Unknown" type="byte" />
+    </Subrecord>
+    <Subrecord desc="Owner NPC or Faction" name="XOWN" optional="1" size="4">
+      <Element name="ID" type="int" />
+    </Subrecord>
+    <Subrecord desc="XGLB" name="XGLB" optional="1" size="4">
+      <Element name="Unknown" type="int" />
+    </Subrecord>
+    <Subrecord desc="XRNK" name="XRNK" optional="1" size="4">
+      <Element name="Unknown" type="int" />
+    </Subrecord>
+    <Subrecord desc="Water Height" name="XCLW" optional="1" size="4">
+      <Element name="Height" type="float" />
+    </Subrecord>
+    <Subrecord desc="Water Reference" name="XCWT" optional="1" size="4">
+      <Element name="ID" type="int" />
+    </Subrecord>
+  </Record>
+  <Record desc="Object Reference" name="REFR">
+    <Subrecord desc="Editor ID" name="EDID" optional="1">
+      <Element name="Name" type="string" />
+    </Subrecord>
+    <Subrecord desc="Basic Object" name="NAME" optional="1" size="4">
+      <Element name="ID" type="int" />
+    </Subrecord>
+    <Subrecord desc="XPCI" name="XPCI" optional="1" size="4">
+      <Element name="Unknown" type="int" />
+    </Subrecord>
+    <Subrecord desc="XSED" name="XSED" optional="1">
+      <Element name="Unknown" type="blob" />
+    </Subrecord>
+    <Subrecord desc="XLOD" name="XLOD" optional="1" size="12">
+      <Element name="Unknown" type="float" />
+      <Element name="Unknown 1" type="float" />
+      <Element name="Unknown 2" type="float" />
+    </Subrecord>
+    <Subrecord desc="XMRK" name="XMRK" optional="1" size="-1" />
+    <Subrecord desc="FNAM" name="FNAM" optional="1" size="1">
+      <Element name="Unknown" type="byte" />
+    </Subrecord>
+    <Subrecord desc="Full Name" name="FULL" optional="1">
+      <Element name="Unknown" type="string" />
+    </Subrecord>
+    <Subrecord desc="TNAM" name="TNAM" optional="1" size="2">
+      <Element name="Unknown" type="short" />
+    </Subrecord>
+    <Subrecord desc="XLCM" name="XLCM" optional="1" size="4">
+      <Element name="Unknown" type="int" />
+    </Subrecord>
+    <Subrecord desc="XTRG" name="XTRG" optional="1" size="4">
+      <Element name="Unknown" type="int" />
+    </Subrecord>
+    <Subrecord desc="XRTM" name="XRTM" optional="1" size="4">
+      <Element name="Unknown" type="int" />
+    </Subrecord>
+    <Subrecord desc="XACT" name="XACT" optional="1" size="4">
+      <Element name="Unknown" type="int" />
+    </Subrecord>
+    <Subrecord desc="ONAM" name="ONAM" optional="1" size="-1" />
+    <Subrecord desc="Owner" name="XOWN" optional="1" size="4">
+      <Element name="ID" type="int" />
+    </Subrecord>
+    <Subrecord desc="XGLB" name="XGLB" optional="1" size="4">
+      <Element name="Unknown" type="int" />
+    </Subrecord>
+    <Subrecord desc="Item Count" name="XCNT" optional="1" size="4">
+      <Element name="Count" type="int" />
+    </Subrecord>
+    <Subrecord desc="XRNK" name="XRNK" optional="1" size="4">
+      <Element name="Unknown" type="int" />
+    </Subrecord>
+    <Subrecord desc="Lock Information" name="XLOC" optional="1">
+      <Element name="Unknown Flags" type="blob" />
+    </Subrecord>
+    <Subrecord desc="Enable Script Point" name="XESP" optional="1" size="8">
+      <Element name="ID" type="int" />
+      <Element name="Range?" type="int" />
+    </Subrecord>
+    <Subrecord desc="Scale" name="XSCL" optional="1" size="4">
+      <Element name="Value" type="float" />
+    </Subrecord>
+    <Subrecord desc="Door Teleport" name="XTEL" optional="1" size="28">
+      <Element name="Door ID" type="int" />
+      <Element name="Loc.X" type="float" />
+      <Element name="Loc.Y" type="float" />
+      <Element name="Loc.Z" type="float" />
+      <Element name="Rot.X" type="float" />
+      <Element name="Rot.Y" type="int" />
+      <Element name="Rot.Z" type="float" />
+    </Subrecord>
+    <Subrecord desc="Locational Data" name="DATA" optional="1" size="24">
+      <Element name="Loc.X" type="float" />
+      <Element name="Loc.Y" type="float" />
+      <Element name="Loc.Z" type="float" />
+      <Element name="Rot.X" type="float" />
+      <Element name="Rot.Y" type="float" />
+      <Element name="Rot.Z" type="float" />
+    </Subrecord>
+  </Record>
+  <Record desc="PGRD" name="PGRD">
+    <Subrecord desc="DATA" name="DATA" optional="1" size="2">
+      <Element name="Unknown" type="short" />
+    </Subrecord>
+    <Subrecord desc="PGRP" name="PGRP" optional="1">
+      <Element name="Unknown" type="blob" />
+    </Subrecord>
+    <Subrecord desc="PGAG" name="PGAG" optional="1">
+      <Element name="Unknown" type="blob" />
+    </Subrecord>
+    <Subrecord desc="PGRR" name="PGRR" optional="1">
+      <Element name="Unknown" type="blob" />
+    </Subrecord>
+    <Subrecord desc="PGRI" name="PGRI" optional="1">
+      <Element name="Unknown" type="blob" />
+    </Subrecord>
+    <Subrecord desc="PGRL" name="PGRL" optional="1" repeat="1">
+      <Element name="Unknown" type="blob" />
+    </Subrecord>
+  </Record>
+  <Record desc="ACRE" name="ACRE">
+    <Subrecord desc="NAME" name="NAME" optional="1" size="4">
+      <Element name="Unknown" type="int" />
+    </Subrecord>
+    <Subrecord desc="XOWN" name="XOWN" optional="1" size="4">
+      <Element name="Unknown" type="int" />
+    </Subrecord>
+    <Subrecord desc="XSCL" name="XSCL" optional="1" size="4">
+      <Element name="Unknown" type="float" />
+    </Subrecord>
+    <Subrecord desc="EDID" name="EDID" optional="1">
+      <Element name="Unknown" type="string" />
+    </Subrecord>
+    <Subrecord desc="XESP" name="XESP" optional="1" size="8">
+      <Element name="Unknown" type="int" />
+      <Element name="Unknown 1" type="int" />
+    </Subrecord>
+    <Subrecord desc="XRGD" name="XRGD" optional="1">
+      <Element name="Unknown" type="blob" />
+    </Subrecord>
+    <Subrecord desc="DATA" name="DATA" optional="1" size="24">
+      <Element name="Unknown" type="float" />
+      <Element name="Unknown 1" type="float" />
+      <Element name="Unknown 2" type="float" />
+      <Element name="Unknown 3" type="int" />
+      <Element name="Unknown 4" type="int" />
+      <Element name="Unknown 5" type="float" />
+    </Subrecord>
+  </Record>
+  <Record desc="Actor Reference" name="ACHR">
+    <Subrecord desc="Base NPC" name="NAME" optional="1" size="4">
+      <Element name="ID" type="int" />
+    </Subrecord>
+    <Subrecord desc="XLOD" name="XLOD" optional="1" size="12">
+      <Element name="Unknown" type="float" />
+      <Element name="Unknown 1" type="int" />
+      <Element name="Unknown 2" type="float" />
+    </Subrecord>
+    <Subrecord desc="XPCI" name="XPCI" optional="1" size="4">
+      <Element name="Unknown" type="int" />
+    </Subrecord>
+    <Subrecord desc="FULL" name="FULL" optional="1" size="1">
+      <Element name="Unknown" type="byte" />
+    </Subrecord>
+    <Subrecord desc="XSCL" name="XSCL" optional="1" size="4">
+      <Element name="Unknown" type="float" />
+    </Subrecord>
+    <Subrecord desc="XHRS" name="XHRS" optional="1" size="4">
+      <Element name="Unknown" type="int" />
+    </Subrecord>
+    <Subrecord desc="Enable Script Point?" name="XESP" optional="1" size="8">
+      <Element name="ID" type="int" />
+      <Element name="Unknown 1" type="int" />
+    </Subrecord>
+    <Subrecord desc="XMRC" name="XMRC" optional="1" size="4">
+      <Element name="Unknown" type="int" />
+    </Subrecord>
+    <Subrecord desc="Editor ID" name="EDID" optional="1">
+      <Element name="Name" type="string" />
+    </Subrecord>
+    <Subrecord desc="Rag Doll?" name="XRGD" optional="1">
+      <Element name="Unknown" type="blob" />
+    </Subrecord>
+    <Subrecord desc="DATA" name="DATA" optional="1" size="24">
+      <Element name="Loc.X" type="float" />
+      <Element name="Loc.Y" type="float" />
+      <Element name="Loc.Z" type="float" />
+      <Element name="Rot.X" type="int" />
+      <Element name="Rot.Y" type="int" />
+      <Element name="Rot.Z" type="float" />
+    </Subrecord>
+  </Record>
+  <Record desc="World Space" name="WRLD">
+    <Subrecord desc="Editor ID" name="EDID" optional="1">
+      <Element name="Name" type="string" />
+    </Subrecord>
+    <Subrecord desc="FULL" name="FULL" optional="1">
+      <Element name="Unknown" type="string" />
+    </Subrecord>
+    <Subrecord desc="CNAM" name="CNAM" optional="1" size="4">
+      <Element name="ID" type="int" />
+    </Subrecord>
+    <Subrecord desc="WNAM" name="WNAM" optional="1" size="4">
+      <Element name="Unknown" type="int" />
+    </Subrecord>
+    <Subrecord desc="NAM2" name="NAM2" optional="1" size="4">
+      <Element name="Unknown" type="int" />
+    </Subrecord>
+    <Subrecord desc="ICON" name="ICON" optional="1">
+      <Element name="Unknown" type="blob" />
+    </Subrecord>
+    <Subrecord desc="MNAM" name="MNAM" optional="1" size="16">
+      <Element name="Width" type="int" />
+      <Element name="Height" type="int" />
+      <Element name="NW Cell X" type="int" />
+      <Element name="NW Cell Y" type="int" />
+    </Subrecord>
+    <Subrecord desc="DATA" name="DATA" optional="1" size="1">
+      <Element name="Unknown" type="byte" />
+    </Subrecord>
+    <Subrecord desc="NAM0" name="NAM0" optional="1" size="8">
+      <Element name="Unknown" type="float" />
+      <Element name="Unknown 1" type="float" />
+    </Subrecord>
+    <Subrecord desc="NAM9" name="NAM9" optional="1" size="8">
+      <Element name="Unknown" type="float" />
+      <Element name="Unknown 1" type="float" />
+    </Subrecord>
+    <Subrecord desc="SNAM" name="SNAM" optional="1" size="4">
+      <Element name="Unknown" type="int" />
+    </Subrecord>
+    <Subrecord desc="OFST" name="OFST" optional="1">
+      <Element name="Unknown" type="blob" />
+    </Subrecord>
+  </Record>
+  <Record desc="ROAD" name="ROAD">
+    <Subrecord desc="PGRP" name="PGRP" optional="1">
+      <Element name="Unknown" type="blob" />
+    </Subrecord>
+    <Subrecord desc="PGRR" name="PGRR" optional="1">
+      <Element name="Unknown" type="blob" />
+    </Subrecord>
+  </Record>
+  <Record desc="Landscape" name="LAND">
+    <Subrecord desc="DATA" name="DATA" optional="1" size="4">
+      <Element name="Unknown" type="int" />
+    </Subrecord>
+    <Subrecord desc="Vertex Normals" name="VNML" optional="1">
+      <Element name="Unknown" type="blob" />
+    </Subrecord>
+    <Subrecord desc="Vertex Height" name="VHGT" optional="1">
+      <Element name="Unknown" type="blob" />
+    </Subrecord>
+    <Subrecord desc="Vertex Color" name="VCLR" optional="1">
+      <Element name="Unknown" type="blob" />
+    </Subrecord>
+    <Subrecord desc="VTEX" name="VTEX" optional="1">
+      <Element name="Unknown" type="blob" />
+    </Subrecord>
+    <Subrecord desc="Base Texture" name="BTXT" optional="3" repeat="3" size="8">
+      <Element name="ID" type="int" />
+      <Element name="Quadrant" options="Bottom Left;0;Bottom Right;1;Upper Left;2;Upper Right;3" type="int" />
+    </Subrecord>
+    <Subrecord desc="Additional Texture" name="ATXT" optional="3" repeat="3" size="8">
+      <Element name="ID" type="int" />
+      <Element name="Unknown 1" type="int" />
+    </Subrecord>
+    <Subrecord desc="VTXT" name="VTXT" optional="3" repeat="3">
+      <Element name="Unknown" type="blob" />
+    </Subrecord>
+  </Record>
+  <Record desc="Dialogue Topic" name="DIAL">
+    <Subrecord desc="Editor ID" name="EDID" optional="1">
+      <Element name="Editor ID" type="string" />
+    </Subrecord>
+    <Subrecord desc="QSTI" name="QSTI" optional="1" repeat="1" size="4">
+      <Element name="Unknown" type="int" />
+    </Subrecord>
+    <Subrecord desc="Topic Text" name="FULL" optional="1">
+      <Element name="Name" type="string" />
+    </Subrecord>
+    <Subrecord desc="Unknown Data 2" name="DATA" optional="1" size="1">
+      <Element name="??" type="byte" />
+    </Subrecord>
+  </Record>
+  <Record desc="Dialogue Info" name="INFO">
+    <Subrecord desc="Unknown Data" name="DATA" optional="1">
+      <Element name="??" type="blob" />
+    </Subrecord>
+    <Subrecord desc="QSTI" name="QSTI" optional="1" size="4">
+      <Element name="Unknown" type="int" />
+    </Subrecord>
+    <Subrecord desc="NAME" name="NAME" optional="1" repeat="1" size="4">
+      <Element name="Unknown" type="int" />
+    </Subrecord>
+    <Subrecord desc="Topic Response Data" name="TRDT" optional="3" repeat="3" size="16">
+      <Element name="??" type="int" />
+      <Element name="Unknown 1" type="int" />
+      <Element name="Unknown 2" type="int" />
+      <Element name="Unknown 3" type="int" />
+    </Subrecord>
+    <Subrecord desc="Dialogue Text" name="NAM1" optional="3" repeat="3">
+      <Element name="text" type="string" />
+    </Subrecord>
+    <Subrecord desc="Uknown Byte" name="NAM2" optional="3" repeat="3">
+      <Element name="??" type="string" />
+    </Subrecord>
+    <Subrecord desc="CTDT" name="CTDT" optional="1" repeat="1" size="20">
+      <Element name="Unknown" type="int" />
+      <Element name="Unknown 1" type="float" />
+      <Element name="Unknown 2" type="int" />
+      <Element name="Unknown 3" type="int" />
+      <Element name="Unknown 4" type="int" />
+    </Subrecord>
+    <Subrecord desc="CTDA" name="CTDA" optional="1" repeat="1" size="24">
+      <Element name="Unknown" type="int" />
+      <Element name="Unknown 1" type="float" />
+      <Element name="Unknown 2" type="int" />
+      <Element name="Unknown 3" type="int" />
+      <Element name="Unknown 4" type="int" />
+      <Element name="Unknown 5" type="int" />
+    </Subrecord>
+    <Subrecord desc="TCLF" name="TCLF" optional="1" repeat="1" size="4">
+      <Element name="Unknown" type="int" />
+    </Subrecord>
+    <Subrecord desc="SCHD" name="SCHD" optional="1">
+      <Element name="Unknown" type="blob" />
+    </Subrecord>
+    <Subrecord desc="Linked To Topic" name="TCLT" optional="1" repeat="1" size="4">
+      <Element name="link to" type="int" />
+    </Subrecord>
+    <Subrecord desc="SCHR" name="SCHR" optional="1" size="20">
+      <Element name="Unknown" type="int" />
+      <Element name="Unknown 1" type="int" />
+      <Element name="Unknown 2" type="int" />
+      <Element name="Unknown 3" type="int" />
+      <Element name="Unknown 4" type="int" />
+    </Subrecord>
+    <Subrecord desc="SCDA" name="SCDA" optional="1">
+      <Element name="Unknown" type="blob" />
+    </Subrecord>
+    <Subrecord desc="SCTX" name="SCTX" optional="1">
+      <Element name="Unknown" type="blob" />
+    </Subrecord>
+    <Subrecord desc="SCRO" name="SCRO" optional="1" repeat="1" size="4">
+      <Element name="Unknown" type="int" />
+    </Subrecord>
+  </Record>
+  <Record desc="Quest" name="QUST">
+    <Subrecord desc="Editor ID" name="EDID" optional="1">
+      <Element name="Editor ID" type="string" />
+    </Subrecord>
+    <Subrecord desc="SCRI" name="SCRI" optional="1" size="4">
+      <Element name="Unknown" type="int" />
+    </Subrecord>
+    <Subrecord desc="Full Name" name="FULL" optional="1">
+      <Element name="Name" type="string" />
+    </Subrecord>
+    <Subrecord desc="ICON" name="ICON" optional="1">
+      <Element name="Unknown" type="string" />
+    </Subrecord>
+    <Subrecord desc="DATA" name="DATA" optional="1" size="2">
+      <Element name="Unknown" type="short" />
+    </Subrecord>
+    <Subrecord desc="Quest Stage" name="INDX" optional="8" repeat="8" size="2">
+      <Element name="Stage Number" type="short" />
+    </Subrecord>
+    <Subrecord desc="Quest Stage Data" name="QSDT" optional="8" repeat="8">
+      <Element name="unknown byte" type="string" />
+    </Subrecord>
+    <Subrecord desc="CNAM" name="CNAM" optional="8" repeat="8">
+      <Element name="Unknown" type="string" />
+    </Subrecord>
+    <Subrecord desc="SCHR" name="SCHR" optional="8" repeat="8" size="20">
+      <Element name="Unknown" type="int" />
+      <Element name="Unknown 1" type="int" />
+      <Element name="Unknown 2" type="int" />
+      <Element name="Unknown 3" type="int" />
+      <Element name="Unknown 4" type="int" />
+    </Subrecord>
+    <Subrecord desc="SCDA" name="SCDA" optional="8" repeat="8">
+      <Element name="Unknown" type="blob" />
+    </Subrecord>
+    <Subrecord desc="Script Text" name="SCTX" optional="8" repeat="8">
+      <Element name="Script" type="blob" />
+    </Subrecord>
+    <Subrecord desc="SCRO" name="SCRO" optional="8" repeat="8" size="4">
+      <Element name="Unknown" type="int" />
+    </Subrecord>
+    <Subrecord desc="CTDA" name="CTDA" optional="9" repeat="9" size="24">
+      <Element name="Unknown" type="int" />
+      <Element name="Unknown 1" type="float" />
+      <Element name="Unknown 2" type="int" />
+      <Element name="Unknown 3" type="int" />
+      <Element name="Unknown 4" type="int" />
+      <Element name="Unknown 5" type="int" />
+    </Subrecord>
+    <Subrecord desc="QSTA" name="QSTA" optional="2" repeat="2" size="8">
+      <Element name="Unknown" type="int" />
+      <Element name="Unknown 1" type="int" />
+    </Subrecord>
+  </Record>
+  <Record desc="Idle Animation" name="IDLE">
+    <Subrecord desc="Editor ID" name="EDID" optional="1">
+      <Element name="Name" type="string" />
+    </Subrecord>
+    <Subrecord desc="MODL" name="MODL" optional="1">
+      <Element name="Unknown" type="string" />
+    </Subrecord>
+    <Subrecord desc="MODB" name="MODB" optional="1" size="4">
+      <Element name="Unknown" type="int" />
+    </Subrecord>
+    <Subrecord desc="CTDT" name="CTDT" optional="1" repeat="1" size="20">
+      <Element name="Unknown" type="int" />
+      <Element name="Unknown 1" type="float" />
+      <Element name="Unknown 2" type="int" />
+      <Element name="Unknown 3" type="int" />
+      <Element name="Unknown 4" type="int" />
+    </Subrecord>
+    <Subrecord desc="CTDA" name="CTDA" optional="1" repeat="1" size="24">
+      <Element name="Unknown" type="int" />
+      <Element name="Unknown 1" type="float" />
+      <Element name="Unknown 2" type="int" />
+      <Element name="Unknown 3" type="int" />
+      <Element name="Unknown 4" type="int" />
+      <Element name="Unknown 5" type="int" />
+    </Subrecord>
+    <Subrecord desc="Animations" name="ANAM" optional="1" size="1">
+      <Element name="Root ID" type="byte" />
+    </Subrecord>
+    <Subrecord desc="DATA" name="DATA" optional="1" size="8">
+      <Element name="Unknown" type="int" />
+      <Element name="Unknown 1" type="int" />
+    </Subrecord>
+  </Record>
+  <Record desc="AI Package" name="PACK">
+    <Subrecord desc="Editor ID" name="EDID" optional="1">
+      <Element name="Name" type="string" />
+    </Subrecord>
+    <Subrecord desc="PKDT" name="PKDT" optional="1">
+      <Element name="Unknown" type="blob" />
+    </Subrecord>
+    <Subrecord desc="PLDT" name="PLDT" optional="1" size="12">
+      <Element name="Unknown" type="int" />
+      <Element name="Unknown 1" type="int" />
+      <Element name="Unknown 2" type="int" />
+    </Subrecord>
+    <Subrecord desc="PSDT" name="PSDT" optional="1" size="8">
+      <Element name="Unknown" type="int" />
+      <Element name="Unknown 1" type="int" />
+    </Subrecord>
+    <Subrecord desc="PTDT" name="PTDT" optional="1" size="12">
+      <Element name="Unknown" type="int" />
+      <Element name="Unknown 1" type="int" />
+      <Element name="Unknown 2" type="int" />
+    </Subrecord>
+    <Subrecord desc="CTDT" name="CTDT" optional="1" repeat="1" size="20">
+      <Element name="Unknown" type="int" />
+      <Element name="Unknown 1" type="float" />
+      <Element name="Unknown 2" type="int" />
+      <Element name="Unknown 3" type="int" />
+      <Element name="Unknown 4" type="int" />
+    </Subrecord>
+    <Subrecord desc="CTDA" name="CTDA" optional="1" repeat="1" size="24">
+      <Element name="Unknown" type="int" />
+      <Element name="Unknown 1" type="float" />
+      <Element name="Unknown 2" type="int" />
+      <Element name="Unknown 3" type="int" />
+      <Element name="Unknown 4" type="int" />
+      <Element name="Unknown 5" type="int" />
+    </Subrecord>
+  </Record>
+  <Record desc="Combat Style" name="CSTY">
+    <Subrecord desc="Editor ID" name="EDID" optional="1">
+      <Element name="Name" type="string" />
+    </Subrecord>
+    <Subrecord desc="CSTD" name="CSTD" optional="1">
+      <Element name="Unknown" type="blob" />
+    </Subrecord>
+    <Subrecord desc="CSAD" name="CSAD" optional="1" size="84">
+      <Element name="Unknown" type="float" />
+      <Element name="Unknown 1" type="int" />
+      <Element name="Unknown 2" type="float" />
+      <Element name="Unknown 3" type="float" />
+      <Element name="Unknown 4" type="float" />
+      <Element name="Unknown 5" type="float" />
+      <Element name="Unknown 6" type="float" />
+      <Element name="Unknown 7" type="float" />
+      <Element name="Unknown 8" type="float" />
+      <Element name="Unknown 9" type="float" />
+      <Element name="Unknown 10" type="float" />
+      <Element name="Unknown 11" type="int" />
+      <Element name="Unknown 12" type="float" />
+      <Element name="Unknown 13" type="float" />
+      <Element name="Unknown 14" type="float" />
+      <Element name="Unknown 15" type="int" />
+      <Element name="Unknown 16" type="float" />
+      <Element name="Unknown 17" type="float" />
+      <Element name="Unknown 18" type="float" />
+      <Element name="Unknown 19" type="float" />
+      <Element name="Unknown 20" type="float" />
+    </Subrecord>
+  </Record>
+  <Record desc="Load Screen" name="LSCR">
+    <Subrecord desc="Editor ID" name="EDID" optional="1">
+      <Element name="Name" type="string" />
+    </Subrecord>
+    <Subrecord desc="ICON" name="ICON" optional="1">
+      <Element name="Unknown" type="string" />
+    </Subrecord>
+    <Subrecord desc="Description" name="DESC" optional="1">
+      <Element name="Name" type="string" />
+    </Subrecord>
+    <Subrecord desc="LNAM" name="LNAM" optional="1" repeat="1" size="12">
+      <Element name="Unknown" type="int" />
+      <Element name="Unknown 1" type="int" />
+      <Element name="Unknown 2" type="short" />
+      <Element name="Unknown 2" type="short" />
+    </Subrecord>
+  </Record>
+  <Record desc="Leveled Spell" name="LVSP">
+    <Subrecord desc="Editor ID" name="EDID" optional="1">
+      <Element name="Name" type="string" />
+    </Subrecord>
+    <Subrecord desc="Chance" name="LVLD" optional="1" size="1">
+      <Element name="Value" type="byte" />
+    </Subrecord>
+    <Subrecord desc="Leveled List Flags" name="LVLF" optional="1" size="1">
+      <Element name="Flags" type="byte" />
+    </Subrecord>
+    <Subrecord desc="LVLO" name="LVLO" optional="1" repeat="1" size="12">
+      <Element name="Level" type="int" />
+      <Element name="Spell ID" type="int" />
+      <Element name="Count" type="int" />
+    </Subrecord>
+  </Record>
+  <Record desc="Animated Object" name="ANIO">
+    <Subrecord desc="Editor ID" name="EDID" optional="1">
+      <Element name="Name" type="string" />
+    </Subrecord>
+    <Subrecord desc="Model Name" name="MODL" optional="1">
+      <Element name="Name" type="string" />
+    </Subrecord>
+    <Subrecord desc="MODB" name="MODB" optional="1" size="4">
+      <Element name="Unknown" type="int" />
+    </Subrecord>
+    <Subrecord desc="DATA" name="DATA" optional="1" size="4">
+      <Element name="Unknown" type="int" />
+    </Subrecord>
+  </Record>
+  <Record desc="Water" name="WATR">
+    <Subrecord desc="Editor ID" name="EDID" optional="1">
+      <Element name="Name" type="string" />
+    </Subrecord>
+    <Subrecord desc="TNAM" name="TNAM" optional="1">
+      <Element name="ID" type="string" />
+    </Subrecord>
+    <Subrecord desc="ANAM" name="ANAM" optional="1" size="1">
+      <Element name="Unknown" type="byte" />
+    </Subrecord>
+    <Subrecord desc="FNAM" name="FNAM" optional="1" size="1">
+      <Element name="Name" type="byte" />
+    </Subrecord>
+    <Subrecord desc="MNAM" name="MNAM" optional="1">
+      <Element name="Name" type="string" />
+    </Subrecord>
+    <Subrecord desc="SNAM" name="SNAM" optional="1" size="4">
+      <Element name="ID" type="int" />
+    </Subrecord>
+    <Subrecord desc="DATA" name="DATA" optional="1">
+      <Element name="Unknown" type="blob" />
+    </Subrecord>
+    <Subrecord desc="GNAM" name="GNAM" optional="1" size="12">
+      <Element name="Unknown" type="int" />
+      <Element name="Unknown 1" type="int" />
+      <Element name="Unknown 2" type="int" />
+    </Subrecord>
+  </Record>
+  <Record desc="Effect Shader" name="EFSH">
+    <Subrecord desc="Editor ID" name="EDID" optional="1">
+      <Element name="Name" type="string" />
+    </Subrecord>
+    <Subrecord desc="ICON" name="ICON" optional="1">
+      <Element name="Name" type="string" />
+    </Subrecord>
+    <Subrecord desc="ICO2" name="ICO2" optional="1">
+      <Element name="Name" type="string" />
+    </Subrecord>
+    <Subrecord desc="DATA" name="DATA" optional="1">
+      <Element name="Unknown" type="blob" />
+    </Subrecord>
+  </Record>
+</Records>

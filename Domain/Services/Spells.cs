@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using TESVSnip.Domain.Data.RecordStructure;
+using TESVSnip.Domain.Data.Structure;
 using TESVSnip.Domain.Data.Strings;
 using TESVSnip.Domain.Model;
 using TESVSnip.Domain.Properties;
@@ -131,7 +131,7 @@ namespace TESVSnip.Domain.Services
 
             if (anyModified)
             {
-                var tes4 = plugin.Records.OfType<Record>().FirstOrDefault(x => x.Name == "TES4");
+                var tes4 = plugin.Records.OfType<Record>().FirstOrDefault(x => x.Name .StartsWith("TES"));
                 if (tes4 != null)
                 {
                     tes4.Flags1 |= 0x00000080U;
@@ -164,18 +164,15 @@ namespace TESVSnip.Domain.Services
 
         public static void ReorderSubrecords(Record rec)
         {
-            if (rec == null || RecordStructure.Records == null)
-            {
+            var records = rec.GetStructures();
+            if (rec == null || records == null)
                 return;
-            }
 
-            if (!RecordStructure.Records.ContainsKey(rec.Name))
-            {
+            RecordStructure recStruct;
+            if (!records.TryGetValue(rec.Name, out recStruct))
                 return;
-            }
 
-            SubrecordStructure[] sss = RecordStructure.Records[rec.Name].subrecords;
-
+            SubrecordStructure[] sss = recStruct.subrecords;
             var subs = new List<SubRecord>(rec.SubRecords);
             foreach (var sub in subs)
             {
@@ -228,7 +225,7 @@ namespace TESVSnip.Domain.Services
                     throw new ApplicationException("Cannot select plugin");
                 }
 
-                var hdr = plugin.Records.OfType<Rec>().FirstOrDefault(x => x.Name == "TES4");
+                var hdr = plugin.Records.OfType<Rec>().FirstOrDefault(x => x.Name .StartsWith("TES"));
                 if (hdr == null)
                 {
                     throw new ApplicationException(Resources.PluginLacksAValidTes4RecordCannotContinue);
@@ -321,7 +318,7 @@ namespace TESVSnip.Domain.Services
                 plugin.UpdateRecordCount();
 
                 /* int reccount = -1 + plugin.Records.Cast<Rec>().Sum(r => sanitizeCountRecords(r));
-                var tes4 = plugin.Records.OfType<Record>().FirstOrDefault(x => x.Name == "TES4");
+                var tes4 = plugin.Records.OfType<Record>().FirstOrDefault(x => x.Name .StartsWith("TES"));
                 if (tes4 != null)
                 {
                     if (tes4.SubRecords.Count > 0 && tes4.SubRecords[0].Name == "HEDR" && tes4.SubRecords[0].Size >= 8)
@@ -349,7 +346,7 @@ namespace TESVSnip.Domain.Services
 
         public static uint getNextFormID(Plugin plugin)
         {
-            var tes4 = plugin.Records.OfType<Record>().FirstOrDefault(x => x.Name == "TES4");
+            var tes4 = plugin.Records.OfType<Record>().FirstOrDefault(x => x.Name .StartsWith("TES"));
             if (tes4 != null && tes4.SubRecords.Count > 0 && tes4.SubRecords[0].Name == "HEDR" &&
                 tes4.SubRecords[0].Size >= 8)
             {
@@ -655,7 +652,7 @@ namespace TESVSnip.Domain.Services
 
             if (anyModified)
             {
-                var tes4 = plugin.Records.OfType<Record>().FirstOrDefault(x => x.Name == "TES4");
+                var tes4 = plugin.Records.OfType<Record>().FirstOrDefault(x => x.Name .StartsWith("TES"));
                 if (tes4 != null)
                 {
                     tes4.Flags1 &= ~0x00000080U;

@@ -9,7 +9,7 @@
 
     using BrightIdeasSoftware;
 
-    using TESVSnip.Domain.Data.RecordStructure;
+    using Domain.Data.Structure;
     using TESVSnip.Domain.Model;
     using TESVSnip.Properties;
 
@@ -193,14 +193,14 @@
 
         private void InitializeComboBox()
         {
-            var records =
-                RecordStructure.Records.Values.Select(x => new ComboBoxItem<RecordStructure> { Name = string.Format("{0}: {1}", x.name, x.description), Value = x }).OrderBy(x => x.Name).OfType<object>
-                    ().ToArray();
+            var records = TESVSnip.Domain.Data.DomainDefinition.LoadedDomains().SelectMany(domain=>
+                domain.Records.Values.Select(x => new ComboBoxItem<RecordStructure> { Name = string.Format("{0}: {1}", x.name, x.description), Value = x })
+                .Distinct().OrderBy(x => x.Name)).ToArray();
             this.cboRecordType.Items.Clear();
             this.cboRecordType.Items.AddRange(records);
             if (this.Criteria != null && !string.IsNullOrEmpty(this.Criteria.Type))
             {
-                this.cboRecordType.SelectedItem = RecordStructure.Records[this.Criteria.Type];
+                this.cboRecordType.SelectedItem = records.FirstOrDefault(x=>x.Value.name == this.Criteria.Type);
             }
         }
 
@@ -419,8 +419,11 @@
                 this.filterTree.ItemChecked -= this.filterTree_ItemChecked;
                 try
                 {
-                    RecordStructure rec;
-                    if (RecordStructure.Records.TryGetValue(settings.Type, out rec))
+                    RecordStructure rec = null;
+                    foreach (var domain in TESVSnip.Domain.Data.DomainDefinition.LoadedDomains())
+                        if (domain.Records.TryGetValue(settings.Type, out rec))
+                            break;
+                    if (rec != null)
                     {
                         this.filterTree.Roots = this.ConfigureRecord(rec);
                         this.AssignCriteria(settings);

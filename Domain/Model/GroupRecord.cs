@@ -10,7 +10,7 @@ namespace TESVSnip.Domain.Model
     using System.Runtime.InteropServices;
     using System.Runtime.Serialization;
 
-    using TESVSnip.Domain.Data.RecordStructure;
+    using Data.Structure;
     using TESVSnip.Framework.Persistence;
     using TESVSnip.Framework.Services;
 
@@ -45,20 +45,21 @@ namespace TESVSnip.Domain.Model
             this.UpdateShortDescription();
         }
 
-        internal GroupRecord(uint Size, BinaryReader br, bool Oblivion, Func<string,bool> recFilter, bool filterAll)
+        internal GroupRecord(uint Size, BinaryReader br, float version, Func<string,bool> recFilter, bool filterAll)
         {
+            bool isOblivion = Math.Abs(version - 1.0f) <= float.Epsilon * 10.0f;
             Name = "GRUP";
             this.data = br.ReadBytes(4);
             this.groupType = br.ReadUInt32();
             this.dateStamp = br.ReadUInt32();
             string contentType = this.groupType == 0 ? Encoding.Instance.GetString(this.data) : string.Empty;
-            if (!Oblivion)
+            if (!isOblivion)
             {
                 this.flags = br.ReadUInt32();
             }
 
             uint amountRead = 0;
-            while (amountRead < Size - (Oblivion ? 20 : 24))
+            while (amountRead < Size - (isOblivion ? 20 : 24))
             {
                 string s = ReadRecName(br);
                 uint recsize = br.ReadUInt32();
@@ -67,7 +68,7 @@ namespace TESVSnip.Domain.Model
                     try
                     {
                         bool skip = filterAll || (recFilter != null && !recFilter(contentType));
-                        var gr = new GroupRecord(recsize, br, Oblivion, recFilter, skip);
+                        var gr = new GroupRecord(recsize, br, version, recFilter, skip);
                         if (!filterAll)
                         {
                             this.AddRecord(gr);
@@ -87,17 +88,17 @@ namespace TESVSnip.Domain.Model
                     bool skip = filterAll || (recFilter != null && !recFilter(contentType));
                     if (skip)
                     {
-                        long size = recsize + (Oblivion ? 12 : 16);
+                        long size = recsize + (isOblivion ? 12 : 16);
 
                         // if ((br.ReadUInt32() & 0x00040000) > 0) size += 4;
                         br.BaseStream.Position += size; // just read past the data
-                        amountRead += (uint)(recsize + (Oblivion ? 20 : 24));
+                        amountRead += (uint)(recsize + (isOblivion ? 20 : 24));
                     }
                     else
                     {
                         try
                         {
-                            var r = new Record(s, recsize, br, Oblivion);
+                            var r = new Record(s, recsize, br, version);
                             this.AddRecord(r);
                         }
                         catch (Exception e)
@@ -106,17 +107,17 @@ namespace TESVSnip.Domain.Model
                         }
                         finally
                         {
-                            amountRead += (uint)(recsize + (Oblivion ? 20 : 24));
+                            amountRead += (uint)(recsize + (isOblivion ? 20 : 24));
                         }
                     }
                 }
             }
 
             this.UpdateShortDescription();
-            if (amountRead != (Size - (Oblivion ? 20 : 24)))
+            if (amountRead != (Size - (isOblivion ? 20 : 24)))
             {
                 throw new TESParserException(
-                    string.Format("Record block did not match the size specified in the group header! Header Size={0:D} Group Size={1:D}", Size - (Oblivion ? 20 : 24), amountRead));
+                    string.Format("Record block did not match the size specified in the group header! Header Size={0:D} Group Size={1:D}", Size - (isOblivion ? 20 : 24), amountRead));
             }
         }
 
@@ -377,16 +378,10 @@ namespace TESVSnip.Domain.Model
                 string desc = string.Format(" ({0})", data);
                 if (this.groupType == 0)
                 {
-                    RecordStructure rec;
-                    if (RecordStructure.Records.TryGetValue(data, out rec))
-                    {
-                        if (rec.description != data)
-                        {
-                            desc += " - " + rec.description;
-                        }
-                    }
+                    var rec = GetStructure();
+                    if (rec != null && rec.description != data)
+                        desc += " - " + rec.description;
                 }
-
                 descriptiveName = desc;
             }
             else
@@ -475,6 +470,21 @@ namespace TESVSnip.Domain.Model
             if (tn != null)
                 return tn as Plugin;
             return null;
+        }
+
+        public Dictionary<string, RecordStructure> GetStructures()
+        {
+            var p = GetPlugin();
+            if (p == null) return null;
+            return p.GetRecordStructures();
+        }
+
+        public RecordStructure GetStructure()
+        {
+            var p = GetPlugin();
+            if (p == null) return null;
+            var structs = p.GetRecordStructures();
+            return structs[this.ContentsType];
         }
 
         public override string ToString()

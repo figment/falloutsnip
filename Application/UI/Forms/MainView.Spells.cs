@@ -1,5 +1,5 @@
 ﻿using System.Text.RegularExpressions;
-using TESVSnip.Domain.Data.RecordStructure.Xml;
+using TESVSnip.Domain.Data.Structure.Xml;
 using TESVSnip.UI.Services;
 
 namespace TESVSnip.UI.Forms
@@ -14,7 +14,7 @@ namespace TESVSnip.UI.Forms
     using System.Xml;
     using System.Xml.Serialization;
 
-    using TESVSnip.Domain.Data.RecordStructure;
+    using Domain.Data.Structure;
     using TESVSnip.Domain.Data.Strings;
     using TESVSnip.Domain.Model;
     using TESVSnip.Domain.Scripts;
@@ -101,7 +101,7 @@ namespace TESVSnip.UI.Forms
                     continue;
                 }
 
-                var tes4 = plugin.Records.OfType<Record>().FirstOrDefault(x => x.Name == "TES4");
+                var tes4 = plugin.Records.OfType<Record>().FirstOrDefault(x => x.Name.StartsWith("TES"));
                 if (plugin.Masters[i].Records.Count < 2 || tes4 == null)
                 {
                     continue;
@@ -408,14 +408,14 @@ namespace TESVSnip.UI.Forms
             builder.UpdateProgressAction = this.UpdateBackgroundProgress;
 
             this.StartBackgroundWork(
-                () => { builder.Start(p); },
+                () => builder.Start(p),
                 () =>
                     {
                         if (!this.IsBackroundProcessCanceled())
                         {
                             using (var dlg = new SaveFileDialog())
                             {
-                                dlg.InitialDirectory = Path.GetTempPath();
+                                //dlg.InitialDirectory = Path.GetTempPath();
                                 dlg.FileName = "RecordStructure.xml";
                                 dlg.OverwritePrompt = false;
                                 if (dlg.ShowDialog() == DialogResult.OK)
@@ -429,6 +429,69 @@ namespace TESVSnip.UI.Forms
                             }
                         }
                     });
+        }
+
+        private void mergeRecordsXMLToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            Records baseRecords;
+            Records updateRecords;
+
+            var xs = new XmlSerializer(typeof(Records));
+            using (var dlg = new OpenFileDialog())
+            {
+                dlg.Title = "Select Base Record Structure";
+                dlg.InitialDirectory = Options.Value.SettingsDirectory;
+                dlg.FileName = "RecordStructure.xml";
+                if (dlg.ShowDialog(this) != DialogResult.OK)
+                {
+                    return;
+                }
+
+                using (var fs = File.OpenRead(dlg.FileName))
+                {
+                    baseRecords = xs.Deserialize(fs) as Records;
+                }
+            }
+
+            using (var dlg = new OpenFileDialog())
+            {
+                dlg.Title = "Select Record Structure XML To Merge";
+                dlg.InitialDirectory = Options.Value.SettingsDirectory;
+                //dlg.InitialDirectory = Path.GetTempPath();
+                dlg.FileName = "RecordStructure.xml";
+                if (dlg.ShowDialog(this) != DialogResult.OK)
+                {
+                    return;
+                }
+
+                using (var fs = File.OpenRead(dlg.FileName))
+                {
+                    updateRecords = xs.Deserialize(fs) as Records;
+                }
+            }
+
+            if (updateRecords != null && baseRecords != null)
+            {
+                var builder = new RecordBuilder();
+                builder.MergeRecords(baseRecords.Items.OfType<RecordsRecord>(),
+                                     updateRecords.Items.OfType<RecordsRecord>());
+
+                using (var dlg = new SaveFileDialog())
+                {
+                    dlg.Title = "Select Record Structure To Save";
+                    dlg.InitialDirectory = Options.Value.SettingsDirectory;
+                    //dlg.InitialDirectory = Path.GetTempPath();
+                    dlg.FileName = "RecordStructure.xml";
+                    dlg.OverwritePrompt = false;
+                    if (dlg.ShowDialog(this) == DialogResult.OK)
+                    {
+                        using (var fs = File.CreateText(dlg.FileName))
+                        {
+                            xs.Serialize(fs, updateRecords);
+                        }
+                    }
+                }
+            }
         }
 
         private void createStubsForMissingStringsToolStripMenuItem_Click(object sender, EventArgs e)
@@ -637,7 +700,7 @@ namespace TESVSnip.UI.Forms
                 }
 
                 bool firstwasfallout = false;
-                if (r != null && r.Name == "TES4")
+                if (r != null && r.Name.StartsWith("TES"))
                 {
                     foreach (SubRecord sr in r.SubRecords)
                     {
@@ -957,7 +1020,7 @@ namespace TESVSnip.UI.Forms
             }
 
             var p = this.GetPluginFromNode(this.PluginTree.SelectedRecord);
-            var tes4 = p.Records.OfType<Record>().FirstOrDefault(x => x.Name == "TES4");
+            var tes4 = p.Records.OfType<Record>().FirstOrDefault(x => x.Name.StartsWith("TES"));
             if (tes4 == null)
             {
                 MessageBox.Show("Plugin has no TES4 record");

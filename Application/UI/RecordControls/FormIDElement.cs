@@ -1,9 +1,12 @@
-﻿namespace TESVSnip.UI.RecordControls
+﻿using TESVSnip.Domain.Data;
+using TESVSnip.UI.Forms;
+
+namespace TESVSnip.UI.RecordControls
 {
     using System;
     using System.Linq;
 
-    using TESVSnip.Domain.Data.RecordStructure;
+    using Domain.Data.Structure;
     using TESVSnip.Framework;
 
     internal partial class FormIDElement : TextElement
@@ -16,7 +19,7 @@
         {
             this.InitializeComponent();
 
-            var recitems = RecordStructure.Records.Keys.OfType<object>().ToArray();
+            var recitems = DomainDefinition.GetRecordNames();
             this.cboRecType.Sorted = true;
             this.cboRecType.Items.Clear();
             this.cboRecType.Items.Add("<All>");

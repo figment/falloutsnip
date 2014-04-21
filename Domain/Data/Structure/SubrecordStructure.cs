@@ -1,11 +1,10 @@
-using TESVSnip.Domain.Data.RecordStructure.Xml;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using TESVSnip.Domain.Data.Structure.Xml;
 
-namespace TESVSnip.Domain.Data.RecordStructure
+namespace TESVSnip.Domain.Data.Structure
 {
-    using System;
-    using System.Collections.Generic;
-    using System.Linq;
-
     public class SubrecordStructure : SubrecordBase
     {
         public readonly int CondID;
@@ -27,8 +26,8 @@ namespace TESVSnip.Domain.Data.RecordStructure
         public readonly int size;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="SubrecordStructure"/> class. 
-        /// Clone structure with optional and repeat values overridden.
+        ///     Initializes a new instance of the <see cref="SubrecordStructure" /> class.
+        ///     Clone structure with optional and repeat values overridden.
         /// </summary>
         /// <param name="src">
         /// </param>
@@ -55,7 +54,9 @@ namespace TESVSnip.Domain.Data.RecordStructure
         {
             this.notininfo = node.notininfo;
             this.size = node.size;
-            this.Condition = (!string.IsNullOrEmpty(node.condition)) ? (CondType)Enum.Parse(typeof(CondType), node.condition, true) : CondType.None;
+            this.Condition = (!string.IsNullOrEmpty(node.condition))
+                                 ? (CondType) Enum.Parse(typeof (CondType), node.condition, true)
+                                 : CondType.None;
             this.CondID = node.condid;
             this.CondOperand = node.condvalue;
             this.UseHexEditor = node.usehexeditor;
@@ -71,7 +72,9 @@ namespace TESVSnip.Domain.Data.RecordStructure
         {
             this.notininfo = node.notininfo;
             this.size = node.size;
-            this.Condition = (!string.IsNullOrEmpty(node.condition)) ? (CondType)Enum.Parse(typeof(CondType), node.condition, true) : CondType.None;
+            this.Condition = (!string.IsNullOrEmpty(node.condition))
+                                 ? (CondType) Enum.Parse(typeof (CondType), node.condition, true)
+                                 : CondType.None;
             this.CondID = node.condid;
             this.CondOperand = node.condvalue;
             this.UseHexEditor = node.usehexeditor;
@@ -88,13 +91,13 @@ namespace TESVSnip.Domain.Data.RecordStructure
 
 
         /// <summary>
-        /// Build the Element array with groups expanded.
+        ///     Build the Element array with groups expanded.
         /// </summary>
         /// <param name="list">
-        /// The list.
+        ///     The list.
         /// </param>
         /// <returns>
-        /// The System.Collections.Generic.IEnumerable`1[T -&gt; TESVSnip.ElementStructure].
+        ///     The System.Collections.Generic.IEnumerable`1[T -&gt; TESVSnip.ElementStructure].
         /// </returns>
         private static IEnumerable<ElementStructure> GetElementArray(IEnumerable<ElementBase> list)
         {
@@ -132,7 +135,7 @@ namespace TESVSnip.Domain.Data.RecordStructure
             {
                 if (sr is Xml.SubrecordElement)
                 {
-                    yield return new ElementStructure((Xml.SubrecordElement)sr);
+                    yield return new ElementStructure((Xml.SubrecordElement) sr);
                 }
                 else if (sr is Xml.ElementGroup)
                 {

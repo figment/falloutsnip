@@ -4,7 +4,7 @@ namespace TESVSnip.Domain.Model
     using System.Collections.Generic;
     using System.Linq;
 
-    using TESVSnip.Domain.Data.RecordStructure;
+    using Data.Structure;
 
     public class BatchSubrecord : BatchCriteria
     {
@@ -28,8 +28,9 @@ namespace TESVSnip.Domain.Model
                 {
                     // guess the best insert location
                     int idx = -1;
+                    var records = r.GetStructures();
                     RecordStructure rs;
-                    if (RecordStructure.Records.TryGetValue(r.Name, out rs))
+                    if (records.TryGetValue(r.Name, out rs))
                     {
                         for (int i = Array.FindIndex(rs.subrecords, structure => structure.name == this.Record.name) - 1; i >= 0; --i)
                         {

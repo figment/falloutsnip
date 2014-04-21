@@ -9,7 +9,7 @@
 
     using BrightIdeasSoftware;
 
-    using TESVSnip.Domain.Data.RecordStructure;
+    using Domain.Data.Structure;
     using TESVSnip.Domain.Model;
     using TESVSnip.Properties;
 
@@ -23,7 +23,7 @@
 
         private RecordStructure rec;
 
-        private IEnumerable<Record> records;
+        //private IEnumerable<Record> records;
 
         public BatchEditRecords()
         {
@@ -116,12 +116,7 @@
 
         public void ConfigureRecords(IEnumerable<Record> records)
         {
-            var recs = records.Select(
-                x => {
-                    RecordStructure rs;
-                    return RecordStructure.Records.TryGetValue(x.Name, out rs) ? rs : null;
-                }).Distinct();
-
+            var recs = records.Select(rec => rec.GetStructure()).Distinct();
             this.rec = (recs.Count() == 1) ? recs.FirstOrDefault() : null;
             if (this.rec == null)
             {
@@ -129,7 +124,7 @@
             }
             else
             {
-                this.records = records;
+                //this.records = records;
 
                 var srs = (from sr in this.rec.subrecords
                            let children = sr.elements.Select(se => new BatchElement() { Name = se.name, Parent = null, Record = se, Type = BatchCondElementType.Set, Checked = false }).ToList()

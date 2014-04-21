@@ -4,7 +4,7 @@
 //TODO: End function call on ')'
 //TODO: ModPCMiscStat
 
-using TESVSnip.Domain.Data.RecordStructure.Xml;
+using TESVSnip.Domain.Data.Structure.Xml;
 
 namespace TESVSnip.Domain.Scripts
 {
@@ -15,7 +15,7 @@ namespace TESVSnip.Domain.Scripts
     using System.Linq;
     using System.Xml;
 
-    using TESVSnip.Domain.Data.RecordStructure;
+    using Data.Structure;
     using TESVSnip.Domain.Model;
     using TESVSnip.Domain.Services;
     using TESVSnip.Framework;
@@ -310,7 +310,7 @@ namespace TESVSnip.Domain.Scripts
                     continue;
                 }
 
-                if (plugin.Records.OfType<BaseRecord>().FirstOrDefault(x => x.Name == "TES4") == null)
+                if (plugin.Records.OfType<BaseRecord>().FirstOrDefault(x => x.Name .StartsWith("TES")) == null)
                 {
                     continue;
                 }

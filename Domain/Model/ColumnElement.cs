@@ -1,6 +1,6 @@
 namespace TESVSnip.Domain.Model
 {
-    using TESVSnip.Domain.Data.RecordStructure;
+    using Data.Structure;
 
     public class ColumnElement : ColumnCriteria
     {

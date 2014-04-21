@@ -1,9 +1,8 @@
-using TESVSnip.Domain.Data.RecordStructure.Xml;
+using System;
+using TESVSnip.Domain.Data.Structure.Xml;
 
-namespace TESVSnip.Domain.Data.RecordStructure
+namespace TESVSnip.Domain.Data.Structure
 {
-    using System;
-
     public class ElementStructure : ElementBase
     {
         public readonly int CondID;
@@ -46,6 +45,7 @@ namespace TESVSnip.Domain.Data.RecordStructure
             this.funcw = string.Empty;
             this.type = ElementValueType.Blob;
         }
+
         public ElementStructure(ElementStructure src, int optional = 0, int repeat = 0)
             : base(src, optional, repeat)
         {
@@ -76,8 +76,10 @@ namespace TESVSnip.Domain.Data.RecordStructure
             this.hexviewwithdec = node.hexviewwithdec;
             this.notininfo = node.notininfo;
             //this.optional = node.optional != 0;
-            this.options = node.options == null ? new string[0] : node.options.Split(new[] { ';' }, StringSplitOptions.RemoveEmptyEntries);
-            this.flags = node.flags == null ? new string[0] : node.flags.Split(new[] { ';' });
+            this.options = node.options == null
+                               ? new string[0]
+                               : node.options.Split(new[] {';'}, StringSplitOptions.RemoveEmptyEntries);
+            this.flags = node.flags == null ? new string[0] : node.flags.Split(new[] {';'});
             //this.repeat = node.repeat;
             this.funcr = node.funcr;
             this.funcw = node.funcw;
@@ -92,7 +94,7 @@ namespace TESVSnip.Domain.Data.RecordStructure
 
             this.FormIDType = null;
             this.multiline = node.multiline;
-            this.type = (ElementValueType)Enum.Parse(typeof(ElementValueType), node.type, true);
+            this.type = (ElementValueType) Enum.Parse(typeof (ElementValueType), node.type, true);
             switch (this.type)
             {
                 case ElementValueType.FormID:

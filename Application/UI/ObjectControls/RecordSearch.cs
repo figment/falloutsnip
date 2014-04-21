@@ -1,4 +1,6 @@
-﻿namespace TESVSnip.UI.ObjectControls
+﻿using TESVSnip.Domain.Data;
+
+namespace TESVSnip.UI.ObjectControls
 {
     using System;
     using System.Collections.Generic;
@@ -12,7 +14,7 @@
 
     using BrightIdeasSoftware;
 
-    using TESVSnip.Domain.Data.RecordStructure;
+    using Domain.Data.Structure;
     using TESVSnip.Domain.Model;
     using TESVSnip.Framework.Collections;
     using TESVSnip.Properties;
@@ -418,19 +420,9 @@
 
             this.ResetSearch();
             this.toolStripIncrFindStatus.Text = string.Empty;
-            if (!RecordStructure.Loaded)
-            {
-                RecordStructure.Load();
-            }
-
             this.toolStripIncrFindTypeFilter.Sorted = true;
             this.toolStripIncrFindTypeFilter.Items.Clear();
-            if (RecordStructure.Records != null)
-            {
-                var recitems = RecordStructure.Records.Keys.OfType<object>().ToArray();
-                this.toolStripIncrFindTypeFilter.Items.AddRange(recitems);
-            }
-
+            this.toolStripIncrFindTypeFilter.Items.AddRange(DomainDefinition.GetRecordNames());
             this.toolStripIncrFindTypeFilter.SelectedIndex = 0;
 
             this.backgroundWorker1.DoWork += this.backgroundWorker1_DoWork;
@@ -1161,7 +1153,7 @@
                 var scs = this.toolStripIncrSelectCriteria.Tag as SearchCriteriaSettings;
                 if (scs != null && !string.IsNullOrEmpty(scs.Type))
                 {
-                    RecordStructure.Records.TryGetValue(scs.Type, out rec);
+                    rec = TESVSnip.Domain.Data.DomainDefinition.GetFirstRecordOfType(scs.Type);
                 }
             }
             else
@@ -1169,7 +1161,7 @@
                 var recType = this.toolStripIncrFindTypeFilter.SelectedItem as string;
                 if (!string.IsNullOrEmpty(recType))
                 {
-                    RecordStructure.Records.TryGetValue(recType, out rec);
+                    rec = TESVSnip.Domain.Data.DomainDefinition.GetFirstRecordOfType(recType);
                 }
             }
 

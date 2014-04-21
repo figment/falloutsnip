@@ -1,15 +1,15 @@
-using System.Linq;
 using System;
 using System.CodeDom.Compiler;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
+using System.Linq;
 using System.Xml.Serialization;
 
-namespace TESVSnip.Domain.Data.RecordStructure.Xml
+namespace TESVSnip.Domain.Data.Structure.Xml
 {
     /// <summary>
-    /// The subrecord.
+    ///     The subrecord.
     /// </summary>
     /// <remarks>
     /// </remarks>
@@ -22,92 +22,72 @@ namespace TESVSnip.Domain.Data.RecordStructure.Xml
     public class Subrecord
     {
         /// <summary>
-        /// The elements.
+        ///     The elements.
         /// </summary>
         /// <remarks>
         /// </remarks>
-        [XmlElement("Group", typeof(ElementGroup))]
-        [XmlElement("Element", typeof(SubrecordElement))]
-        public List<ElementBase> Items = new List<ElementBase>();
+        [XmlElement("Group", typeof (ElementGroup))] [XmlElement("Element", typeof (SubrecordElement))] public
+            List<ElementBase> Items = new List<ElementBase>();
 
         /// <summary>
-        /// The condid.
+        ///     The condid.
         /// </summary>
         /// <remarks>
         /// </remarks>
-        [XmlAttribute]
-        [DefaultValue(0)]
-        public int condid;
+        [XmlAttribute] [DefaultValue(0)] public int condid;
 
         /// <summary>
-        /// The condition.
+        ///     The condition.
         /// </summary>
         /// <remarks>
         /// </remarks>
-        [XmlAttribute]
-        [DefaultValue("")]
-        public string condition;
+        [XmlAttribute] [DefaultValue("")] public string condition;
 
         /// <summary>
-        /// The condvalue.
+        ///     The condvalue.
         /// </summary>
         /// <remarks>
         /// </remarks>
-        [XmlAttribute]
-        [DefaultValue("")]
-        public string condvalue;
+        [XmlAttribute] [DefaultValue("")] public string condvalue;
 
         /// <summary>
-        /// The desc.
+        ///     The desc.
         /// </summary>
         /// <remarks>
         /// </remarks>
-        [XmlAttribute]
-        [DefaultValue("")]
-        public string desc;
+        [XmlAttribute] [DefaultValue("")] public string desc;
 
         /// <summary>
-        /// The name.
+        ///     The name.
         /// </summary>
         /// <remarks>
         /// </remarks>
-        [XmlAttribute]
-        public string name;
+        [XmlAttribute] public string name;
 
         /// <summary>
-        /// The notininfo.
+        ///     The notininfo.
         /// </summary>
         /// <remarks>
         /// </remarks>
-        [XmlAttribute]
-        [DefaultValue(false)]
-        public bool notininfo;
+        [XmlAttribute] [DefaultValue(false)] public bool notininfo;
 
         /// <summary>
-        /// The optional.
+        ///     The optional.
         /// </summary>
         /// <remarks>
         /// </remarks>
-        [XmlAttribute]
-        [DefaultValue(0)]
-        public int optional;
+        [XmlAttribute] [DefaultValue(0)] public int optional;
 
         /// <summary>
-        /// The repeat.
+        ///     The repeat.
         /// </summary>
         /// <remarks>
         /// </remarks>
-        [XmlAttribute]
-        [DefaultValue(0)]
-        public int repeat;
+        [XmlAttribute] [DefaultValue(0)] public int repeat;
 
-        [XmlAttribute]
-        [DefaultValue(0)]
-        public int size;
+        [XmlAttribute] [DefaultValue(0)] public int size;
 
-        [XmlIgnore]
-        [DefaultValue(false)]
-        public bool usehexeditor;
+        [XmlIgnore] [DefaultValue(false)] public bool usehexeditor;
 
         public Subrecord()
         {
@@ -124,20 +104,13 @@ namespace TESVSnip.Domain.Data.RecordStructure.Xml
         [XmlIgnore]
         public IEnumerable<ElementGroup> Groups
         {
-            get
-            {
-                return this.Items.OfType<ElementGroup>();
-            }
+            get { return this.Items.OfType<ElementGroup>(); }
         }
 
         [XmlIgnore]
         public IEnumerable<SubrecordElement> Elements
         {
-            get
-            {
-                return this.Items.OfType<SubrecordElement>();
-            }
+            get { return this.Items.OfType<SubrecordElement>(); }
         }
-
     }
 }

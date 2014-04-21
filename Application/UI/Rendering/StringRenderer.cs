@@ -4,7 +4,7 @@ using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Windows.Forms;
-using TESVSnip.Domain.Data.RecordStructure;
+using TESVSnip.Domain.Data.Structure;
 using TESVSnip.Domain.Model;
 using TESVSnip.Domain.Scripts;
 using TESVSnip.Framework;
@@ -18,9 +18,9 @@ namespace TESVSnip.UI.Rendering.Extensions
     {
         public static void GetFormattedData(this BaseRecord rec, StringBuilder sb)
         {
-            if (rec is Record)
-                ((Record)rec).GetFormattedData(sb);
-            else if (rec is SubRecord)
+            //if (rec is Record)
+            //    ((Record)rec).GetFormattedData(sb);
+            if (rec is SubRecord)
                 ((SubRecord) rec).GetFormattedData(sb);
             else
                 sb.Append(rec.GetDesc());
@@ -80,11 +80,9 @@ namespace TESVSnip.UI.Rendering.Extensions
             try
             {
                 context.Record = rec;
-                RecordStructure structure;
-                if (!RecordStructure.Records.TryGetValue(rec.Name, out structure))
-                {
+                RecordStructure structure = rec.GetStructure();
+                if (structure == null)
                     return string.Empty;
-                }
 
                 var s = new StringBuilder();
                 s.AppendLine(structure.description);
@@ -699,7 +697,11 @@ namespace TESVSnip.UI.Rendering.Extensions
         }
         public static string GetDesc(this Plugin rec)
         {
-            return "[Skyrim plugin]" + Environment.NewLine + "Filename: " + rec.Name + Environment.NewLine + "File size: " + rec.Size + Environment.NewLine + "Records: " + rec.Records.Count;
+            return string.Format("[{0} plugin]{1}Filename: {2}{3}File size: {4}{5}Records: {6}"
+                , rec.Domain.Name, Environment.NewLine 
+                ,rec.Name, Environment.NewLine 
+                ,rec.Size, Environment.NewLine 
+                ,rec.Records.Count);
         }
 
         public static string GetDesc(this PluginList rec)

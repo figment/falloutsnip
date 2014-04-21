@@ -2,7 +2,7 @@ namespace TESVSnip.Domain.Model
 {
     using System;
 
-    using TESVSnip.Domain.Data.RecordStructure;
+    using Data.Structure;
     using TESVSnip.Framework;
 
     /// <summary>
