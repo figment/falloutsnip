@@ -1,7 +1,7 @@
 import sys
 import startup
 import shared.util as util
-gameDir = util.getGameDirectory()
+gameDir = util.getGameDirectory('Oblivion')
 
 import System
 from System.Diagnostics import Stopwatch
@@ -32,14 +32,14 @@ def browser(htmlstr):
 	server.handle_request()           
 
 sw = Stopwatch.StartNew()
-plugin = TESVSnip.Domain.Model.Plugin(gameDir + 'imoen.esp')
+plugin = TESVSnip.Domain.Model.Plugin(gameDir + 'asdf.esp')
 rec = None
-for rec in plugin.Records:
-	if isinstance(rec, GroupRecord):
-		break
-#for kvp in plugin.EnumerateRecords('NPC_'):
-#	rec = kvp.Value
-#	#break
+# for rec in plugin.Records:
+	# if isinstance(rec, GroupRecord):
+		# break
+for kvp in plugin.EnumerateRecords('RACE'):
+	rec = kvp.Value
+	#break
 cssfile = Path.GetFullPath(Path.Combine(Path.GetDirectoryName(sys.argv[0]),'../scripts/renderer.css'))
 html = renderer.HTMLRenderer(title="Record",css=( cssfile, ) )
 html.GetHeader(rec)

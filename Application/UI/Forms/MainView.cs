@@ -165,11 +165,39 @@ namespace TESVSnip.UI.Forms
             BaseRecord.ChildListChanged += PluginList_ChildListChanged;
 
             htmlContent.OnLinkClicked += htmlContent_OnLinkClicked;
+            InitializeGameOptions();
             LocalizeApp();
             PyInterpreter.InitPyInterpreter();
             HtmlRenderer.Initialize();
             mruMenu = new MruStripMenu(recentFilelToolStripMenuItem, OnMruFile,
                                        mruRegKey + "\\MRU", true, 16);
+        }
+
+        private void InitializeGameOptions()
+        {
+            string defaultDomain = Properties.Settings.Default.DefaultDomain ?? "Skyrim";
+            defaultGameSettingsToolStripMenuItem.DropDownItems.Clear();
+            foreach (var domain in TESVSnip.Domain.Data.DomainDefinition.AllDomains())
+            {
+                var item = new ToolStripMenuItem
+                    {
+                        Name = domain.Name,
+                        Text = string.IsNullOrWhiteSpace(domain.DisplayName) ? domain.Name : domain.DisplayName,
+                        Visible = true,
+                        Enabled = true,
+                        Tag = domain.Name,
+                        Checked = defaultDomain == domain.Name,
+                    };
+                defaultGameSettingsToolStripMenuItem.DropDownItems.Add(item);
+            }
+            defaultGameSettingsToolStripMenuItem.DropDownItemClicked +=
+                delegate(object sender, ToolStripItemClickedEventArgs e)
+                    {
+                        Properties.Settings.Default.DefaultDomain = e.ClickedItem.Tag.ToString();
+                        foreach (var item in defaultGameSettingsToolStripMenuItem.DropDownItems.OfType<ToolStripMenuItem>())
+                            item.Checked = Properties.Settings.Default.DefaultDomain == item.Tag.ToString();
+                        Options.Value.Reconfigure();
+                    };
         }
 
         public static object Clipboard

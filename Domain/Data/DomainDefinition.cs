@@ -34,6 +34,9 @@ namespace TESVSnip.Domain.Data
         public string[] AllESMRecords { get; private set; }
         public string HEDRType { get; private set; }
         public float HEDRVersion { get; private set; }
+        public int HEDROffset { get; private set; }
+        public int HEDRRecSize { get; private set; }
+        public int RecSize { get; private set; }
 
         public Settings Settings { get; private set; }
         public bool Loaded { get; private set; }
@@ -47,7 +50,7 @@ namespace TESVSnip.Domain.Data
             var iniFile = Path.Combine(Folders.SettingsDirectory, "Domains.ini");
             foreach (var section in IniFile.GetSectionNames(iniFile))
             {
-                var values = IniFile.GetPropertyValues(section);
+                var values = IniFile.GetPropertyValues(iniFile, section);
                 var define = new DomainDefinition(section);
                 define.DisplayName = GetValue(values, "Display", section);
                 define.Master = GetValue(values, "Master", section+".esm");
@@ -56,6 +59,9 @@ namespace TESVSnip.Domain.Data
                 define.AllESMRecords = GetValue(values, "AllESMRecords", "").Split(';');
                 define.HEDRType = GetValue(values, "HEDRType", "TES4");
                 define.HEDRVersion = float.Parse(GetValue(values, "HEDRVersion", "1.0"));
+                define.HEDROffset = int.Parse(GetValue(values, "HEDROffset", "4"));
+                define.HEDRRecSize = int.Parse(GetValue(values, "HEDRRecSize", "2"));
+                define.RecSize = int.Parse(GetValue(values, "RecSize", "16"));
                 Domains[section] = define;
             }
         }
@@ -78,7 +84,20 @@ namespace TESVSnip.Domain.Data
 
         public static IEnumerable<DomainDefinition> LoadedDomains()
         {
+            return Domains.Values.Where(domain => domain.Loaded);
+        }
+
+        public static IEnumerable<DomainDefinition> AllDomains()
+        {
             return Domains.Values;
+        }
+
+        public static DomainDefinition Lookup(string p)
+        {
+            DomainDefinition define;
+            if (Domains.TryGetValue(p, out define))
+                return define;
+            return null;
         }
 
         public static DomainDefinition Load(string p)
@@ -116,6 +135,8 @@ namespace TESVSnip.Domain.Data
             foreach (var domain in Domains.Values.Where(domain => type == domain.HEDRType 
                 && Math.Abs(version - domain.HEDRVersion) < EPSILON))
             {
+                if (!domain.Loaded)
+                    Load(domain.Name);
                 return domain;
             }
             throw new Exception("File is not a known TES4 file (Unexpected version)");

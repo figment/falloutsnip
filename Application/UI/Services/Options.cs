@@ -20,11 +20,11 @@ namespace TESVSnip.UI.Services
         {
             this.SettingsDirectory = Environment.CurrentDirectory;
             this.ApplicationDirectory = Environment.CurrentDirectory;
-            this.SetupGameDirectory();
             this.SetupApplicationDirectory();
             this.SetupScriptHostDirectory();
+            Reconfigure();
+            SetupApplicationDirectory();
             this.ParseCommandLine(args);
-            this.PrepareDirectories();
         }
 
         /// <summary>
@@ -81,6 +81,12 @@ namespace TESVSnip.UI.Services
         public static void Initialize(string[] args)
         {
             _instance = new Options(args);
+        }
+
+        public void Reconfigure()
+        {
+            this.SetupGameDirectory();
+            this.PrepareDirectories();
         }
 
         /// <summary>
@@ -198,12 +204,17 @@ namespace TESVSnip.UI.Services
         {
             try
             {
-                using (var key = Registry.LocalMachine.OpenSubKey(@"SOFTWARE\Wow6432Node\Bethesda Softworks\Skyrim"))
+                string defaultDomain = Properties.Settings.Default.DefaultDomain ?? "Skyrim";
+                var domain = TESVSnip.Domain.Data.DomainDefinition.Lookup(defaultDomain);
+                if (domain == null)
+                    return;
+
+                using (var key = Registry.LocalMachine.OpenSubKey(@"SOFTWARE\Wow6432Node\" + domain.RegistryKey))
                 {
                     //on 64bits
                     if (key == null)
                     {
-                        using (var key2 = Registry.LocalMachine.OpenSubKey(@"SOFTWARE\Bethesda Softworks\Skyrim"))
+                        using (var key2 = Registry.LocalMachine.OpenSubKey(@"SOFTWARE\" + domain.RegistryKey))
                         {
                             //on 32bits
                             if (key2 == null) return;
@@ -217,6 +228,8 @@ namespace TESVSnip.UI.Services
                     if (gameDirectory != null)
                     {
                         this.GameDataDirectory = Path.Combine(gameDirectory, "Data");
+                        if ( !Directory.Exists(this.GameDataDirectory) )
+                            this.GameDataDirectory = Path.Combine(gameDirectory, "Data files");
                     }
                 }
             }

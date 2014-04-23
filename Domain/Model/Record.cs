@@ -47,9 +47,8 @@ namespace TESVSnip.Domain.Model
             this.FixSubrecordOwner();
         }
 
-        internal Record(string name, uint dataSize, BinaryReader recordReader, float version)
+        internal Record(string name, uint dataSize, BinaryReader recordReader, TESVSnip.Domain.Data.DomainDefinition define)
         {
-            bool isOblivion = Math.Abs(version - 1.0f) <= float.Epsilon*10.0f;
             this.dataSize = dataSize;
 
             int estimatedCount = Math.Max( Math.Min(16, (int)dataSize/10), 0 );
@@ -58,11 +57,10 @@ namespace TESVSnip.Domain.Model
             Name = name;
             Flags1 = recordReader.ReadUInt32();
             FormID = recordReader.ReadUInt32();
-            Flags2 = recordReader.ReadUInt32();
-            if (!isOblivion)
-            {
+            if (define.RecSize >= 12)
+                Flags2 = recordReader.ReadUInt32();
+            if (define.RecSize >= 16)
                 Flags3 = recordReader.ReadUInt32();
-            }
 
             bool compressed = (Flags1 & 0x00040000) != 0;
             uint amountRead = 0;
@@ -77,10 +75,9 @@ namespace TESVSnip.Domain.Model
             using (var stream = new MemoryStream(recordReader.ReadBytes((int)dataSize),false))
             using (var br = new BinaryReader(stream))
             {
-                BinaryReader dataReader = compressed
-                                              ? Decompressor.Decompress(br, (int)dataSize, (int)realSize,
-                                                                        out compressLevel)
-                                              : br;
+                var dataReader = compressed 
+                    ? Decompressor.Decompress(br, (int)dataSize, (int)realSize, out compressLevel)
+                    : br;
                 {
                     while (true)
                     {
@@ -100,7 +97,7 @@ namespace TESVSnip.Domain.Model
                         }
                         else
                         {
-                            size = dataReader.ReadUInt16();
+                            size = define.HEDRRecSize == 2 ? dataReader.ReadUInt16() : dataReader.ReadUInt32();
                         }
 
                         var record = new SubRecord(this, type, dataReader, size);

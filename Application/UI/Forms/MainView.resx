@@ -474,6 +474,15 @@
   <data name="resetSettingsToDefaultsToolStripMenuItem.Text" xml:space="preserve">
     <value>Reset settings to defaults</value>
   </data>
+  <data name="defaultGameSettingsToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
+    <value>208, 22</value>
+  </data>
+  <data name="defaultGameSettingsToolStripMenuItem.Text" xml:space="preserve">
+    <value>Default Game Settings</value>
+  </data>
+  <data name="defaultGameSettingsToolStripMenuItem.ToolTipText" xml:space="preserve">
+    <value>When Game context is not known, this game will be used as defaults.</value>
+  </data>
   <data name="optionsToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
     <value>61, 20</value>
   </data>
@@ -805,7 +814,7 @@
     <value>155, 17</value>
   </metadata>
   <data name="OpenModDialog.Filter" xml:space="preserve">
-    <value>Skyrim (*.esm, *.esp)|*.esm;*.esp|Skyrim plugin (*.esp)|*.esp|Skyrim Master file (*.esm)|*.esm|All (*.*)|*.*</value>
+    <value>All Files (*.esm, *.esp)|*.esm;*.esp|Plugin file (*.esp)|*.esp|Master file (*.esm)|*.esm|All (*.*)|*.*</value>
   </data>
   <data name="OpenModDialog.Title" xml:space="preserve">
     <value>Select plugin(s) to open</value>
@@ -814,7 +823,7 @@
     <value>17, 17</value>
   </metadata>
   <data name="SaveModDialog.Filter" xml:space="preserve">
-    <value>Skyrim (*.esm, *.esp)|*.esm;*.esp|Skyrim plugin (*.esp)|*.esp|Skyrim Master file (*.esm)|*.esm|All (*.*)|*.*</value>
+    <value>All Files (*.esm, *.esp)|*.esm;*.esp|Plugin file (*.esp)|*.esp|Master file (*.esm)|*.esm|All (*.*)|*.*</value>
   </data>
   <data name="SaveModDialog.Title" xml:space="preserve">
     <value>Select path to save to</value>
@@ -2227,6 +2236,12 @@
   </data>
   <data name="&gt;&gt;toolStripIncrInvalidRecStatus.Type" xml:space="preserve">
     <value>System.Windows.Forms.ToolStripLabel, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;defaultGameSettingsToolStripMenuItem.Name" xml:space="preserve">
+    <value>defaultGameSettingsToolStripMenuItem</value>
+  </data>
+  <data name="&gt;&gt;defaultGameSettingsToolStripMenuItem.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="&gt;&gt;$this.Name" xml:space="preserve">
     <value>MainView</value>

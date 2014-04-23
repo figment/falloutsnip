@@ -82,11 +82,11 @@ def alternateLoadMasterPluginIndex():
 	r.Close()
 
 	
-def getGameDirectory():
+def getGameDirectory(game='Skyrim'):
 	from System.IO import Path
 	from Microsoft.Win32 import Registry, RegistryValueOptions
-	key = Registry.LocalMachine.OpenSubKey(r"SOFTWARE\Wow6432Node\Bethesda Softworks\Skyrim")
-	if not key: key = Registry.LocalMachine.OpenSubKey(r"SOFTWARE\Bethesda Softworks\Skyrim")
+	key = Registry.LocalMachine.OpenSubKey(r"SOFTWARE\Wow6432Node\Bethesda Softworks\%s"%game)
+	if not key: key = Registry.LocalMachine.OpenSubKey(r"SOFTWARE\Bethesda Softworks\%s"%game)
 	result = key.GetValue("Installed Path", '', RegistryValueOptions.None)
 	if key: key.Dispose()
 	if not result: return None

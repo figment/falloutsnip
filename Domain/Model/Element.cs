@@ -16,22 +16,24 @@ namespace TESVSnip.Domain.Model
         {
         }
 
-        internal Element(ElementStructure es, byte[] data, int offset, int count)
-            : this(es, new ArraySegment<byte>(data, offset, count))
+        internal Element(ElementStructure es, byte[] data, int offset, int count, Tuple<ElementBase, int>[] indices)
+            : this(es, new ArraySegment<byte>(data, offset, count), indices)
         {
         }
 
-        internal Element(ElementStructure es, ArraySegment<byte> data)
+        internal Element(ElementStructure es, ArraySegment<byte> data, Tuple<ElementBase, int>[] indices)
         {
             this.Structure = es;
             this.Data = data;
+            this.Indices = indices;
         }
 
-        internal Element(ElementStructure es, ElementValueType vt, ArraySegment<byte> data)
+        internal Element(ElementStructure es, ElementValueType vt, ArraySegment<byte> data, Tuple<ElementBase, int>[] indices)
         {
             this.Structure = es;
             this.Data = data;
             this.type = vt;
+            this.Indices = indices;
         }
 
         /// <summary>
@@ -52,6 +54,8 @@ namespace TESVSnip.Domain.Model
         public bool Modified { get; private set; }
 
         public ElementStructure Structure { get; private set; }
+
+        public Tuple<ElementBase, int>[] Indices { get; private set; }
 
         public ElementValueType Type
         {
@@ -108,7 +112,7 @@ namespace TESVSnip.Domain.Model
             }
         }
 
-        internal static Element CreateElement(ElementStructure es, byte[] data, ref int offset, bool rawData)
+        internal static Element CreateElement(ElementStructure es, byte[] data, ref int offset, bool rawData, Tuple<ElementBase, int>[] indices)
         {
             int maxlen = data.Length - offset;
             Element elem = null;
@@ -119,38 +123,38 @@ namespace TESVSnip.Domain.Model
                 {
                     case ElementValueType.Int:
                         len = maxlen >= sizeof(int) ? sizeof(int) : maxlen;
-                        elem = new Element(es, ElementValueType.Int, new ArraySegment<byte>(data, offset, len));
+                        elem = new Element(es, ElementValueType.Int, new ArraySegment<byte>(data, offset, len), indices);
                         offset += len;
                         break;
                     case ElementValueType.UInt:
                     case ElementValueType.FormID:
                         len = maxlen >= sizeof(uint) ? sizeof(uint) : maxlen;
-                        elem = new Element(es, ElementValueType.UInt, new ArraySegment<byte>(data, offset, len));
+                        elem = new Element(es, ElementValueType.UInt, new ArraySegment<byte>(data, offset, len), indices);
                         offset += len;
                         break;
                     case ElementValueType.Float:
                         len = maxlen >= sizeof(float) ? sizeof(float) : maxlen;
-                        elem = new Element(es, ElementValueType.Float, new ArraySegment<byte>(data, offset, len));
+                        elem = new Element(es, ElementValueType.Float, new ArraySegment<byte>(data, offset, len), indices);
                         offset += len;
                         break;
                     case ElementValueType.Short:
                         len = maxlen >= sizeof(short) ? sizeof(short) : maxlen;
-                        elem = new Element(es, ElementValueType.Short, new ArraySegment<byte>(data, offset, len));
+                        elem = new Element(es, ElementValueType.Short, new ArraySegment<byte>(data, offset, len), indices);
                         offset += len;
                         break;
                     case ElementValueType.UShort:
                         len = maxlen >= sizeof(ushort) ? sizeof(ushort) : maxlen;
-                        elem = new Element(es, ElementValueType.UShort, new ArraySegment<byte>(data, offset, len));
+                        elem = new Element(es, ElementValueType.UShort, new ArraySegment<byte>(data, offset, len), indices);
                         offset += len;
                         break;
                     case ElementValueType.SByte:
                         len = maxlen >= sizeof(sbyte) ? sizeof(sbyte) : maxlen;
-                        elem = new Element(es, ElementValueType.SByte, new ArraySegment<byte>(data, offset, len));
+                        elem = new Element(es, ElementValueType.SByte, new ArraySegment<byte>(data, offset, len), indices);
                         offset += len;
                         break;
                     case ElementValueType.Byte:
                         len = maxlen >= sizeof(byte) ? sizeof(byte) : maxlen;
-                        elem = new Element(es, ElementValueType.Byte, new ArraySegment<byte>(data, offset, len));
+                        elem = new Element(es, ElementValueType.Byte, new ArraySegment<byte>(data, offset, len), indices);
                         offset += len;
                         break;
                     case ElementValueType.String:
@@ -164,12 +168,12 @@ namespace TESVSnip.Domain.Model
                         {
                             // raw form includes the zero termination byte
                             len = len == 0 ? 0 : len + 1;
-                            elem = new Element(es, ElementValueType.String, new ArraySegment<byte>(data, offset, len));
+                            elem = new Element(es, ElementValueType.String, new ArraySegment<byte>(data, offset, len), indices);
                             offset += len;
                         }
                         else
                         {
-                            elem = new Element(es, ElementValueType.String, new ArraySegment<byte>(data, offset, len));
+                            elem = new Element(es, ElementValueType.String, new ArraySegment<byte>(data, offset, len), indices);
                             offset += len == 0 ? 0 : len + 1;
                         }
 
@@ -182,12 +186,12 @@ namespace TESVSnip.Domain.Model
                             if (rawData)
                             {
                                 // raw data includes short prefix
-                                elem = new Element(es, ElementValueType.BString, new ArraySegment<byte>(data, offset, len + 2));
+                                elem = new Element(es, ElementValueType.BString, new ArraySegment<byte>(data, offset, len + 2), indices);
                                 offset += len + 2;
                             }
                             else
                             {
-                                elem = new Element(es, ElementValueType.String, new ArraySegment<byte>(data, offset + 2, len));
+                                elem = new Element(es, ElementValueType.String, new ArraySegment<byte>(data, offset + 2, len), indices);
                                 offset += len + 2;
                             }
                         }
@@ -195,11 +199,11 @@ namespace TESVSnip.Domain.Model
                         {
                             if (rawData)
                             {
-                                elem = new Element(es, ElementValueType.BString, new ArraySegment<byte>(new byte[2] { 0, 0 }));
+                                elem = new Element(es, ElementValueType.BString, new ArraySegment<byte>(new byte[2] { 0, 0 }), indices);
                             }
                             else
                             {
-                                elem = new Element(es, ElementValueType.String, new ArraySegment<byte>(new byte[0]));
+                                elem = new Element(es, ElementValueType.String, new ArraySegment<byte>(new byte[0]), indices);
                             }
 
                             offset += maxlen;
@@ -214,12 +218,12 @@ namespace TESVSnip.Domain.Model
                             if (rawData)
                             {
                                 // raw data includes int prefix
-                                elem = new Element(es, ElementValueType.IString, new ArraySegment<byte>(data, offset, len + 4));
+                                elem = new Element(es, ElementValueType.IString, new ArraySegment<byte>(data, offset, len + 4), indices);
                                 offset += len + 4;
                             }
                             else
                             {
-                                elem = new Element(es, ElementValueType.String, new ArraySegment<byte>(data, offset + 4, len));
+                                elem = new Element(es, ElementValueType.String, new ArraySegment<byte>(data, offset + 4, len), indices);
                                 offset += len + 4;
                             }
                         }
@@ -227,11 +231,11 @@ namespace TESVSnip.Domain.Model
                         {
                             if (rawData)
                             {
-                                elem = new Element(es, ElementValueType.IString, new ArraySegment<byte>(new byte[4] { 0, 0, 0, 0 }));
+                                elem = new Element(es, ElementValueType.IString, new ArraySegment<byte>(new byte[4] { 0, 0, 0, 0 }), indices);
                             }
                             else
                             {
-                                elem = new Element(es, ElementValueType.String, new ArraySegment<byte>(new byte[0]));
+                                elem = new Element(es, ElementValueType.String, new ArraySegment<byte>(new byte[0]), indices);
                             }
 
                             offset += maxlen;
@@ -242,11 +246,11 @@ namespace TESVSnip.Domain.Model
                         len = maxlen >= 4 ? 4 : maxlen;
                         if (rawData)
                         {
-                            elem = new Element(es, ElementValueType.Str4, new ArraySegment<byte>(data, offset, len));
+                            elem = new Element(es, ElementValueType.Str4, new ArraySegment<byte>(data, offset, len), indices);
                         }
                         else
                         {
-                            elem = new Element(es, ElementValueType.String, new ArraySegment<byte>(data, offset, len));
+                            elem = new Element(es, ElementValueType.String, new ArraySegment<byte>(data, offset, len), indices);
                         }
 
                         offset += len;
@@ -255,7 +259,7 @@ namespace TESVSnip.Domain.Model
                     case ElementValueType.LString:
                         if (maxlen < sizeof(int))
                         {
-                            elem = new Element(es, ElementValueType.String, new ArraySegment<byte>(data, offset, maxlen));
+                            elem = new Element(es, ElementValueType.String, new ArraySegment<byte>(data, offset, maxlen), indices);
                             offset += maxlen;
                         }
                         else
@@ -265,7 +269,7 @@ namespace TESVSnip.Domain.Model
                             bool isString = TypeConverter.IsLikelyString(blob);
                             if (!isString)
                             {
-                                elem = new Element(es, ElementValueType.UInt, new ArraySegment<byte>(data, offset, len));
+                                elem = new Element(es, ElementValueType.UInt, new ArraySegment<byte>(data, offset, len), indices);
                                 offset += 4;
                             }
                             else
@@ -280,12 +284,12 @@ namespace TESVSnip.Domain.Model
                                 {
                                     // lstring as raw string includes the terminating null
                                     len = len == 0 ? 0 : len + 1;
-                                    elem = new Element(es, ElementValueType.LString, new ArraySegment<byte>(data, offset, len));
+                                    elem = new Element(es, ElementValueType.LString, new ArraySegment<byte>(data, offset, len), indices);
                                     offset += len;
                                 }
                                 else
                                 {
-                                    elem = new Element(es, ElementValueType.String, new ArraySegment<byte>(data, offset, len));
+                                    elem = new Element(es, ElementValueType.String, new ArraySegment<byte>(data, offset, len), indices);
                                     offset += len == 0 ? 0 : len + 1;
                                 }
                             }
@@ -294,7 +298,7 @@ namespace TESVSnip.Domain.Model
                         break;
 
                     default:
-                        elem = new Element(es, ElementValueType.Blob, new ArraySegment<byte>(data, offset, maxlen));
+                        elem = new Element(es, ElementValueType.Blob, new ArraySegment<byte>(data, offset, maxlen), indices);
                         offset += maxlen;
                         break;
                 }

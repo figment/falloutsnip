@@ -191,110 +191,91 @@
       <Element name="Specialization" type="uint"
         options="Combat;0;Magic;1;Stealth;2;"/>
       <Element name="Major Skills" type="uint" repeat="7"
-        options="Armorer;12;Athletics;13;Blade;14;Block;15;Blunt;16;Hand to Hand;17;Heavy Armor;18;Alchemy;19;Alteration;20;Acrobatics;26;"
+        options="NONE;255;Armorer;12;Athletics;13;Blade;14;Block;15;Blunt;16;Hand To Hand;17;Heavy Armor;18;Alchemy;19;Alteration;20;Conjuration;21;Destruction;22;Illusion;23;Mysticism;24;Restoration;25;Acrobatics;26;Light Armor;27;Marksman;28;Mercantile;29;Security;30;Sneak;31;Speechcraft;32;"
         />
       <Element name="Flags" type="uint" flags="Playable;Guard;"/>
       <Element name="Trades" desc="Auto-Calc Buys/Sells" type="uint" 
         flags="Weapons;Armor;Clothing;Books;Ingredients;;;Lights;Apparatus;;Miscellaneous;Spells;Magic Items;Potions;Training;;Recharge;Repair;;;"/>
       <Element name="Training Skill" type="byte"
-        options="Armorer;0;Athletics;1;Blade;2;Block;3;Blunt;4;Hand to Hand;5;Heavy Armor;6;Alchemy;7;Alteration;8;Acrobatics;14;"
+        options="Armorer;0;Athletics;1;Blade;2;Block;3;Blunt;4;Hand To Hand;5;Heavy Armor;6;Alchemy;7;Alteration;8;Conjuration;9;Destruction;10;Illusion;11;Mysticism;12;Restoration;13;Acrobatics;14;Light Armor;15;Marksman;16;Mercantile;17;Security;18;Sneak;19;Speechcraft;20;"
       />
       <Element name="Training Level" type="byte"/>
-      <Element name="Unknown" type="byte"/>
-      <Element name="Unknown" type="byte"/>
+      <Element name="Unknown" type="short"/>
     </Subrecord>
   </Record>  
-  
   <Record desc="Faction" name="FACT">
-    <Subrecord desc="Editor ID" name="EDID" optional="1">
-      <Element name="Name" type="string" />
+    <Group id="EDID" optional="1" />
+    <Group id="FULL" optional="1" />
+    <Subrecord desc="Interfaction Relations" name="XNAM" optional="1" repeat="1" size="8">
+      <Element name="FactionID" type="formid" reftype="FACT" />
+      <Element name="Disposition Mod" type="int" />
     </Subrecord>
-    <Subrecord desc="XNAM" name="XNAM" optional="1" repeat="1" size="8">
-      <Element name="ID" type="int" />
-      <Element name="Unknown 1" type="int" />
+    <Subrecord desc="Faction Data" name="DATA" optional="1" size="1">
+      <Element name="Flags" type="byte" flags="Hidden from PC;Evil;Special Combat;"/>
     </Subrecord>
-    <Subrecord desc="Full Name" name="FULL" optional="1">
-      <Element name="Name" type="string" />
+    <Subrecord desc="Crime Gold" name="CNAM" optional="1" size="4">
+      <Element name="Multiplier" type="float" />
     </Subrecord>
-    <Subrecord desc="DATA" name="DATA" optional="1" size="1">
-      <Element name="Name" type="byte" />
-    </Subrecord>
-    <Subrecord desc="CNAM" name="CNAM" optional="1" size="4">
-      <Element name="Unknown" type="float" />
-    </Subrecord>
-    <Subrecord desc="Rank ID" name="RNAM" optional="4" repeat="4" size="4">
-      <Element name="Unknown" type="int" />
-    </Subrecord>
-    <Subrecord desc="Rank Name?" name="MNAM" optional="4" repeat="4">
-      <Element name="Name" type="string" />
-    </Subrecord>
-    <Subrecord desc="FNAM" name="FNAM" optional="4" repeat="4">
-      <Element name="Name" type="string" />
-    </Subrecord>
-    <Subrecord desc="INAM" name="INAM" optional="4" repeat="4">
-      <Element name="Unknown" type="string" />
-    </Subrecord>
+    <Group id="RANK" repeat="1">
+        <Subrecord desc="Rank ID" name="RNAM" optional="1" size="4">
+          <Element name="Unknown" type="int" />
+        </Subrecord>
+        <Subrecord desc="Male Rank" name="MNAM" optional="1">
+          <Element name="Name" type="string" />
+        </Subrecord>
+        <Subrecord desc="Female Rank" name="FNAM" optional="1">
+          <Element name="Name" type="string" />
+        </Subrecord>
+        <Subrecord desc="Rank Image" name="INAM" optional="1">
+          <Element name="Filename" type="string" />
+        </Subrecord>
+    </Group>
   </Record>
-  <Record desc="HAIR" name="HAIR">
-    <Subrecord desc="Editor ID" name="EDID" optional="1">
-      <Element name="Name" type="string" />
-    </Subrecord>
-    <Subrecord desc="FULL" name="FULL" optional="1">
-      <Element name="Unknown" type="string" />
-    </Subrecord>
-    <Subrecord desc="MODL" name="MODL" optional="1">
-      <Element name="Unknown" type="string" />
+  <Record desc="Hair" name="HAIR">
+    <Group id="EDID" optional="1" />
+    <Group id="FULL" optional="1" />
+    <Subrecord desc="Model File" name="MODL" optional="1">
+      <Element name="NIF File" type="string" />
     </Subrecord>
     <Subrecord desc="MODB" name="MODB" optional="1" size="4">
       <Element name="Unknown" type="int" />
     </Subrecord>
-    <Subrecord desc="ICON" name="ICON" optional="1">
-      <Element name="Unknown" type="string" />
-    </Subrecord>
-    <Subrecord desc="DATA" name="DATA" optional="1" size="1">
-      <Element name="Unknown" type="byte" />
+    <Group id="ICONIMAGE" optional="1" />
+    <Subrecord desc="Flags" name="DATA" optional="1" size="1">
+      <Element name="Flags" type="byte" flags="Playable;Cannot Be Male;Fixed Color;Cannot Be Female;" />
     </Subrecord>
   </Record>
   <Record desc="Eyes" name="EYES">
-    <Subrecord desc="Editor ID" name="EDID" optional="1">
-      <Element name="Name" type="string" />
-    </Subrecord>
-    <Subrecord desc="Full Name" name="FULL" optional="1">
-      <Element name="Name" type="string" />
-    </Subrecord>
-    <Subrecord desc="ICON" name="ICON" optional="1">
-      <Element name="Name" type="string" />
-    </Subrecord>
+    <Group id="EDID" optional="1" />
+    <Group id="FULL" optional="1" />
+    <Group id="ICONIMAGE" optional="1" />
     <Subrecord desc="DATA" name="DATA" optional="1" size="1">
-      <Element name="Unknown" options="None;0;Both Genders;1;Female;3;Male;5;" type="byte" />
+      <Element name="Flags" Flags="Playable;" type="byte" />
     </Subrecord>
   </Record>
+  
   <Record desc="Race / Creature Type" name="RACE">
-    <Subrecord desc="Editor ID" name="EDID" optional="1">
-      <Element name="Name" type="string" />
-    </Subrecord>
-    <Subrecord desc="Full Name" name="FULL" optional="1">
-      <Element name="Name" type="string" />
-    </Subrecord>
-    <Subrecord desc="Description" name="DESC" optional="1">
-      <Element name="Name" type="blob" />
-    </Subrecord>
+    <Group id="EDID" optional="1" />
+    <Group id="FULL" optional="1" />
+    <Group id="DESC" optional="1" />
     <Subrecord desc="Learned Spell" name="SPLO" optional="1" repeat="1" size="4">
-      <Element name="ID" type="int" />
+      <Element name="ID" type="formid" reftype="SPLO" />
     </Subrecord>
     <Subrecord desc="XNAM" name="XNAM" optional="1" repeat="1" size="8">
       <Element name="Unknown" type="int" />
       <Element name="Unknown 1" type="int" />
     </Subrecord>
     <Subrecord desc="Actor Values" name="DATA" optional="1" size="36">
-      <Element name="Unknown Value 1" type="int" />
-      <Element name="Unknown Value 2" type="int" />
-      <Element name="Unknown Value 3" type="int" />
-      <Element name="Unknown Value 4" type="int" />
-      <Element name="Unknown Value 5" type="float" />
-      <Element name="Unknown Value 6" type="float" />
-      <Element name="Unknown Value 7" type="float" />
-      <Element name="Unknown Value 8" type="float" />
+      <Group name="Skill Bonus" desc="Skill Bonus" repeat="8">
+        <Element name="Skill" type="byte"
+                options="NONE;255;Armorer;12;Athletics;13;Blade;14;Block;15;Blunt;16;Hand To Hand;17;Heavy Armor;18;Alchemy;19;Alteration;20;Conjuration;21;Destruction;22;Illusion;23;Mysticism;24;Restoration;25;Acrobatics;26;Light Armor;27;Marksman;28;Mercantile;29;Security;30;Sneak;31;Speechcraft;32;"
+                />
+        <Element name="Value" type="byte"/>
+      </Group>
+      <Element name="Male Height" type="float" />
+      <Element name="Female Height" type="float" />
+      <Element name="Male Weight" type="float" />
+      <Element name="Female Weight" type="float" />
       <Element name="Unknown Value 8" type="int" />
     </Subrecord>
     <Subrecord desc="VNAM" name="VNAM" optional="1" size="8">
@@ -305,20 +286,36 @@
       <Element name="Male ID" type="int" />
       <Element name="Female ID" type="int" />
     </Subrecord>
-    <Subrecord desc="CNAM" name="CNAM" optional="1" size="1">
-      <Element name="Unknown" type="byte" />
+    <Subrecord desc="Clamp Values" name="CNAM" optional="1" size="1">
+      <Element name="Enable" type="byte" />
     </Subrecord>
-    <Subrecord desc="PNAM" name="PNAM" optional="1" size="4">
-      <Element name="Unknown" type="float" />
+    <Subrecord desc="Main Clamp" name="PNAM" optional="1" size="4">
+      <Element name="Value" type="float" />
     </Subrecord>
-    <Subrecord desc="UNAM" name="UNAM" optional="1" size="4">
-      <Element name="Unknown" type="float" />
+    <Subrecord desc="Face Clamp" name="UNAM" optional="1" size="4">
+      <Element name="Value" type="float" />
     </Subrecord>
     <Subrecord desc="ATTR" name="ATTR" optional="1" size="16">
-      <Element name="Unknown" type="int" />
-      <Element name="Unknown 1" type="int" />
-      <Element name="Unknown 2" type="int" />
-      <Element name="Unknown 3" type="int" />
+      <Group name="Male">
+        <Element name="Strength" type="byte"/>
+        <Element name="Intelligence" type="byte"/>
+        <Element name="Willpower" type="byte"/>
+        <Element name="Agility" type="byte"/>
+        <Element name="Speed" type="byte"/>
+        <Element name="Endurance" type="byte"/>
+        <Element name="Personality" type="byte"/>
+        <Element name="Luck" type="byte"/>
+      </Group>
+      <Group name="Female">
+        <Element name="Strength" type="byte"/>
+        <Element name="Intelligence" type="byte"/>
+        <Element name="Willpower" type="byte"/>
+        <Element name="Agility" type="byte"/>
+        <Element name="Speed" type="byte"/>
+        <Element name="Endurance" type="byte"/>
+        <Element name="Personality" type="byte"/>
+        <Element name="Luck" type="byte"/>
+      </Group>
     </Subrecord>
     <Subrecord desc="NAM0" name="NAM0" optional="1" size="-1" />
     <Subrecord desc="INDX" name="INDX" optional="5" repeat="5" size="4">

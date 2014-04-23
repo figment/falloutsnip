@@ -327,13 +327,13 @@ namespace TESVSnip.Domain.Model
         {
             if (this.Structure == null)
             {
-                yield return new Element(new ElementStructure(), new ArraySegment<byte>(this.GetData()));
+                yield return new Element(new ElementStructure(), new ArraySegment<byte>(this.GetData()), null);
             }
             else
             {
                 byte[] data = this.GetReadonlyData();
                 int offset = 0;
-                foreach (var item in EnumerateElements(this.Structure.elementTree, data, offset, rawData))
+                foreach (var item in EnumerateElements(this.Structure.elementTree, data, offset, rawData, null))
                     yield return item.Item2;
             }
         }
@@ -346,8 +346,7 @@ namespace TESVSnip.Domain.Model
         /// <param name="offset"></param>
         /// <param name="rawData"></param>
         /// <returns></returns>
-        private IEnumerable<Tuple<int, Element>> EnumerateElements(IEnumerable<ElementBase> elements, byte[] data,
-                                                                   int offset, bool rawData)
+        private IEnumerable<Tuple<int, Element>> EnumerateElements(IEnumerable<ElementBase> elements, byte[] data, int offset, bool rawData, Tuple<ElementBase,int>[] indices )
         {
             foreach (var es in elements)
             {
@@ -360,7 +359,11 @@ namespace TESVSnip.Domain.Model
                         break;
                     if (es is ElementGroup)
                     {
-                        foreach (var item in EnumerateElements(((ElementGroup) es).elements, data, offset, rawData))
+                        var groupIndices = new Tuple<ElementBase, int>[(indices == null) ? 1 : indices.Length + 1];
+                        if (indices != null) Array.Copy(indices, 0, groupIndices, 0, indices.Length);
+                        groupIndices[groupIndices.Length-1] = new Tuple<ElementBase, int>(es, count);
+
+                        foreach (var item in EnumerateElements(((ElementGroup)es).elements, data, offset, rawData, groupIndices))
                         {
                             offset = item.Item1;
                             yield return item;
@@ -368,7 +371,12 @@ namespace TESVSnip.Domain.Model
                     }
                     if (es is ElementStructure)
                     {
-                        var elem = Element.CreateElement((ElementStructure) es, data, ref offset, rawData);
+                        int repeatCount = es.repeat > 0 ? 1 : 0;
+                        var groupIndices = new Tuple<ElementBase, int>[(indices == null) ? repeatCount : indices.Length + repeatCount];
+                        if (indices != null && indices.Length > 0) Array.Copy(indices, 0, groupIndices, 0, indices.Length);
+                        if (repeatCount > 0)
+                            groupIndices[groupIndices.Length - 1] = new Tuple<ElementBase, int>(es, count);
+                        var elem = Element.CreateElement((ElementStructure) es, data, ref offset, rawData, groupIndices);
                         yield return new Tuple<int, Element>(offset, elem);
                     }
                     if (es.repeat == 0) break;

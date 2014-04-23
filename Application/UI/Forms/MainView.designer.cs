@@ -169,6 +169,7 @@ namespace TESVSnip.UI.Forms {
             this.toolStripSeparator5 = new System.Windows.Forms.ToolStripSeparator();
             this.toolStripIncrInvalidRecStatus = new System.Windows.Forms.ToolStripLabel();
             this.dockPanel = new WeifenLuo.WinFormsUI.Docking.DockPanel();
+            this.defaultGameSettingsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.menuStrip1.SuspendLayout();
             this.statusStrip1.SuspendLayout();
             this.toolStripIncrFind.SuspendLayout();
@@ -452,7 +453,8 @@ namespace TESVSnip.UI.Forms {
             this.resetDockingWindowsToolStripMenuItem,
             this.eSMFilterSettingsToolStripMenuItem,
             this.compressionSettingsToolStripMenuItem,
-            this.resetSettingsToDefaultsToolStripMenuItem});
+            this.resetSettingsToDefaultsToolStripMenuItem,
+            this.defaultGameSettingsToolStripMenuItem});
             this.optionsToolStripMenuItem.Name = "optionsToolStripMenuItem";
             resources.ApplyResources(this.optionsToolStripMenuItem, "optionsToolStripMenuItem");
             // 
@@ -1171,6 +1173,11 @@ namespace TESVSnip.UI.Forms {
             dockPanelSkin1.DockPaneStripSkin = dockPaneStripSkin1;
             this.dockPanel.Skin = dockPanelSkin1;
             // 
+            // defaultGameSettingsToolStripMenuItem
+            // 
+            this.defaultGameSettingsToolStripMenuItem.Name = "defaultGameSettingsToolStripMenuItem";
+            resources.ApplyResources(this.defaultGameSettingsToolStripMenuItem, "defaultGameSettingsToolStripMenuItem");
+            // 
             // MainView
             // 
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
@@ -1332,5 +1339,6 @@ namespace TESVSnip.UI.Forms {
         private System.Windows.Forms.ToolStripMenuItem globalScriptsToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem selectionScriptsToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem editScriptsToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem defaultGameSettingsToolStripMenuItem;
     }
 }

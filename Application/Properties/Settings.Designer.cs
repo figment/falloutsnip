@@ -394,7 +394,7 @@ namespace TESVSnip.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        [global::System.Configuration.DefaultSettingValueAttribute("Skyrim")]
         public string DefaultDomain {
             get {
                 return ((string)(this["DefaultDomain"]));

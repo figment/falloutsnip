@@ -96,7 +96,7 @@
       <Value Profile="(Default)" />
     </Setting>
     <Setting Name="DefaultDomain" Type="System.String" Scope="User">
-      <Value Profile="(Default)" />
+      <Value Profile="(Default)">Skyrim</Value>
     </Setting>
   </Settings>
 </SettingsFile>

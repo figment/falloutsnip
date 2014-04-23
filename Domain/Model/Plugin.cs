@@ -106,7 +106,7 @@ namespace TESVSnip.Domain.Model
             var fi = new FileInfo(filePath);
             using (var br = new BinaryReader(fi.OpenRead()))
             {
-                define = this.DetectVersion(br);
+                define = this.DetectVersion(br, filePath);
                 br.BaseStream.Position = 0;
                 this.LoadPluginData(br, headerOnly, includeFilter);
             }
@@ -994,16 +994,28 @@ namespace TESVSnip.Domain.Model
             }
         }
         
-        private DomainDefinition DetectVersion(BinaryReader br)
+        private DomainDefinition DetectVersion(BinaryReader br, string fileName)
         {
-            var s = ReadRecName(br);
-            if (s == "TES3")
+            // Quick check for master esm.  Skyrim.esm uses same as fallout. so harder to detect
+            if (!string.IsNullOrEmpty(fileName))
+            {
+                foreach (var domain in DomainDefinition.AllDomains().Where(domain => 
+                    string.Compare(domain.Master, Path.GetFileName(fileName),StringComparison.InvariantCultureIgnoreCase) == 0))
+                {
+                    if (!domain.Loaded)
+                        DomainDefinition.Load(domain.Name);
+                    return domain;
+                }
+            }
+
+            var tes = ReadRecName(br);
+            if (tes == "TES3")
                 return DomainDefinition.Load("Morrowind"); // hardcoded?
-            if (s != "TES4")
+            if (tes != "TES4")
                 throw new Exception("File is not a valid TES4 plugin (Missing TES4 record)");
             // Check for file version by checking the position of the HEDR field in the file. (ie. how big are the record header.)
             br.BaseStream.Position = 20;
-            s = ReadRecName(br);
+            var s = ReadRecName(br);
             if (s == "HEDR")
                 return DomainDefinition.Load("Oblivion"); // hardcoded?
             s = ReadRecName(br);
@@ -1011,7 +1023,7 @@ namespace TESVSnip.Domain.Model
                 throw new Exception("File is not a valid TES4 plugin (Missing HEDR subrecord in the TES4 record)");
             var recsize = br.ReadUInt16();
             var version = br.ReadSingle();
-            return DomainDefinition.DetectDefinitionFromVersion(s, version);
+            return DomainDefinition.DetectDefinitionFromVersion(tes, version);
         }
 
         private DomainDefinition DetectVersion()
@@ -1033,7 +1045,6 @@ namespace TESVSnip.Domain.Model
             {
                 string s;
                 uint recsize;
-                float version = 0.0f;
 
                 this.Filtered = includeFilter != null;
 
@@ -1041,41 +1052,27 @@ namespace TESVSnip.Domain.Model
                 Decompressor.Init();
 
                 s = ReadRecName(br);
-                if (s != "TES4")
+                if (s != this.define.HEDRType)
                 {
                     throw new Exception("File is not a valid TES4 plugin (Missing TES4 record)");
                 }
 
                 // Check for file version by checking the position of the HEDR field in the file. (ie. how big are the record header.)
-                br.BaseStream.Position = 20;
+                br.BaseStream.Position = define.HEDROffset;
                 s = ReadRecName(br);
-                if (s == "HEDR")
-                {
-                    // Record Header is 20 bytes
-                }
-                else
-                {
-                    s = ReadRecName(br);
-                    if (s != "HEDR")
-                    {
-                        throw new Exception("File is not a valid TES4 plugin (Missing HEDR subrecord in the TES4 record)");
-                    }
-                    // Record Header is 24 bytes. Or the file is illegal
-                }
-                br.ReadUInt16();
-                version = br.ReadSingle();
-
+                if (s != "HEDR")
+                    throw new Exception(string.Format("File is not a valid {0} plugin (Missing HEDR subrecord in the {1} record)",define.Name,define.HEDRType));
                 br.BaseStream.Position = 4;
                 recsize = br.ReadUInt32();
                 try
                 {
-                    this.AddRecord(new Record("TES4", recsize, br, version));
+                    this.AddRecord(new Record(this.define.HEDRType, recsize, br, this.define));
                 }
                 catch (Exception e)
                 {
                     Alerts.Show(e.Message);
                 }
-                bool hasExtraFlags = Math.Abs(version - 1.0f) > float.Epsilon * 10.0f;
+                //bool hasExtraFlags = Math.Abs(version - 1.0f) > float.Epsilon * 10.0f;
 
                 if (!headerOnly)
                 {
@@ -1087,7 +1084,7 @@ namespace TESVSnip.Domain.Model
                         {
                             try
                             {
-                                this.AddRecord(new GroupRecord(recsize, br, version, includeFilter, false));
+                                this.AddRecord(new GroupRecord(recsize, br, this.define, includeFilter, false));
                             }
                             catch (Exception e)
                             {
@@ -1099,7 +1096,7 @@ namespace TESVSnip.Domain.Model
                             bool skip = includeFilter != null && !includeFilter(s);
                             if (skip)
                             {
-                                long size = recsize + 8 + (hasExtraFlags ? 4 : 0);
+                                long size = recsize + define.RecSize;
                                 if ((br.ReadUInt32() & 0x00040000) > 0)
                                 {
                                     size += 4; // Add 4 bytes for compressed record since the decompressed size is not included in the record size.
@@ -1111,7 +1108,7 @@ namespace TESVSnip.Domain.Model
                             {
                                 try
                                 {
-                                    this.AddRecord(new Record(s, recsize, br, version));
+                                    this.AddRecord(new Record(s, recsize, br, define));
                                 }
                                 catch (Exception e)
                                 {

@@ -194,6 +194,23 @@ class HTMLRenderer():
         except Exception, e:
             pass
 
+    def GetElementName(self, elem):
+        sselem = elem.Structure
+        indices = elem.Indices
+        if indices:
+            ssname = ''
+            for index in indices:
+                if ssname: ssname += '.'
+                ssname += index.Item1.name
+                if index.Item1.repeat > 0:
+                    ssname += '[%s]'%(str(index.Item2))
+            if not sselem.repeat:
+                if ssname: ssname += '.'
+                ssname += sselem.name
+            return ssname
+        else:
+            return sselem.name
+
     def GetElementValue(self, elem):
         # presumably we can just straight up execute this but for now this is compatible
         if elem.Structure.funcr:
@@ -274,11 +291,12 @@ class HTMLRenderer():
                 with p.tbody():
                     for elem in elems:
                         sselem = elem.Structure
+                        ssname = self.GetElementName(elem)
                         value = self.GetElementValue(elem)
                         strValue = str(value)
 
                         with p.tr():
-                            p.td(sselem.name, width="33%", class_='label')
+                            p.td(ssname, width="33%", class_='label')
 
                             if sselem.type == ElementValueType.Blob:
                                 p.td(TypeConverter.GetHexData(elem.Data), class_='value', colspan='4')
