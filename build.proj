@@ -37,10 +37,10 @@
     <CopyToStagingFr Include="$(ApplicationTargetDir)fr-FR\**" />
     <CopyToStaging Include="$(SolutionDir)falloutsnip_LICENSE" />
     <CopyToStaging Include="$(SolutionDir)falloutsnip_README.TXT" />
-    <CopyToStagingPython Include="$(SolutionDir)Vendor\IronPython-2.7.4\IronPython.dll" />
-    <CopyToStagingPython Include="$(SolutionDir)Vendor\IronPython-2.7.4\IronPython.Modules.dll" />
-    <CopyToStagingPython Include="$(SolutionDir)Vendor\IronPython-2.7.4\Microsoft.Dynamic.dll" />
-    <CopyToStagingPython Include="$(SolutionDir)Vendor\IronPython-2.7.4\Microsoft.Scripting.dll" />
+    <CopyToStagingPython Include="$(SolutionDir)Vendor\IronPython\IronPython.dll" />
+    <CopyToStagingPython Include="$(SolutionDir)Vendor\IronPython\IronPython.Modules.dll" />
+    <CopyToStagingPython Include="$(SolutionDir)Vendor\IronPython\Microsoft.Dynamic.dll" />
+    <CopyToStagingPython Include="$(SolutionDir)Vendor\IronPython\Microsoft.Scripting.dll" />
     <CopyToStagingPlatform64 Include="$(SolutionDir)Platform\x64\zlib1.dll" />
     <CopyToStagingPlatform64 Include="$(SolutionDir)Platform\x64\ZLibMC.dll" />
     <CopyToStagingPlatform32 Include="$(SolutionDir)Platform\x86\zlib1.dll" />
