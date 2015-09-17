@@ -56,7 +56,7 @@ namespace FalloutSnip.UI.Forms
                 RegexOptions.None);
 
         private static object s_clipboard;
-        private static string mruRegKey = "SOFTWARE\\FalloutSnip (Skyrim Edition)\\MRU";
+        private static string mruRegKey = "SOFTWARE\\FalloutSnip\\MRU";
         private readonly SelectionContext Selection;
         private readonly HtmlContent htmlContent = new HtmlContent();
         private readonly MruStripMenu mruMenu;

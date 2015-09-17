@@ -20,13 +20,13 @@
   </PropertyGroup>
   <PropertyGroup>
     <CompanyName>FalloutSnip</CompanyName>
-    <ProductName>FalloutSnip (Skyrim Edition)</ProductName>
-    <Copyright>Copyright (c) 2014</Copyright>
+    <ProductName>FalloutSnip</ProductName>
+    <Copyright>Copyright (c) 2015</Copyright>
     <Trademark>All Rights Reserved</Trademark>
     <!-- <SignAssembly>true</SignAssembly> -->
     <PublisherName>FalloutSnip</PublisherName>
-    <AssemblyOriginatorKeyFile Condition="'$(AssemblyOriginatorKeyFile)' == ''">$(BUILD_ROOT)\build\be.snk</AssemblyOriginatorKeyFile>
-    <ManifestKeyFile Condition="'$(ManifestKeyFile)' == ''">$(BUILD_ROOT)\build\be.snk</ManifestKeyFile>
+    <AssemblyOriginatorKeyFile Condition="'$(AssemblyOriginatorKeyFile)' == ''">$(BUILD_ROOT)\build\falloutsnip.snk</AssemblyOriginatorKeyFile>
+    <ManifestKeyFile Condition="'$(ManifestKeyFile)' == ''">$(BUILD_ROOT)\build\falloutsnip.snk</ManifestKeyFile>
     <GitVersionNumber>0</GitVersionNumber>
   </PropertyGroup>
       

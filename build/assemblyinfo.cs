@@ -15,13 +15,13 @@ using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 
 [assembly: AssemblyCompany("FalloutSnip")]
-[assembly: AssemblyTitle("FalloutSnip (Skyrim Edition) - Version 4.5 (875f626)")]
-[assembly: AssemblyCopyright("Copyright (c) 2014")]
+[assembly: AssemblyTitle("FalloutSnip - Version 1.0 (875f626)")]
+[assembly: AssemblyCopyright("Copyright (c) 2015")]
 [assembly: AssemblyTrademark("All Rights Reserved")]
 [assembly: CLSCompliant(false)]
 [assembly: AssemblyDelaySign(false)]
-[assembly: AssemblyVersion("4.5.5737.2")]
-[assembly: AssemblyFileVersion("4.5.5737.2")]
-[assembly: AssemblyInformationalVersion("FalloutSnip (Skyrim Edition) - Version 4.5")]
+[assembly: AssemblyVersion("1.0.0.0")]
+[assembly: AssemblyFileVersion("1.0.0.0")]
+[assembly: AssemblyInformationalVersion("FalloutSnip - Version 1.0")]
 
 
