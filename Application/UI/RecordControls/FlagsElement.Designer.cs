@@ -1,6 +1,6 @@
-﻿namespace TESVSnip.UI.RecordControls
+﻿namespace FalloutSnip.UI.RecordControls
 {
-    using TESVSnip.Windows.Controls;
+    using FalloutSnip.Windows.Controls;
 
     partial class FlagsElement
     {
@@ -31,7 +31,7 @@
         private void InitializeComponent()
         {
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FlagsElement));
-            this.cboFlags = new TESVSnip.Windows.Controls.FlagComboBox();
+            this.cboFlags = new FalloutSnip.Windows.Controls.FlagComboBox();
             ((System.ComponentModel.ISupportInitialize)(this.Error)).BeginInit();
             this.SuspendLayout();
             // 
@@ -42,7 +42,7 @@
             this.cboFlags.CheckOnClick = true;
             this.cboFlags.ControlSize = new System.Drawing.Size(47, 16);
             this.cboFlags.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawVariable;
-            this.cboFlags.DropDownSizeMode = TESVSnip.Windows.Controls.CustomComboBox.SizeMode.UseDropDownSize;
+            this.cboFlags.DropDownSizeMode = FalloutSnip.Windows.Controls.CustomComboBox.SizeMode.UseDropDownSize;
             this.cboFlags.DropSize = new System.Drawing.Size(121, 106);
             this.cboFlags.FormattingEnabled = true;
             this.cboFlags.Name = "cboFlags";

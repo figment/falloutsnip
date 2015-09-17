@@ -1,4 +1,4 @@
-﻿namespace TESVSnip.UI.ObjectControls
+﻿namespace FalloutSnip.UI.ObjectControls
 {
     using System;
     using System.Collections.Generic;
@@ -11,12 +11,12 @@
     using BrightIdeasSoftware;
 
     using Domain.Data.Structure;
-    using TESVSnip.Domain.Model;
-    using TESVSnip.Framework.Collections;
-    using TESVSnip.Properties;
-    using TESVSnip.UI.Forms;
+    using FalloutSnip.Domain.Model;
+    using FalloutSnip.Framework.Collections;
+    using FalloutSnip.Properties;
+    using FalloutSnip.UI.Forms;
 
-    using Settings = TESVSnip.Properties.Settings;
+    using Settings = FalloutSnip.Properties.Settings;
 
     public partial class SubrecordListEditor : UserControl, ISupportInitialize
     {

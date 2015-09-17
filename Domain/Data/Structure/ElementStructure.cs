@@ -1,7 +1,7 @@
 using System;
-using TESVSnip.Domain.Data.Structure.Xml;
+using FalloutSnip.Domain.Data.Structure.Xml;
 
-namespace TESVSnip.Domain.Data.Structure
+namespace FalloutSnip.Domain.Data.Structure
 {
     public class ElementStructure : ElementBase
     {

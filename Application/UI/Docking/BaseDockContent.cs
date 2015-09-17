@@ -1,4 +1,4 @@
-﻿namespace TESVSnip.UI.Docking
+﻿namespace FalloutSnip.UI.Docking
 {
     using System;
     using System.ComponentModel;

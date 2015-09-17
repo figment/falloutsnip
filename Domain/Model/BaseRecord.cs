@@ -1,6 +1,6 @@
-using TESVSnip.Domain.Services;
+using FalloutSnip.Domain.Services;
 
-namespace TESVSnip.Domain.Model
+namespace FalloutSnip.Domain.Model
 {
     using System;
     using System.Collections;
@@ -9,7 +9,7 @@ namespace TESVSnip.Domain.Model
     using System.Linq;
     using System.Runtime.Serialization;
     using System.Text;
-    using TESVSnip.Framework.Persistence;
+    using FalloutSnip.Framework.Persistence;
 
     [Persistable(Flags = PersistType.DeclaredOnly)]
     [Serializable]

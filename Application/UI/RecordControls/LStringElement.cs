@@ -1,13 +1,13 @@
-﻿namespace TESVSnip.UI.RecordControls
+﻿namespace FalloutSnip.UI.RecordControls
 {
     using System;
     using System.Globalization;
     using System.Windows.Forms;
 
     using Domain.Data.Structure;
-    using TESVSnip.Framework;
-    using TESVSnip.Properties;
-    using TESVSnip.UI.Forms;
+    using FalloutSnip.Framework;
+    using FalloutSnip.Properties;
+    using FalloutSnip.UI.Forms;
 
     internal partial class LStringElement : TextElement
     {

@@ -10,10 +10,10 @@ using IronPython.Hosting;
 using IronPython.Runtime.Exceptions;
 using Microsoft.Scripting;
 using Microsoft.Scripting.Hosting;
-using TESVSnip.Framework.Services;
-using TESVSnip.UI.Forms;
+using FalloutSnip.Framework.Services;
+using FalloutSnip.UI.Forms;
 
-namespace TESVSnip.UI.Services
+namespace FalloutSnip.UI.Services
 {
     internal class PluginEngine : IDisposable
     {
@@ -80,7 +80,7 @@ namespace TESVSnip.UI.Services
             runtime.IO.SetErrorOutput(outputStream, System.Text.Encoding.UTF8);
 
             runtime.LoadAssembly(Assembly.GetExecutingAssembly());
-            runtime.LoadAssembly(typeof(TESVSnip.Domain.Model.BaseRecord).Assembly);
+            runtime.LoadAssembly(typeof(FalloutSnip.Domain.Model.BaseRecord).Assembly);
             runtime.LoadAssembly(typeof(String).Assembly);
             runtime.LoadAssembly(typeof(System.Drawing.Icon).Assembly);
             runtime.LoadAssembly(typeof(Python).Assembly);
@@ -133,9 +133,9 @@ namespace TESVSnip.UI.Services
             {
                 var scope = pyEngine.CreateScope();
                 scope.SetVariable("__window__", Application.OpenForms.OfType<MainView>().FirstOrDefault());
-                scope.SetVariable("__plugins__", TESVSnip.Domain.Model.PluginList.All);
+                scope.SetVariable("__plugins__", FalloutSnip.Domain.Model.PluginList.All);
                 scope.SetVariable("__options__", Options.Value);
-                scope.SetVariable("__settings__", TESVSnip.Properties.Settings.Default);
+                scope.SetVariable("__settings__", FalloutSnip.Properties.Settings.Default);
                 pyEngine.ExecuteFile(path, scope);
             }
             catch (SyntaxErrorException e)
@@ -185,8 +185,8 @@ namespace TESVSnip.UI.Services
             {
                 try
                 {
-                    var recs = TESVSnip.Domain.Model.PluginList.All.Records
-                        .Cast<TESVSnip.Domain.Model.Plugin>().ToArray();
+                    var recs = FalloutSnip.Domain.Model.PluginList.All.Records
+                        .Cast<FalloutSnip.Domain.Model.Plugin>().ToArray();
                     plugin.Execute(recs);
                 }
                 catch (Exception e)

@@ -5,7 +5,7 @@ using System.Linq;
 using System.Reflection;
 using PythonConsoleControl;
 
-namespace TESVSnip.UI.Services
+namespace FalloutSnip.UI.Services
 {
     /// <summary>
     /// Service Class for loading the IronPython Installation

@@ -3,13 +3,13 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using TESVSnip.Domain.Data.Structure.Xml;
-using TESVSnip.Domain.Model;
-using TESVSnip.Framework;
+using FalloutSnip.Domain.Data.Structure.Xml;
+using FalloutSnip.Domain.Model;
+using FalloutSnip.Framework;
 
 #endregion
 
-namespace TESVSnip.UI
+namespace FalloutSnip.UI
 {
     internal class RecordBuilder
     {
@@ -534,12 +534,12 @@ namespace TESVSnip.UI
         }
 
 #if false
-        public TESVSnip.Data.RecordsRecord ProcessBase(Record r)
+        public FalloutSnip.Data.RecordsRecord ProcessBase(Record r)
         {
-            TESVSnip.Data.RecordsRecord rr;
+            FalloutSnip.Data.RecordsRecord rr;
             if (!rdict.TryGetValue(r.Name, out rr))
             {
-                rr = new TESVSnip.Data.RecordsRecord();
+                rr = new FalloutSnip.Data.RecordsRecord();
                 rr.name = r.Name;
                 rr.desc = r.Name;
                 rdict.Add(r.Name, rr);
@@ -549,7 +549,7 @@ namespace TESVSnip.UI
 
         public bool Process(Record p)
         {
-            TESVSnip.Data.RecordsRecord rr = ProcessBase(p);
+            FalloutSnip.Data.RecordsRecord rr = ProcessBase(p);
 
             // int srIdx = 0;
             var groups = from psr in p.SubRecords
@@ -557,15 +557,15 @@ namespace TESVSnip.UI
                          select new { Name = g.Key, Records = g.ToArray() };
 
             int lastIndex = 0;
-            Dictionary<string, TESVSnip.Data.Subrecord> dict = new Dictionary<string, TESVSnip.Data.Subrecord>();
+            Dictionary<string, FalloutSnip.Data.Subrecord> dict = new Dictionary<string, FalloutSnip.Data.Subrecord>();
             foreach (var kvp in groups)
             {
                 if (IsCanceled) return false;
 
-                TESVSnip.Data.Subrecord sr = rr.Subrecords.FirstOrDefault(x => x.name == kvp.Name);
+                FalloutSnip.Data.Subrecord sr = rr.Subrecords.FirstOrDefault(x => x.name == kvp.Name);
                 if (sr == null)
                 {
-                    sr = new TESVSnip.Data.Subrecord();
+                    sr = new FalloutSnip.Data.Subrecord();
                     sr.name = sr.desc = kvp.Name;
                     sr.optional = 1;
                     if (lastIndex + 1 <= rr.Items.Count)
@@ -617,9 +617,9 @@ namespace TESVSnip.UI
         }
 
 
-        public void Process(TESVSnip.Data.Subrecord sr, SubRecord subrec)
+        public void Process(FalloutSnip.Data.Subrecord sr, SubRecord subrec)
         {
-            TESVSnip.Data.SubrecordElement expectedElement = (sr.Elements.Count >= 1) ? sr.Elements[0] : null;
+            FalloutSnip.Data.SubrecordElement expectedElement = (sr.Elements.Count >= 1) ? sr.Elements[0] : null;
             if (expectedElement != null && expectedElement.type == "blob")
                 return;
 
@@ -636,7 +636,7 @@ namespace TESVSnip.UI
                 if (expectedElement != null && expectedElement.size == 2)
                     return;
 
-                TESVSnip.Data.SubrecordElement elem = new TESVSnip.Data.SubrecordElement();
+                FalloutSnip.Data.SubrecordElement elem = new FalloutSnip.Data.SubrecordElement();
                 elem.name = "Unknown";
                 elem.type = "short";
                 elem.size = 2;
@@ -656,7 +656,7 @@ namespace TESVSnip.UI
                     // test if its a string
                     if (expectedElement == null)
                     {
-                        TESVSnip.Data.SubrecordElement elem = new TESVSnip.Data.SubrecordElement();
+                        FalloutSnip.Data.SubrecordElement elem = new FalloutSnip.Data.SubrecordElement();
                         elem.name = "Unknown";
                         elem.type = "string";
                         sr.Elements.Add(elem);
@@ -687,7 +687,7 @@ namespace TESVSnip.UI
                     {
                         if (expectedElement == null)
                         {
-                            TESVSnip.Data.SubrecordElement elem = new TESVSnip.Data.SubrecordElement();
+                            FalloutSnip.Data.SubrecordElement elem = new FalloutSnip.Data.SubrecordElement();
                             elem.name = "Unknown";
                             elem.type = "int";
                             elem.size = 4;
@@ -704,7 +704,7 @@ namespace TESVSnip.UI
 // replace element which is int with float
                             if (expectedElement == null)
                             {
-                                TESVSnip.Data.SubrecordElement elem = new TESVSnip.Data.SubrecordElement();
+                                FalloutSnip.Data.SubrecordElement elem = new FalloutSnip.Data.SubrecordElement();
                                 elem.name = "Unknown";
                                 elem.type = "float";
                                 elem.size = 4;
@@ -725,7 +725,7 @@ namespace TESVSnip.UI
                                 string reftype = r.DescriptiveName.Substring(0, 4); // ???
                                 if (expectedElement == null)
                                 {
-                                    TESVSnip.Data.SubrecordElement elem = new TESVSnip.Data.SubrecordElement();
+                                    FalloutSnip.Data.SubrecordElement elem = new FalloutSnip.Data.SubrecordElement();
                                     elem.name = "ID";
                                     elem.type = "formid";
                                     elem.reftype = reftype;
@@ -749,7 +749,7 @@ namespace TESVSnip.UI
                                 {
                                     if (expectedElement == null)
                                     {
-                                        TESVSnip.Data.SubrecordElement elem = new TESVSnip.Data.SubrecordElement();
+                                        FalloutSnip.Data.SubrecordElement elem = new FalloutSnip.Data.SubrecordElement();
                                         elem.name = "Unknown";
                                         elem.type = "string";
                                         sr.Elements.Add(elem);
@@ -761,7 +761,7 @@ namespace TESVSnip.UI
                             {
                                 if (lhs > 0 && lhs < 255 && uhs > 0 && uhs < 255)
                                 {
-                                    TESVSnip.Data.SubrecordElement elem = new TESVSnip.Data.SubrecordElement();
+                                    FalloutSnip.Data.SubrecordElement elem = new FalloutSnip.Data.SubrecordElement();
                                     elem.name = "Unknown";
                                     elem.type = "short";
                                     elem.size = 2;
@@ -770,7 +770,7 @@ namespace TESVSnip.UI
                                 }
                                 else
                                 {
-                                    TESVSnip.Data.SubrecordElement elem = new TESVSnip.Data.SubrecordElement();
+                                    FalloutSnip.Data.SubrecordElement elem = new FalloutSnip.Data.SubrecordElement();
                                     elem.name = "Unknown";
                                     elem.type = "int";
                                     elem.size = 4;

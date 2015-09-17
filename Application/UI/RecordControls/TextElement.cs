@@ -1,16 +1,16 @@
-﻿using TESVSnip.Domain.Scripts;
-using FunctionOperation = TESVSnip.Domain.Scripts.FunctionOperation;
-using PyInterpreter = TESVSnip.Domain.Scripts.PyInterpreter;
+﻿using FalloutSnip.Domain.Scripts;
+using FunctionOperation = FalloutSnip.Domain.Scripts.FunctionOperation;
+using PyInterpreter = FalloutSnip.Domain.Scripts.PyInterpreter;
 
-namespace TESVSnip.UI.RecordControls
+namespace FalloutSnip.UI.RecordControls
 {
     using System;
     using System.Globalization;
     using System.Windows.Forms;
 
     using Domain.Data.Structure;
-    using TESVSnip.Framework;
-    using TESVSnip.Framework.Services;
+    using FalloutSnip.Framework;
+    using FalloutSnip.Framework.Services;
 
     internal partial class TextElement : BaseElement, ITextElementControl
     {

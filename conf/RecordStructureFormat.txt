@@ -40,7 +40,7 @@ NOTE: The size of the data is by each Subrecord block indepentently.  Group shou
 
 NOTE: When a Group block contains Subrecord blocks, [repeat] and [optional] apply only to the Subrecord block within the Group block.
 
-The Subrecords in the group determine the order.  TESVSnip 4.4.0a already does this correctly.
+The Subrecords in the group determine the order.  FalloutSnip 4.4.0a already does this correctly.
 
 <Group id="blah">
   <Subrecord="NAM0" Arguments>
@@ -133,7 +133,7 @@ Use of Optional:
 </Group>
 
 
-When a Subrecord block uses [optional] then the record is still skipped.  This also seems to work correctly with TESVSnip 4.4.0a.
+When a Subrecord block uses [optional] then the record is still skipped.  This also seems to work correctly with FalloutSnip 4.4.0a.
 
 XXXXXXXXXXXXXXXXX
 XXX Subrecord XXX

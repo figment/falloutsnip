@@ -1,4 +1,4 @@
-﻿namespace TESVSnip.UI.ObjectControls
+﻿namespace FalloutSnip.UI.ObjectControls
 {
     using System;
     using System.ComponentModel;
@@ -6,9 +6,9 @@
     using System.Linq;
     using System.Windows.Forms;
 
-    using TESVSnip.Domain.Model;
-    using TESVSnip.Framework.Collections;
-    using TESVSnip.UI.Forms;
+    using FalloutSnip.Domain.Model;
+    using FalloutSnip.Framework.Collections;
+    using FalloutSnip.UI.Forms;
 
     public partial class RecordEditor : UserControl
     {

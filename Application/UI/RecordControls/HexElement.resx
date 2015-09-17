@@ -571,7 +571,7 @@
     <value>hexBox1</value>
   </data>
   <data name="&gt;&gt;hexBox1.Type" xml:space="preserve">
-    <value>Be.Windows.Forms.HexBox, TESVSnip, Version=2.7.4404.2, Culture=neutral, PublicKeyToken=null</value>
+    <value>Be.Windows.Forms.HexBox, FalloutSnip, Version=2.7.4404.2, Culture=neutral, PublicKeyToken=null</value>
   </data>
   <data name="&gt;&gt;hexBox1.Parent" xml:space="preserve">
     <value>$this</value>
@@ -607,6 +607,6 @@
     <value>HexElement</value>
   </data>
   <data name="&gt;&gt;$this.Type" xml:space="preserve">
-    <value>TESVSnip.RecordControls.BaseElement, TESVSnip, Version=2.7.4404.2, Culture=neutral, PublicKeyToken=null</value>
+    <value>FalloutSnip.RecordControls.BaseElement, FalloutSnip, Version=2.7.4404.2, Culture=neutral, PublicKeyToken=null</value>
   </data>
 </root>

@@ -8,8 +8,8 @@
     <ProjectGuid>{5FA31161-DDBB-430F-9E99-0ECE98B733DE}</ProjectGuid>
     <OutputType>WinExe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>TESVSnip</RootNamespace>
-    <AssemblyName>TESVSnip</AssemblyName>
+    <RootNamespace>FalloutSnip</RootNamespace>
+    <AssemblyName>FalloutSnip</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <ApplicationIcon>Resources\tesv_ico.ico</ApplicationIcon>
@@ -43,9 +43,9 @@
     <SignAssembly>false</SignAssembly>
   </PropertyGroup>
   <PropertyGroup>
-    <AssemblyOriginatorKeyFile>$(BUILD_ROOT)\build\tesvsnip.snk</AssemblyOriginatorKeyFile>
+    <AssemblyOriginatorKeyFile>$(BUILD_ROOT)\build\falloutsnip.snk</AssemblyOriginatorKeyFile>
   </PropertyGroup>
-  <Import Project="$(BUILD_ROOT)\build\tesvsnip.common.targets" />
+  <Import Project="$(BUILD_ROOT)\build\falloutsnip.common.targets" />
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
@@ -203,9 +203,7 @@
     <Compile Include="Vendor\HexBox\IByteProvider.cs" />
     <Compile Include="Vendor\HexBox\NativeMethods.cs" />
     <Compile Include="Vendor\ObjectListView\CellEditing\CellEditKeyEngine.cs" />
-    <Compile Include="Vendor\ObjectListView\CellEditing\CellEditors.cs">
-      <SubType>Component</SubType>
-    </Compile>
+    <Compile Include="Vendor\ObjectListView\CellEditing\CellEditors.cs" />
     <Compile Include="Vendor\ObjectListView\CellEditing\EditorRegistry.cs" />
     <Compile Include="Vendor\ObjectListView\DataListView.cs">
       <SubType>Component</SubType>
@@ -319,9 +317,7 @@
     <Content Include="Vendor\ObjectListView\Resources\sort-descending.png" />
     <Content Include="Vendor\ObjectListView\Resources\sort-descending1.png" />
     <Compile Include="Vendor\Controls\OldNewEvent.cs" />
-    <Compile Include="Vendor\Controls\PopupControl.cs">
-      <SubType>Component</SubType>
-    </Compile>
+    <Compile Include="Vendor\Controls\PopupControl.cs" />
     <Compile Include="Vendor\Controls\RichTextBoxEx.cs">
       <SubType>Component</SubType>
     </Compile>
@@ -657,7 +653,7 @@
     <EmbeddedResource Include="UI\RecordControls\TextElement.resx">
       <DependentUpon>TextElement.cs</DependentUpon>
     </EmbeddedResource>
-    <None Include="$(BUILD_ROOT)\build\tesvsnip.snk" />
+    <None Include="$(BUILD_ROOT)\build\falloutsnip.snk" />
     <None Include="$(SolutionDir)changelog.rtf" />
     <None Include="Resources\Python.xshd" />
     <None Include="TranslateUI\Tools\ResEx\ResEx.chm" />

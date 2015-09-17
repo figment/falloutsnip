@@ -1,4 +1,4 @@
-namespace TESVSnip.Domain.Data.Structure
+namespace FalloutSnip.Domain.Data.Structure
 {
     public enum ElementValueType
     {

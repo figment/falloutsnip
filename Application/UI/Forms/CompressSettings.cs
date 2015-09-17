@@ -1,13 +1,13 @@
 ﻿using System.Globalization;
 
-namespace TESVSnip.UI.Forms
+namespace FalloutSnip.UI.Forms
 {
     using System;
     using System.Collections.Generic;
     using System.Linq;
     using System.Windows.Forms;
 
-    using TESVSnip.Properties;
+    using FalloutSnip.Properties;
 
     public partial class CompressSettings : Form
     {

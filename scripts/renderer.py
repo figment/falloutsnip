@@ -1,15 +1,15 @@
-import markup
+﻿import markup
 from System import Single, SByte, Byte, Int16, UInt16, Int32, UInt32, Double
 from System import ArraySegment, Convert, UriBuilder
 from System.Text import StringBuilder
 #from System.Web import HttpUtility
-import TESVSnip.Domain
-from TESVSnip.Domain.Model import BaseRecord, Record, Plugin, SubRecord, GroupRecord
-from TESVSnip.Domain.Data.Structure import RecordStructure, ElementValueType
-from TESVSnip.Domain.Scripts import PyInterpreter, FunctionOperation
-from TESVSnip.Domain.Services import Spells
-from TESVSnip.Framework import TypeConverter
-from TESVSnip.Framework.Services import Encoding
+import FalloutSnip.Domain
+from FalloutSnip.Domain.Model import BaseRecord, Record, Plugin, SubRecord, GroupRecord
+from FalloutSnip.Domain.Data.Structure import RecordStructure, ElementValueType
+from FalloutSnip.Domain.Scripts import PyInterpreter, FunctionOperation
+from FalloutSnip.Domain.Services import Spells
+from FalloutSnip.Framework import TypeConverter
+from FalloutSnip.Framework.Services import Encoding
 
 
 def ifnull(value, default):
@@ -124,7 +124,7 @@ class HTMLRenderer():
                 compressRow = None
                 flagstr = ''
                 if rec.Flags1:
-                    flagstr = TESVSnip.Domain.Model.FlagDefs.GetRecFlags1Desc(rec.Flags1)
+                    flagstr = FalloutSnip.Domain.Model.FlagDefs.GetRecFlags1Desc(rec.Flags1)
                     if flagstr: flagstr = ' : ' + flagstr
                     if flagstr.find('Compressed') > 0:
                         compressRow = ( 'Compression Level:', rec.CompressionLevel.ToString(), 'flags')
@@ -508,9 +508,9 @@ class HTMLRenderer():
 
 
 if __name__ == '<module>':
-    import TESVSnip.Domain
+    import FalloutSnip.Domain
 
-    class Renderer(TESVSnip.Domain.Rendering.IRenderer):
+    class Renderer(FalloutSnip.Domain.Rendering.IRenderer):
 
         def Render(self, rec, kwargs):
             try:

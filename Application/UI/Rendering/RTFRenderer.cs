@@ -5,13 +5,13 @@ using System.Linq;
 using System.Text;
 using System.Windows.Forms;
 using RTF;
-using TESVSnip.Domain.Data.Structure;
-using TESVSnip.Domain.Model;
-using TESVSnip.Domain.Scripts;
-using TESVSnip.Framework;
-using TESVSnip.Properties;
+using FalloutSnip.Domain.Data.Structure;
+using FalloutSnip.Domain.Model;
+using FalloutSnip.Domain.Scripts;
+using FalloutSnip.Framework;
+using FalloutSnip.Properties;
 
-namespace TESVSnip.UI.Rendering.Extensions
+namespace FalloutSnip.UI.Rendering.Extensions
 {
     static class RTFRenderer
     {

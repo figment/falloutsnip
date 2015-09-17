@@ -1,4 +1,4 @@
-﻿namespace TESVSnip.UI.Forms
+﻿namespace FalloutSnip.UI.Forms
 {
     partial class RecordColumnSelect
     {

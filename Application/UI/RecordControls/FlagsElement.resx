@@ -139,7 +139,7 @@
     <value>cboFlags</value>
   </data>
   <data name="&gt;&gt;cboFlags.Type" xml:space="preserve">
-    <value>TESVSnip.Windows.Controls.FlagComboBox, TESVSnip, Version=3.0.4404.4, Culture=neutral, PublicKeyToken=null</value>
+    <value>FalloutSnip.Windows.Controls.FlagComboBox, FalloutSnip, Version=3.0.4404.4, Culture=neutral, PublicKeyToken=null</value>
   </data>
   <data name="&gt;&gt;cboFlags.Parent" xml:space="preserve">
     <value>$this</value>
@@ -166,6 +166,6 @@
     <value>FlagsElement</value>
   </data>
   <data name="&gt;&gt;$this.Type" xml:space="preserve">
-    <value>TESVSnip.RecordControls.TextElement, TESVSnip, Version=3.0.4404.4, Culture=neutral, PublicKeyToken=null</value>
+    <value>FalloutSnip.RecordControls.TextElement, FalloutSnip, Version=3.0.4404.4, Culture=neutral, PublicKeyToken=null</value>
   </data>
 </root>

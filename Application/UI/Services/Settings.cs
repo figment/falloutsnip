@@ -4,7 +4,7 @@ using System.IO;
 using System.Windows.Forms;
 using System.Xml;
 
-namespace TESVSnip.UI.Services
+namespace FalloutSnip.UI.Services
 {
     internal static class Settings
     {

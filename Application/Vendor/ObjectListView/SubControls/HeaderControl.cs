@@ -55,7 +55,7 @@ using System.Runtime.InteropServices;
 using System.Security.Permissions;
 using System.Windows.Forms;
 using System.Windows.Forms.VisualStyles;
-using TESVSnip.Properties;
+using FalloutSnip.Properties;
 
 namespace BrightIdeasSoftware
 {

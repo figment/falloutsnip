@@ -1,4 +1,4 @@
-﻿namespace TESVSnip.UI.Forms
+﻿namespace FalloutSnip.UI.Forms
 {
     partial class SearchFilterBasic
     {
@@ -142,7 +142,7 @@
             // 
             this.btnRemoveSearch.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.btnRemoveSearch.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.btnRemoveSearch.Image = global::TESVSnip.Properties.Resources._14_layer_deletelayer;
+            this.btnRemoveSearch.Image = global::FalloutSnip.Properties.Resources._14_layer_deletelayer;
             this.btnRemoveSearch.Location = new System.Drawing.Point(340, 11);
             this.btnRemoveSearch.Margin = new System.Windows.Forms.Padding(0);
             this.btnRemoveSearch.Name = "btnRemoveSearch";
@@ -156,7 +156,7 @@
             // 
             this.btnAddSearch.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.btnAddSearch.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.btnAddSearch.Image = global::TESVSnip.Properties.Resources.bookmark_add;
+            this.btnAddSearch.Image = global::FalloutSnip.Properties.Resources.bookmark_add;
             this.btnAddSearch.Location = new System.Drawing.Point(320, 11);
             this.btnAddSearch.Margin = new System.Windows.Forms.Padding(0);
             this.btnAddSearch.Name = "btnAddSearch";

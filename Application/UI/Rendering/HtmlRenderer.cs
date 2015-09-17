@@ -4,13 +4,13 @@ using System.Linq;
 using System.IO;
 using System.Reflection;
 using System.Text;
-using TESVSnip.Domain.Model;
-using TESVSnip.Domain.Rendering;
-using TESVSnip.Domain.Services;
+using FalloutSnip.Domain.Model;
+using FalloutSnip.Domain.Rendering;
+using FalloutSnip.Domain.Services;
 using IronPython.Hosting;
 using Microsoft.Scripting.Hosting;
 
-namespace TESVSnip.UI.Rendering
+namespace FalloutSnip.UI.Rendering
 {
     /// <summary>
     /// CLASS PyInterpreter
@@ -60,14 +60,14 @@ namespace TESVSnip.UI.Rendering
             //paths.Add(PluginEngine.PluginsPyPath);
             paths.Add(Path.Combine(Folders.ScriptsDirectory, "lib"));
 
-            if (!string.IsNullOrEmpty(TESVSnip.UI.Services.Options.Value.IronPythonDirectory))
-                paths.Add(Path.Combine(TESVSnip.UI.Services.Options.Value.IronPythonDirectory, "lib"));
+            if (!string.IsNullOrEmpty(FalloutSnip.UI.Services.Options.Value.IronPythonDirectory))
+                paths.Add(Path.Combine(FalloutSnip.UI.Services.Options.Value.IronPythonDirectory, "lib"));
             pyEngine.SetSearchPaths(paths);
 
             var runtime = pyEngine.Runtime;
             runtime.LoadAssembly(Assembly.GetExecutingAssembly());
-            runtime.LoadAssembly(typeof(TESVSnip.Framework.TypeConverter).Assembly);
-            runtime.LoadAssembly(typeof(TESVSnip.Domain.Model.BaseRecord).Assembly);
+            runtime.LoadAssembly(typeof(FalloutSnip.Framework.TypeConverter).Assembly);
+            runtime.LoadAssembly(typeof(FalloutSnip.Domain.Model.BaseRecord).Assembly);
             runtime.LoadAssembly(typeof(String).Assembly);
             runtime.LoadAssembly(typeof(IronPython.Hosting.Python).Assembly);
             runtime.LoadAssembly(typeof(System.Dynamic.DynamicObject).Assembly);

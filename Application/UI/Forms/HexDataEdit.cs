@@ -1,4 +1,4 @@
-namespace TESVSnip.UI.Forms
+namespace FalloutSnip.UI.Forms
 {
     using System;
     using System.Globalization;
@@ -7,9 +7,9 @@ namespace TESVSnip.UI.Forms
 
     using Be.Windows.Forms;
 
-    using TESVSnip.Domain.Model;
-    using TESVSnip.Framework;
-    using TESVSnip.Properties;
+    using FalloutSnip.Domain.Model;
+    using FalloutSnip.Framework;
+    using FalloutSnip.Properties;
 
     internal partial class HexDataEdit : Form
     {

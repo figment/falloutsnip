@@ -1,12 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using TESVSnip.Domain.Data.Structure;
-using TESVSnip.Domain.Services;
+using FalloutSnip.Domain.Data.Structure;
+using FalloutSnip.Domain.Services;
 using IronPython.Hosting;
 using Microsoft.Scripting.Hosting;
 
-namespace TESVSnip.Domain.Scripts
+namespace FalloutSnip.Domain.Scripts
 {
     public enum FunctionOperation
     {

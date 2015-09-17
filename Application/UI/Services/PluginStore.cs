@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace TESVSnip.UI.Services
+namespace FalloutSnip.UI.Services
 {
     public static class PluginStore
     {

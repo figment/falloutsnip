@@ -1,10 +1,10 @@
-namespace TESVSnip.Framework
+namespace FalloutSnip.Framework
 {
     using System;
     using System.Runtime.InteropServices;
     using System.Text;
 
-    using Encoding = TESVSnip.Framework.Services.Encoding;
+    using Encoding = FalloutSnip.Framework.Services.Encoding;
 
     [StructLayout(LayoutKind.Explicit)]
     public struct TypeConverter

@@ -10,7 +10,7 @@ using System.Text;
 
 #endregion
 
-namespace TESVSnip.Framework.IO
+namespace FalloutSnip.Framework.IO
 {
 
     #region class IniFile

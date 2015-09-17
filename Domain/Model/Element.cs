@@ -1,9 +1,9 @@
-namespace TESVSnip.Domain.Model
+namespace FalloutSnip.Domain.Model
 {
     using System;
 
     using Data.Structure;
-    using TESVSnip.Framework;
+    using FalloutSnip.Framework;
 
     /// <summary>
     ///   Helper for reference to Element structure including data

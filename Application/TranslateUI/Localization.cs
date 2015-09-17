@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Windows.Forms;
 
-namespace TESVSnip.UI.Forms
+namespace FalloutSnip.UI.Forms
 {
     internal partial class MainView : Form
     {

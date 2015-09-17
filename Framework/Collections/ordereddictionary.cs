@@ -1,4 +1,4 @@
-namespace TESVSnip.Framework.Collections
+namespace FalloutSnip.Framework.Collections
 {
     using System;
     using System.Collections;
@@ -529,7 +529,7 @@ namespace TESVSnip.Framework.Collections
         /// The get enumerator.
         /// </summary>
         /// <returns>
-        /// The TESVSnip.Collections.Generic.OrderedDictionary`2+Enumerator. 
+        /// The FalloutSnip.Collections.Generic.OrderedDictionary`2+Enumerator. 
         /// </returns>
         public Enumerator GetEnumerator()
         {

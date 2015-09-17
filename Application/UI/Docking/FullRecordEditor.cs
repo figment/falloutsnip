@@ -1,9 +1,9 @@
-﻿namespace TESVSnip.UI.Docking
+﻿namespace FalloutSnip.UI.Docking
 {
     using System;
 
-    using TESVSnip.Domain.Model;
-    using TESVSnip.Properties;
+    using FalloutSnip.Domain.Model;
+    using FalloutSnip.Properties;
 
     public partial class FullRecordEditor : BaseDockContent
     {

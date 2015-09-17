@@ -2,21 +2,21 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using TESVSnip.Domain.Data.Structure;
-using TESVSnip.Domain.Data.Strings;
-using TESVSnip.Domain.Model;
-using TESVSnip.Domain.Properties;
-using TESVSnip.Framework;
+using FalloutSnip.Domain.Data.Structure;
+using FalloutSnip.Domain.Data.Strings;
+using FalloutSnip.Domain.Model;
+using FalloutSnip.Domain.Properties;
+using FalloutSnip.Framework;
 
-namespace TESVSnip.Domain.Services
+namespace FalloutSnip.Domain.Services
 {
     /// <summary>
     /// This file contains the miscellaneous spells for the main form.
     /// </summary>
     public static class Spells
     {
-        private static readonly string[] LooseGroups = TESVSnip.Domain.Services.RecordLayout.LooseGroups;
-        private static readonly string[] SanitizeOrder = TESVSnip.Domain.Services.RecordLayout.SanitizeOrder;
+        private static readonly string[] LooseGroups = FalloutSnip.Domain.Services.RecordLayout.LooseGroups;
+        private static readonly string[] SanitizeOrder = FalloutSnip.Domain.Services.RecordLayout.SanitizeOrder;
         
         /// <summary>
         ///  Copy Records to new plugin.  By default make as overrides

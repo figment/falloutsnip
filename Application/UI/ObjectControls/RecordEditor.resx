@@ -151,7 +151,7 @@
     <value>comboBox1</value>
   </data>
   <data name="&gt;&gt;comboBox1.Type" xml:space="preserve">
-    <value>TESVSnip.Windows.Controls.FlagComboBox, TESVSnip, Version=3.4.4408.1, Culture=neutral, PublicKeyToken=null</value>
+    <value>FalloutSnip.Windows.Controls.FlagComboBox, FalloutSnip, Version=3.4.4408.1, Culture=neutral, PublicKeyToken=null</value>
   </data>
   <data name="&gt;&gt;comboBox1.Parent" xml:space="preserve">
     <value>verticalSplitContainer.Panel1</value>
@@ -439,7 +439,7 @@
     <value>subrecordListEditor</value>
   </data>
   <data name="&gt;&gt;subrecordListEditor.Type" xml:space="preserve">
-    <value>TESVSnip.ObjectControls.SubrecordListEditor, TESVSnip, Version=3.4.4408.1, Culture=neutral, PublicKeyToken=null</value>
+    <value>FalloutSnip.ObjectControls.SubrecordListEditor, FalloutSnip, Version=3.4.4408.1, Culture=neutral, PublicKeyToken=null</value>
   </data>
   <data name="&gt;&gt;subrecordListEditor.Parent" xml:space="preserve">
     <value>verticalSplitContainer.Panel2</value>
@@ -577,7 +577,7 @@
     <value>elementEditor</value>
   </data>
   <data name="&gt;&gt;elementEditor.Type" xml:space="preserve">
-    <value>TESVSnip.Forms.SubrecordEditor, TESVSnip, Version=3.4.4408.1, Culture=neutral, PublicKeyToken=null</value>
+    <value>FalloutSnip.Forms.SubrecordEditor, FalloutSnip, Version=3.4.4408.1, Culture=neutral, PublicKeyToken=null</value>
   </data>
   <data name="&gt;&gt;elementEditor.Parent" xml:space="preserve">
     <value>horizontalSplitContainer.Panel2</value>

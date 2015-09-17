@@ -136,7 +136,7 @@
     <value>listSubrecord</value>
   </data>
   <data name="&gt;&gt;listSubrecord.Type" xml:space="preserve">
-    <value>TESVSnip.Windows.Controls.ObjectBindingListView, TESVSnip, Version=4.2.4450.237, Culture=neutral, PublicKeyToken=null</value>
+    <value>FalloutSnip.Windows.Controls.ObjectBindingListView, FalloutSnip, Version=4.2.4450.237, Culture=neutral, PublicKeyToken=null</value>
   </data>
   <data name="&gt;&gt;listSubrecord.Parent" xml:space="preserve">
     <value>subrecordPanel</value>

@@ -1,9 +1,9 @@
-namespace TESVSnip.Domain.Model
+namespace FalloutSnip.Domain.Model
 {
     using System;
     using System.Runtime.Serialization;
 
-    using TESVSnip.Framework.Persistence;
+    using FalloutSnip.Framework.Persistence;
 
     [Persistable(Flags = PersistType.DeclaredOnly)]
     [Serializable]

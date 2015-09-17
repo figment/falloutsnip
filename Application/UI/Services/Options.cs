@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
 using Microsoft.Win32;
-using TESVSnip.Domain.Model;
+using FalloutSnip.Domain.Model;
 
-namespace TESVSnip.UI.Services
+namespace FalloutSnip.UI.Services
 {
     /// <summary>
     /// Global program options.
@@ -178,7 +178,7 @@ namespace TESVSnip.UI.Services
         /// </summary>
         private void SetupScriptHostDirectory()
         {
-            var path = TESVSnip.Properties.Settings.Default.IronPythonPath;
+            var path = FalloutSnip.Properties.Settings.Default.IronPythonPath;
             if (string.IsNullOrWhiteSpace(path) || !Directory.Exists(path))
             {
                 using (var key = Registry.LocalMachine.OpenSubKey(Environment.Is64BitOperatingSystem
@@ -205,7 +205,7 @@ namespace TESVSnip.UI.Services
             try
             {
                 string defaultDomain = Properties.Settings.Default.DefaultDomain ?? "Skyrim";
-                var domain = TESVSnip.Domain.Data.DomainDefinition.Lookup(defaultDomain);
+                var domain = FalloutSnip.Domain.Data.DomainDefinition.Lookup(defaultDomain);
                 if (domain == null)
                     return;
 

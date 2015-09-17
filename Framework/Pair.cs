@@ -1,4 +1,4 @@
-namespace TESVSnip.Framework
+namespace FalloutSnip.Framework
 {
     public struct Pair<A, B>
     {

@@ -1,4 +1,4 @@
-namespace TESVSnip.UI.Forms
+namespace FalloutSnip.UI.Forms
 {
     using System;
     using System.Collections.Generic;
@@ -7,11 +7,11 @@ namespace TESVSnip.UI.Forms
     using System.Windows.Forms;
 
     using Domain.Data.Structure;
-    using TESVSnip.Domain.Model;
-    using TESVSnip.Framework;
-    using TESVSnip.Framework.Services;
-    using TESVSnip.Properties;
-    using TESVSnip.Windows.Controls;
+    using FalloutSnip.Domain.Model;
+    using FalloutSnip.Framework;
+    using FalloutSnip.Framework.Services;
+    using FalloutSnip.Properties;
+    using FalloutSnip.Windows.Controls;
 
     internal partial class MediumLevelRecordEditor : Form
     {

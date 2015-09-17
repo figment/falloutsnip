@@ -1,4 +1,4 @@
-﻿namespace TESVSnip.UI.Forms
+﻿namespace FalloutSnip.UI.Forms
 {
     using System;
     using System.Collections.Generic;
@@ -7,12 +7,12 @@
     using System.Linq;
     using System.Windows.Forms;
 
-    using TESVSnip.Domain.Data.Strings;
-    using TESVSnip.Domain.Model;
-    using TESVSnip.Framework.Collections;
-    using TESVSnip.Properties;
+    using FalloutSnip.Domain.Data.Strings;
+    using FalloutSnip.Domain.Model;
+    using FalloutSnip.Framework.Collections;
+    using FalloutSnip.Properties;
 
-    using Settings = TESVSnip.Domain.Services.Folders;
+    using Settings = FalloutSnip.Domain.Services.Folders;
 
     public partial class StringsEditor : Form
     {

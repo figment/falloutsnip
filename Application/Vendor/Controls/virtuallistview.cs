@@ -8,7 +8,7 @@ using System.Runtime.InteropServices;
 using System.Threading;
 using System.Windows.Forms;
 
-namespace TESVSnip.Windows.Controls
+namespace FalloutSnip.Windows.Controls
 {
 
     #region VirtualListView Delegates

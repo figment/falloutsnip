@@ -1,4 +1,4 @@
-#
+﻿#
 # List Items Plugin
 #
 #   Create a console compliant script which lists all items in the plugin
@@ -11,8 +11,8 @@
 #
 from shared.util import *
 import System
-import TESVSnip.Domain
-from TESVSnip.Domain.Model import BaseRecord, Record, Plugin, SubRecord, GroupRecord
+import FalloutSnip.Domain
+from FalloutSnip.Domain.Model import BaseRecord, Record, Plugin, SubRecord, GroupRecord
 from System import Action, Func, Predicate, TimeSpan
 from System.Diagnostics import Stopwatch
 	
@@ -50,11 +50,11 @@ def generateItemList(records):
 
 if __name__ == '<module>':
 
-	import TESVSnip
-	class ScriptPlugin(TESVSnip.UI.Services.PluginBase):
+	import FalloutSnip
+	class ScriptPlugin(FalloutSnip.UI.Services.PluginBase):
 
 		def Execute(self, recs):
-			from TESVSnip.UI.Hosting import ScriptSupport
+			from FalloutSnip.UI.Hosting import ScriptSupport
 			from System.Drawing import SystemColors, Color
 			
 			sw = Stopwatch.StartNew()
@@ -75,7 +75,7 @@ if __name__ == '<module>':
 					return False
 			return True
 
-	TESVSnip.UI.Services.PluginStore.AddPlugins(
+	FalloutSnip.UI.Services.PluginStore.AddPlugins(
 		[ ScriptPlugin("listitems", "List &Item Script", supportSelection=True, supportGlobal=True) 
 		]
 	)

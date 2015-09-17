@@ -1,4 +1,4 @@
-namespace TESVSnip.Framework.Services
+namespace FalloutSnip.Framework.Services
 {
     public struct FontLangInfo
     {

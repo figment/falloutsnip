@@ -670,7 +670,7 @@
     <value>hexBox1</value>
   </data>
   <data name="&gt;&gt;hexBox1.Type" xml:space="preserve">
-    <value>Be.Windows.Forms.HexBox, TESVSnip, Version=4.2.4450.237, Culture=neutral, PublicKeyToken=null</value>
+    <value>Be.Windows.Forms.HexBox, FalloutSnip, Version=4.2.4450.237, Culture=neutral, PublicKeyToken=null</value>
   </data>
   <data name="&gt;&gt;hexBox1.Parent" xml:space="preserve">
     <value>$this</value>

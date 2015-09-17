@@ -1,4 +1,4 @@
-﻿namespace TESVSnip.UI.ObjectControls
+﻿namespace FalloutSnip.UI.ObjectControls
 {
     using System;
     using System.Drawing;
@@ -8,9 +8,9 @@
     using System.Windows.Forms;
 
     using Domain.Data.Structure;
-    using TESVSnip.Domain.Model;
-    using TESVSnip.Framework.Collections;
-    using TESVSnip.UI.RecordControls;
+    using FalloutSnip.Domain.Model;
+    using FalloutSnip.Framework.Collections;
+    using FalloutSnip.UI.RecordControls;
 
     public partial class SubrecordEditor : UserControl
     {
@@ -69,7 +69,7 @@
                 return;
             }
 
-            // warn user about data corruption.  But this may be case of fixing using tesvsnip to fix corruption so still allow
+            // warn user about data corruption.  But this may be case of fixing using falloutsnip to fix corruption so still allow
             if (this.strWarnOnSave != null)
             {
                 if (DialogResult.Yes

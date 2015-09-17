@@ -1,6 +1,6 @@
-﻿using TESVSnip.Domain.Data;
+﻿using FalloutSnip.Domain.Data;
 
-namespace TESVSnip.UI.ObjectControls
+namespace FalloutSnip.UI.ObjectControls
 {
     using System;
     using System.Collections.Generic;
@@ -15,16 +15,16 @@ namespace TESVSnip.UI.ObjectControls
     using BrightIdeasSoftware;
 
     using Domain.Data.Structure;
-    using TESVSnip.Domain.Model;
-    using TESVSnip.Framework.Collections;
-    using TESVSnip.Properties;
-    using TESVSnip.UI.Docking;
-    using TESVSnip.UI.Forms;
+    using FalloutSnip.Domain.Model;
+    using FalloutSnip.Framework.Collections;
+    using FalloutSnip.Properties;
+    using FalloutSnip.UI.Docking;
+    using FalloutSnip.UI.Forms;
 
     using WeifenLuo.WinFormsUI.Docking;
 
-    using Settings = TESVSnip.Properties.Settings;
-    using TypeConverter = TESVSnip.Framework.TypeConverter;
+    using Settings = FalloutSnip.Properties.Settings;
+    using TypeConverter = FalloutSnip.Framework.TypeConverter;
 
     public partial class RecordSearch : UserControl, ISupportInitialize
     {
@@ -441,7 +441,7 @@ namespace TESVSnip.UI.ObjectControls
         /// <param name="ctx">
         /// </param>
         /// <returns>
-        /// The System.Collections.Generic.ICollection`1[T -&gt; TESVSnip.Model.Record].
+        /// The System.Collections.Generic.ICollection`1[T -&gt; FalloutSnip.Model.Record].
         /// </returns>
         private ICollection<Record> PerformSearch(SearchSettings ctx)
         {
@@ -946,7 +946,7 @@ namespace TESVSnip.UI.ObjectControls
             var array = e.ClickedItem.Tag as object[];
             if (array != null && array.Length == 2)
             {
-                int count = TESVSnip.Domain.Services.Spells.CopyRecordsTo(array[0] as BaseRecord[], array[1] as IGroupRecord);
+                int count = FalloutSnip.Domain.Services.Spells.CopyRecordsTo(array[0] as BaseRecord[], array[1] as IGroupRecord);
             }
         }
 
@@ -1153,7 +1153,7 @@ namespace TESVSnip.UI.ObjectControls
                 var scs = this.toolStripIncrSelectCriteria.Tag as SearchCriteriaSettings;
                 if (scs != null && !string.IsNullOrEmpty(scs.Type))
                 {
-                    rec = TESVSnip.Domain.Data.DomainDefinition.GetFirstRecordOfType(scs.Type);
+                    rec = FalloutSnip.Domain.Data.DomainDefinition.GetFirstRecordOfType(scs.Type);
                 }
             }
             else
@@ -1161,7 +1161,7 @@ namespace TESVSnip.UI.ObjectControls
                 var recType = this.toolStripIncrFindTypeFilter.SelectedItem as string;
                 if (!string.IsNullOrEmpty(recType))
                 {
-                    rec = TESVSnip.Domain.Data.DomainDefinition.GetFirstRecordOfType(recType);
+                    rec = FalloutSnip.Domain.Data.DomainDefinition.GetFirstRecordOfType(recType);
                 }
             }
 

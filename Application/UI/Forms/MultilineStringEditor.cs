@@ -1,4 +1,4 @@
-﻿namespace TESVSnip.UI.Forms
+﻿namespace FalloutSnip.UI.Forms
 {
     using System;
     using System.Windows.Forms;

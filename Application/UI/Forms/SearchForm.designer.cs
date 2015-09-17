@@ -1,4 +1,4 @@
-namespace TESVSnip {
+namespace FalloutSnip {
     partial class SearchForm {
         /// <summary>
         /// Required designer variable.

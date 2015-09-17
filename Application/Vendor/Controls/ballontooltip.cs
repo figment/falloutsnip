@@ -7,7 +7,7 @@ using System.Runtime.InteropServices;
 using System.Windows.Forms;
 using System.Windows.Forms.Design;
 
-namespace TESVSnip.Windows.Controls
+namespace FalloutSnip.Windows.Controls
 {
     /// <summary>
     /// BallonToolTip

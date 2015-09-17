@@ -1,4 +1,4 @@
-﻿namespace TESVSnip.UI.ObjectControls
+﻿namespace FalloutSnip.UI.ObjectControls
 {
     partial class SubrecordEditor
     {

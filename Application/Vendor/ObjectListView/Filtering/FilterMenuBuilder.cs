@@ -31,7 +31,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Windows.Forms;
-using TESVSnip.Properties;
+using FalloutSnip.Properties;
 
 namespace BrightIdeasSoftware
 {

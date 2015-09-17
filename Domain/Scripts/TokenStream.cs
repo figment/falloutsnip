@@ -1,4 +1,4 @@
-namespace TESVSnip.Domain.Scripts
+namespace FalloutSnip.Domain.Scripts
 {
     using System;
     using System.Collections.Generic;

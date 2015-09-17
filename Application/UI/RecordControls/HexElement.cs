@@ -1,4 +1,4 @@
-﻿namespace TESVSnip.UI.RecordControls
+﻿namespace FalloutSnip.UI.RecordControls
 {
     using System;
     using System.Globalization;
@@ -7,8 +7,8 @@
 
     using Be.Windows.Forms;
 
-    using TESVSnip.Framework;
-    using TESVSnip.UI.Forms;
+    using FalloutSnip.Framework;
+    using FalloutSnip.UI.Forms;
 
     internal partial class HexElement : BaseElement
     {

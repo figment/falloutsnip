@@ -136,7 +136,7 @@
     <value>pluginTreeControl</value>
   </data>
   <data name="&gt;&gt;pluginTreeControl.Type" xml:space="preserve">
-    <value>TESVSnip.ObjectControls.PluginTreeView, TESVSnip, Version=3.4.4408.1, Culture=neutral, PublicKeyToken=null</value>
+    <value>FalloutSnip.ObjectControls.PluginTreeView, FalloutSnip, Version=3.4.4408.1, Culture=neutral, PublicKeyToken=null</value>
   </data>
   <data name="&gt;&gt;pluginTreeControl.Parent" xml:space="preserve">
     <value>$this</value>

@@ -4,9 +4,9 @@
 //TODO: End function call on ')'
 //TODO: ModPCMiscStat
 
-using TESVSnip.Domain.Data.Structure.Xml;
+using FalloutSnip.Domain.Data.Structure.Xml;
 
-namespace TESVSnip.Domain.Scripts
+namespace FalloutSnip.Domain.Scripts
 {
     using System;
     using System.Collections.Generic;
@@ -16,10 +16,10 @@ namespace TESVSnip.Domain.Scripts
     using System.Xml;
 
     using Data.Structure;
-    using TESVSnip.Domain.Model;
-    using TESVSnip.Domain.Services;
-    using TESVSnip.Framework;
-    using TESVSnip.Framework.Services;
+    using FalloutSnip.Domain.Model;
+    using FalloutSnip.Domain.Services;
+    using FalloutSnip.Framework;
+    using FalloutSnip.Framework.Services;
 
     public static class ScriptCompiler
     {

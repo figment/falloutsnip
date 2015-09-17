@@ -4,15 +4,15 @@ using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Windows.Forms;
-using TESVSnip.Domain.Data.Structure;
-using TESVSnip.Domain.Model;
-using TESVSnip.Domain.Scripts;
-using TESVSnip.Framework;
-using TESVSnip.Framework.Services;
-using TESVSnip.Properties;
-using TESVSnip.UI.Rendering.Extensions;
+using FalloutSnip.Domain.Data.Structure;
+using FalloutSnip.Domain.Model;
+using FalloutSnip.Domain.Scripts;
+using FalloutSnip.Framework;
+using FalloutSnip.Framework.Services;
+using FalloutSnip.Properties;
+using FalloutSnip.UI.Rendering.Extensions;
 
-namespace TESVSnip.UI.Rendering.Extensions
+namespace FalloutSnip.UI.Rendering.Extensions
 {
     static class StringRenderer
     {
@@ -526,7 +526,7 @@ namespace TESVSnip.UI.Rendering.Extensions
                                         int len = TypeConverter.h2s(recdata[offset], recdata[offset + 1]);
                                         if (!sselem.notininfo)
                                         {
-                                            s.Append(TESVSnip.Framework.Services.Encoding.Instance.GetString(recdata, offset + 2, len));
+                                            s.Append(FalloutSnip.Framework.Services.Encoding.Instance.GetString(recdata, offset + 2, len));
                                         }
 
                                         offset += 2 + len;
@@ -538,7 +538,7 @@ namespace TESVSnip.UI.Rendering.Extensions
                                         int len = TypeConverter.h2si(recdata[offset], recdata[offset + 1], recdata[offset + 2], recdata[offset + 3]);
                                         if (!sselem.notininfo)
                                         {
-                                            s.Append(TESVSnip.Framework.Services.Encoding.Instance.GetString(recdata, offset + 4, len));
+                                            s.Append(FalloutSnip.Framework.Services.Encoding.Instance.GetString(recdata, offset + 4, len));
                                         }
 
                                         offset += 4 + len;
@@ -593,7 +593,7 @@ namespace TESVSnip.UI.Rendering.Extensions
                                     {
                                         if (!sselem.notininfo)
                                         {
-                                            s.Append(TESVSnip.Framework.Services.Encoding.Instance.GetString(recdata, offset, 4));
+                                            s.Append(FalloutSnip.Framework.Services.Encoding.Instance.GetString(recdata, offset, 4));
                                         }
 
                                         offset += 4;

@@ -1,4 +1,4 @@
-﻿namespace TESVSnip.TranslateUI
+﻿namespace FalloutSnip.TranslateUI
 {
     using System.Globalization;
     using System.Resources;

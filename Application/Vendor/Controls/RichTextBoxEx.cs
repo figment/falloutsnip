@@ -147,7 +147,7 @@ namespace RichTextBoxLinks
         {
             get
             {
-                //if (!global::TESVSnip.Properties.Settings.Default.UseMsftEdit)
+                //if (!global::FalloutSnip.Properties.Settings.Default.UseMsftEdit)
                 //    return base.CreateParams;
 
                 if (moduleHandle == IntPtr.Zero)

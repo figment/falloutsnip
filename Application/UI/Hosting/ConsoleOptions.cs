@@ -5,7 +5,7 @@ using System.Windows.Media;
 using ICSharpCode.AvalonEdit;
 using PythonConsoleControl;
 
-namespace TESVSnip.UI.Hosting
+namespace FalloutSnip.UI.Hosting
 {
     public class ConsoleOptions
     {

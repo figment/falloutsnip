@@ -1,4 +1,4 @@
-#
+﻿#
 # Extract NPC Example
 #
 #   Extract NPCs from Plugins
@@ -6,8 +6,8 @@
 from shared.util import *
 
 import System
-import TESVSnip.Domain
-from TESVSnip.Domain.Model import BaseRecord, Record, Plugin, SubRecord, GroupRecord
+import FalloutSnip.Domain
+from FalloutSnip.Domain.Model import BaseRecord, Record, Plugin, SubRecord, GroupRecord
 from System import TimeSpan, UInt32
 from System.Diagnostics import Stopwatch
 
@@ -16,7 +16,7 @@ creatureKYWDs = (0x0001397A, 0x00013798, 0x00013797, 0x00013795) #0x00013796 (un
 def getNPCRaces(plugins):
 	""" Get List of NPC Races.  Basically exclude the creature keywords
 	"""
-	from TESVSnip.Domain.Data.Structure import ElementValueType
+	from FalloutSnip.Domain.Data.Structure import ElementValueType
 	result = []
 	for plugin in plugins:
 		races = plugin.GetRecordList('RACE')
@@ -37,7 +37,7 @@ def getNPCRaces(plugins):
 def getNonCreatureNPCs(plugins):
 	""" Get List of NPC Races.  Basically exclude the creature keywords
 	"""
-	from TESVSnip.Domain.Data.Structure import ElementValueType
+	from FalloutSnip.Domain.Data.Structure import ElementValueType
 	result = []
 	for plugin in plugins:
 		races = plugin.GetRecordList('NPC_')
@@ -57,9 +57,9 @@ def getNonCreatureNPCs(plugins):
 	return result
 	
 def copyRecords(records):
-	import TESVSnip.Domain
+	import FalloutSnip.Domain
 	from shared.SelectItem import SelectItem
-	GetPluginFromNode = TESVSnip.Domain.Spells.GetPluginFromNode
+	GetPluginFromNode = FalloutSnip.Domain.Spells.GetPluginFromNode
 	skyrim = __plugins__['skyrim.esm']
 	if not skyrim:
 		print 'ERROR: Skyrim.esm not found'
@@ -69,18 +69,18 @@ def copyRecords(records):
 	p = newPlugin()
 	#reclist
 	for rec in records:
-		TESVSnip.Domain.Spells.CopyRecordsTo(plugin.GetRecordList('NPC_'), p, override = True)
+		FalloutSnip.Domain.Spells.CopyRecordsTo(plugin.GetRecordList('NPC_'), p, override = True)
 		pass
 	return p
 	
 if __name__ == '<module>':
-	import TESVSnip
+	import FalloutSnip
 	
-	class ScriptPlugin(TESVSnip.UI.Services.PluginBase):
+	class ScriptPlugin(FalloutSnip.UI.Services.PluginBase):
 		def Execute(self, recs):
-			from TESVSnip.UI.Hosting import ScriptSupport
+			from FalloutSnip.UI.Hosting import ScriptSupport
 			from System.Drawing import SystemColors, Color
-			from TESVSnip.UI.Hosting import ScriptSupport
+			from FalloutSnip.UI.Hosting import ScriptSupport
 		
 			sw = Stopwatch.StartNew()
 			print getNPCRaces(recs)
@@ -97,4 +97,4 @@ if __name__ == '<module>':
 					return False
 			return True
 		
-	TESVSnip.UI.Services.PluginStore.AddPlugins([ScriptPlugin("extract.npc", "&Extract NPCS", supportSelection=True, supportGlobal=True)])
+	FalloutSnip.UI.Services.PluginStore.AddPlugins([ScriptPlugin("extract.npc", "&Extract NPCS", supportSelection=True, supportGlobal=True)])

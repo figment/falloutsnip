@@ -1,6 +1,6 @@
-namespace TESVSnip.Domain.Data.Strings
+namespace FalloutSnip.Domain.Data.Strings
 {
-    using TESVSnip.Framework.Collections;
+    using FalloutSnip.Framework.Collections;
 
     /// <summary>
     /// The localized string dict.

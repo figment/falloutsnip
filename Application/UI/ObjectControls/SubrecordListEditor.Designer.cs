@@ -1,4 +1,4 @@
-﻿namespace TESVSnip.UI.ObjectControls
+﻿namespace FalloutSnip.UI.ObjectControls
 {
     partial class SubrecordListEditor
     {
@@ -30,7 +30,7 @@
         {
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(SubrecordListEditor));
             this.subrecordPanel = new System.Windows.Forms.Panel();
-            this.listSubrecord = new TESVSnip.Windows.Controls.ObjectBindingListView();
+            this.listSubrecord = new FalloutSnip.Windows.Controls.ObjectBindingListView();
             this.toolStripSubRecord = new System.Windows.Forms.ToolStrip();
             this.toolStripInsertRecord = new System.Windows.Forms.ToolStripDropDownButton();
             this.toolStripDeleteRecord = new System.Windows.Forms.ToolStripButton();
@@ -108,7 +108,7 @@
             // toolStripInsertRecord
             // 
             this.toolStripInsertRecord.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.toolStripInsertRecord.Image = global::TESVSnip.Properties.Resources.insertcell1;
+            this.toolStripInsertRecord.Image = global::FalloutSnip.Properties.Resources.insertcell1;
             resources.ApplyResources(this.toolStripInsertRecord, "toolStripInsertRecord");
             this.toolStripInsertRecord.Name = "toolStripInsertRecord";
             this.toolStripInsertRecord.Padding = new System.Windows.Forms.Padding(0, 0, 1, 0);
@@ -118,7 +118,7 @@
             // toolStripDeleteRecord
             // 
             this.toolStripDeleteRecord.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.toolStripDeleteRecord.Image = global::TESVSnip.Properties.Resources.deletecell;
+            this.toolStripDeleteRecord.Image = global::FalloutSnip.Properties.Resources.deletecell;
             resources.ApplyResources(this.toolStripDeleteRecord, "toolStripDeleteRecord");
             this.toolStripDeleteRecord.Name = "toolStripDeleteRecord";
             this.toolStripDeleteRecord.Click += new System.EventHandler(this.toolStripDeleteRecord_Click);
@@ -131,7 +131,7 @@
             // toolStripMoveRecordUp
             // 
             this.toolStripMoveRecordUp.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.toolStripMoveRecordUp.Image = global::TESVSnip.Properties.Resources.move_task_up;
+            this.toolStripMoveRecordUp.Image = global::FalloutSnip.Properties.Resources.move_task_up;
             resources.ApplyResources(this.toolStripMoveRecordUp, "toolStripMoveRecordUp");
             this.toolStripMoveRecordUp.Name = "toolStripMoveRecordUp";
             this.toolStripMoveRecordUp.Click += new System.EventHandler(this.toolStripMoveRecordUp_Click);
@@ -139,7 +139,7 @@
             // toolStripMoveRecordDown
             // 
             this.toolStripMoveRecordDown.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.toolStripMoveRecordDown.Image = global::TESVSnip.Properties.Resources.move_task_down;
+            this.toolStripMoveRecordDown.Image = global::FalloutSnip.Properties.Resources.move_task_down;
             resources.ApplyResources(this.toolStripMoveRecordDown, "toolStripMoveRecordDown");
             this.toolStripMoveRecordDown.Name = "toolStripMoveRecordDown";
             this.toolStripMoveRecordDown.Click += new System.EventHandler(this.toolStripMoveRecordDown_Click);
@@ -152,7 +152,7 @@
             // toolStripEditSubrecord
             // 
             this.toolStripEditSubrecord.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.toolStripEditSubrecord.Image = global::TESVSnip.Properties.Resources.editclear;
+            this.toolStripEditSubrecord.Image = global::FalloutSnip.Properties.Resources.editclear;
             resources.ApplyResources(this.toolStripEditSubrecord, "toolStripEditSubrecord");
             this.toolStripEditSubrecord.Name = "toolStripEditSubrecord";
             this.toolStripEditSubrecord.Padding = new System.Windows.Forms.Padding(2, 0, 0, 0);
@@ -161,7 +161,7 @@
             // toolStripEditSubrecordHex
             // 
             this.toolStripEditSubrecordHex.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.toolStripEditSubrecordHex.Image = global::TESVSnip.Properties.Resources.xdays;
+            this.toolStripEditSubrecordHex.Image = global::FalloutSnip.Properties.Resources.xdays;
             resources.ApplyResources(this.toolStripEditSubrecordHex, "toolStripEditSubrecordHex");
             this.toolStripEditSubrecordHex.Name = "toolStripEditSubrecordHex";
             this.toolStripEditSubrecordHex.Click += new System.EventHandler(this.toolStripEditSubrecordHex_Click);
@@ -170,7 +170,7 @@
             // 
             this.toolStripPasteSubrecord.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
             this.toolStripPasteSubrecord.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.toolStripPasteSubrecord.Image = global::TESVSnip.Properties.Resources.Paste;
+            this.toolStripPasteSubrecord.Image = global::FalloutSnip.Properties.Resources.Paste;
             resources.ApplyResources(this.toolStripPasteSubrecord, "toolStripPasteSubrecord");
             this.toolStripPasteSubrecord.Name = "toolStripPasteSubrecord";
             this.toolStripPasteSubrecord.Click += new System.EventHandler(this.toolStripPasteSubrecord_Click);
@@ -179,7 +179,7 @@
             // 
             this.toolStripCopySubrecord.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
             this.toolStripCopySubrecord.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.toolStripCopySubrecord.Image = global::TESVSnip.Properties.Resources.Copy;
+            this.toolStripCopySubrecord.Image = global::FalloutSnip.Properties.Resources.Copy;
             resources.ApplyResources(this.toolStripCopySubrecord, "toolStripCopySubrecord");
             this.toolStripCopySubrecord.Name = "toolStripCopySubrecord";
             this.toolStripCopySubrecord.Click += new System.EventHandler(this.toolStripCopySubrecord_Click);

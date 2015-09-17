@@ -376,7 +376,7 @@
     <value>PluginTree</value>
   </data>
   <data name="&gt;&gt;PluginTree.Type" xml:space="preserve">
-    <value>TESVSnip.UI.Controls.CustomTreeView, TESVSnip, Version=4.5.5125.8, Culture=neutral, PublicKeyToken=null</value>
+    <value>FalloutSnip.UI.Controls.CustomTreeView, FalloutSnip, Version=4.5.5125.8, Culture=neutral, PublicKeyToken=null</value>
   </data>
   <data name="&gt;&gt;PluginTree.Parent" xml:space="preserve">
     <value>$this</value>

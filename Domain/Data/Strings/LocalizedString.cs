@@ -1,4 +1,4 @@
-namespace TESVSnip.Domain.Data.Strings
+namespace FalloutSnip.Domain.Data.Strings
 {
     using System.ComponentModel;
     using System.Xml.Serialization;

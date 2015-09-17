@@ -1,8 +1,8 @@
 ﻿using System.Text.RegularExpressions;
-using TESVSnip.Domain.Data.Structure.Xml;
-using TESVSnip.UI.Services;
+using FalloutSnip.Domain.Data.Structure.Xml;
+using FalloutSnip.UI.Services;
 
-namespace TESVSnip.UI.Forms
+namespace FalloutSnip.UI.Forms
 {
     using System;
     using System.Collections.Generic;
@@ -15,14 +15,14 @@ namespace TESVSnip.UI.Forms
     using System.Xml.Serialization;
 
     using Domain.Data.Structure;
-    using TESVSnip.Domain.Data.Strings;
-    using TESVSnip.Domain.Model;
-    using TESVSnip.Domain.Scripts;
-    using TESVSnip.Domain.Services;
-    using TESVSnip.Framework;
-    using TESVSnip.Properties;
+    using FalloutSnip.Domain.Data.Strings;
+    using FalloutSnip.Domain.Model;
+    using FalloutSnip.Domain.Scripts;
+    using FalloutSnip.Domain.Services;
+    using FalloutSnip.Framework;
+    using FalloutSnip.Properties;
 
-    using Settings = TESVSnip.Properties.Settings;
+    using Settings = FalloutSnip.Properties.Settings;
 
     /// <summary>
     /// This file contains the miscellaneous spells for the main form.
@@ -588,7 +588,7 @@ namespace TESVSnip.UI.Forms
                 dlg.CheckPathExists = true;
                 dlg.AddExtension = true;
                 dlg.OverwritePrompt = true;
-                dlg.FileName = string.Format("{0}_{1}.xml", Path.GetFileNameWithoutExtension(plugin.Name), TESVSnip.Domain.Properties.Settings.Default.LocalizationName);
+                dlg.FileName = string.Format("{0}_{1}.xml", Path.GetFileNameWithoutExtension(plugin.Name), FalloutSnip.Domain.Properties.Settings.Default.LocalizationName);
                 if (dlg.ShowDialog(this) == DialogResult.OK)
                 {
                     var xs = new XmlSerializer(typeof (LocalizedStrings));
@@ -939,7 +939,7 @@ namespace TESVSnip.UI.Forms
                     dlg.CheckPathExists = true;
                     dlg.CheckFileExists = true;
                     dlg.AddExtension = true;
-                    dlg.FileName = string.Format("{0}_{1}.xml", Path.GetFileNameWithoutExtension(plugin.Name), TESVSnip.Domain.Properties.Settings.Default.LocalizationName);
+                    dlg.FileName = string.Format("{0}_{1}.xml", Path.GetFileNameWithoutExtension(plugin.Name), FalloutSnip.Domain.Properties.Settings.Default.LocalizationName);
                     if (dlg.ShowDialog(this) == DialogResult.OK)
                     {
                         var xs = new XmlSerializer(typeof (LocalizedStrings));

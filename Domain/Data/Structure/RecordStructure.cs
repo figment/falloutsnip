@@ -4,9 +4,9 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Xml.Serialization;
-using TESVSnip.Domain.Data.Structure.Xml;
+using FalloutSnip.Domain.Data.Structure.Xml;
 
-namespace TESVSnip.Domain.Data.Structure
+namespace FalloutSnip.Domain.Data.Structure
 {
     public class RecordStructure
     {
@@ -43,7 +43,7 @@ namespace TESVSnip.Domain.Data.Structure
         ///     The list.
         /// </param>
         /// <returns>
-        ///     The System.Collections.Generic.List`1[T -&gt; TESVSnip.SubrecordStructure].
+        ///     The System.Collections.Generic.List`1[T -&gt; FalloutSnip.SubrecordStructure].
         /// </returns>
         private static List<SubrecordStructure> BuildSubrecordStructure(IEnumerable<SubrecordBase> list)
         {

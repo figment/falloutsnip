@@ -1,4 +1,4 @@
-#
+﻿#
 # Required imports by all scripts
 #
 import os, sys
@@ -7,8 +7,8 @@ sys.path.append(binpath)
 sys.path.append(os.getcwd() + r'\..\conf\plugins')
 
 import clr
-#clr.AddReferenceByPartialName("TESVSnip.Domain")
-clr.AddReferenceToFileAndPath(binpath + 'TESVSnip.Framework.dll')
-clr.AddReferenceToFileAndPath(binpath + 'TESVSnip.Domain.dll')
+#clr.AddReferenceByPartialName("FalloutSnip.Domain")
+clr.AddReferenceToFileAndPath(binpath + 'FalloutSnip.Framework.dll')
+clr.AddReferenceToFileAndPath(binpath + 'FalloutSnip.Domain.dll')
 clr.AddReferenceByPartialName("System.Core")
-#import TESVSnip.Framework, TESVSnip.Domain
+#import FalloutSnip.Framework, FalloutSnip.Domain

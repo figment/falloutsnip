@@ -1,6 +1,6 @@
-﻿using TESVSnip.UI.Services;
+﻿using FalloutSnip.UI.Services;
 
-namespace TESVSnip.UI.ObjectControls
+namespace FalloutSnip.UI.ObjectControls
 {
     using System;
     using System.Collections;
@@ -14,14 +14,14 @@ namespace TESVSnip.UI.ObjectControls
 
     using OC.Windows.Forms;
 
-    using TESVSnip.Domain.Model;
-    using TESVSnip.Properties;
-    using TESVSnip.UI.Docking;
-    using TESVSnip.UI.Forms;
+    using FalloutSnip.Domain.Model;
+    using FalloutSnip.Properties;
+    using FalloutSnip.UI.Docking;
+    using FalloutSnip.UI.Forms;
 
     using WeifenLuo.WinFormsUI.Docking;
 
-    using Settings = TESVSnip.Properties.Settings;
+    using Settings = FalloutSnip.Properties.Settings;
 
     public partial class PluginTreeView : UserControl, ISupportInitialize
     {
@@ -236,7 +236,7 @@ namespace TESVSnip.UI.ObjectControls
 
         private bool IsValidNode(BaseRecord item)
         {
-            var p = TESVSnip.Domain.Services.Spells.GetPluginFromNode(item);
+            var p = FalloutSnip.Domain.Services.Spells.GetPluginFromNode(item);
             return (p.Parent != null);
         }
 
@@ -319,7 +319,7 @@ namespace TESVSnip.UI.ObjectControls
                     dstNode.AddRecord(br);
                     if (asNew)
                     {
-                        TESVSnip.Domain.Services.Spells.giveRecordNewFormID((Record)br, false);
+                        FalloutSnip.Domain.Services.Spells.giveRecordNewFormID((Record)br, false);
                     }
 
                     this.RebuildSelection();
@@ -345,7 +345,7 @@ namespace TESVSnip.UI.ObjectControls
                         node.AddRecord(br);
                         if (asNew)
                         {
-                            TESVSnip.Domain.Services.Spells.giveRecordNewFormID((Record)br, false);
+                            FalloutSnip.Domain.Services.Spells.giveRecordNewFormID((Record)br, false);
                         }
                     }
 
@@ -912,7 +912,7 @@ namespace TESVSnip.UI.ObjectControls
                 {
                     var src = nodes[0] as BaseRecord[];
                     var dst = nodes[1] as IGroupRecord;
-                    TESVSnip.Domain.Services.Spells.CopyRecordsTo(src, dst);
+                    FalloutSnip.Domain.Services.Spells.CopyRecordsTo(src, dst);
                 }
             }
             catch

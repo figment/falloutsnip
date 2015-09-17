@@ -37,7 +37,7 @@ using System.Windows.Forms;
 
 namespace BrightIdeasSoftware
 {
-    using TESVSnip.Framework.Persistence;
+    using FalloutSnip.Framework.Persistence;
 
     /// <summary>
     /// An OLVColumn knows which aspect of an object it should present.

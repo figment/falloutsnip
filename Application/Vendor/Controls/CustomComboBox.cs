@@ -4,7 +4,7 @@ using System.Drawing;
 using System.Security.Permissions;
 using System.Windows.Forms;
 
-namespace TESVSnip.Windows.Controls
+namespace FalloutSnip.Windows.Controls
 {
     /// <summary>
     /// <c>CustomComboBox</c> is an extension of <c>ComboBox</c> which provides drop-down customization.

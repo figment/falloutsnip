@@ -4,7 +4,7 @@ using System.IO;
 using System.Reflection;
 using System.Runtime.InteropServices;
 
-namespace TESVSnip.Framework.Services
+namespace FalloutSnip.Framework.Services
 {
     public class Platform
     {

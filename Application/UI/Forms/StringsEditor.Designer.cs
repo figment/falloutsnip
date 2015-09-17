@@ -1,4 +1,4 @@
-﻿namespace TESVSnip.UI.Forms
+﻿namespace FalloutSnip.UI.Forms
 {
     partial class StringsEditor
     {
@@ -45,7 +45,7 @@
             this.cboType = new System.Windows.Forms.ComboBox();
             this.label4 = new System.Windows.Forms.Label();
             this.btnNewItem = new System.Windows.Forms.Button();
-            this.listStrings = new TESVSnip.Windows.Controls.BindingListView();
+            this.listStrings = new FalloutSnip.Windows.Controls.BindingListView();
             this.btnApply = new System.Windows.Forms.Button();
             this.error = new System.Windows.Forms.ErrorProvider(this.components);
             ((System.ComponentModel.ISupportInitialize)(this.error)).BeginInit();
@@ -59,7 +59,7 @@
             // btnAddString
             // 
             resources.ApplyResources(this.btnAddString, "btnAddString");
-            this.btnAddString.Image = global::TESVSnip.Properties.Resources.edit_add;
+            this.btnAddString.Image = global::FalloutSnip.Properties.Resources.edit_add;
             this.btnAddString.Name = "btnAddString";
             this.tip.SetToolTip(this.btnAddString, resources.GetString("btnAddString.ToolTip"));
             this.btnAddString.UseVisualStyleBackColor = true;
@@ -93,7 +93,7 @@
             // btnLookup
             // 
             resources.ApplyResources(this.btnLookup, "btnLookup");
-            this.btnLookup.Image = global::TESVSnip.Properties.Resources.find;
+            this.btnLookup.Image = global::FalloutSnip.Properties.Resources.find;
             this.btnLookup.Name = "btnLookup";
             this.tip.SetToolTip(this.btnLookup, resources.GetString("btnLookup.ToolTip"));
             this.btnLookup.UseVisualStyleBackColor = true;
@@ -102,7 +102,7 @@
             // btnDeleteString
             // 
             resources.ApplyResources(this.btnDeleteString, "btnDeleteString");
-            this.btnDeleteString.Image = global::TESVSnip.Properties.Resources.edit_remove;
+            this.btnDeleteString.Image = global::FalloutSnip.Properties.Resources.edit_remove;
             this.btnDeleteString.Name = "btnDeleteString";
             this.tip.SetToolTip(this.btnDeleteString, resources.GetString("btnDeleteString.ToolTip"));
             this.btnDeleteString.UseVisualStyleBackColor = true;
@@ -143,7 +143,7 @@
             // btnNewItem
             // 
             resources.ApplyResources(this.btnNewItem, "btnNewItem");
-            this.btnNewItem.Image = global::TESVSnip.Properties.Resources.insertcell;
+            this.btnNewItem.Image = global::FalloutSnip.Properties.Resources.insertcell;
             this.btnNewItem.Name = "btnNewItem";
             this.btnNewItem.UseVisualStyleBackColor = true;
             this.btnNewItem.Click += new System.EventHandler(this.btnNewItem_Click);

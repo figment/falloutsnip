@@ -6,7 +6,7 @@ using System.Diagnostics;
 using System.Xml.Schema;
 using System.Xml.Serialization;
 
-namespace TESVSnip.Domain.Data.Structure.Xml
+namespace FalloutSnip.Domain.Data.Structure.Xml
 {
     /// <summary>
     ///     The records.

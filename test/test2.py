@@ -1,12 +1,12 @@
-import startup
+﻿import startup
 import shared.util as util
 gameDir = util.getGameDirectory()
 
 import System
 from System.Diagnostics import Stopwatch
 from System import TimeSpan
-import TESVSnip.Domain
-from TESVSnip.Domain.Services import Spells
+import FalloutSnip.Domain
+from FalloutSnip.Domain.Services import Spells
 
 import markup
 

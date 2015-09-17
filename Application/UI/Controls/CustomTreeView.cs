@@ -1,4 +1,4 @@
-namespace TESVSnip.UI.Controls
+namespace FalloutSnip.UI.Controls
 {
     using System;
     using System.Collections;
@@ -8,7 +8,7 @@ namespace TESVSnip.UI.Controls
 
     using BrightIdeasSoftware;
 
-    using TESVSnip.Domain.Model;
+    using FalloutSnip.Domain.Model;
 
     internal class CustomTreeView : TreeListView
     {

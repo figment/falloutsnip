@@ -1,4 +1,4 @@
-﻿namespace TESVSnip.UI.Forms
+﻿namespace FalloutSnip.UI.Forms
 {
     using System;
     using System.Collections;
@@ -10,8 +10,8 @@
     using BrightIdeasSoftware;
 
     using Domain.Data.Structure;
-    using TESVSnip.Domain.Model;
-    using TESVSnip.Properties;
+    using FalloutSnip.Domain.Model;
+    using FalloutSnip.Properties;
 
     internal partial class SearchFilterBasic : Form
     {
@@ -193,7 +193,7 @@
 
         private void InitializeComboBox()
         {
-            var records = TESVSnip.Domain.Data.DomainDefinition.LoadedDomains().SelectMany(domain=>
+            var records = FalloutSnip.Domain.Data.DomainDefinition.LoadedDomains().SelectMany(domain=>
                 domain.Records.Values.Select(x => new ComboBoxItem<RecordStructure> { Name = string.Format("{0}: {1}", x.name, x.description), Value = x })
                 .Distinct().OrderBy(x => x.Name)).ToArray();
             this.cboRecordType.Items.Clear();
@@ -420,7 +420,7 @@
                 try
                 {
                     RecordStructure rec = null;
-                    foreach (var domain in TESVSnip.Domain.Data.DomainDefinition.LoadedDomains())
+                    foreach (var domain in FalloutSnip.Domain.Data.DomainDefinition.LoadedDomains())
                         if (domain.Records.TryGetValue(settings.Type, out rec))
                             break;
                     if (rec != null)

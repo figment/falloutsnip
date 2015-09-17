@@ -3,7 +3,7 @@ using System.ComponentModel;
 using System.Diagnostics;
 using System.Xml.Serialization;
 
-namespace TESVSnip.Domain.Data.Structure.Xml
+namespace FalloutSnip.Domain.Data.Structure.Xml
 {
     [Serializable]
     [DebuggerStepThrough]

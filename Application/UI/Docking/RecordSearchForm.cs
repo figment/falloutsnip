@@ -1,8 +1,8 @@
-﻿namespace TESVSnip.UI.Docking
+﻿namespace FalloutSnip.UI.Docking
 {
     using System;
 
-    using TESVSnip.Domain.Model;
+    using FalloutSnip.Domain.Model;
 
     public partial class RecordSearchForm : BaseDockContent
     {

@@ -1,17 +1,17 @@
 ﻿using System.Collections.Generic;
 using System.Windows.Forms;
 using PythonConsoleControl;
-using TESVSnip.UI.Hosting;
+using FalloutSnip.UI.Hosting;
 
-namespace TESVSnip.UI.Docking
+namespace FalloutSnip.UI.Docking
 {
     using System;
 
-    using TESVSnip.Domain.Model;
+    using FalloutSnip.Domain.Model;
 
     public partial class InterpreterConsole : BaseDockContent
     {
-        private TESVSnip.UI.Hosting.IronPythonConsole pythonConsole;
+        private FalloutSnip.UI.Hosting.IronPythonConsole pythonConsole;
         public InterpreterConsole()
         {
             pythonConsole = new IronPythonConsole();

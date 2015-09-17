@@ -1,4 +1,4 @@
-﻿namespace TESVSnip.Domain.Services
+﻿namespace FalloutSnip.Domain.Services
 {
     using System;
     using System.IO;

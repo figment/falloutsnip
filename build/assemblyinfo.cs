@@ -14,14 +14,14 @@ using System.Resources;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 
-[assembly: AssemblyCompany("TESVSnip")]
-[assembly: AssemblyTitle("TESVSnip (Skyrim Edition) - Version 4.5 (d95610f)")]
+[assembly: AssemblyCompany("FalloutSnip")]
+[assembly: AssemblyTitle("FalloutSnip (Skyrim Edition) - Version 4.5 (d95610f)")]
 [assembly: AssemblyCopyright("Copyright (c) 2014")]
 [assembly: AssemblyTrademark("All Rights Reserved")]
 [assembly: CLSCompliant(false)]
 [assembly: AssemblyDelaySign(false)]
 [assembly: AssemblyVersion("4.5.5141.0")]
 [assembly: AssemblyFileVersion("4.5.5141.0")]
-[assembly: AssemblyInformationalVersion("TESVSnip (Skyrim Edition) - Version 4.5")]
+[assembly: AssemblyInformationalVersion("FalloutSnip (Skyrim Edition) - Version 4.5")]
 
 

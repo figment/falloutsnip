@@ -22,29 +22,29 @@ using System.Xml.Serialization;
 using IronPython.Hosting;
 using JWC;
 using Microsoft.Win32;
-using TESVSnip.Domain.Data;
-using TESVSnip.Domain.Data.Structure;
-using TESVSnip.Domain.Data.Structure.Xml;
-using TESVSnip.Domain.Model;
-using TESVSnip.Domain.Scripts;
-using TESVSnip.Domain.Services;
-using TESVSnip.Framework;
-using TESVSnip.Properties;
-using TESVSnip.TranslateUI;
-using TESVSnip.UI.Docking;
-using TESVSnip.UI.ObjectControls;
-using TESVSnip.UI.Rendering;
-using TESVSnip.UI.Services;
+using FalloutSnip.Domain.Data;
+using FalloutSnip.Domain.Data.Structure;
+using FalloutSnip.Domain.Data.Structure.Xml;
+using FalloutSnip.Domain.Model;
+using FalloutSnip.Domain.Scripts;
+using FalloutSnip.Domain.Services;
+using FalloutSnip.Framework;
+using FalloutSnip.Properties;
+using FalloutSnip.TranslateUI;
+using FalloutSnip.UI.Docking;
+using FalloutSnip.UI.ObjectControls;
+using FalloutSnip.UI.Rendering;
+using FalloutSnip.UI.Services;
 using WeifenLuo.WinFormsUI.Docking;
-using Encoding = TESVSnip.Framework.Services.Encoding;
+using Encoding = FalloutSnip.Framework.Services.Encoding;
 using OpenFileDialog = System.Windows.Forms.OpenFileDialog;
 using SaveFileDialog = System.Windows.Forms.SaveFileDialog;
-using Settings = TESVSnip.Properties.Settings;
+using Settings = FalloutSnip.Properties.Settings;
 using Timer = System.Threading.Timer;
 
 #endregion
 
-namespace TESVSnip.UI.Forms
+namespace FalloutSnip.UI.Forms
 {
     internal partial class MainView : Form
     {
@@ -56,7 +56,7 @@ namespace TESVSnip.UI.Forms
                 RegexOptions.None);
 
         private static object s_clipboard;
-        private static string mruRegKey = "SOFTWARE\\TESVSnip (Skyrim Edition)\\MRU";
+        private static string mruRegKey = "SOFTWARE\\FalloutSnip (Skyrim Edition)\\MRU";
         private readonly SelectionContext Selection;
         private readonly HtmlContent htmlContent = new HtmlContent();
         private readonly MruStripMenu mruMenu;
@@ -177,7 +177,7 @@ namespace TESVSnip.UI.Forms
         {
             string defaultDomain = Properties.Settings.Default.DefaultDomain ?? "Skyrim";
             defaultGameSettingsToolStripMenuItem.DropDownItems.Clear();
-            foreach (var domain in TESVSnip.Domain.Data.DomainDefinition.AllDomains())
+            foreach (var domain in FalloutSnip.Domain.Data.DomainDefinition.AllDomains())
             {
                 var item = new ToolStripMenuItem
                     {
@@ -371,7 +371,7 @@ namespace TESVSnip.UI.Forms
                 var od = System.Windows.Forms.Clipboard.GetDataObject();
                 if (od != null)
                 {
-                    var cliptype = od.GetData("TESVSnip");
+                    var cliptype = od.GetData("FalloutSnip");
                     if (cliptype is string)
                     {
                         return od.GetData(cliptype.ToString());
@@ -406,7 +406,7 @@ namespace TESVSnip.UI.Forms
             if (Settings.Default.UseWindowsClipboard)
             {
                 var od = System.Windows.Forms.Clipboard.GetDataObject();
-                return od != null && od.GetDataPresent("TESVSnip");
+                return od != null && od.GetDataPresent("FalloutSnip");
             }
 
             return Clipboard != null;
@@ -442,7 +442,7 @@ namespace TESVSnip.UI.Forms
                     var ido = new DataObject();
                     var srFormat = value.GetType().FullName;
                     ido.SetData(srFormat, cloneable.Clone());
-                    ido.SetData("TESVSnip", srFormat);
+                    ido.SetData("FalloutSnip", srFormat);
                     System.Windows.Forms.Clipboard.Clear();
                     System.Windows.Forms.Clipboard.SetDataObject(ido, true);
                 }
@@ -1705,7 +1705,7 @@ namespace TESVSnip.UI.Forms
         {
             try
             {
-                TESVSnip.Domain.Data.DomainDefinition.Reload();
+                FalloutSnip.Domain.Data.DomainDefinition.Reload();
 
                 foreach (var rec in PluginList.All.Enumerate(x => x is Record).OfType<Record>())
                 {
@@ -2225,7 +2225,7 @@ namespace TESVSnip.UI.Forms
             {
                 string msg = string.Format(TranslateUiGlobalization.ResManager.GetString("UI_MRU_FileNotExist"),
                                            filename);
-                MessageBox.Show(msg, "Tesvsnip", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show(msg, "FalloutSnip", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 mruMenu.RemoveFile(number);
             }
         }
@@ -2244,7 +2244,7 @@ namespace TESVSnip.UI.Forms
             }
             catch (Exception ex)
             {
-                MessageBox.Show(ex.Message, "Tesvsnip", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show(ex.Message, "FalloutSnip", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
 

@@ -1,4 +1,4 @@
-import startup
+﻿import startup
 import shared.util as util
 gameDir = util.getGameDirectory()
 
@@ -6,7 +6,7 @@ import System
 from System.Diagnostics import Stopwatch
 from System import TimeSpan
 
-import TESVSnip.Domain
+import FalloutSnip.Domain
 
 sw = Stopwatch.StartNew()
 
@@ -15,15 +15,15 @@ includeList = ('RACE', 'NPC_', 'LVLN')
 filter = System.Func[str,bool]( lambda x: x in includeList )
 
 
-plugins = TESVSnip.Domain.Model.PluginList.All
+plugins = FalloutSnip.Domain.Model.PluginList.All
 pluginList = util.loadMasterPluginIndex()
 from System import Random
 rand = Random()
 pluginName = pluginList.items()[ rand.Next(0,len(pluginList)-1) ][0]
-plugins.AddRecord(TESVSnip.Domain.Model.Plugin(gameDir + pluginName, filter))
+plugins.AddRecord(FalloutSnip.Domain.Model.Plugin(gameDir + pluginName, filter))
 
 import ExtractNPCs
-skyrimRaces = TESVSnip.Domain.Model.Plugin(gameDir + 'skyrim.esm', filter)
+skyrimRaces = FalloutSnip.Domain.Model.Plugin(gameDir + 'skyrim.esm', filter)
 records = [skyrimRaces]
 records.extend(plugins.Records)
 races = ExtractNPCs.getNPCRaces(records)
@@ -31,9 +31,9 @@ for race in races:
 	print race
 
 p = util.newPlugin()
-from TESVSnip.Domain.Services import Spells
+from FalloutSnip.Domain.Services import Spells
 
-aRaces = System.Collections.Generic.List[TESVSnip.Domain.Model.BaseRecord](races).ToArray()
+aRaces = System.Collections.Generic.List[FalloutSnip.Domain.Model.BaseRecord](races).ToArray()
 Spells.CopyRecordsTo(aRaces, p, False)
 
 sw.Stop()

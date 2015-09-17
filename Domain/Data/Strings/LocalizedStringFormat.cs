@@ -1,4 +1,4 @@
-namespace TESVSnip.Domain.Data.Strings
+namespace FalloutSnip.Domain.Data.Strings
 {
     /// <summary>
     ///     The localized string format.

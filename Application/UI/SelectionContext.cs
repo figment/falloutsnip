@@ -1,11 +1,11 @@
-namespace TESVSnip.UI
+namespace FalloutSnip.UI
 {
     using System;
     using System.Collections.Generic;
 
     using Domain.Data.Structure;
-    using TESVSnip.Domain.Model;
-    using TESVSnip.Framework;
+    using FalloutSnip.Domain.Model;
+    using FalloutSnip.Framework;
 
     /// <summary>
     /// External state for holding single selection for use with evaluating descriptions and intelligent editors.

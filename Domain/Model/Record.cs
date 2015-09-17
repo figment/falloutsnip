@@ -4,12 +4,12 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Runtime.Serialization;
-using TESVSnip.Domain.Data.Structure;
-using TESVSnip.Domain.Services;
-using TESVSnip.Framework.Collections;
-using TESVSnip.Framework.Persistence;
+using FalloutSnip.Domain.Data.Structure;
+using FalloutSnip.Domain.Services;
+using FalloutSnip.Framework.Collections;
+using FalloutSnip.Framework.Persistence;
 
-namespace TESVSnip.Domain.Model
+namespace FalloutSnip.Domain.Model
 {
     [Persistable(Flags = PersistType.DeclaredOnly)]
     [Serializable]
@@ -47,7 +47,7 @@ namespace TESVSnip.Domain.Model
             this.FixSubrecordOwner();
         }
 
-        internal Record(string name, uint dataSize, BinaryReader recordReader, TESVSnip.Domain.Data.DomainDefinition define)
+        internal Record(string name, uint dataSize, BinaryReader recordReader, FalloutSnip.Domain.Data.DomainDefinition define)
         {
             this.dataSize = dataSize;
 
@@ -428,7 +428,7 @@ namespace TESVSnip.Domain.Model
         ///     Retain raw data instead of converting to more usuable form
         /// </param>
         /// <returns>
-        ///     The System.Collections.Generic.IEnumerable`1[T -&gt; TESVSnip.Element].
+        ///     The System.Collections.Generic.IEnumerable`1[T -&gt; FalloutSnip.Element].
         /// </returns>
         public IEnumerable<Element> EnumerateElements(SubRecord sr, bool rawData)
         {

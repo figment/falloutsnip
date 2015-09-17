@@ -1,16 +1,16 @@
-# NPC Weight manipulator Plugin
+﻿# NPC Weight manipulator Plugin
 #
 #   Enumerate through all NPCs and list/manipulate the weight
 #      some mods like rbs.esp I think have too many fat people
 #
 import shared.required
 import System
-import TESVSnip.Domain
-from TESVSnip.Domain.Model import BaseRecord, Record, Plugin, SubRecord, GroupRecord
+import FalloutSnip.Domain
+from FalloutSnip.Domain.Model import BaseRecord, Record, Plugin, SubRecord, GroupRecord
 from System import Action, Func, Predicate, TimeSpan
 from System.Diagnostics import Stopwatch
 from System.Text.RegularExpressions import Regex
-#from TESVSnip.UI.Hosting import ScriptSupport as ss
+#from FalloutSnip.UI.Hosting import ScriptSupport as ss
 
 reWhite = Regex(r"[\n\t\r]") # can probably use re but user might not have full IronPython
 
@@ -30,7 +30,7 @@ def newPlugin():
 	r.AddRecord(sr)
 	sr = SubRecord()
 	sr.Name = "CNAM";
-	sr.SetData(TESVSnip.Framework.Services.Encoding.Instance.GetBytes("Default\0"))
+	sr.SetData(FalloutSnip.Framework.Services.Encoding.Instance.GetBytes("Default\0"))
 	r.AddRecord(sr)
 	p.AddRecord(r)
 	#__plugins__.AddRecord(p)

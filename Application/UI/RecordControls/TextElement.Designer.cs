@@ -1,4 +1,4 @@
-﻿namespace TESVSnip.UI.RecordControls
+﻿namespace FalloutSnip.UI.RecordControls
 {
     partial class TextElement
     {

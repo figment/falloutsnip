@@ -1,4 +1,4 @@
-﻿namespace TESVSnip.UI.Forms
+﻿namespace FalloutSnip.UI.Forms
 {
     using System;
     using System.Collections;
@@ -8,8 +8,8 @@
     using BrightIdeasSoftware;
 
     using Domain.Data.Structure;
-    using TESVSnip.Domain.Model;
-    using TESVSnip.Properties;
+    using FalloutSnip.Domain.Model;
+    using FalloutSnip.Properties;
 
     internal partial class RecordColumnSelect : Form
     {

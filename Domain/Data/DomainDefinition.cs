@@ -5,15 +5,15 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Xml.Serialization;
-using TESVSnip.Domain.Data.Structure;
-using TESVSnip.Domain.Data.Structure.Xml;
-using TESVSnip.Domain.Properties;
-using TESVSnip.Domain.Services;
-using TESVSnip.Framework.IO;
+using FalloutSnip.Domain.Data.Structure;
+using FalloutSnip.Domain.Data.Structure.Xml;
+using FalloutSnip.Domain.Properties;
+using FalloutSnip.Domain.Services;
+using FalloutSnip.Framework.IO;
 
 #endregion
 
-namespace TESVSnip.Domain.Data
+namespace FalloutSnip.Domain.Data
 {
     /// <summary>
     ///     The intent of this class is to hold all "static" information related to

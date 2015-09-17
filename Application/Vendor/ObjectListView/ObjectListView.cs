@@ -478,7 +478,7 @@ using System.Runtime.Serialization.Formatters.Binary;
 using System.Windows.Forms;
 using System.Windows.Forms.VisualStyles;
 using BrightIdeasSoftware.Design;
-using TESVSnip.Properties;
+using FalloutSnip.Properties;
 using ContentAlignment = System.Drawing.ContentAlignment;
 
 namespace BrightIdeasSoftware

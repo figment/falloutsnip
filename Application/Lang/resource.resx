@@ -318,7 +318,7 @@ Duration of process between 15 and 35 seconds.</value>
     <value>Do you want to create a backup of the plugin before saving it ?</value>
   </data>
   <data name="Application_Title" xml:space="preserve">
-    <value>TESVSnip (Skyrim Edition)</value>
+    <value>FalloutSnip (Skyrim Edition)</value>
   </data>
   <data name="MSG_ERR_CanNotCreateBackup" xml:space="preserve">
     <value>Error. Can't create a backup of plugin. Do you want save it anyway ?</value>
@@ -333,7 +333,7 @@ Duration of process between 15 and 35 seconds.</value>
     <value>Unable to load settings.xml.</value>
   </data>
   <data name="Global_Msg_TESVsnipError" xml:space="preserve">
-    <value>TESVsnip Error</value>
+    <value>FalloutSnip Error</value>
   </data>
   <data name="TESSNIP_Spell_NoFormVersionGreater40" xml:space="preserve">
     <value>No Form Version greater than 40.</value>

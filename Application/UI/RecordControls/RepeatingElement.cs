@@ -1,4 +1,4 @@
-﻿namespace TESVSnip.UI.RecordControls
+﻿namespace FalloutSnip.UI.RecordControls
 {
     using System;
     using System.Collections.Generic;
@@ -6,7 +6,7 @@
     using System.Windows.Forms;
 
     using Domain.Data.Structure;
-    using TESVSnip.Framework.Collections;
+    using FalloutSnip.Framework.Collections;
 
     internal partial class RepeatingElement : BaseElement, IOuterElementControl, IGroupedElementControl
     {

@@ -556,7 +556,7 @@
     <value>listStrings</value>
   </data>
   <data name="&gt;&gt;listStrings.Type" xml:space="preserve">
-    <value>TESVSnip.Windows.Controls.BindingListView, TESVSnip, Version=4.2.4450.237, Culture=neutral, PublicKeyToken=null</value>
+    <value>FalloutSnip.Windows.Controls.BindingListView, FalloutSnip, Version=4.2.4450.237, Culture=neutral, PublicKeyToken=null</value>
   </data>
   <data name="&gt;&gt;listStrings.Parent" xml:space="preserve">
     <value>$this</value>

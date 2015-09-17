@@ -1,4 +1,4 @@
-﻿namespace TESVSnip.Windows.Controls
+﻿namespace FalloutSnip.Windows.Controls
 {
     partial class FlagComboBox
     {

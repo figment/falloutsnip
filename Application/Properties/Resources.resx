@@ -359,8 +359,8 @@ Do you still want to save?</value>
     <value>..\Resources\14_layer_deletelayer.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="RestartText" xml:space="preserve">
-    <value>To confirm the coding setting, restart Tesvsnip now?</value>
-    <comment>查找类似 To confirm the coding setting, restart Tesvsnip now? 的本地化字符串。</comment>
+    <value>To confirm the coding setting, restart FalloutSnip now?</value>
+    <comment>查找类似 To confirm the coding setting, restart FalloutSnip now? 的本地化字符串。</comment>
   </data>
   <data name="Copy1" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\Copy.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>

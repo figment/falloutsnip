@@ -1,9 +1,9 @@
 using System.ComponentModel;
 using Microsoft.Scripting.Runtime;
-using TESVSnip.Domain.Data;
-using TESVSnip.Domain.Data.Structure;
+using FalloutSnip.Domain.Data;
+using FalloutSnip.Domain.Data.Structure;
 
-namespace TESVSnip.Domain.Model
+namespace FalloutSnip.Domain.Model
 {
     using System;
     using System.Collections;
@@ -13,12 +13,12 @@ namespace TESVSnip.Domain.Model
     using System.Linq;
     using System.Runtime.Serialization;
 
-    using TESVSnip.Domain.Data.Strings;
-    using TESVSnip.Framework;
-    using TESVSnip.Framework.Persistence;
-    using TESVSnip.Framework.Services;
+    using FalloutSnip.Domain.Data.Strings;
+    using FalloutSnip.Framework;
+    using FalloutSnip.Framework.Persistence;
+    using FalloutSnip.Framework.Services;
 
-    using TESVSnip.Domain.Services;
+    using FalloutSnip.Domain.Services;
 
     [Persistable(Flags = PersistType.DeclaredOnly)]
     [Serializable]
@@ -459,7 +459,7 @@ namespace TESVSnip.Domain.Model
                 return;
             }
 
-            string locName = TESVSnip.Domain.Properties.Settings.Default.LocalizationName;
+            string locName = FalloutSnip.Domain.Properties.Settings.Default.LocalizationName;
 
             if (!Directory.GetFiles(this.StringsFolder, this.FileName + "_" + locName + "*").Any())
             {
@@ -472,7 +472,7 @@ namespace TESVSnip.Domain.Model
             }
 
             string prefix = Path.Combine(this.StringsFolder, this.FileName);
-            prefix += "_" + TESVSnip.Domain.Properties.Settings.Default.LocalizationName;
+            prefix += "_" + FalloutSnip.Domain.Properties.Settings.Default.LocalizationName;
 
             System.Text.Encoding enc = Encoding.Instance;
             FontLangInfo fontInfo;
@@ -918,7 +918,7 @@ namespace TESVSnip.Domain.Model
                 if (Properties.Settings.Default.SaveStringsFiles)
                 {
                     string prefix = Path.Combine(Path.Combine(Path.GetDirectoryName(filePath), "Strings"), Path.GetFileNameWithoutExtension(filePath));
-                    prefix += "_" + TESVSnip.Domain.Properties.Settings.Default.LocalizationName;
+                    prefix += "_" + FalloutSnip.Domain.Properties.Settings.Default.LocalizationName;
                     this.SaveStrings(prefix);
                 }
             }
@@ -954,7 +954,7 @@ namespace TESVSnip.Domain.Model
         {
             System.Text.Encoding enc = Encoding.Instance;
             FontLangInfo fontInfo;
-            if (Encoding.TryGetFontInfo(TESVSnip.Domain.Properties.Settings.Default.LocalizationName, out fontInfo))
+            if (Encoding.TryGetFontInfo(FalloutSnip.Domain.Properties.Settings.Default.LocalizationName, out fontInfo))
             {
                 if (fontInfo.CodePage != 1252)
                 {

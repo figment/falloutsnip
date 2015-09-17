@@ -6,7 +6,7 @@ using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
 
-namespace TESVSnip.Windows.Controls
+namespace FalloutSnip.Windows.Controls
 {
     /// <summary>
     /// Summary description for BindingListView.

@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
-using TESVSnip.Domain.Model;
+using FalloutSnip.Domain.Model;
 
-namespace TESVSnip.Domain.Rendering
+namespace FalloutSnip.Domain.Rendering
 {
     public interface IRenderer
     {

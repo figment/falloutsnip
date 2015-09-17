@@ -1,6 +1,6 @@
-namespace TESVSnip.Domain.Model
+namespace FalloutSnip.Domain.Model
 {
-    using TESVSnip.Framework;
+    using FalloutSnip.Framework;
 
     public interface ISelectionContext : ICloneable<ISelectionContext>
     {

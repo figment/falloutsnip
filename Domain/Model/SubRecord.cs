@@ -6,11 +6,11 @@ using System.Linq;
 using System.Runtime.InteropServices;
 using System.Runtime.Serialization;
 using System.Text;
-using TESVSnip.Domain.Data.Structure;
-using TESVSnip.Framework;
-using TESVSnip.Framework.Persistence;
+using FalloutSnip.Domain.Data.Structure;
+using FalloutSnip.Framework;
+using FalloutSnip.Framework.Persistence;
 
-namespace TESVSnip.Domain.Model
+namespace FalloutSnip.Domain.Model
 {
     [Persistable(Flags = PersistType.DeclaredOnly)]
     [Serializable]
@@ -216,7 +216,7 @@ namespace TESVSnip.Domain.Model
             //  using array search to find ending zero then limit to that or length
             int len = this.Data.Length;
             while (len > 0 && this.Data[len - 1] == 0) --len;
-            return TESVSnip.Framework.Services.Encoding.Instance.GetString(this.Data, 0, len);
+            return FalloutSnip.Framework.Services.Encoding.Instance.GetString(this.Data, 0, len);
         }
 
         public T GetValue<T>(int offset)
@@ -321,7 +321,7 @@ namespace TESVSnip.Domain.Model
         ///     Retain raw data instead of converting to more usuable form
         /// </param>
         /// <returns>
-        ///     The System.Collections.Generic.IEnumerable`1[T -&gt; TESVSnip.Element].
+        ///     The System.Collections.Generic.IEnumerable`1[T -&gt; FalloutSnip.Element].
         /// </returns>
         public IEnumerable<Element> EnumerateElements(bool rawData)
         {

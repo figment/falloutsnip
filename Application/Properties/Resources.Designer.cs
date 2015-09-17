@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace TESVSnip.Properties {
+namespace FalloutSnip.Properties {
     using System;
     
     
@@ -39,7 +39,7 @@ namespace TESVSnip.Properties {
         internal static global::System.Resources.ResourceManager ResourceManager {
             get {
                 if (object.ReferenceEquals(resourceMan, null)) {
-                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("TESVSnip.Properties.Resources", typeof(Resources).Assembly);
+                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("FalloutSnip.Properties.Resources", typeof(Resources).Assembly);
                     resourceMan = temp;
                 }
                 return resourceMan;
@@ -820,7 +820,7 @@ namespace TESVSnip.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to To confirm the coding setting, restart Tesvsnip now?.
+        ///   Looks up a localized string similar to To confirm the coding setting, restart FalloutSnip now?.
         /// </summary>
         internal static string RestartText {
             get {

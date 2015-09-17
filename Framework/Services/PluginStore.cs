@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using TESVSnip.Domain.Services;
+using FalloutSnip.Domain.Services;
 
-namespace TESVSnip.Framework.Services
+namespace FalloutSnip.Framework.Services
 {
     public static class PluginStore
     {

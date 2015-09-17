@@ -1,9 +1,9 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using TESVSnip.Domain.Data.Structure.Xml;
+using FalloutSnip.Domain.Data.Structure.Xml;
 
-namespace TESVSnip.Domain.Data.Structure
+namespace FalloutSnip.Domain.Data.Structure
 {
     public class SubrecordStructure : SubrecordBase
     {
@@ -97,7 +97,7 @@ namespace TESVSnip.Domain.Data.Structure
         ///     The list.
         /// </param>
         /// <returns>
-        ///     The System.Collections.Generic.IEnumerable`1[T -&gt; TESVSnip.ElementStructure].
+        ///     The System.Collections.Generic.IEnumerable`1[T -&gt; FalloutSnip.ElementStructure].
         /// </returns>
         private static IEnumerable<ElementStructure> GetElementArray(IEnumerable<ElementBase> list)
         {

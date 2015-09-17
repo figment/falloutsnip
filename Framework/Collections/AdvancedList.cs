@@ -1,4 +1,4 @@
-namespace TESVSnip.Framework.Collections
+namespace FalloutSnip.Framework.Collections
 {
     using System;
     using System.Collections.Generic;
@@ -6,7 +6,7 @@ namespace TESVSnip.Framework.Collections
     using System.Linq;
     using System.Runtime.Serialization;
 
-    using TESVSnip.Framework.Persistence;
+    using FalloutSnip.Framework.Persistence;
 
     /// <summary>
     /// The advanced list.

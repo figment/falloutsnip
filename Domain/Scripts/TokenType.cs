@@ -1,4 +1,4 @@
-namespace TESVSnip.Domain.Scripts
+namespace FalloutSnip.Domain.Scripts
 {
     internal enum TokenType
     {

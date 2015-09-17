@@ -1,7 +1,7 @@
 using System;
 using System.Globalization;
 
-namespace TESVSnip.Domain.Data.Structure
+namespace FalloutSnip.Domain.Data.Structure
 {
     public class SubrecordBase
     {

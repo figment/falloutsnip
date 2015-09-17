@@ -14,7 +14,7 @@ using System.Drawing;
 using System.Text;
 using System.Windows.Forms;
 
-namespace TESVSnip.Windows.Controls
+namespace FalloutSnip.Windows.Controls
 {
     public class CheckedComboBox : CustomComboBox
     {

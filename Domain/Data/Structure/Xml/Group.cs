@@ -7,7 +7,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Xml.Serialization;
 
-namespace TESVSnip.Domain.Data.Structure.Xml
+namespace FalloutSnip.Domain.Data.Structure.Xml
 {
     /// <summary>
     ///     The group.

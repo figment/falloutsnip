@@ -92,7 +92,7 @@
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>D:\Development\Gaming\tesvsnip\Vendor\zlib-1.2.8\win32\visualc9-x86\Win32\DLL ASM Release\zlib1.lib</AdditionalDependencies>
+      <AdditionalDependencies>D:\Development\Gaming\falloutsnip\Vendor\zlib-1.2.8\win32\visualc9-x86\Win32\DLL ASM Release\zlib1.lib</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
@@ -104,7 +104,7 @@
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>D:\Development\Gaming\tesvsnip\Vendor\zlib-1.2.8\win32\visualc9-x86\Win32\DLL ASM Release\zlib1.lib</AdditionalDependencies>
+      <AdditionalDependencies>D:\Development\Gaming\falloutsnip\Vendor\zlib-1.2.8\win32\visualc9-x86\Win32\DLL ASM Release\zlib1.lib</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">

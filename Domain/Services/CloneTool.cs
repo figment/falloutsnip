@@ -2,12 +2,12 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using TESVSnip.Domain.Data.Structure;
-using TESVSnip.Domain.Model;
-using TESVSnip.Framework;
-using TESVSnip.Framework.Collections;
+using FalloutSnip.Domain.Data.Structure;
+using FalloutSnip.Domain.Model;
+using FalloutSnip.Framework;
+using FalloutSnip.Framework.Collections;
 
-namespace TESVSnip.Domain.Services
+namespace FalloutSnip.Domain.Services
 {
     /// <summary>
     /// Helper class for cloning records.  

@@ -1,14 +1,14 @@
-﻿using TESVSnip.UI.Rendering.Extensions;
+﻿using FalloutSnip.UI.Rendering.Extensions;
 
-namespace TESVSnip.UI.Docking
+namespace FalloutSnip.UI.Docking
 {
     using System.Windows.Forms;
 
     using RTF;
 
-    using TESVSnip.Domain.Model;
-    using TESVSnip.Framework.Services;
-    using TESVSnip.Properties;
+    using FalloutSnip.Domain.Model;
+    using FalloutSnip.Framework.Services;
+    using FalloutSnip.Properties;
 
     public partial class RichTextContent : BaseDockContent
     {

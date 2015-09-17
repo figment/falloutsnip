@@ -16,7 +16,7 @@ using Timer = System.Windows.Forms.Timer;
 
 namespace Be.Windows.Forms
 {
-    using TESVSnip.Framework.Services;
+    using FalloutSnip.Framework.Services;
 
     #region HexCasing enumeration
 

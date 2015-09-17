@@ -238,6 +238,6 @@
     <value>LStringElement</value>
   </data>
   <data name="&gt;&gt;$this.Type" xml:space="preserve">
-    <value>TESVSnip.UI.RecordControls.TextElement, TESVSnip, Version=4.5.5132.1, Culture=neutral, PublicKeyToken=null</value>
+    <value>FalloutSnip.UI.RecordControls.TextElement, FalloutSnip, Version=4.5.5132.1, Culture=neutral, PublicKeyToken=null</value>
   </data>
 </root>

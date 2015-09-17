@@ -2,7 +2,7 @@
 using System.Collections;
 using Microsoft.Scripting;
 
-namespace TESVSnip.UI.Services
+namespace FalloutSnip.UI.Services
 {
     public class PluginBase : IDisposable
     {

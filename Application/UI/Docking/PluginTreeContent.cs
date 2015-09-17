@@ -1,6 +1,6 @@
-﻿namespace TESVSnip.UI.Docking
+﻿namespace FalloutSnip.UI.Docking
 {
-    using TESVSnip.UI.ObjectControls;
+    using FalloutSnip.UI.ObjectControls;
 
     using WeifenLuo.WinFormsUI.Docking;
 

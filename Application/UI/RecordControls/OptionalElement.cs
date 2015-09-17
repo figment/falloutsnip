@@ -1,4 +1,4 @@
-﻿namespace TESVSnip.UI.RecordControls
+﻿namespace FalloutSnip.UI.RecordControls
 {
     using System;
     using System.Drawing;

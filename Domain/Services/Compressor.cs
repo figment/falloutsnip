@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Reflection;
-using TESVSnip.Framework.Services;
+using FalloutSnip.Framework.Services;
 
-namespace TESVSnip.Domain.Services
+namespace FalloutSnip.Domain.Services
 {
     #region class Compressor / Decompressor
 

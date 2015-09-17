@@ -1,4 +1,4 @@
-#
+﻿#
 # NPC Weight manipulator Plugin
 #
 #   Enumerate through all NPCs and list/manipulate the weight
@@ -7,8 +7,8 @@
 from shared.util import *
 
 import System
-import TESVSnip.Domain
-from TESVSnip.Domain.Model import BaseRecord, Record, Plugin, SubRecord, GroupRecord
+import FalloutSnip.Domain
+from FalloutSnip.Domain.Model import BaseRecord, Record, Plugin, SubRecord, GroupRecord
 from System import Action, Func, Predicate, TimeSpan
 from System.Diagnostics import Stopwatch
 from System import Random
@@ -136,11 +136,11 @@ def modifyNPCWeights(records):
 
 	
 if __name__ == '<module>':
-	import TESVSnip
-	from TESVSnip.UI.Hosting import ScriptSupport
+	import FalloutSnip
+	from FalloutSnip.UI.Hosting import ScriptSupport
 	from System.Drawing import SystemColors, Color
 		
-	class ScriptPlugin(TESVSnip.UI.Services.PluginBase):
+	class ScriptPlugin(FalloutSnip.UI.Services.PluginBase):
 
 		def Execute(self, recs):
 			sw = Stopwatch.StartNew()
@@ -167,7 +167,7 @@ if __name__ == '<module>':
 					return False
 			return True
 		
-	TESVSnip.UI.Services.PluginStore.AddPlugins(
+	FalloutSnip.UI.Services.PluginStore.AddPlugins(
 		[ ScriptPlugin("listweight", "List &NPC Weights", supportSelection=True, supportGlobal=True) 
 		, ScriptPlugin("modweight", "&Modify NPC Weights", supportSelection=True, supportGlobal=False)  # only support for explicit selected plugin
 		]

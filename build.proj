@@ -12,7 +12,7 @@
     <BUILD_ROOT Condition="'$(BUILD_ROOT)' == '' AND Exists('$(MSBuildProjectDirectory)\build\')">$(MSBuildProjectDirectory)\</BUILD_ROOT>
   </PropertyGroup>
   <PropertyGroup>
-    <ProjectName>TESVSnip</ProjectName>
+    <ProjectName>FalloutSnip</ProjectName>
     <ProjectGuid>{E5EAE955-8751-46A5-9881-C68E7C508151}</ProjectGuid>
     <FrameworkDir>$(SolutionDir)Framework\</FrameworkDir>
     <FrameworkTargetDir>$(FrameworkDir)bin\$(Configuration)\</FrameworkTargetDir>
@@ -23,7 +23,7 @@
     <StageOutputDir>$(SolutionDir)Output\</StageOutputDir>
     <MergeOutputFile>$(StageOutputDir)\$(TargetName)$(TargetExt)</MergeOutputFile>
   </PropertyGroup>
-  <Import Project="$(BUILD_ROOT)\build\tesvsnip.common.targets" />
+  <Import Project="$(BUILD_ROOT)\build\falloutsnip.common.targets" />
   <ItemGroup>
     <inputAssembliesConf Include="$(ApplicationTargetDir)*.exe.config" />
     <inputAssemblies Include="$(ApplicationTargetDir)*.exe" />
@@ -33,10 +33,10 @@
     <CopyToStagingLang Include="$(ApplicationTargetDir)Lang\resource.resources" />
     <CopyToStagingLang Include="$(ApplicationTargetDir)Lang\resource.fr-FR.resources" />
     <CopyToStagingFr Include="$(ApplicationTargetDir)Lang\**" />
-    <CopyToStagingFr Include="$(ApplicationTargetDir)fr-FR\TESVSnip.resources.dll" />
+    <CopyToStagingFr Include="$(ApplicationTargetDir)fr-FR\FalloutSnip.resources.dll" />
     <CopyToStagingFr Include="$(ApplicationTargetDir)fr-FR\**" />
-    <CopyToStaging Include="$(SolutionDir)TESVsnip_LICENSE" />
-    <CopyToStaging Include="$(SolutionDir)TESVsnip_README.TXT" />
+    <CopyToStaging Include="$(SolutionDir)falloutsnip_LICENSE" />
+    <CopyToStaging Include="$(SolutionDir)falloutsnip_README.TXT" />
     <CopyToStagingPython Include="$(SolutionDir)Vendor\IronPython-2.7.4\IronPython.dll" />
     <CopyToStagingPython Include="$(SolutionDir)Vendor\IronPython-2.7.4\IronPython.Modules.dll" />
     <CopyToStagingPython Include="$(SolutionDir)Vendor\IronPython-2.7.4\Microsoft.Dynamic.dll" />
@@ -86,7 +86,7 @@
     <MakeDir Directories="$(StageOutputDir)" />
     <Delete Files="$(StageOutputDir)\$(ProjectName)_v$(Major).$(Minor).rar" />
     <SimpleExec Command="$(ProgramFiles)\WinRar\rar.exe" Args="a -r $(ProjectName)_v$(Major).$(Minor).rar * -x*.pdb -x*vshost* -x*.rar -x*.7z" WorkingDirectory="$(StageOutputDir)" />
-    <SimpleExec Command="$(ProgramFiles)\WinRar\rar.exe" Args="c $(ProjectName)_v$(Major).$(Minor).rar" StdIn="TESVsnip_README.TXT" WorkingDirectory="$(StageOutputDir)" />
+    <SimpleExec Command="$(ProgramFiles)\WinRar\rar.exe" Args="c $(ProjectName)_v$(Major).$(Minor).rar" StdIn="falloutsnip_README.TXT" WorkingDirectory="$(StageOutputDir)" />
   </Target>
   <Target Name="Package_7z" DependsOnTargets="Package">
     <MakeDir Directories="$(StageOutputDir)" />

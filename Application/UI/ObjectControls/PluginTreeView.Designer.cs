@@ -1,6 +1,6 @@
-﻿namespace TESVSnip.UI.ObjectControls
+﻿namespace FalloutSnip.UI.ObjectControls
 {
-    using TESVSnip.UI.Controls;
+    using FalloutSnip.UI.Controls;
 
     partial class PluginTreeView
     {
@@ -58,7 +58,7 @@
             this.toolStripMenuItem6 = new System.Windows.Forms.ToolStripMenuItem();
             this.scriptsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.referenceSearchToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.PluginTree = new TESVSnip.UI.Controls.CustomTreeView();
+            this.PluginTree = new FalloutSnip.UI.Controls.CustomTreeView();
             this.toolStripRecord.SuspendLayout();
             this.contextMenuRecord.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.PluginTree)).BeginInit();
@@ -88,14 +88,14 @@
             // toolStripRecordBack
             // 
             this.toolStripRecordBack.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.toolStripRecordBack.Image = global::TESVSnip.Properties.Resources.agt_back;
+            this.toolStripRecordBack.Image = global::FalloutSnip.Properties.Resources.agt_back;
             resources.ApplyResources(this.toolStripRecordBack, "toolStripRecordBack");
             this.toolStripRecordBack.Name = "toolStripRecordBack";
             // 
             // toolStripRecordNext
             // 
             this.toolStripRecordNext.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.toolStripRecordNext.Image = global::TESVSnip.Properties.Resources.agt_forward;
+            this.toolStripRecordNext.Image = global::FalloutSnip.Properties.Resources.agt_forward;
             resources.ApplyResources(this.toolStripRecordNext, "toolStripRecordNext");
             this.toolStripRecordNext.Name = "toolStripRecordNext";
             // 
@@ -104,7 +104,7 @@
             this.toolStripRecordPasteNew.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
             this.toolStripRecordPasteNew.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
             resources.ApplyResources(this.toolStripRecordPasteNew, "toolStripRecordPasteNew");
-            this.toolStripRecordPasteNew.Image = global::TESVSnip.Properties.Resources.special_paste;
+            this.toolStripRecordPasteNew.Image = global::FalloutSnip.Properties.Resources.special_paste;
             this.toolStripRecordPasteNew.Name = "toolStripRecordPasteNew";
             this.toolStripRecordPasteNew.Click += new System.EventHandler(this.toolStripRecordPasteNew_Click);
             // 
@@ -113,7 +113,7 @@
             this.toolStripRecordPaste.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
             this.toolStripRecordPaste.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
             resources.ApplyResources(this.toolStripRecordPaste, "toolStripRecordPaste");
-            this.toolStripRecordPaste.Image = global::TESVSnip.Properties.Resources.Paste;
+            this.toolStripRecordPaste.Image = global::FalloutSnip.Properties.Resources.Paste;
             this.toolStripRecordPaste.Name = "toolStripRecordPaste";
             this.toolStripRecordPaste.Click += new System.EventHandler(this.toolStripRecordPaste_Click);
             // 
@@ -122,7 +122,7 @@
             this.toolStripRecordCopy.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
             this.toolStripRecordCopy.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
             resources.ApplyResources(this.toolStripRecordCopy, "toolStripRecordCopy");
-            this.toolStripRecordCopy.Image = global::TESVSnip.Properties.Resources.Copy;
+            this.toolStripRecordCopy.Image = global::FalloutSnip.Properties.Resources.Copy;
             this.toolStripRecordCopy.Name = "toolStripRecordCopy";
             this.toolStripRecordCopy.Click += new System.EventHandler(this.toolStripRecordCopy_Click);
             // 
@@ -136,7 +136,7 @@
             this.toolStripRecordDelete.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
             this.toolStripRecordDelete.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
             resources.ApplyResources(this.toolStripRecordDelete, "toolStripRecordDelete");
-            this.toolStripRecordDelete.Image = global::TESVSnip.Properties.Resources.deletecell;
+            this.toolStripRecordDelete.Image = global::FalloutSnip.Properties.Resources.deletecell;
             this.toolStripRecordDelete.Name = "toolStripRecordDelete";
             this.toolStripRecordDelete.Click += new System.EventHandler(this.toolStripRecordDelete_Click);
             // 

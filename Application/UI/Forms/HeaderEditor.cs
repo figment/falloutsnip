@@ -1,11 +1,11 @@
-namespace TESVSnip.UI.Forms
+namespace FalloutSnip.UI.Forms
 {
     using System;
     using System.Globalization;
     using System.Windows.Forms;
 
-    using TESVSnip.Domain.Model;
-    using TESVSnip.Properties;
+    using FalloutSnip.Domain.Model;
+    using FalloutSnip.Properties;
 
     internal partial class HeaderEditor : Form
     {

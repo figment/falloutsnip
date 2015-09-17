@@ -2,7 +2,7 @@ using System;
 using System.Windows.Forms;
 using System.Collections.Generic;
 
-namespace TESVSnip {
+namespace FalloutSnip {
     partial class SearchForm : Form {
         private TreeView tv;
         private TreeNode[] foundNodes;

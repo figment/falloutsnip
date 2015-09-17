@@ -1,9 +1,9 @@
-using TESVSnip.Domain.Scripts;
-using TESVSnip.Framework;
-using FunctionOperation = TESVSnip.Domain.Scripts.FunctionOperation;
-using PyInterpreter = TESVSnip.Domain.Scripts.PyInterpreter;
+using FalloutSnip.Domain.Scripts;
+using FalloutSnip.Framework;
+using FunctionOperation = FalloutSnip.Domain.Scripts.FunctionOperation;
+using PyInterpreter = FalloutSnip.Domain.Scripts.PyInterpreter;
 
-namespace TESVSnip.UI.Forms
+namespace FalloutSnip.UI.Forms
 {
     using System;
     using System.Drawing;
@@ -12,10 +12,10 @@ namespace TESVSnip.UI.Forms
     using System.Linq;
 
     using Domain.Data.Structure;
-    using TESVSnip.Domain.Model;
-    using TESVSnip.Framework.Collections;
-    using TESVSnip.Properties;
-    using TESVSnip.UI.RecordControls;
+    using FalloutSnip.Domain.Model;
+    using FalloutSnip.Framework.Collections;
+    using FalloutSnip.Properties;
+    using FalloutSnip.UI.RecordControls;
 
     internal partial class NewMediumLevelRecordEditor : Form
     {
@@ -216,7 +216,7 @@ namespace TESVSnip.UI.Forms
 
         private void bSave_Click(object sender, EventArgs e)
         {
-            // warn user about data corruption.  But this may be case of fixing using tesvsnip to fix corruption so still allow
+            // warn user about data corruption.  But this may be case of fixing using falloutsnip to fix corruption so still allow
             if (this.strWarnOnSave != null)
             {
                 if (DialogResult.Yes

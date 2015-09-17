@@ -1,4 +1,4 @@
-namespace TESVSnip.Framework
+namespace FalloutSnip.Framework
 {
     using System;
     using System.Collections.Generic;

@@ -1,11 +1,11 @@
-namespace TESVSnip.Domain.Model
+namespace FalloutSnip.Domain.Model
 {
     using System;
     using System.Globalization;
     using System.Linq;
 
     using Data.Structure;
-    using TESVSnip.Framework.Collections;
+    using FalloutSnip.Framework.Collections;
 
     #region XML Serialization
 

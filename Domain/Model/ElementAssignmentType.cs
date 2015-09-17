@@ -1,4 +1,4 @@
-namespace TESVSnip.Domain.Model
+namespace FalloutSnip.Domain.Model
 {
     public enum ElementAssignmentType
     {

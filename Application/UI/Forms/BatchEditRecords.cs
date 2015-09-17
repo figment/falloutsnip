@@ -1,4 +1,4 @@
-﻿namespace TESVSnip.UI.Forms
+﻿namespace FalloutSnip.UI.Forms
 {
     using System;
     using System.Collections;
@@ -10,8 +10,8 @@
     using BrightIdeasSoftware;
 
     using Domain.Data.Structure;
-    using TESVSnip.Domain.Model;
-    using TESVSnip.Properties;
+    using FalloutSnip.Domain.Model;
+    using FalloutSnip.Properties;
 
     internal partial class BatchEditRecords : Form
     {
@@ -133,14 +133,14 @@
                 // Construct specialized editors for FormID and related headers
 #if false
                 {
-                    var elems = new List<TESVSnip.Data.SubrecordElement>
+                    var elems = new List<FalloutSnip.Data.SubrecordElement>
                     {
-                        new TESVSnip.Data.SubrecordElement{name = "FormID", desc = "Form ID", hexview = true, type = "uint"}, 
-                        new TESVSnip.Data.SubrecordElement{name = "Flags1", desc = "Flags 1", hexview = true, type = "uint"}, 
-                        new TESVSnip.Data.SubrecordElement{name = "Flags2", desc = "Flags 2", hexview = true, type = "uint"}, 
-                        new TESVSnip.Data.SubrecordElement{name = "Flags3", desc = "Flags 3", hexview = true, type = "uint"}, 
+                        new FalloutSnip.Data.SubrecordElement{name = "FormID", desc = "Form ID", hexview = true, type = "uint"}, 
+                        new FalloutSnip.Data.SubrecordElement{name = "Flags1", desc = "Flags 1", hexview = true, type = "uint"}, 
+                        new FalloutSnip.Data.SubrecordElement{name = "Flags2", desc = "Flags 2", hexview = true, type = "uint"}, 
+                        new FalloutSnip.Data.SubrecordElement{name = "Flags3", desc = "Flags 3", hexview = true, type = "uint"}, 
                     };
-                    var frmHdr = new TESVSnip.Data.Subrecord { name = "Header", desc = "Record Header", Elements = elems };
+                    var frmHdr = new FalloutSnip.Data.Subrecord { name = "Header", desc = "Record Header", Elements = elems };
                     var hdr = new SubrecordStructure(frmHdr);
                     var hdrElems = hdr.elements.Select(se =>
                         new BatchElement { Name = se.name, Parent = null, Record = se, Type = BatchCondElementType.Set, Checked = false }

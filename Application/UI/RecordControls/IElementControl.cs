@@ -1,9 +1,9 @@
-﻿namespace TESVSnip.UI.RecordControls
+﻿namespace FalloutSnip.UI.RecordControls
 {
     using System;
 
     using Domain.Data.Structure;
-    using TESVSnip.Domain.Model;
+    using FalloutSnip.Domain.Model;
 
     internal interface IElementControl
     {

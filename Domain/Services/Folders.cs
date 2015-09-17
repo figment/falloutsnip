@@ -5,7 +5,7 @@ using System.Linq;
 using System.Reflection;
 using System.Text;
 
-namespace TESVSnip.Domain.Services
+namespace FalloutSnip.Domain.Services
 {
     public static class Folders
     {

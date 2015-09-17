@@ -136,7 +136,7 @@
     <value>subrecordPanel</value>
   </data>
   <data name="&gt;&gt;subrecordPanel.Type" xml:space="preserve">
-    <value>TESVSnip.ObjectControls.SubrecordListEditor, TESVSnip, Version=3.4.4408.1, Culture=neutral, PublicKeyToken=null</value>
+    <value>FalloutSnip.ObjectControls.SubrecordListEditor, FalloutSnip, Version=3.4.4408.1, Culture=neutral, PublicKeyToken=null</value>
   </data>
   <data name="&gt;&gt;subrecordPanel.Parent" xml:space="preserve">
     <value>$this</value>

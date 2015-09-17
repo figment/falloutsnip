@@ -1,4 +1,4 @@
-namespace TESVSnip.Framework.Persistence
+namespace FalloutSnip.Framework.Persistence
 {
     using System;
 

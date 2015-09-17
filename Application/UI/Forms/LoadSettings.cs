@@ -1,4 +1,4 @@
-﻿namespace TESVSnip.UI.Forms
+﻿namespace FalloutSnip.UI.Forms
 {
     using System;
     using System.Collections.Generic;
@@ -6,8 +6,8 @@
     using System.Linq;
     using System.Windows.Forms;
 
-    using TESVSnip.Framework.Services;
-    using TESVSnip.Properties;
+    using FalloutSnip.Framework.Services;
+    using FalloutSnip.Properties;
 
     public partial class LoadSettings : Form
     {

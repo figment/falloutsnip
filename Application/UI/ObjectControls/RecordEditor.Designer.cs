@@ -1,4 +1,4 @@
-﻿namespace TESVSnip.UI.ObjectControls
+﻿namespace FalloutSnip.UI.ObjectControls
 {
     partial class RecordEditor
     {
@@ -31,7 +31,7 @@
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(RecordEditor));
             this.horizontalSplitContainer = new System.Windows.Forms.SplitContainer();
             this.verticalSplitContainer = new System.Windows.Forms.SplitContainer();
-            this.comboBox1 = new TESVSnip.Windows.Controls.FlagComboBox();
+            this.comboBox1 = new FalloutSnip.Windows.Controls.FlagComboBox();
             this.tbFlags3 = new System.Windows.Forms.TextBox();
             this.textBox1 = new System.Windows.Forms.TextBox();
             this.tbFlags2 = new System.Windows.Forms.TextBox();
@@ -100,7 +100,7 @@
             this.comboBox1.CheckOnClick = true;
             this.comboBox1.ControlSize = new System.Drawing.Size(47, 16);
             this.comboBox1.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawVariable;
-            this.comboBox1.DropDownSizeMode = TESVSnip.Windows.Controls.CustomComboBox.SizeMode.UseDropDownSize;
+            this.comboBox1.DropDownSizeMode = FalloutSnip.Windows.Controls.CustomComboBox.SizeMode.UseDropDownSize;
             this.comboBox1.DropSize = new System.Drawing.Size(121, 106);
             this.comboBox1.FormattingEnabled = true;
             this.comboBox1.Name = "comboBox1";
@@ -217,7 +217,7 @@
         private System.Windows.Forms.Label label4;
         private System.Windows.Forms.TextBox tbName;
         private System.Windows.Forms.TextBox tbFormID;
-        private TESVSnip.Windows.Controls.FlagComboBox comboBox1;
+        private FalloutSnip.Windows.Controls.FlagComboBox comboBox1;
         private System.Windows.Forms.TextBox tbFlags3;
         private System.Windows.Forms.TextBox tbFlags2;
         private System.Windows.Forms.Label label3;

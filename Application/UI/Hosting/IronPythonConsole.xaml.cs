@@ -19,14 +19,14 @@ using Microsoft.Scripting;
 using System.Threading;
 using PythonConsoleControl;
 
-namespace TESVSnip.UI.Hosting
+namespace FalloutSnip.UI.Hosting
 {
     /// <summary>
     /// Interaction logic for IronPythonConsole.xaml
     /// </summary>
     public partial class IronPythonConsole : UserControl
     {
-        private TESVSnip.UI.Hosting.ConsoleOptions consoleOptionsProvider;
+        private FalloutSnip.UI.Hosting.ConsoleOptions consoleOptionsProvider;
         // this is the name of the file currently being edited in the pad
         private string currentFileName;
 
@@ -51,7 +51,7 @@ namespace TESVSnip.UI.Hosting
             InitializeComponent();
             textEditor.SyntaxHighlighting = pythonHighlighting;
             textEditor.PreviewKeyDown += new KeyEventHandler(textEditor_PreviewKeyDown);
-            consoleOptionsProvider = new TESVSnip.UI.Hosting.ConsoleOptions(consoleControl.Pad);   
+            consoleOptionsProvider = new FalloutSnip.UI.Hosting.ConsoleOptions(consoleControl.Pad);   
         }
 
         void MainWindow_Initialized(object sender, EventArgs e)

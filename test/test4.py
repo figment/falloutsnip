@@ -1,4 +1,4 @@
-import sys
+﻿import sys
 import startup
 import shared.util as util
 gameDir = util.getGameDirectory('Oblivion')
@@ -8,12 +8,12 @@ from System.Diagnostics import Stopwatch
 from System import TimeSpan
 from System.IO import Path
 
-import TESVSnip.Domain
-from TESVSnip.Domain.Services import Spells
-from TESVSnip.Domain.Model import BaseRecord, Record, Plugin, SubRecord, GroupRecord
-from TESVSnip.Domain.Data.Structure import RecordStructure, ElementValueType
-from TESVSnip.Domain.Scripts import PyInterpreter
-from TESVSnip.Domain.Services import Spells
+import FalloutSnip.Domain
+from FalloutSnip.Domain.Services import Spells
+from FalloutSnip.Domain.Model import BaseRecord, Record, Plugin, SubRecord, GroupRecord
+from FalloutSnip.Domain.Data.Structure import RecordStructure, ElementValueType
+from FalloutSnip.Domain.Scripts import PyInterpreter
+from FalloutSnip.Domain.Services import Spells
 
 import markup
 import HTML as tb
@@ -32,7 +32,7 @@ def browser(htmlstr):
 	server.handle_request()           
 
 sw = Stopwatch.StartNew()
-plugin = TESVSnip.Domain.Model.Plugin(gameDir + 'asdf.esp')
+plugin = FalloutSnip.Domain.Model.Plugin(gameDir + 'asdf.esp')
 rec = None
 # for rec in plugin.Records:
 	# if isinstance(rec, GroupRecord):

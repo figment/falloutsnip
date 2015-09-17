@@ -1,6 +1,6 @@
-﻿using TESVSnip.Domain.Data;
+﻿using FalloutSnip.Domain.Data;
 
-namespace TESVSnip.UI.Forms
+namespace FalloutSnip.UI.Forms
 {
     using System;
     using System.Collections;
@@ -13,10 +13,10 @@ namespace TESVSnip.UI.Forms
     using System.Windows.Forms;
 
     using Domain.Data.Structure;
-    using TESVSnip.Domain.Model;
-    using TESVSnip.Framework;
+    using FalloutSnip.Domain.Model;
+    using FalloutSnip.Framework;
 
-    using Settings = TESVSnip.Properties.Settings;
+    using Settings = FalloutSnip.Properties.Settings;
 
     /// <summary>
     /// This file contains the incremental search related functionality for the main form.
@@ -323,7 +323,7 @@ namespace TESVSnip.UI.Forms
         /// The ctx.
         /// </param>
         /// <returns>
-        /// The TESVSnip.Model.BaseRecord.
+        /// The FalloutSnip.Model.BaseRecord.
         /// </returns>
         private BaseRecord PerformSearch(SearchSettings ctx)
         {

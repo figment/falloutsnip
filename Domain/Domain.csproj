@@ -7,8 +7,8 @@
     <ProjectGuid>{C771D1E1-8186-49A2-9AEB-997DAF106FFD}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>TESVSnip.Domain</RootNamespace>
-    <AssemblyName>TESVSnip.Domain</AssemblyName>
+    <RootNamespace>FalloutSnip.Domain</RootNamespace>
+    <AssemblyName>FalloutSnip.Domain</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>
@@ -21,9 +21,9 @@
     <SignAssembly>false</SignAssembly>
   </PropertyGroup>
   <PropertyGroup>
-    <AssemblyOriginatorKeyFile>$(BUILD_ROOT)\build\tesvsnip.snk</AssemblyOriginatorKeyFile>
+    <AssemblyOriginatorKeyFile>$(BUILD_ROOT)\build\falloutsnip.snk</AssemblyOriginatorKeyFile>
   </PropertyGroup>
-  <Import Project="$(BUILD_ROOT)\build\tesvsnip.common.targets" />
+  <Import Project="$(BUILD_ROOT)\build\falloutsnip.common.targets" />
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>

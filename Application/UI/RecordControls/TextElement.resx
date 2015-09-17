@@ -213,6 +213,6 @@
     <value>TextElement</value>
   </data>
   <data name="&gt;&gt;$this.Type" xml:space="preserve">
-    <value>TESVSnip.RecordControls.BaseElement, TESVSnip, Version=4.3.4450.238, Culture=neutral, PublicKeyToken=null</value>
+    <value>FalloutSnip.RecordControls.BaseElement, FalloutSnip, Version=4.3.4450.238, Culture=neutral, PublicKeyToken=null</value>
   </data>
 </root>

@@ -1,9 +1,9 @@
-namespace TESVSnip.UI.Forms
+namespace FalloutSnip.UI.Forms
 {
     using System;
     using System.Windows.Forms;
 
-    using TESVSnip.Properties;
+    using FalloutSnip.Properties;
 
     internal partial class DataEdit : Form
     {

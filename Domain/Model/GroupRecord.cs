@@ -1,6 +1,6 @@
-using TESVSnip.Domain.Services;
+using FalloutSnip.Domain.Services;
 
-namespace TESVSnip.Domain.Model
+namespace FalloutSnip.Domain.Model
 {
     using System;
     using System.Collections;
@@ -11,8 +11,8 @@ namespace TESVSnip.Domain.Model
     using System.Runtime.Serialization;
 
     using Data.Structure;
-    using TESVSnip.Framework.Persistence;
-    using TESVSnip.Framework.Services;
+    using FalloutSnip.Framework.Persistence;
+    using FalloutSnip.Framework.Services;
 
     [Persistable(Flags = PersistType.DeclaredOnly)]
     [Serializable]
@@ -45,7 +45,7 @@ namespace TESVSnip.Domain.Model
             this.UpdateShortDescription();
         }
 
-        internal GroupRecord(uint Size, BinaryReader br, TESVSnip.Domain.Data.DomainDefinition define, Func<string, bool> recFilter, bool filterAll)
+        internal GroupRecord(uint Size, BinaryReader br, FalloutSnip.Domain.Data.DomainDefinition define, Func<string, bool> recFilter, bool filterAll)
         {
             Name = "GRUP";
             this.data = br.ReadBytes(4);

@@ -2,9 +2,9 @@
 using System.Drawing;
 using System.Windows.Forms;
 
-namespace TESVSnip.UI.Docking
+namespace FalloutSnip.UI.Docking
 {
-    using TESVSnip.UI.ObjectControls;
+    using FalloutSnip.UI.ObjectControls;
 
     partial class InterpreterConsole
     {

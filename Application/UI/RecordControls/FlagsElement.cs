@@ -1,10 +1,10 @@
-﻿namespace TESVSnip.UI.RecordControls
+﻿namespace FalloutSnip.UI.RecordControls
 {
     using System;
     using System.Windows.Forms;
 
     using Domain.Data.Structure;
-    using TESVSnip.Framework;
+    using FalloutSnip.Framework;
 
     internal partial class FlagsElement : TextElement
     {

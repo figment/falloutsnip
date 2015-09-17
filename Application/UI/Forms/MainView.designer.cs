@@ -1,4 +1,4 @@
-namespace TESVSnip.UI.Forms {
+namespace FalloutSnip.UI.Forms {
     partial class MainView {
         /// <summary>
         /// Required designer variable.
@@ -891,7 +891,7 @@ namespace TESVSnip.UI.Forms {
             // 
             this.toolStripStopProgress.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
             this.toolStripStopProgress.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.toolStripStopProgress.Image = global::TESVSnip.Properties.Resources.agt_stop;
+            this.toolStripStopProgress.Image = global::FalloutSnip.Properties.Resources.agt_stop;
             resources.ApplyResources(this.toolStripStopProgress, "toolStripStopProgress");
             this.toolStripStopProgress.Name = "toolStripStopProgress";
             this.toolStripStopProgress.Click += new System.EventHandler(this.toolStripStopProgress_Click);
@@ -936,7 +936,7 @@ namespace TESVSnip.UI.Forms {
             // toolStripIncrFindCancel
             // 
             this.toolStripIncrFindCancel.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.toolStripIncrFindCancel.Image = global::TESVSnip.Properties.Resources.delete;
+            this.toolStripIncrFindCancel.Image = global::FalloutSnip.Properties.Resources.delete;
             resources.ApplyResources(this.toolStripIncrFindCancel, "toolStripIncrFindCancel");
             this.toolStripIncrFindCancel.Name = "toolStripIncrFindCancel";
             this.toolStripIncrFindCancel.Click += new System.EventHandler(this.toolStripIncrFindCancel_Click);
@@ -964,7 +964,7 @@ namespace TESVSnip.UI.Forms {
             // 
             // toolStripIncrFindNext
             // 
-            this.toolStripIncrFindNext.Image = global::TESVSnip.Properties.Resources.down;
+            this.toolStripIncrFindNext.Image = global::FalloutSnip.Properties.Resources.down;
             resources.ApplyResources(this.toolStripIncrFindNext, "toolStripIncrFindNext");
             this.toolStripIncrFindNext.Name = "toolStripIncrFindNext";
             this.toolStripIncrFindNext.Overflow = System.Windows.Forms.ToolStripItemOverflow.Never;
@@ -972,7 +972,7 @@ namespace TESVSnip.UI.Forms {
             // 
             // toolStripIncrFindPrev
             // 
-            this.toolStripIncrFindPrev.Image = global::TESVSnip.Properties.Resources.up;
+            this.toolStripIncrFindPrev.Image = global::FalloutSnip.Properties.Resources.up;
             resources.ApplyResources(this.toolStripIncrFindPrev, "toolStripIncrFindPrev");
             this.toolStripIncrFindPrev.Name = "toolStripIncrFindPrev";
             this.toolStripIncrFindPrev.Overflow = System.Windows.Forms.ToolStripItemOverflow.Never;
@@ -980,7 +980,7 @@ namespace TESVSnip.UI.Forms {
             // 
             // toolStripIncrFindRestart
             // 
-            this.toolStripIncrFindRestart.Image = global::TESVSnip.Properties.Resources.quick_restart;
+            this.toolStripIncrFindRestart.Image = global::FalloutSnip.Properties.Resources.quick_restart;
             resources.ApplyResources(this.toolStripIncrFindRestart, "toolStripIncrFindRestart");
             this.toolStripIncrFindRestart.Name = "toolStripIncrFindRestart";
             this.toolStripIncrFindRestart.Click += new System.EventHandler(this.toolStripIncrFindRestart_Click);
@@ -998,7 +998,7 @@ namespace TESVSnip.UI.Forms {
             // toolStripIncrFindMatch
             // 
             this.toolStripIncrFindMatch.CheckOnClick = true;
-            this.toolStripIncrFindMatch.Image = global::TESVSnip.Properties.Resources.emptybox;
+            this.toolStripIncrFindMatch.Image = global::FalloutSnip.Properties.Resources.emptybox;
             resources.ApplyResources(this.toolStripIncrFindMatch, "toolStripIncrFindMatch");
             this.toolStripIncrFindMatch.Name = "toolStripIncrFindMatch";
             this.toolStripIncrFindMatch.CheckStateChanged += new System.EventHandler(this.toolStripCheck_CheckStateChanged);
@@ -1006,7 +1006,7 @@ namespace TESVSnip.UI.Forms {
             // toolStripIncrFindExact
             // 
             this.toolStripIncrFindExact.CheckOnClick = true;
-            this.toolStripIncrFindExact.Image = global::TESVSnip.Properties.Resources.emptybox;
+            this.toolStripIncrFindExact.Image = global::FalloutSnip.Properties.Resources.emptybox;
             resources.ApplyResources(this.toolStripIncrFindExact, "toolStripIncrFindExact");
             this.toolStripIncrFindExact.Name = "toolStripIncrFindExact";
             this.toolStripIncrFindExact.CheckStateChanged += new System.EventHandler(this.toolStripCheck_CheckStateChanged);
@@ -1014,7 +1014,7 @@ namespace TESVSnip.UI.Forms {
             // toolStripIncrFindWrapAround
             // 
             this.toolStripIncrFindWrapAround.CheckOnClick = true;
-            this.toolStripIncrFindWrapAround.Image = global::TESVSnip.Properties.Resources.emptybox;
+            this.toolStripIncrFindWrapAround.Image = global::FalloutSnip.Properties.Resources.emptybox;
             resources.ApplyResources(this.toolStripIncrFindWrapAround, "toolStripIncrFindWrapAround");
             this.toolStripIncrFindWrapAround.Name = "toolStripIncrFindWrapAround";
             this.toolStripIncrFindWrapAround.CheckStateChanged += new System.EventHandler(this.toolStripCheck_CheckStateChanged);
@@ -1055,7 +1055,7 @@ namespace TESVSnip.UI.Forms {
             // toolStripIncrInvalidRecCancel
             // 
             this.toolStripIncrInvalidRecCancel.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.toolStripIncrInvalidRecCancel.Image = global::TESVSnip.Properties.Resources.delete;
+            this.toolStripIncrInvalidRecCancel.Image = global::FalloutSnip.Properties.Resources.delete;
             resources.ApplyResources(this.toolStripIncrInvalidRecCancel, "toolStripIncrInvalidRecCancel");
             this.toolStripIncrInvalidRecCancel.Name = "toolStripIncrInvalidRecCancel";
             this.toolStripIncrInvalidRecCancel.Click += new System.EventHandler(this.toolStripIncrInvalidRecCancel_Click);
@@ -1072,21 +1072,21 @@ namespace TESVSnip.UI.Forms {
             // 
             // toolStripIncrInvalidRecNext
             // 
-            this.toolStripIncrInvalidRecNext.Image = global::TESVSnip.Properties.Resources.down;
+            this.toolStripIncrInvalidRecNext.Image = global::FalloutSnip.Properties.Resources.down;
             resources.ApplyResources(this.toolStripIncrInvalidRecNext, "toolStripIncrInvalidRecNext");
             this.toolStripIncrInvalidRecNext.Name = "toolStripIncrInvalidRecNext";
             this.toolStripIncrInvalidRecNext.Click += new System.EventHandler(this.toolStripIncrInvalidRecNext_Click);
             // 
             // toolStripIncrInvalidRecPrev
             // 
-            this.toolStripIncrInvalidRecPrev.Image = global::TESVSnip.Properties.Resources.up;
+            this.toolStripIncrInvalidRecPrev.Image = global::FalloutSnip.Properties.Resources.up;
             resources.ApplyResources(this.toolStripIncrInvalidRecPrev, "toolStripIncrInvalidRecPrev");
             this.toolStripIncrInvalidRecPrev.Name = "toolStripIncrInvalidRecPrev";
             this.toolStripIncrInvalidRecPrev.Click += new System.EventHandler(this.toolStripIncrInvalidRecPrev_Click);
             // 
             // toolStripIncrInvalidRecRestart
             // 
-            this.toolStripIncrInvalidRecRestart.Image = global::TESVSnip.Properties.Resources.quick_restart;
+            this.toolStripIncrInvalidRecRestart.Image = global::FalloutSnip.Properties.Resources.quick_restart;
             resources.ApplyResources(this.toolStripIncrInvalidRecRestart, "toolStripIncrInvalidRecRestart");
             this.toolStripIncrInvalidRecRestart.Name = "toolStripIncrInvalidRecRestart";
             this.toolStripIncrInvalidRecRestart.Click += new System.EventHandler(this.toolStripIncrInvalidRecRestart_Click);
@@ -1099,7 +1099,7 @@ namespace TESVSnip.UI.Forms {
             // toolStripIncrInvalidRecWrapAround
             // 
             this.toolStripIncrInvalidRecWrapAround.CheckOnClick = true;
-            this.toolStripIncrInvalidRecWrapAround.Image = global::TESVSnip.Properties.Resources.emptybox;
+            this.toolStripIncrInvalidRecWrapAround.Image = global::FalloutSnip.Properties.Resources.emptybox;
             resources.ApplyResources(this.toolStripIncrInvalidRecWrapAround, "toolStripIncrInvalidRecWrapAround");
             this.toolStripIncrInvalidRecWrapAround.Name = "toolStripIncrInvalidRecWrapAround";
             this.toolStripIncrInvalidRecWrapAround.CheckStateChanged += new System.EventHandler(this.toolStripCheck_CheckStateChanged);

@@ -2,14 +2,14 @@
 using System.Diagnostics;
 using System.Threading;
 using System.Windows.Forms;
-using TESVSnip.Domain.Services;
-using TESVSnip.Framework.Services;
-using TESVSnip.Properties;
-using TESVSnip.UI.Forms;
-using TESVSnip.UI.Services;
-using Settings = TESVSnip.Properties.Settings;
+using FalloutSnip.Domain.Services;
+using FalloutSnip.Framework.Services;
+using FalloutSnip.Properties;
+using FalloutSnip.UI.Forms;
+using FalloutSnip.UI.Services;
+using Settings = FalloutSnip.Properties.Settings;
 
-namespace TESVSnip
+namespace FalloutSnip
 {
     internal static class Program
     {
@@ -25,7 +25,7 @@ namespace TESVSnip
             Platform.Initialize();
             Options.Initialize(args);
             Scripting.Initialize();
-            Encoding.Initalize(TESVSnip.Framework.Properties.Settings.Default.UseUTF8);
+            Encoding.Initalize(FalloutSnip.Framework.Properties.Settings.Default.UseUTF8);
             try
             {
                 //AppDomain.CurrentDomain.UnhandledException += OnUnhandledException;
@@ -36,7 +36,7 @@ namespace TESVSnip
                 // Add an event handler for handling UI thread exceptions to the event
                 //Application.ThreadException += Program.ApplicationThreadException;
 
-                TESVSnip.Properties.Settings.Default.Reload();
+                FalloutSnip.Properties.Settings.Default.Reload();
                 Application.EnableVisualStyles();
                 Application.SetCompatibleTextRenderingDefault(false);
 
@@ -49,7 +49,7 @@ namespace TESVSnip
                 try
                 {
                     Application.Run(main);
-                    TESVSnip.Properties.Settings.Default.Save();
+                    FalloutSnip.Properties.Settings.Default.Save();
                 }
                 catch (Exception ex)
                 {

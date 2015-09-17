@@ -1,4 +1,4 @@
-﻿namespace TESVSnip.UI.ObjectControls
+﻿namespace FalloutSnip.UI.ObjectControls
 {
     using BrightIdeasSoftware;
 
@@ -99,7 +99,7 @@
             // 
             // toolStripIncrSelectCriteria
             // 
-            this.toolStripIncrSelectCriteria.Image = global::TESVSnip.Properties.Resources.configure_toolbars;
+            this.toolStripIncrSelectCriteria.Image = global::FalloutSnip.Properties.Resources.configure_toolbars;
             resources.ApplyResources(this.toolStripIncrSelectCriteria, "toolStripIncrSelectCriteria");
             this.toolStripIncrSelectCriteria.Name = "toolStripIncrSelectCriteria";
             this.toolStripIncrSelectCriteria.Overflow = System.Windows.Forms.ToolStripItemOverflow.Never;
@@ -118,7 +118,7 @@
             // 
             // toolStripIncrFindGo
             // 
-            this.toolStripIncrFindGo.Image = global::TESVSnip.Properties.Resources.find;
+            this.toolStripIncrFindGo.Image = global::FalloutSnip.Properties.Resources.find;
             resources.ApplyResources(this.toolStripIncrFindGo, "toolStripIncrFindGo");
             this.toolStripIncrFindGo.Name = "toolStripIncrFindGo";
             this.toolStripIncrFindGo.Overflow = System.Windows.Forms.ToolStripItemOverflow.Never;
@@ -128,7 +128,7 @@
             // 
             this.toolStripSynchronize.AutoToolTip = false;
             this.toolStripSynchronize.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.toolStripSynchronize.Image = global::TESVSnip.Properties.Resources.reload_all_tabs;
+            this.toolStripSynchronize.Image = global::FalloutSnip.Properties.Resources.reload_all_tabs;
             resources.ApplyResources(this.toolStripSynchronize, "toolStripSynchronize");
             this.toolStripSynchronize.Name = "toolStripSynchronize";
             this.toolStripSynchronize.Click += new System.EventHandler(this.toolStripSynchronize_Click);
@@ -136,7 +136,7 @@
             // toolStripIncrFindCancel
             // 
             this.toolStripIncrFindCancel.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.toolStripIncrFindCancel.Image = global::TESVSnip.Properties.Resources.agt_stop;
+            this.toolStripIncrFindCancel.Image = global::FalloutSnip.Properties.Resources.agt_stop;
             resources.ApplyResources(this.toolStripIncrFindCancel, "toolStripIncrFindCancel");
             this.toolStripIncrFindCancel.Name = "toolStripIncrFindCancel";
             this.toolStripIncrFindCancel.Click += new System.EventHandler(this.toolStripIncrFindCancel_Click);
@@ -144,7 +144,7 @@
             // toolStripIncrFindClear
             // 
             this.toolStripIncrFindClear.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.toolStripIncrFindClear.Image = global::TESVSnip.Properties.Resources.RolledBack;
+            this.toolStripIncrFindClear.Image = global::FalloutSnip.Properties.Resources.RolledBack;
             resources.ApplyResources(this.toolStripIncrFindClear, "toolStripIncrFindClear");
             this.toolStripIncrFindClear.Name = "toolStripIncrFindClear";
             this.toolStripIncrFindClear.Click += new System.EventHandler(this.toolStripIncrFindClear_Click);
@@ -152,7 +152,7 @@
             // toolStripSelectColumns
             // 
             this.toolStripSelectColumns.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.toolStripSelectColumns.Image = global::TESVSnip.Properties.Resources.EditTable;
+            this.toolStripSelectColumns.Image = global::FalloutSnip.Properties.Resources.EditTable;
             resources.ApplyResources(this.toolStripSelectColumns, "toolStripSelectColumns");
             this.toolStripSelectColumns.Name = "toolStripSelectColumns";
             this.toolStripSelectColumns.Click += new System.EventHandler(this.toolStripSelectColumns_Click);
@@ -171,7 +171,7 @@
             // toolStripIncrFindMatch
             // 
             this.toolStripIncrFindMatch.CheckOnClick = true;
-            this.toolStripIncrFindMatch.Image = global::TESVSnip.Properties.Resources.emptybox;
+            this.toolStripIncrFindMatch.Image = global::FalloutSnip.Properties.Resources.emptybox;
             resources.ApplyResources(this.toolStripIncrFindMatch, "toolStripIncrFindMatch");
             this.toolStripIncrFindMatch.Name = "toolStripIncrFindMatch";
             this.toolStripIncrFindMatch.CheckStateChanged += new System.EventHandler(this.toolStripCheck_CheckStateChanged);
@@ -179,7 +179,7 @@
             // toolStripIncrFindExact
             // 
             this.toolStripIncrFindExact.CheckOnClick = true;
-            this.toolStripIncrFindExact.Image = global::TESVSnip.Properties.Resources.emptybox;
+            this.toolStripIncrFindExact.Image = global::FalloutSnip.Properties.Resources.emptybox;
             resources.ApplyResources(this.toolStripIncrFindExact, "toolStripIncrFindExact");
             this.toolStripIncrFindExact.Name = "toolStripIncrFindExact";
             this.toolStripIncrFindExact.CheckStateChanged += new System.EventHandler(this.toolStripCheck_CheckStateChanged);

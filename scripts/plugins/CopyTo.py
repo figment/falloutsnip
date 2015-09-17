@@ -1,4 +1,4 @@
-#
+﻿#
 # Copy to Example
 #
 #   Copy Selected Group or Record to another plugin or new plugin
@@ -6,15 +6,15 @@
 from shared.util import *
 
 import System
-import TESVSnip.Domain
-from TESVSnip.Domain.Model import BaseRecord, Record, Plugin, SubRecord, GroupRecord
+import FalloutSnip.Domain
+from FalloutSnip.Domain.Model import BaseRecord, Record, Plugin, SubRecord, GroupRecord
 from System import TimeSpan
 from System.Diagnostics import Stopwatch
 
 def copyToRecord(records, override):
-	import TESVSnip.Domain.Spells
+	import FalloutSnip.Domain.Spells
 	from shared.SelectItem import SelectItem
-	GetPluginFromNode = TESVSnip.Domain.Spells.GetPluginFromNode
+	GetPluginFromNode = FalloutSnip.Domain.Spells.GetPluginFromNode
 	
 	parents = set( [ GetPluginFromNode(r).Name for r in records ] )
 	form = SelectItem()
@@ -30,15 +30,15 @@ def copyToRecord(records, override):
 		else:
 			p = __plugins__[form.GetSelectedItem()]
 		if p:
-			TESVSnip.Domain.Spells.CopyRecordsTo(records, p, override)
+			FalloutSnip.Domain.Spells.CopyRecordsTo(records, p, override)
 			pass
 			
 
 if __name__ == '<module>':
-	import TESVSnip
-	from TESVSnip.UI.Hosting import ScriptSupport
+	import FalloutSnip
+	from FalloutSnip.UI.Hosting import ScriptSupport
 	
-	class ScriptPlugin(TESVSnip.UI.Services.PluginBase):
+	class ScriptPlugin(FalloutSnip.UI.Services.PluginBase):
 		from System.Drawing import Color
 		def Execute(self, recs):
 			sw = Stopwatch.StartNew()
@@ -57,7 +57,7 @@ if __name__ == '<module>':
 					return False
 			return True
 
-	TESVSnip.UI.Services.PluginStore.AddPlugins(
+	FalloutSnip.UI.Services.PluginStore.AddPlugins(
 		[ ScriptPlugin("copyto.over", "&Copy Override To", supportSelection=True, supportGlobal=False)
 		, ScriptPlugin("copyto.new", "&Copy New To", supportSelection=True, supportGlobal=False)
 		]

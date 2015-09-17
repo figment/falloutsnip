@@ -449,6 +449,6 @@
     <value>RepeatingElement</value>
   </data>
   <data name="&gt;&gt;$this.Type" xml:space="preserve">
-    <value>TESVSnip.RecordControls.BaseElement, TESVSnip, Version=2.7.4404.2, Culture=neutral, PublicKeyToken=null</value>
+    <value>FalloutSnip.RecordControls.BaseElement, FalloutSnip, Version=2.7.4404.2, Culture=neutral, PublicKeyToken=null</value>
   </data>
 </root>

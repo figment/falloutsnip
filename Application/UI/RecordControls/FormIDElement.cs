@@ -1,13 +1,13 @@
-﻿using TESVSnip.Domain.Data;
-using TESVSnip.UI.Forms;
+﻿using FalloutSnip.Domain.Data;
+using FalloutSnip.UI.Forms;
 
-namespace TESVSnip.UI.RecordControls
+namespace FalloutSnip.UI.RecordControls
 {
     using System;
     using System.Linq;
 
     using Domain.Data.Structure;
-    using TESVSnip.Framework;
+    using FalloutSnip.Framework;
 
     internal partial class FormIDElement : TextElement
     {

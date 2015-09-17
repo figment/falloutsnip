@@ -517,7 +517,7 @@ using System.Windows.Forms;
 using System.Windows.Forms.VisualStyles;
 using System.Runtime.Serialization.Formatters;
 using System.Threading;
-using TESVSnip.Properties;
+using FalloutSnip.Properties;
 
 namespace BrightIdeasSoftware
 {

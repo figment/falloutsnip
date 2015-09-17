@@ -1,13 +1,13 @@
-namespace TESVSnip.UI.Forms
+namespace FalloutSnip.UI.Forms
 {
     using System;
     using System.Globalization;
     using System.Windows.Forms;
 
-    using TESVSnip.Domain.Model;
-    using TESVSnip.Framework;
-    using TESVSnip.Framework.Services;
-    using TESVSnip.Properties;
+    using FalloutSnip.Domain.Model;
+    using FalloutSnip.Framework;
+    using FalloutSnip.Framework.Services;
+    using FalloutSnip.Properties;
 
     internal partial class GroupEditor : Form
     {

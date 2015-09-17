@@ -201,7 +201,7 @@
   <data name="rtfWarning.Text" xml:space="preserve">
     <value>{\rtf1\ansi\ansicpg1252\deff0\deflang1033{\fonttbl{\f0\fnil\fcharset0 Calibri;}}
 {\colortbl ;\red255\green0\blue0;}
-{\*\generator Msftedit 5.41.21.2510;}\viewkind4\uc1\pard\sa200\sl276\slmult1\lang9\f0\fs20 Select the Record Types that will be \ul not\ulnone  loaded by TESVSnip when loading ESM masters. Typically, this is for Skyrim.ESM  and it is encouraged to only select REGN, NAVI, WRLD, DIAL for best performance while still loading a majority of records.\par
+{\*\generator Msftedit 5.41.21.2510;}\viewkind4\uc1\pard\sa200\sl276\slmult1\lang9\f0\fs20 Select the Record Types that will be \ul not\ulnone  loaded by FalloutSnip when loading ESM masters. Typically, this is for Skyrim.ESM  and it is encouraged to only select REGN, NAVI, WRLD, DIAL for best performance while still loading a majority of records.\par
 \cf1\fs22 Warning: Saving Masters with records not loaded will result in loss of those records.\cf0\par
 }</value>
   </data>
