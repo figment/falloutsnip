@@ -17,7 +17,7 @@ namespace FalloutSnip.UI.Forms
         {
             this.gr = gr;
             this.InitializeComponent();
-            Icon = Resources.tesv_ico;
+            Icon = Resources.fosnip;
             this.cmbGroupType.ContextMenu = new ContextMenu();
             this.cmbGroupType.SelectedIndex = (int)gr.groupType;
             this.tbRecType.Text = gr.ContentsType;

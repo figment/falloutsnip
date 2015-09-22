@@ -14,7 +14,7 @@ namespace FalloutSnip {
 
         public SearchForm(TreeView list) {
             InitializeComponent();
-            this.Icon=Properties.Resources.tesv_ico;
+            this.Icon=Properties.Resources.fosnip;
             bReset.Enabled=false;
             tv=list;
         }

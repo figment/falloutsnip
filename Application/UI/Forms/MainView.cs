@@ -118,7 +118,7 @@ namespace FalloutSnip.UI.Forms
                 OpenModDialog.InitialDirectory = Settings.Default.DefaultOpenFolder;
             }
 
-            Icon = Resources.tesv_ico;
+            Icon = Resources.fosnip;
             try
             {
                 if (!Settings.Default.IsFirstTimeOpening)

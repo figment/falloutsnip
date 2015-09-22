@@ -29,7 +29,7 @@
         {
             this.InitializeComponent();
             this.filterTree.CheckBoxes = true;
-            Icon = Resources.tesv_ico;
+            Icon = Resources.fosnip;
         }
 
         internal BatchEditRecords(IEnumerable<Record> records)

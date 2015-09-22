@@ -34,7 +34,7 @@ namespace FalloutSnip.UI.Forms
         public NewMediumLevelRecordEditor(Plugin p, Record r, SubRecord sr, SubrecordStructure ss)
         {
             this.InitializeComponent();
-            Icon = Resources.tesv_ico;
+            Icon = Resources.fosnip;
             SuspendLayout();
             this.sr = sr;
             this.ss = ss;

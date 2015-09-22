@@ -28,7 +28,7 @@ namespace FalloutSnip.UI.Forms
         public HexDataEdit(string RecName, byte[] data, dFormIDLookupS formIDLookup)
         {
             this.InitializeComponent();
-            Icon = Resources.tesv_ico;
+            Icon = Resources.fosnip;
             this.formIDLookup = formIDLookup;
             Text += RecName;
             this.tbName.Text = RecName;

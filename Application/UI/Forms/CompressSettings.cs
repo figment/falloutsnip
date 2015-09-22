@@ -14,7 +14,7 @@ namespace FalloutSnip.UI.Forms
         public CompressSettings()
         {
             this.InitializeComponent();
-            Icon = Resources.tesv_ico;
+            Icon = Resources.fosnip;
         }
 
         private void LoadSettings_Load(object sender, EventArgs e)

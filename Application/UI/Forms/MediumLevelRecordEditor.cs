@@ -44,7 +44,7 @@ namespace FalloutSnip.UI.Forms
         public MediumLevelRecordEditor(SubRecord sr, SubrecordStructure ss, dFormIDLookupS formIDLookup, dFormIDScan formIDScan, dLStringLookup strIDLookup)
         {
             this.InitializeComponent();
-            Icon = Resources.tesv_ico;
+            Icon = Resources.fosnip;
             SuspendLayout();
             this.sr = sr;
             this.ss = ss;

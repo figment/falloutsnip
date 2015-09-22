@@ -12,7 +12,7 @@
     <AssemblyName>FalloutSnip</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
-    <ApplicationIcon>Resources\tesv_ico.ico</ApplicationIcon>
+    <ApplicationIcon>Resources\fosnip.ico</ApplicationIcon>
     <FileUpgradeFlags>
     </FileUpgradeFlags>
     <OldToolsVersion>3.5</OldToolsVersion>
@@ -724,7 +724,7 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <None Include="Resources\tesv_ico.ico" />
+    <None Include="Resources\fosnip.ico" />
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config">

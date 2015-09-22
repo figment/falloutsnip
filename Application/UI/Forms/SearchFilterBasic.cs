@@ -26,7 +26,7 @@
         public SearchFilterBasic()
         {
             this.InitializeComponent();
-            Icon = Resources.tesv_ico;
+            Icon = Resources.fosnip;
         }
 
         // internal SearchFilterBasic(RecordStructure rec)

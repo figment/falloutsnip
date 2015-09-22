@@ -16,7 +16,7 @@ namespace FalloutSnip.UI.Forms
         public DataEdit(string RecName, byte[] data)
         {
             this.InitializeComponent();
-            Icon = Resources.tesv_ico;
+            Icon = Resources.fosnip;
             Text += RecName;
             this.tbName.Text = RecName;
             Text += " (string mode)";

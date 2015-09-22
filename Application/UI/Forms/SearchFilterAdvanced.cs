@@ -23,7 +23,7 @@
         public SearchFilterAdvanced()
         {
             this.InitializeComponent();
-            Icon = Resources.tesv_ico;
+            Icon = Resources.fosnip;
         }
 
         internal SearchFilterAdvanced(RecordStructure rec)

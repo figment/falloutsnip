@@ -22,7 +22,7 @@ namespace FalloutSnip.UI.Forms
         private HeaderEditor(Record r)
         {
             this.InitializeComponent();
-            Icon = Resources.tesv_ico;
+            Icon = Resources.fosnip;
             this.R = r;
             this.tbName.Text = r.Name;
             this.Flags1 = r.Flags1;
