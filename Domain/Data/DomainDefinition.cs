@@ -34,6 +34,8 @@ namespace FalloutSnip.Domain.Data
         public string[] AllESMRecords { get; private set; }
         public string HEDRType { get; private set; }
         public float HEDRVersion { get; private set; }
+        public float HEDRVersionMin { get; private set; }
+        public float HEDRVersionMax { get; private set; }
         public int HEDROffset { get; private set; }
         public int HEDRRecSize { get; private set; }
         public int RecSize { get; private set; }
@@ -59,6 +61,8 @@ namespace FalloutSnip.Domain.Data
                 define.AllESMRecords = GetValue(values, "AllESMRecords", "").Split(';');
                 define.HEDRType = GetValue(values, "HEDRType", "TES4");
                 define.HEDRVersion = float.Parse(GetValue(values, "HEDRVersion", "1.0"));
+                define.HEDRVersionMin = float.Parse(GetValue(values, "HEDRVersionMin", define.HEDRVersion.ToString()));
+                define.HEDRVersionMax = float.Parse(GetValue(values, "HEDRVersionMax", define.HEDRVersion.ToString()));
                 define.HEDROffset = int.Parse(GetValue(values, "HEDROffset", "4"));
                 define.HEDRRecSize = int.Parse(GetValue(values, "HEDRRecSize", "2"));
                 define.RecSize = int.Parse(GetValue(values, "RecSize", "16"));
@@ -133,7 +137,8 @@ namespace FalloutSnip.Domain.Data
         {
             const float EPSILON = Single.Epsilon * 10;
             foreach (var domain in Domains.Values.Where(domain => type == domain.HEDRType 
-                && Math.Abs(version - domain.HEDRVersion) < EPSILON))
+                && version >= (domain.HEDRVersionMin - EPSILON)
+                && version <= (domain.HEDRVersionMax + EPSILON)))
             {
                 if (!domain.Loaded)
                     Load(domain.Name);

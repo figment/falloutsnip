@@ -43,7 +43,7 @@
       <Element name="compiled script blob" type="blob" />
     </Subrecord>
     <Subrecord name="SCTX" desc="Uncompiled Script" optional="1">
-      <Element name="" type="fstring" multiline="true" />
+      <Element name="" type="string" multiline="true" />
     </Subrecord>
     <Subrecord name="SLSD" desc="Local Variable Data" optional="2" repeat="2">
       <Element name="index" type="int" />

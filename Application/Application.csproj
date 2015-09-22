@@ -122,6 +122,30 @@
     <Reference Include="WindowsFormsIntegration" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="UI\Forms\MainView.Messaging.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="UI\Forms\MainView.Selection.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="UI\Forms\MainView.Model.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="UI\Forms\MainView.Strings.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="UI\Forms\MainView.Status.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="UI\Forms\MainView.Scripts.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="UI\Forms\MainView.Search.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="UI\Forms\MainView.Docking.cs">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Include="UI\Services\Options.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -395,9 +419,6 @@
     </Compile>
     <Compile Include="UI\Forms\LoadSettings.Designer.cs">
       <DependentUpon>LoadSettings.cs</DependentUpon>
-    </Compile>
-    <Compile Include="UI\Forms\MainView.Search.cs">
-      <SubType>Form</SubType>
     </Compile>
     <Compile Include="UI\Forms\MainView.Spells.cs">
       <SubType>Form</SubType>

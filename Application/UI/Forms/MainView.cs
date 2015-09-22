@@ -48,31 +48,13 @@ namespace FalloutSnip.UI.Forms
 {
     internal partial class MainView : Form
     {
-        private const int WM_SETREDRAW = 0x0b;
 
-        private static readonly Regex linkRegex =
-            new Regex(
-                "^(?:(?<text>[^#]*)#)?(?:(?<plugin>[^\\/:*?\"<>|@]*)@)?(?<type>[0-z][A-Z][A-Z][A-Z_]):(?<id>[0-9a-zA-Z]+)$",
-                RegexOptions.None);
-
-        private static object s_clipboard;
-        private static string mruRegKey = "SOFTWARE\\FalloutSnip\\MRU";
-        private readonly SelectionContext Selection;
-        private readonly HtmlContent htmlContent = new HtmlContent();
         private readonly MruStripMenu mruMenu;
-        private readonly PluginTreeContent pluginTreeContent = new PluginTreeContent();
-        private readonly SubrecordListContent subrecordListContent = new SubrecordListContent();
 
         private volatile bool backgroundWorkCanceled;
 
         private bool inRebuildSelection;
 
-        internal Dictionary<string, ToolStripMenuItem> languageToolBarItems =
-            new Dictionary<string, ToolStripMenuItem>(StringComparer.InvariantCultureIgnoreCase);
-        private DeserializeDockContent mDeserializeDockContent;
-        private OutputTextContent outputTextContent;
-        private Timer statusTimer;
-        private StringsEditor stringEditor;
 
         public MainView()
         {
@@ -200,20 +182,6 @@ namespace FalloutSnip.UI.Forms
                     };
         }
 
-        public static object Clipboard
-        {
-            get { return GetClipboardData(); }
-
-            set
-            {
-                SetClipboardData(value);
-                if (ClipboardChanged != null)
-                {
-                    ClipboardChanged(null, EventArgs.Empty);
-                }
-            }
-        }
-
         private PluginTreeView PluginTree
         {
             get { return pluginTreeContent.PluginTree; }
@@ -238,25 +206,6 @@ namespace FalloutSnip.UI.Forms
         }
 
         public static event EventHandler ClipboardChanged;
-
-        public static void PostStatusText(string text)
-        {
-            PostStatusText(text, SystemColors.ControlText);
-        }
-
-        public static void PostStatusText(string text, Color color)
-        {
-            var form = Application.OpenForms.OfType<MainView>().FirstOrDefault();
-            if (form != null)
-            {
-                form.SendStatusText(text, color);
-            }
-        }
-
-        public static void PostStatusWarning(string text)
-        {
-            PostStatusText(text, Color.OrangeRed);
-        }
 
         public void CancelBackgroundProcess()
         {
@@ -303,47 +252,6 @@ namespace FalloutSnip.UI.Forms
             return backgroundWorkCanceled;
         }
 
-        /// <summary>
-        ///     Send text to status and then clear 5 seconds later.
-        /// </summary>
-        /// <param name="text">
-        /// </param>
-        public void SendStatusText(string text)
-        {
-            SendStatusText(text, SystemColors.ControlText);
-        }
-
-        public void SendStatusText(string text, Color color)
-        {
-            try
-            {
-                if (InvokeRequired)
-                {
-                    Invoke(new Action<string, Color>(SendStatusText), new object[] {text, color});
-                }
-                else
-                {
-                    toolStripStatusLabel.ForeColor = color;
-                    toolStripStatusLabel.Text = text;
-                    if (statusTimer == null)
-                    {
-                        statusTimer = new Timer(
-                            o =>
-                            Invoke(new TimerCallback(o2 => { toolStripStatusLabel.Text = string.Empty; }),
-                                   new object[] {string.Empty}), string.Empty, TimeSpan.FromSeconds(15),
-                            TimeSpan.FromMilliseconds(-1));
-                    }
-                    else
-                    {
-                        statusTimer.Change(TimeSpan.FromSeconds(15), TimeSpan.FromMilliseconds(-1));
-                    }
-                }
-            }
-            catch (Exception)
-            {
-            }
-        }
-
         public void StartBackgroundWork(Action workAction, Action completedAction)
         {
             if (backgroundWorker1.IsBusy)
@@ -364,65 +272,6 @@ namespace FalloutSnip.UI.Forms
             backgroundWorker1.ReportProgress(percentProgress);
         }
 
-        internal static object GetClipboardData()
-        {
-            if (Settings.Default.UseWindowsClipboard)
-            {
-                var od = System.Windows.Forms.Clipboard.GetDataObject();
-                if (od != null)
-                {
-                    var cliptype = od.GetData("FalloutSnip");
-                    if (cliptype is string)
-                    {
-                        return od.GetData(cliptype.ToString());
-                    }
-                }
-
-                return null;
-            }
-
-            return s_clipboard;
-        }
-
-        internal static T GetClipboardData<T>() where T : class
-        {
-            if (Settings.Default.UseWindowsClipboard)
-            {
-                var od = System.Windows.Forms.Clipboard.GetDataObject();
-                if (od != null)
-                {
-                    var clip = od.GetData(typeof (T).FullName);
-                    return clip as T;
-                }
-
-                return default(T);
-            }
-
-            return s_clipboard as T;
-        }
-
-        internal static bool HasClipboardData()
-        {
-            if (Settings.Default.UseWindowsClipboard)
-            {
-                var od = System.Windows.Forms.Clipboard.GetDataObject();
-                return od != null && od.GetDataPresent("FalloutSnip");
-            }
-
-            return Clipboard != null;
-        }
-
-        internal static bool HasClipboardData<T>()
-        {
-            if (Settings.Default.UseWindowsClipboard)
-            {
-                var od = System.Windows.Forms.Clipboard.GetDataObject();
-                return od != null && od.GetDataPresent(typeof (T).FullName);
-            }
-
-            return Clipboard is T;
-        }
-
         internal static void PostReferenceSearch(uint formid)
         {
             var form = Application.OpenForms.OfType<MainView>().FirstOrDefault();
@@ -432,26 +281,6 @@ namespace FalloutSnip.UI.Forms
             }
         }
 
-        internal static void SetClipboardData(object value)
-        {
-            if (Settings.Default.UseWindowsClipboard)
-            {
-                var cloneable = value as ICloneable;
-                if (cloneable != null)
-                {
-                    var ido = new DataObject();
-                    var srFormat = value.GetType().FullName;
-                    ido.SetData(srFormat, cloneable.Clone());
-                    ido.SetData("FalloutSnip", srFormat);
-                    System.Windows.Forms.Clipboard.Clear();
-                    System.Windows.Forms.Clipboard.SetDataObject(ido, true);
-                }
-            }
-            else
-            {
-                s_clipboard = value;
-            }
-        }
 
         internal static void SynchronizeSelection(IEnumerable<BaseRecord> selection)
         {
@@ -541,67 +370,9 @@ namespace FalloutSnip.UI.Forms
             SendMessage(control.Handle, WM_SETREDRAW, ipenable, IntPtr.Zero);
         }
 
-        private static bool IsVisible(IDockContent content)
-        {
-            return content.DockHandler.DockState != DockState.Hidden &&
-                   content.DockHandler.DockState != DockState.Unknown;
-        }
 
         [DllImport("user32.dll")]
         private static extern IntPtr SendMessage(IntPtr hWnd, int msg, IntPtr wParam, IntPtr lParam);
-
-        private void CloseAllContents()
-        {
-            // we don't want to create another instance of tool window, set DockPanel to null
-            pluginTreeContent.DockPanel = null;
-            subrecordListContent.DockPanel = null;
-        }
-
-        private void CloseStringEditor()
-        {
-            if (stringEditor != null)
-            {
-                var editor = stringEditor;
-                stringEditor = null;
-                try
-                {
-                    if (!editor.IsDisposed)
-                    {
-                        editor.Close();
-                    }
-                }
-                catch
-                {
-                }
-            }
-        }
-
-        private void CopySelectedSubRecord()
-        {
-            var sr = GetSelectedSubrecords();
-            if (sr == null)
-            {
-                return;
-            }
-
-            Clipboard = sr.Select(ss => (SubRecord) ss.Clone()).ToArray();
-        }
-
-        private void CopySelection()
-        {
-            // Route to focused control.
-            if (PluginTree.ContainsFocus)
-            {
-                PluginTree.CopySelectedRecord();
-            }
-            else if (SubrecordList.ContainsFocus)
-            {
-                if (Selection.SelectedSubrecord)
-                {
-                    CopySelectedSubRecord();
-                }
-            }
-        }
 
         private void EnableUserInterface(bool enable)
         {
@@ -617,61 +388,7 @@ namespace FalloutSnip.UI.Forms
             PluginList.FixMasters();
         }
 
-        private IDockContent GetContentFromPersistString(string persistString)
-        {
-            if (persistString == typeof (PluginTreeContent).ToString())
-            {
-                return pluginTreeContent;
-            }
 
-            if (persistString == typeof (SubrecordListContent).ToString())
-            {
-                return subrecordListContent;
-            }
-
-
-            if (persistString == typeof (HtmlContent).ToString())
-            {
-                return htmlContent;
-            }
-
-            return null;
-        }
-
-        private Plugin GetPluginFromNode(BaseRecord node)
-        {
-            var tn = node;
-            if (tn is Plugin)
-            {
-                return (Plugin) tn;
-            }
-
-            while (!(tn is Plugin) && tn != null)
-            {
-                tn = tn.Parent;
-            }
-
-            if (tn != null)
-            {
-                return tn as Plugin;
-            }
-
-            return new Plugin();
-        }
-
-        private Record GetRecordByID(uint id)
-        {
-            if (Selection != null && Selection.Record != null)
-            {
-                var p = GetPluginFromNode(Selection.Record);
-                if (p != null)
-                {
-                    return p.GetRecordByID(id);
-                }
-            }
-
-            return null;
-        }
 
         private string[] GetRecordFilter(string s)
         {
@@ -747,148 +464,6 @@ namespace FalloutSnip.UI.Forms
             return recFilter;
         }
 
-        private SelectionContext GetSelectedContext()
-        {
-            return Selection;
-
-            // context.Record = this.parentRecord
-            // context.SubRecord = GetSelectedSubrecord();
-        }
-
-        private SubRecord GetSelectedSubrecord()
-        {
-            return SubrecordList.GetSelectedSubrecord();
-        }
-
-        private IEnumerable<SubRecord> GetSelectedSubrecords()
-        {
-            return SubrecordList.GetSelectedSubrecords();
-        }
-
-        private void InitializeDockingWindows()
-        {
-            mDeserializeDockContent = GetContentFromPersistString;
-        }
-
-        private void InitializeLanguage()
-        {
-            languageToolBarItems.Add("English", englishToolStripMenuItem);
-            languageToolBarItems.Add("Czech", czechToolStripMenuItem);
-            languageToolBarItems.Add("French", frenchToolStripMenuItem);
-            languageToolBarItems.Add("German", germanToolStripMenuItem);
-            languageToolBarItems.Add("Italian", italianToolStripMenuItem);
-            languageToolBarItems.Add("Spanish", spanishToolStripMenuItem);
-            languageToolBarItems.Add("Russian", russianToolStripMenuItem);
-            languageToolBarItems.Add("Polish", polishToolStripMenuItem);
-        }
-
-        private void LayoutDockingWindows(bool force)
-        {
-            try
-            {
-                if (!force && IsVisible(pluginTreeContent) && IsVisible(subrecordListContent) &&
-                    IsVisible(htmlContent))
-                {
-                    return;
-                }
-
-                dockPanel.SuspendLayout(true);
-                if (force)
-                {
-                    pluginTreeContent.DockPanel = null;
-                    subrecordListContent.DockPanel = null;
-                    htmlContent.DockPanel = null;
-                }
-
-                if (!IsVisible(pluginTreeContent) || force)
-                {
-                    pluginTreeContent.Show(dockPanel, DockState.DockLeft);
-                    dockPanel.Width = Math.Max(dockPanel.Width, pluginTreeContent.MinimumSize.Width);
-                }
-
-                if (!IsVisible(subrecordListContent) || force)
-                {
-                    subrecordListContent.Show(pluginTreeContent.Pane, DockAlignment.Bottom, 0.5);
-                }
-
-                if (!IsVisible(htmlContent) || force)
-                {
-                    htmlContent.Show(dockPanel, DockState.Document);
-                }
-            }
-            catch
-            {
-            }
-            finally
-            {
-                dockPanel.ResumeLayout(true, true);
-            }
-        }
-
-        private void LoadDockingWindows()
-        {
-            string configFile = Path.Combine(Options.Value.SettingsDirectory, @"DockPanel.config");
-            if (File.Exists(configFile))
-            {
-                try
-                {
-                    dockPanel.SuspendLayout(true);
-                    dockPanel.LoadFromXml(configFile, mDeserializeDockContent);
-                }
-                catch
-                {
-                    if (!string.IsNullOrEmpty(configFile) && File.Exists(configFile))
-                    {
-                        try
-                        {
-                            File.Delete(configFile);
-                        }
-                        catch
-                        {
-                        }
-                    }
-                }
-                finally
-                {
-                    dockPanel.ResumeLayout(true, true);
-                }
-            }
-
-            LayoutDockingWindows(force: false);
-        }
-
-        private string LookupFormIDI(uint id)
-        {
-            return LookupFormIDI(Selection, id);
-        }
-
-        private string LookupFormIDI(SelectionContext context, uint id)
-        {
-            if (context != null && context.Record != null)
-            {
-                var p = GetPluginFromNode(context.Record);
-                if (p != null)
-                {
-                    p.LookupFormID(id);
-                }
-            }
-
-            return "No selection";
-        }
-
-        private string LookupFormStrings(uint id)
-        {
-            if (Selection != null && Selection.Record != null)
-            {
-                var p = GetPluginFromNode(Selection.Record);
-                if (p != null)
-                {
-                    return p.LookupFormStrings(id);
-                }
-            }
-
-            return null;
-        }
 
         private void MainView_Load(object sender, EventArgs e)
         {
@@ -944,119 +519,6 @@ namespace FalloutSnip.UI.Forms
             return rec.MatchRecordStructureToRecord();
         }
 
-        private void PasteFromClipboard(bool recordOnly, bool asNew)
-        {
-            if (!HasClipboardData())
-            {
-                MessageBox.Show(Resources.TheClipboardIsEmpty, Resources.ErrorText);
-                return;
-            }
-
-            if (PluginTree.ContainsFocus)
-            {
-                PluginTree.PasteFromClipboard(recordOnly, asNew);
-            }
-            else if (SubrecordList.ContainsFocus)
-            {
-                SubrecordList.PasteFromClipboard();
-            }
-        }
-
-        private void PluginTree_OnSelectionUpdated(object sender, EventArgs e)
-        {
-            // fix EDID if relevant
-            UpdateMainText(PluginTree.SelectedRecord);
-            PluginTree.RefreshObject(PluginTree.SelectedRecord);
-        }
-
-        private void PluginTree_SelectionChanged(object sender, EventArgs e)
-        {
-            UpdateMainText(PluginTree.SelectedRecord);
-        }
-
-        private void RebuildSelection()
-        {
-            if (inRebuildSelection)
-            {
-                return;
-            }
-
-            bool oldInRebuildSelection = inRebuildSelection;
-            try
-            {
-                inRebuildSelection = true;
-                var rec = PluginTree.SelectedRecord;
-                if (rec == null)
-                {
-                    SubrecordList.Record = null;
-                    Selection.Record = null;
-                    UpdateMainText(string.Empty);
-                    return;
-                }
-
-                bool hasClipboard = HasClipboardData();
-
-                if (rec is Plugin)
-                {
-                    SubrecordList.Record = null;
-                    Selection.Record = null;
-                    cutToolStripMenuItem.Enabled = false;
-                    copyToolStripMenuItem.Enabled = false;
-                    deleteToolStripMenuItem.Enabled = false;
-                    pasteToolStripMenuItem.Enabled = hasClipboard;
-                    pasteNewToolStripMenuItem.Enabled = hasClipboard;
-                    insertGroupToolStripMenuItem.Enabled = true;
-                    insertRecordToolStripMenuItem.Enabled = true;
-                    insertSubrecordToolStripMenuItem.Enabled = false;
-                }
-                else if (rec is Record)
-                {
-                    cutToolStripMenuItem.Enabled = true;
-                    copyToolStripMenuItem.Enabled = true;
-                    deleteToolStripMenuItem.Enabled = true;
-                    pasteToolStripMenuItem.Enabled = hasClipboard;
-                    pasteNewToolStripMenuItem.Enabled = hasClipboard;
-                    insertGroupToolStripMenuItem.Enabled = false;
-                    insertRecordToolStripMenuItem.Enabled = true;
-                    insertSubrecordToolStripMenuItem.Enabled = true;
-                    Selection.Record = rec as Rec;
-                    SubrecordList.Record = Selection.Record as Record;
-                    MatchRecordStructureToRecord();
-                }
-                else if (rec is GroupRecord)
-                {
-                    Selection.Record = null;
-                    SubrecordList.Record = null;
-                    cutToolStripMenuItem.Enabled = true;
-                    copyToolStripMenuItem.Enabled = true;
-                    deleteToolStripMenuItem.Enabled = true;
-                    pasteToolStripMenuItem.Enabled = hasClipboard;
-                    pasteNewToolStripMenuItem.Enabled = hasClipboard;
-                    insertGroupToolStripMenuItem.Enabled = true;
-                    insertRecordToolStripMenuItem.Enabled = true;
-                    insertSubrecordToolStripMenuItem.Enabled = false;
-                }
-                else
-                {
-                    Selection.Record = null;
-                    SubrecordList.Record = null;
-                    cutToolStripMenuItem.Enabled = false;
-                    copyToolStripMenuItem.Enabled = false;
-                    deleteToolStripMenuItem.Enabled = false;
-                    pasteToolStripMenuItem.Enabled = false;
-                    pasteNewToolStripMenuItem.Enabled = false;
-                    insertGroupToolStripMenuItem.Enabled = false;
-                    insertRecordToolStripMenuItem.Enabled = false;
-                    insertSubrecordToolStripMenuItem.Enabled = false;
-                }
-
-                Selection.SubRecord = GetSelectedSubrecord();
-            }
-            finally
-            {
-                inRebuildSelection = oldInRebuildSelection;
-            }
-        }
 
         private void ReferenceSearch(uint formid)
         {
@@ -1085,39 +547,6 @@ namespace FalloutSnip.UI.Forms
             }
         }
 
-        private void SaveDockingWindows()
-        {
-            string configFile = null;
-            try
-            {
-                configFile = Path.Combine(Options.Value.SettingsDirectory, "DockPanel.config");
-                dockPanel.SaveAsXml(configFile);
-            }
-            catch
-            {
-                if (!string.IsNullOrEmpty(configFile) && File.Exists(configFile))
-                {
-                    try
-                    {
-                        File.Delete(configFile);
-                    }
-                    catch
-                    {
-                    }
-                }
-            }
-        }
-
-        private void ShowDockingWindows()
-        {
-            pluginTreeContent.CloseButtonVisible = false;
-            subrecordListContent.CloseButtonVisible = false;
-            htmlContent.MdiParent = this;
-            htmlContent.CloseButtonVisible = false;
-            htmlContent.CloseButton = false;
-            htmlContent.HideOnClose = true;
-            LayoutDockingWindows(force: false);
-        }
 
         private void TESsnip_FormClosing(object sender, FormClosingEventArgs e)
         {
@@ -1155,22 +584,6 @@ namespace FalloutSnip.UI.Forms
         private void UpdateMainText(string text)
         {
             htmlContent.UpdateText(text);
-        }
-
-        private void UpdateStringEditor()
-        {
-            if (stringEditor != null)
-            {
-                var plugins = PluginList.All.Records.OfType<Plugin>().ToList();
-                if (plugins.Count == 0)
-                {
-                    CloseStringEditor();
-                }
-                else
-                {
-                    stringEditor.Reload(plugins.ToArray());
-                }
-            }
         }
 
         private void addMasterToolStripMenuItem_Click(object sender, EventArgs e)
@@ -1428,21 +841,7 @@ namespace FalloutSnip.UI.Forms
 
         private void editStringsToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            if (stringEditor == null)
-            {
-                var plugins = PluginList.All.Records.OfType<Plugin>().ToList();
-                if (plugins.Count == 0)
-                {
-                    MessageBox.Show(this, "No plugins available to edit", Resources.ErrorText, MessageBoxButtons.OK,
-                                    MessageBoxIcon.Error);
-                    return;
-                }
-
-                stringEditor = new StringsEditor();
-                stringEditor.FormClosed += delegate { CloseStringEditor(); };
-                stringEditor.Plugins = plugins.ToArray();
-                stringEditor.Show(this); // modeless. Close if the tree is modified.
-            }
+            OpenStringEditor();
         }
 
         private void editToolStripMenuItem_DropDownOpening(object sender, EventArgs e)
@@ -1537,32 +936,6 @@ namespace FalloutSnip.UI.Forms
             RebuildSelection();
         }
 
-        private void languageToolStripMenuItem_DropDownItemClicked(object sender, ToolStripItemClickedEventArgs e)
-        {
-            foreach (var kvp in languageToolBarItems)
-            {
-                if (e.ClickedItem == kvp.Value)
-                {
-                    if (Domain.Properties.Settings.Default.LocalizationName != kvp.Key)
-                    {
-                        Domain.Properties.Settings.Default.LocalizationName = kvp.Key;
-                        ReloadLanguageFiles();
-                    }
-
-                    break;
-                }
-            }
-        }
-
-        private void languageToolStripMenuItem_DropDownOpening(object sender, EventArgs e)
-        {
-            foreach (var kvp in languageToolBarItems)
-            {
-                kvp.Value.Checked =
-                    string.Compare(kvp.Key, Domain.Properties.Settings.Default.LocalizationName,
-                                   StringComparison.OrdinalIgnoreCase) == 0;
-            }
-        }
 
         private void lookupFormidsToolStripMenuItem_Click(object sender, EventArgs e)
         {
@@ -2249,31 +1622,6 @@ namespace FalloutSnip.UI.Forms
         }
 
 
-        public InterpreterConsole CreateInterpreterWindow()
-        {
-            int id = Application.OpenForms.OfType<InterpreterConsole>().Count() + 1;
-            var form = new InterpreterConsole {Text = string.Format("Console {0}", id)};
-            var console = Application.OpenForms.OfType<InterpreterConsole>().LastOrDefault(x => x.Visible);
-            if (console != null)
-            {
-                if (console.Pane != null)
-                {
-                    // second item in list
-                    form.Show(console.Pane, null);
-                }
-                else if (console.PanelPane != null)
-                {
-                    form.Show(console.PanelPane, null);
-                }
-            }
-            else
-            {
-                form.Show(dockPanel, DockState.Document);
-            }
-
-            return form;
-        }
-
         private void consoleToolStripMenuItem_Click(object sender, EventArgs e)
         {
             try
@@ -2313,29 +1661,6 @@ namespace FalloutSnip.UI.Forms
             }
         }
 
-
-        public T GetWindowByName<T>(string name) where T : BaseDockContent
-        {
-            return Application.OpenForms.OfType<T>().FirstOrDefault(x => string.Compare(x.Text, name, false) == 0);
-        }
-
-        public T GetOrCreateWindowByName<T>(string name) where T : BaseDockContent, new()
-        {
-            var form = Application.OpenForms.OfType<T>().FirstOrDefault(x => string.Compare(x.Text, name, false) == 0);
-            if (form == null)
-            {
-                form = new T {Text = name};
-                form.Show(dockPanel, DockState.Document);
-            }
-            if (!form.Visible)
-            {
-                form.Show(dockPanel, DockState.Document);
-            }
-            return form;
-        }
-
-        [DllImport("shell32.dll")]
-        private static extern int FindExecutable(string lpFile, string lpDirectory, [Out] StringBuilder lpResult);
 
         private void editScriptsToolStripMenuItem_DropDownItemClicked(object sender, ToolStripItemClickedEventArgs e)
         {
@@ -2395,256 +1720,5 @@ namespace FalloutSnip.UI.Forms
             }
         }
 
-        #region Scripting Output Window
-
-        private void outputWindowToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            if (outputTextContent == null)
-            {
-                outputTextContent = GetWindowByName<OutputTextContent>("Output");
-                if (outputTextContent == null)
-                {
-                    outputTextContent = GetOrCreateWindowByName<OutputTextContent>("Output");
-                    outputTextContent.AppendText(PluginEngine.Default.GetOutputText());
-                    outputTextContent.Closed += outputWindow_Closed;
-                    PluginEngine.Default.OnConsoleMessage += pluginEngine_OnConsoleMessage;
-                }
-            }
-        }
-
-        private void outputWindow_Closed(object sender, EventArgs e)
-        {
-            outputTextContent = null;
-            PluginEngine.Default.OnConsoleMessage -= pluginEngine_OnConsoleMessage;
-        }
-
-        private void pluginEngine_OnConsoleMessage(object sender, PluginEngine.MessageEventArgs e)
-        {
-            if (outputTextContent != null)
-            {
-                outputTextContent.AppendText(e.Text);
-            }
-        }
-
-        #endregion
-
-        #region Dynamic IronPython Plugin Scripts
-
-        private void LoadDynamicScripts()
-        {
-            if (!PluginEngine.Default.Plugins.Any())
-            {
-                globalScriptsToolStripMenuItem.Enabled = false;
-                selectionScriptsToolStripMenuItem.Enabled = false;
-            }
-            foreach (var plugin in PluginEngine.Default.Plugins)
-            {
-                // not valid 
-                if (string.IsNullOrWhiteSpace(plugin.Name))
-                    continue;
-
-                if (plugin.SupportsSelection)
-                {
-                    var item = new ToolStripMenuItem
-                        {
-                            Name = plugin.Name,
-                            Text = string.IsNullOrWhiteSpace(plugin.DisplayName) ? plugin.Name : plugin.DisplayName,
-                            Image = plugin.DisplayImage,
-                            ToolTipText = plugin.ToolTipText,
-                            AutoToolTip = !string.IsNullOrWhiteSpace(plugin.ToolTipText),
-                            Visible = true,
-                            Enabled = true,
-                            Tag = plugin.Name,
-                        };
-                    selectionScriptsToolStripMenuItem.DropDownItems.Add(item);
-                }
-                if (plugin.SupportGlobal)
-                {
-                    var item = new ToolStripMenuItem
-                        {
-                            Name = plugin.Name,
-                            Text = string.IsNullOrWhiteSpace(plugin.DisplayName) ? plugin.Name : plugin.DisplayName,
-                            Image = plugin.DisplayImage,
-                            ToolTipText = plugin.ToolTipText,
-                            AutoToolTip = !string.IsNullOrWhiteSpace(plugin.ToolTipText),
-                            Visible = true,
-                            Enabled = true,
-                            Tag = plugin.Name,
-                        };
-                    globalScriptsToolStripMenuItem.DropDownItems.Add(item);
-                }
-            }
-
-            var rootUri = new Uri(Path.Combine(PluginEngine.PluginsPyPath, "."), UriKind.Absolute);
-            foreach (
-                var filename in
-                    Directory.EnumerateFiles(PluginEngine.PluginsPyPath, "*.py", SearchOption.TopDirectoryOnly))
-            {
-                var relativePath = rootUri.MakeRelativeUri(new Uri(filename, UriKind.Absolute)).ToString();
-                // was going to show subdirectories but will leave that alone for now
-                var item = new ToolStripMenuItem
-                    {
-                        Name = Path.GetFileNameWithoutExtension(relativePath),
-                        Text = Path.GetFileNameWithoutExtension(relativePath),
-                        Image = Resources.PythonScript32x32,
-                        ToolTipText = string.Format("Open in {0} in default python editor", relativePath),
-                        AutoToolTip = true,
-                        Visible = true,
-                        Enabled = true,
-                        Tag = Path.GetFullPath(filename),
-                    };
-                editScriptsToolStripMenuItem.DropDownItems.Add(item);
-            }
-
-            selectionScriptsToolStripMenuItem.Enabled = selectionScriptsToolStripMenuItem.HasDropDownItems;
-            globalScriptsToolStripMenuItem.Enabled = globalScriptsToolStripMenuItem.HasDropDownItems;
-        }
-
-        private void ClearDynamicScripts()
-        {
-            globalScriptsToolStripMenuItem.DropDownItems.Clear();
-            selectionScriptsToolStripMenuItem.DropDownItems.Clear();
-            editScriptsToolStripMenuItem.DropDownItems.Clear();
-        }
-
-        private void BuildDynamicScriptsMenu()
-        {
-            ClearDynamicScripts();
-            var outputWindow = GetWindowByName<OutputTextContent>("Output");
-            if (outputWindow != null)
-                outputWindow.UpdateText("");
-            PluginEngine.Default.Reinitialize();
-            LoadDynamicScripts();
-        }
-
-        private void reloadToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            BuildDynamicScriptsMenu();
-        }
-
-        private void scriptsToolStripMenuItem_DropDownOpening(object sender, EventArgs e)
-        {
-            selectionScriptsToolStripMenuItem.Enabled =
-                scriptsToolStripMenuItem.Enabled &&
-                selectionScriptsToolStripMenuItem.HasDropDownItems &&
-                PluginTree.SelectedRecord != null;
-        }
-
-        private void globalScriptsToolStripMenuItem_DropDownItemClicked(object sender, ToolStripItemClickedEventArgs e)
-        {
-            if (e.ClickedItem.Tag != null)
-            {
-                var name = e.ClickedItem.Tag as string;
-                PluginEngine.Default.ExecuteByName(name);
-            }
-        }
-
-        private IList BuildSelectionList()
-        {
-            var recs = PluginTree.SelectedRecords;
-            return recs != null ? recs.ToArray() : new object[0];
-        }
-
-        private void selectionScriptsToolStripMenuItem_DropDownOpening(object sender, EventArgs e)
-        {
-            var recs = BuildSelectionList();
-            if (recs.Count == 0) return;
-            foreach (ToolStripMenuItem menu in selectionScriptsToolStripMenuItem.DropDownItems)
-            {
-                var name = menu.Tag as string;
-                menu.Enabled = !string.IsNullOrEmpty(name) &&
-                               PluginEngine.Default.IsValidSelectionByName(name, recs);
-            }
-        }
-
-        private void selectionScriptsToolStripMenuItem_DropDownItemClicked(object sender,
-                                                                           ToolStripItemClickedEventArgs e)
-        {
-            var recs = BuildSelectionList();
-            if (recs.Count == 0) return;
-
-            var name = e.ClickedItem.Tag as string;
-            if (e.ClickedItem.Enabled)
-                PluginEngine.Default.ExecuteSelectionByName(name, recs);
-        }
-
-        #endregion
-
-        #region MessageFilter
-
-        public class MainViewMessageFilter : IMessageFilter
-        {
-            public const int WM_CHAR = 0x102;
-
-            public const int WM_KEYDOWN = 0x100;
-
-            public const int WM_KEYUP = 0x101;
-
-            private const ushort KEY_PRESSED = 0x8000;
-
-            private readonly MainView owner;
-
-            public MainViewMessageFilter(MainView owner)
-            {
-                this.owner = owner;
-            }
-
-            public bool PreFilterMessage(ref Message m)
-            {
-                try
-                {
-                    return owner.PreFilterMessage(ref m);
-                }
-                catch
-                {
-                }
-
-                return true;
-            }
-
-            [DllImport("user32.dll")]
-            public static extern ushort GetAsyncKeyState(VirtualKeyStates nVirtKey);
-
-            [DllImport("user32.dll")]
-            public static extern ushort GetKeyState(VirtualKeyStates nVirtKey);
-
-            public static bool IsAltDown()
-            {
-                return 1 == GetKeyState(VirtualKeyStates.VK_MENU);
-            }
-
-            public static bool IsControlDown()
-            {
-                return 1 == GetKeyState(VirtualKeyStates.VK_CONTROL);
-            }
-
-            public static bool IsShiftDown()
-            {
-                return 1 == GetKeyState(VirtualKeyStates.VK_SHIFT);
-            }
-
-            internal enum VirtualKeyStates
-            {
-                VK_LBUTTON = 0x01,
-                VK_RBUTTON = 0x02,
-                VK_CANCEL = 0x03,
-                VK_MBUTTON = 0x04,
-                VK_LSHIFT = 0xA0,
-                VK_RSHIFT = 0xA1,
-                VK_LCONTROL = 0xA2,
-                VK_RCONTROL = 0xA3,
-                VK_LMENU = 0xA4,
-                VK_RMENU = 0xA5,
-                VK_LEFT = 0x25,
-                VK_UP = 0x26,
-                VK_RIGHT = 0x27,
-                VK_DOWN = 0x28,
-                VK_SHIFT = 0x10,
-                VK_CONTROL = 0x11,
-                VK_MENU = 0x12,
-            }
-        }
-
-        #endregion
     }
 }

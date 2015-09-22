@@ -57,7 +57,7 @@
             this.Name = "OutputTextContent";
             this.ShowHint = WeifenLuo.WinFormsUI.Docking.DockState.Document;
             this.ShowInTaskbar = false;
-            this.Text = "Report";
+            this.Text = "Output";
             this.ResumeLayout(false);
             this.PerformLayout();
 
