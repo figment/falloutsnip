@@ -15,13 +15,13 @@ using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 
 [assembly: AssemblyCompany("FalloutSnip")]
-[assembly: AssemblyTitle("FalloutSnip - Version 1.0 (66438f6)")]
+[assembly: AssemblyTitle("FalloutSnip - Version 1.0 (54548ba)")]
 [assembly: AssemblyCopyright("Copyright (c) 2015")]
 [assembly: AssemblyTrademark("All Rights Reserved")]
 [assembly: CLSCompliant(false)]
 [assembly: AssemblyDelaySign(false)]
-[assembly: AssemblyVersion("1.0.5737.0")]
-[assembly: AssemblyFileVersion("1.0.5737.0")]
+[assembly: AssemblyVersion("1.0.5796.5")]
+[assembly: AssemblyFileVersion("1.0.5796.5")]
 [assembly: AssemblyInformationalVersion("FalloutSnip - Version 1.0")]
 
 

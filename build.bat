@@ -18,7 +18,7 @@ REM 	echo  <configuration><startup useLegacyV2RuntimeActivationPolicy="true"><re
 REM 	goto exit
 REM )
 
-for %%I in (git.cmd) do @IF EXIST "%%~dp$PATH:I" set GIT_PATH=%%~dp$PATH:I
+for %%I in (git.exe) do @IF EXIST "%%~dp$PATH:I" set GIT_PATH=%%~dp$PATH:I
 IF NOT EXIST "%GIT_PATH%"  set GIT_PATH=%ProgramFiles%\Git\cmd
 IF NOT EXIST "%GIT_PATH%"  set GIT_PATH=%ProgramFiles(x86)%\Git\cmd
 IF NOT EXIST "%GIT_PATH%" (

@@ -91,11 +91,11 @@
         Text=" The THIRDPARTY_ROOT property must be set on the command line."
         Condition="'$(THIRDPARTY_ROOT)' == '' or !Exists('$(THIRDPARTY_ROOT)')" />
            
-    <SimpleExec Command="git.cmd" Args="log -1 &quot;--pretty=format:%h&quot; &quot;$(BUILD_ROOT)\.&quot;">
+    <SimpleExec Command="git.exe" Args="log -1 &quot;--pretty=format:%h&quot; &quot;$(BUILD_ROOT)\.&quot;">
         <Output TaskParameter="StdOut" PropertyName="GitVersionNumber" />
         <Output TaskParameter="ExitCode" PropertyName="GitSuccess" />
     </SimpleExec>
-    <SimpleExec Command="git.cmd" Args="log -1 &quot;--pretty=format:%cd&quot; &quot;$(BUILD_ROOT)\.&quot;">
+    <SimpleExec Command="git.exe" Args="log -1 &quot;--pretty=format:%cd&quot; &quot;$(BUILD_ROOT)\.&quot;">
         <Output TaskParameter="StdOut" PropertyName="GitProjectDate" />
         <Output TaskParameter="ExitCode" PropertyName="GitSuccess" />
     </SimpleExec>

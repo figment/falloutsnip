@@ -41,6 +41,7 @@
     <CopyToStagingPython Include="$(SolutionDir)Vendor\IronPython\IronPython.Modules.dll" />
     <CopyToStagingPython Include="$(SolutionDir)Vendor\IronPython\Microsoft.Dynamic.dll" />
     <CopyToStagingPython Include="$(SolutionDir)Vendor\IronPython\Microsoft.Scripting.dll" />
+    <CopyToStagingPythonLib Include="$(SolutionDir)Vendor\IronPython\lib\**" />
     <CopyToStagingPlatform64 Include="$(SolutionDir)Platform\x64\zlib1.dll" />
     <CopyToStagingPlatform64 Include="$(SolutionDir)Platform\x64\ZLibMC.dll" />
     <CopyToStagingPlatform32 Include="$(SolutionDir)Platform\x86\zlib1.dll" />
@@ -76,6 +77,7 @@
     <Copy SourceFiles="@(CopyToStagingScripts)" DestinationFolder="$(StageOutputDir)Scripts\%(RecursiveDir)" />
     <Copy SourceFiles="@(CopyToStagingFr)" DestinationFolder="$(StageOutputDir)fr-FR\%(RecursiveDir)" />
     <Copy SourceFiles="@(CopyToStagingPython)" DestinationFolder="$(StageOutputDir)" />
+    <Copy SourceFiles="@(CopyToStagingPythonLib)" DestinationFolder="$(StageOutputDir)\lib\%(RecursiveDir)" />
     <Copy SourceFiles="@(inputAssembliesConf)" DestinationFolder="$(StageOutputDir)" />
     <Copy SourceFiles="@(inputAssemblies)" DestinationFolder="$(StageOutputDir)" />
     <Copy SourceFiles="@(CopyToStagingPlatform32)" DestinationFolder="$(StageOutputDir)Platform\x86" />
