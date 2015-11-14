@@ -6,7 +6,7 @@ using FalloutSnip.Domain.Services;
 using IronPython.Hosting;
 using Microsoft.Scripting.Hosting;
 
-namespace FalloutSnip.Domain.Scripts
+namespace FalloutSnip.UI.Scripts
 {
     public enum FunctionOperation
     {
@@ -165,7 +165,7 @@ namespace FalloutSnip.Domain.Scripts
         /// <typeparam name="T"></typeparam>
         /// <param name="elemt"></param>
         /// <returns></returns>
-        public static T ExecuteFunction<T>(Model.Element elemt, FunctionOperation funcOp) where T : struct
+        public static T ExecuteFunction<T>(Domain.Model.Element elemt, FunctionOperation funcOp) where T : struct
         {
             if (funcOp == FunctionOperation.ForReading)
                 if (string.IsNullOrWhiteSpace(elemt.Structure.funcr))

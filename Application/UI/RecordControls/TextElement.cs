@@ -1,6 +1,6 @@
-﻿using FalloutSnip.Domain.Scripts;
-using FunctionOperation = FalloutSnip.Domain.Scripts.FunctionOperation;
-using PyInterpreter = FalloutSnip.Domain.Scripts.PyInterpreter;
+﻿using FalloutSnip.UI.Scripts;
+using FunctionOperation = FalloutSnip.UI.Scripts.FunctionOperation;
+using PyInterpreter = FalloutSnip.UI.Scripts.PyInterpreter;
 
 namespace FalloutSnip.UI.RecordControls
 {

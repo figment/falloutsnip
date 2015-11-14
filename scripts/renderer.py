@@ -6,7 +6,7 @@ from System.Text import StringBuilder
 import FalloutSnip.Domain
 from FalloutSnip.Domain.Model import BaseRecord, Record, Plugin, SubRecord, GroupRecord
 from FalloutSnip.Domain.Data.Structure import RecordStructure, ElementValueType
-from FalloutSnip.Domain.Scripts import PyInterpreter, FunctionOperation
+from FalloutSnip.UI.Scripts import PyInterpreter, FunctionOperation
 from FalloutSnip.Domain.Services import Spells
 from FalloutSnip.Framework import TypeConverter
 from FalloutSnip.Framework.Services import Encoding
@@ -85,11 +85,9 @@ class HTMLRenderer():
             elif isinstance(rec, GroupRecord):
                 return self.GetHeaderGroupRecord(rec)
             return self.GetHeaderBasic(rec)
-        except Exception, e:
-            print e
-            import sys, traceback
-
-            traceback.print_exc(file=sys.stdout)
+        except Exception as e:
+            print(e)
+            import sys, traceback; traceback.print_exc(file=sys.stdout)
             pass
 
     def GetHeaderBasic(self, rec):
@@ -191,7 +189,7 @@ class HTMLRenderer():
             elif isinstance(rec, GroupRecord):
                 return self.GetDescriptionGroupRecord(rec)
             return self.GetHeaderBasic(rec)
-        except Exception, e:
+        except Exception as e:
             pass
 
     def GetElementName(self, elem):
@@ -233,28 +231,26 @@ class HTMLRenderer():
             structure = rec.GetStructure()
             if structure:
                 rec.MatchRecordStructureToRecord()
-                print structure
+                #print structure
                 p.h2(structure.description)
                 for subrec in rec.SubRecords:
-                    print subrec
+                    print(subrec)
                     if (((subrec.Structure != None) and (subrec.Structure.elements != None))
                         and not subrec.Structure.notininfo):
                         self.GetDescriptionSubRecord(subrec)
-        except Exception, e:
+        except Exception as e:
             p.p('Warning: An error occurred while processing the record. It may not conform to the structure defined in RecordStructure.xml',
                 class_='danger')
             p.p(str(e))
-            print e
-            import sys, traceback
-
-            traceback.print_exc(file=sys.stdout)
+            print(e)
+            import sys, traceback; traceback.print_exc(file=sys.stdout)
 
     def GetDescriptionSubRecord(self, rec):
         p = self.page
 
         # table has up to 5 columns
         ss = structure = rec.Structure
-        if not structure or not structure.elements:
+        if not structure or not structure.elementTree:
             with p.table(id='record-desc'):
                 if ss:
                     with p.thead():
@@ -385,10 +381,10 @@ class HTMLRenderer():
                             else:
                                 #p.td(str(sselem.type), class_='text',width='auto' )
                                 p.td(strValue, class_='text', colspan=4)
-        except Exception, e:
+        except Exception as e:
             p.p("Warning: Subrecord doesn't seem to match the expected structure", class_='danger')
             p.p(str(e), class_='danger')
-            #print e
+            #print(e)
             #import sys,traceback
             #traceback.print_exc(file=sys.stdout)
 
@@ -498,11 +494,11 @@ class HTMLRenderer():
 
 
 
-        except Exception, e:
+        except Exception as e:
             p.p('Warning: An error occurred while processing the record. It may not conform to the structure defined in RecordStructure.xml',
                 class_='danger')
             p.p(str(e))
-        #print e
+        #print(e)
         #import sys,traceback
         #traceback.print_exc(file=sys.stdout)
 
@@ -524,7 +520,7 @@ if __name__ == '<module>':
                 html.GetHeader(rec)
                 html.page.hr()
                 html.GetDescription(rec)
-            except Exception, e:
+            except Exception as e:
                 #html.p("Warning: Unexpected Error occurred while processing", class_='danger')
                 #html.p(str(e), class_='danger')
                 return "Unexpected Error occurred while processing record\n" + str(e)

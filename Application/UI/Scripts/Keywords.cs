@@ -1,4 +1,4 @@
-namespace FalloutSnip.Domain.Scripts
+namespace FalloutSnip.UI.Scripts
 {
     internal enum Keywords
     {

@@ -122,6 +122,12 @@
     <Reference Include="WindowsFormsIntegration" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="UI\Scripts\Keywords.cs" />
+    <Compile Include="UI\Scripts\PyInterpreter.cs" />
+    <Compile Include="UI\Scripts\ScriptCompiler.cs" />
+    <Compile Include="UI\Scripts\Token.cs" />
+    <Compile Include="UI\Scripts\TokenStream.cs" />
+    <Compile Include="UI\Scripts\TokenType.cs" />
     <Compile Include="UI\Forms\MainView.Messaging.cs">
       <SubType>Form</SubType>
     </Compile>

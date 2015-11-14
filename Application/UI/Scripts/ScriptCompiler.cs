@@ -6,7 +6,7 @@
 
 using FalloutSnip.Domain.Data.Structure.Xml;
 
-namespace FalloutSnip.Domain.Scripts
+namespace FalloutSnip.UI.Scripts
 {
     using System;
     using System.Collections.Generic;
@@ -15,7 +15,7 @@ namespace FalloutSnip.Domain.Scripts
     using System.Linq;
     using System.Xml;
 
-    using Data.Structure;
+    using Domain.Data.Structure;
     using FalloutSnip.Domain.Model;
     using FalloutSnip.Domain.Services;
     using FalloutSnip.Framework;

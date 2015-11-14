@@ -7,6 +7,7 @@ using System.Text;
 using FalloutSnip.Domain.Model;
 using FalloutSnip.Domain.Rendering;
 using FalloutSnip.Domain.Services;
+using FalloutSnip.UI.Services;
 using IronPython.Hosting;
 using Microsoft.Scripting.Hosting;
 
@@ -44,8 +45,12 @@ namespace FalloutSnip.UI.Rendering
         private static FileSystemWatcher watcher;
 
         // list of watched files
-        private static HashSet<string> watchedFiles = new HashSet<string>(StringComparer.InvariantCultureIgnoreCase); 
+        private static readonly HashSet<string> watchedFiles =
+            new HashSet<string>(StringComparer.InvariantCultureIgnoreCase);
 
+        // default renderer text
+        private const string DefaultRendererText = "ERROR: Renderer incorrectly configured";
+        private static string defaultRenderText = DefaultRendererText;
 
         /// <summary>
         /// Init the py interpreter
@@ -56,13 +61,19 @@ namespace FalloutSnip.UI.Rendering
             objOps = pyEngine.CreateOperations(); // Performing tasks with the script
             scope = pyEngine.CreateScope(); // Default scope for executing the script
 
-            var paths = pyEngine.GetSearchPaths().ToList();
+            //var oldPaths = pyEngine.GetSearchPaths().ToList();
+            var paths = new List<string>();
             //paths.Add(PluginEngine.PluginsPyPath);
+            if (!string.IsNullOrEmpty(Options.Value.IronPythonDirectory))
+            {
+                paths.Add(Options.Value.IronPythonDirectory);
+                paths.Add(Path.Combine(Options.Value.IronPythonDirectory, "lib"));
+                paths.Add(Path.Combine(Options.Value.IronPythonDirectory, "DLLs"));
+            }
+            paths.Add(Folders.ScriptsDirectory);
             paths.Add(Path.Combine(Folders.ScriptsDirectory, "lib"));
 
-            if (!string.IsNullOrEmpty(FalloutSnip.UI.Services.Options.Value.IronPythonDirectory))
-                paths.Add(Path.Combine(FalloutSnip.UI.Services.Options.Value.IronPythonDirectory, "lib"));
-            pyEngine.SetSearchPaths(paths);
+            pyEngine.SetSearchPaths(paths.Where(Directory.Exists).ToList());
 
             var runtime = pyEngine.Runtime;
             runtime.LoadAssembly(Assembly.GetExecutingAssembly());
@@ -80,23 +91,24 @@ namespace FalloutSnip.UI.Rendering
                     IncludeSubdirectories = false
                 };
             watcher.Changed += watcher_Changed;
-            watcher.EnableRaisingEvents = true;
             watchedFiles.Add(Path.GetFullPath(RendererPyPath));
             watchedFiles.Add(Path.ChangeExtension(RendererPyPath, ".css"));
-
+            watcher.EnableRaisingEvents = true;
             Reload();
         }
-        
-        static void watcher_Changed(object sender, FileSystemEventArgs e)
+
+        private static void watcher_Changed(object sender, FileSystemEventArgs e)
         {
-            if (watchedFiles.Contains(e.FullPath))
-                Reload();
+            //if (watchedFiles.Contains(e.FullPath))
+            System.Threading.Thread.Sleep(1000);
+            Reload();
         }
 
         public static void Reload()
         {
             try
             {
+                defaultRenderText = DefaultRendererText;
                 source = pyEngine.CreateScriptSourceFromFile(RendererPyPath); // Load the script
                 compiledCode = source.Compile();
                 compiledCode.Execute(scope); // Create class object
@@ -104,8 +116,9 @@ namespace FalloutSnip.UI.Rendering
                 if (rendererClass != null)
                     rendererImpl = objOps.Invoke(rendererClass) as IRenderer; // Create an instance of the Renderer
             }
-            catch (Exception)
+            catch (Exception e)
             {
+                defaultRenderText = e.ToString();
                 source = null;
                 compiledCode = null;
                 rendererClass = null;
@@ -117,9 +130,9 @@ namespace FalloutSnip.UI.Rendering
         {
             if (watcher != null)
             {
-                watcher = null;
                 watcher.Changed -= watcher_Changed;
                 watcher.EnableRaisingEvents = false;
+                watcher = null;
             }
             source = null;
             compiledCode = null;
@@ -133,9 +146,10 @@ namespace FalloutSnip.UI.Rendering
         {
             if (rendererImpl == null)
             {
-                var sb = new StringBuilder();
-                Extensions.StringRenderer.GetFormattedData(rec, sb);
-                return sb.ToString();
+return defaultRenderText;
+//                var sb = new StringBuilder();
+//                Extensions.StringRenderer.GetFormattedData(rec, sb);
+//                return sb.ToString();
             }
             try
             {

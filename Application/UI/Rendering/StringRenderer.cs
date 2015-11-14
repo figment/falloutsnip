@@ -6,7 +6,7 @@ using System.Text;
 using System.Windows.Forms;
 using FalloutSnip.Domain.Data.Structure;
 using FalloutSnip.Domain.Model;
-using FalloutSnip.Domain.Scripts;
+using FalloutSnip.UI.Scripts;
 using FalloutSnip.Framework;
 using FalloutSnip.Framework.Services;
 using FalloutSnip.Properties;

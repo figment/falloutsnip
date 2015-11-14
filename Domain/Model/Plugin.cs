@@ -1,5 +1,3 @@
-using System.ComponentModel;
-using Microsoft.Scripting.Runtime;
 using FalloutSnip.Domain.Data;
 using FalloutSnip.Domain.Data.Structure;
 
@@ -926,7 +924,7 @@ namespace FalloutSnip.Domain.Model
             this.StringsDirty = false;
         }
 
-        private string CreateBackupFolder([NotNull] string filePath)
+        private string CreateBackupFolder(string filePath)
         {
             var dir = Path.Combine(Path.GetDirectoryName(filePath), "Backup");
             if (!Directory.Exists(dir))
@@ -999,12 +997,26 @@ namespace FalloutSnip.Domain.Model
             // Quick check for master esm.  Skyrim.esm uses same as fallout. so harder to detect
             if (!string.IsNullOrEmpty(fileName))
             {
+                var filename = Path.GetFileName(fileName);
+                var foldername = Path.GetDirectoryName(fileName);
                 foreach (var domain in DomainDefinition.AllDomains().Where(domain => 
-                    string.Compare(domain.Master, Path.GetFileName(fileName),StringComparison.InvariantCultureIgnoreCase) == 0))
+                    string.Compare(domain.Master, filename,StringComparison.InvariantCultureIgnoreCase) == 0))
                 {
                     if (!domain.Loaded)
                         DomainDefinition.Load(domain.Name);
                     return domain;
+                }
+
+                // Now quick check for folder location
+                if (!string.IsNullOrWhiteSpace(foldername))
+                {
+                    foreach (var domain in DomainDefinition.AllDomains().Where(domain =>
+                        string.Compare(domain.GameDataDirectory, foldername, StringComparison.InvariantCultureIgnoreCase) == 0))
+                    {
+                        if (!domain.Loaded)
+                            DomainDefinition.Load(domain.Name);
+                        return domain;
+                    }
                 }
             }
 
@@ -1023,6 +1035,7 @@ namespace FalloutSnip.Domain.Model
                 throw new Exception("File is not a valid TES4 plugin (Missing HEDR subrecord in the TES4 record)");
             var recsize = br.ReadUInt16();
             var version = br.ReadSingle();
+            //var domain = DomainDefinition.DetectDefinitionFromLocation(tes, version);
             return DomainDefinition.DetectDefinitionFromVersion(tes, version);
         }
 
@@ -1061,7 +1074,8 @@ namespace FalloutSnip.Domain.Model
                 br.BaseStream.Position = define.HEDROffset;
                 s = ReadRecName(br);
                 if (s != "HEDR")
-                    throw new Exception(string.Format("File is not a valid {0} plugin (Missing HEDR subrecord in the {1} record)",define.Name,define.HEDRType));
+                    throw new Exception(
+                        $"File is not a valid {define.Name} plugin (Missing HEDR subrecord in the {define.HEDRType} record)");
                 br.BaseStream.Position = 4;
                 recsize = br.ReadUInt32();
                 try

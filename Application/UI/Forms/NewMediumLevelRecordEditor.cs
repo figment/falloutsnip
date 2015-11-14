@@ -1,7 +1,7 @@
-using FalloutSnip.Domain.Scripts;
+using FalloutSnip.UI.Scripts;
 using FalloutSnip.Framework;
-using FunctionOperation = FalloutSnip.Domain.Scripts.FunctionOperation;
-using PyInterpreter = FalloutSnip.Domain.Scripts.PyInterpreter;
+using FunctionOperation = FalloutSnip.UI.Scripts.FunctionOperation;
+using PyInterpreter = FalloutSnip.UI.Scripts.PyInterpreter;
 
 namespace FalloutSnip.UI.Forms
 {

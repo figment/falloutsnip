@@ -842,12 +842,13 @@ namespace FalloutSnip.Domain.Model
 
         public RecordStructure GetStructure()
         {
-            return GetStructures()[this.Name];
+            RecordStructure result;
+            return GetStructures().TryGetValue(this.Name, out result) ? result : null;
         }
 
         public override string ToString()
         {
-            return string.Format("[Record] '{0}' [{1:X8}]: {2}", this.Name, this.FormID, this.DescriptiveName);
+            return $"[Record] '{this.Name}' [{this.FormID:X8}]: {this.DescriptiveName}";
         }
     }
 }

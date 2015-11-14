@@ -12,7 +12,7 @@ import FalloutSnip.Domain
 from FalloutSnip.Domain.Services import Spells
 from FalloutSnip.Domain.Model import BaseRecord, Record, Plugin, SubRecord, GroupRecord
 from FalloutSnip.Domain.Data.Structure import RecordStructure, ElementValueType
-from FalloutSnip.Domain.Scripts import PyInterpreter
+from FalloutSnip.UI.Scripts import PyInterpreter
 from FalloutSnip.Domain.Services import Spells
 
 import markup

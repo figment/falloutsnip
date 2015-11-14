@@ -1,0 +1,6 @@
+/Output
+/.vs
+obj
+bin
+/Application/*.user
+/*.suo

@@ -23,7 +23,6 @@ namespace FalloutSnip.UI.Services
             this.SetupApplicationDirectory();
             this.SetupScriptHostDirectory();
             Reconfigure();
-            SetupApplicationDirectory();
             this.ParseCommandLine(args);
         }
 
@@ -156,45 +155,72 @@ namespace FalloutSnip.UI.Services
             if (!string.IsNullOrWhiteSpace(applicationDirectory))
             {
                 var dir = new DirectoryInfo(applicationDirectory);
-                if (System.String.Compare(dir.Name, "Debug", System.StringComparison.OrdinalIgnoreCase) == 0
-                    || System.String.Compare(dir.Name, "Release", System.StringComparison.OrdinalIgnoreCase) == 0)
+                if (string.Compare(dir.Name, "Debug", StringComparison.OrdinalIgnoreCase) == 0
+                    || string.Compare(dir.Name, "Release", StringComparison.OrdinalIgnoreCase) == 0)
                     dir = dir.Parent;
-                if (System.String.Compare(dir.Name, "bin", System.StringComparison.OrdinalIgnoreCase) == 0)
+                if (dir != null && string.Compare(dir.Name, "bin", StringComparison.OrdinalIgnoreCase) == 0)
                     dir = dir.Parent;
-                applicationDirectory = dir.FullName;
+                if (dir != null && String.Compare(dir.Name, "Application", StringComparison.OrdinalIgnoreCase) == 0)
+                    dir = dir.Parent;
+                applicationDirectory = dir?.FullName;
+
             }
             if (!string.IsNullOrWhiteSpace(applicationDirectory))
             {
-                var confFolder = Path.Combine(applicationDirectory, "conf");
+                var confFolder = Path.GetFullPath(Path.Combine(applicationDirectory, "conf"));
                 if (!Directory.Exists(confFolder))
                     confFolder = Path.GetFullPath(Path.Combine(applicationDirectory, "..", "conf"));
-                this.SettingsDirectory = confFolder;
-                this.ScriptsDirectory = Path.GetFullPath(Path.Combine(SettingsDirectory, "..", "scripts"));
+                SettingsDirectory = confFolder;
+
+                ScriptsDirectory = Path.GetFullPath(Path.Combine(applicationDirectory, "scripts"));
+                if (!Directory.Exists(confFolder))
+                    ScriptsDirectory = Path.GetFullPath(Path.Combine(applicationDirectory, "..", "scripts"));
             }
         }
 
         /// <summary>
-        /// Locate the IronPython install location for scripting
+        ///     Locate the IronPython install location for scripting
         /// </summary>
         private void SetupScriptHostDirectory()
         {
-            var path = FalloutSnip.Properties.Settings.Default.IronPythonPath;
-            if (string.IsNullOrWhiteSpace(path) || !Directory.Exists(path))
+            var path = Properties.Settings.Default.IronPythonPath;
+
+            if (!string.IsNullOrWhiteSpace(path) 
+                && Directory.Exists(path)
+                && Directory.Exists(Path.Combine(path, "lib"))
+                && Directory.Exists(Path.Combine(path, "DLLs"))
+                )
+            {
+                IronPythonDirectory = path;
+            }
+            else // search 
             {
                 using (var key = Registry.LocalMachine.OpenSubKey(Environment.Is64BitOperatingSystem
-                                                                      ? @"SOFTWARE\Wow6432Node\IronPython\2.7\InstallPath"
-                                                                      : @"SOFTWARE\IronPython\2.7\InstallPath"))
+                    ? @"SOFTWARE\Wow6432Node\IronPython\2.7\InstallPath"
+                    : @"SOFTWARE\IronPython\2.7\InstallPath"))
                 {
                     if (key != null)
                     {
-                        this.IronPythonDirectory = key.GetValue(null, "", RegistryValueOptions.None) as string;
+                        IronPythonDirectory = key.GetValue(null, "", RegistryValueOptions.None) as string;
+                    }
+                    else
+                    {
+                        path = Path.GetFullPath(Path.Combine(ApplicationDirectory, "..", "..", "..", "vendor", "IronPython"));
+                        if (!string.IsNullOrWhiteSpace(path)
+                            && Directory.Exists(path)
+                            && Directory.Exists(Path.Combine(path, "lib"))
+                            && Directory.Exists(Path.Combine(path, "DLLs"))
+                            )
+                        {
+                            IronPythonDirectory = path;
+                        }
+                        else
+                        {
+                            IronPythonDirectory = ApplicationDirectory;
+                        }
                     }
                 }
             }
-            else
-            {
-                this.IronPythonDirectory = path;
-            }           
         }
 
         /// <summary>
@@ -209,29 +235,8 @@ namespace FalloutSnip.UI.Services
                 if (domain == null)
                     return;
 
-                using (var key = Registry.LocalMachine.OpenSubKey(@"SOFTWARE\Wow6432Node\" + domain.RegistryKey))
-                {
-                    //on 64bits
-                    if (key == null)
-                    {
-                        using (var key2 = Registry.LocalMachine.OpenSubKey(@"SOFTWARE\" + domain.RegistryKey))
-                        {
-                            //on 32bits
-                            if (key2 == null) return;
-                            this.GameDirectory = key2.GetValue("Installed Path", this.GameDirectory, RegistryValueOptions.None) as string;
-                        }
-                    }
-                    else
-                        this.GameDirectory = key.GetValue("Installed Path", this.GameDirectory, RegistryValueOptions.None) as string;
-
-                    var gameDirectory = this.GameDirectory;
-                    if (gameDirectory != null)
-                    {
-                        this.GameDataDirectory = Path.Combine(gameDirectory, "Data");
-                        if ( !Directory.Exists(this.GameDataDirectory) )
-                            this.GameDataDirectory = Path.Combine(gameDirectory, "Data files");
-                    }
-                }
+                this.GameDirectory = domain.GameDirectory;
+                this.GameDataDirectory = domain.GameDataDirectory;
             }
             catch (Exception ex)
             {

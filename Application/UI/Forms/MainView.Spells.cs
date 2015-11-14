@@ -17,7 +17,7 @@ namespace FalloutSnip.UI.Forms
     using Domain.Data.Structure;
     using FalloutSnip.Domain.Data.Strings;
     using FalloutSnip.Domain.Model;
-    using FalloutSnip.Domain.Scripts;
+    using FalloutSnip.UI.Scripts;
     using FalloutSnip.Domain.Services;
     using FalloutSnip.Framework;
     using FalloutSnip.Properties;

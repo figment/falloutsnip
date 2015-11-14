@@ -10,6 +10,7 @@ using FalloutSnip.Domain.Data.Structure.Xml;
 using FalloutSnip.Domain.Properties;
 using FalloutSnip.Domain.Services;
 using FalloutSnip.Framework.IO;
+using Microsoft.Win32;
 
 #endregion
 
@@ -42,6 +43,9 @@ namespace FalloutSnip.Domain.Data
 
         public Settings Settings { get; private set; }
         public bool Loaded { get; private set; }
+        public string GameDirectory { get; private set; }
+        public string GameDataDirectory { get; private set; }
+
         public Dictionary<string, RecordStructure> Records { get; private set; }
 
         public static event EventHandler DomainLoaded;
@@ -66,6 +70,23 @@ namespace FalloutSnip.Domain.Data
                 define.HEDROffset = int.Parse(GetValue(values, "HEDROffset", "4"));
                 define.HEDRRecSize = int.Parse(GetValue(values, "HEDRRecSize", "2"));
                 define.RecSize = int.Parse(GetValue(values, "RecSize", "16"));
+
+                try
+                {
+                    define.GameDirectory = GetGameDirectoryFromRegistry(define.RegistryKey);
+                    if (!string.IsNullOrEmpty(define.GameDirectory))
+                    {
+                        define.GameDataDirectory = Path.Combine(define.GameDirectory, "Data");
+                        if (!Directory.Exists(define.GameDataDirectory))
+                            define.GameDataDirectory = Path.Combine(define.GameDirectory, "Data files");
+                    }
+                }
+                catch
+                {
+                    define.GameDirectory = null;
+                    define.GameDataDirectory = null;
+                }
+
                 Domains[section] = define;
             }
         }
@@ -146,6 +167,22 @@ namespace FalloutSnip.Domain.Data
             }
             throw new Exception("File is not a known TES4 file (Unexpected version)");
         }
+
+        public static string GetGameDirectoryFromRegistry(string registryKey)
+        {
+            using (var key = Registry.LocalMachine.OpenSubKey(@"SOFTWARE\Wow6432Node\" + registryKey))
+            {
+                //on 64bits
+                if (key != null)
+                    return key.GetValue("Installed Path", "", RegistryValueOptions.None) as string;
+            }
+            using (var key2 = Registry.LocalMachine.OpenSubKey(@"SOFTWARE\" + registryKey))
+            {
+                //on 32bits
+                return key2?.GetValue("Installed Path", "", RegistryValueOptions.None) as string;
+            }
+        }
+
 
         public static RecordStructure GetFirstRecordOfType(string type)
         {
