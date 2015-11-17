@@ -96,7 +96,7 @@
       <Value Profile="(Default)" />
     </Setting>
     <Setting Name="DefaultDomain" Type="System.String" Scope="User">
-      <Value Profile="(Default)">Skyrim</Value>
+      <Value Profile="(Default)">Fallout4</Value>
     </Setting>
   </Settings>
 </SettingsFile>

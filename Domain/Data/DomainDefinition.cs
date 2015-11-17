@@ -64,9 +64,9 @@ namespace FalloutSnip.Domain.Data
                 define.FilteredESM = GetValue(values, "FilteredESM", "").Split(';');
                 define.AllESMRecords = GetValue(values, "AllESMRecords", "").Split(';');
                 define.HEDRType = GetValue(values, "HEDRType", "TES4");
-                define.HEDRVersion = float.Parse(GetValue(values, "HEDRVersion", "1.0"));
-                define.HEDRVersionMin = float.Parse(GetValue(values, "HEDRVersionMin", define.HEDRVersion.ToString()));
-                define.HEDRVersionMax = float.Parse(GetValue(values, "HEDRVersionMax", define.HEDRVersion.ToString()));
+                define.HEDRVersion = float.Parse(GetValue(values, "HEDRVersion", "1.0"), System.Globalization.CultureInfo.InvariantCulture);
+                define.HEDRVersionMin = float.Parse(GetValue(values, "HEDRVersionMin", define.HEDRVersion.ToString()), System.Globalization.CultureInfo.InvariantCulture);
+                define.HEDRVersionMax = float.Parse(GetValue(values, "HEDRVersionMax", define.HEDRVersion.ToString()), System.Globalization.CultureInfo.InvariantCulture);
                 define.HEDROffset = int.Parse(GetValue(values, "HEDROffset", "4"));
                 define.HEDRRecSize = int.Parse(GetValue(values, "HEDRRecSize", "2"));
                 define.RecSize = int.Parse(GetValue(values, "RecSize", "16"));
