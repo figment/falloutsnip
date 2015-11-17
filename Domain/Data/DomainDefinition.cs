@@ -179,7 +179,7 @@ namespace FalloutSnip.Domain.Data
             using (var key2 = Registry.LocalMachine.OpenSubKey(@"SOFTWARE\" + registryKey))
             {
                 //on 32bits
-                return key2?.GetValue("Installed Path", "", RegistryValueOptions.None) as string;
+                return key2.GetValue("Installed Path", "", RegistryValueOptions.None) as string;
             }
         }
 

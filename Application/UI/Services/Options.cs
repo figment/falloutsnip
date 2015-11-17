@@ -162,7 +162,7 @@ namespace FalloutSnip.UI.Services
                     dir = dir.Parent;
                 if (dir != null && String.Compare(dir.Name, "Application", StringComparison.OrdinalIgnoreCase) == 0)
                     dir = dir.Parent;
-                applicationDirectory = dir?.FullName;
+                applicationDirectory = dir.FullName;
 
             }
             if (!string.IsNullOrWhiteSpace(applicationDirectory))

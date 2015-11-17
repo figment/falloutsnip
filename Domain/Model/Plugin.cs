@@ -1075,7 +1075,7 @@ namespace FalloutSnip.Domain.Model
                 s = ReadRecName(br);
                 if (s != "HEDR")
                     throw new Exception(
-                        $"File is not a valid {define.Name} plugin (Missing HEDR subrecord in the {define.HEDRType} record)");
+                        "File is not a valid {define.Name} plugin (Missing HEDR subrecord in the {define.HEDRType} record)");
                 br.BaseStream.Position = 4;
                 recsize = br.ReadUInt32();
                 try
