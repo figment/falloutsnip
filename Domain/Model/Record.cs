@@ -848,7 +848,7 @@ namespace FalloutSnip.Domain.Model
 
         public override string ToString()
         {
-            return $"[Record] '{this.Name}' [{this.FormID:X8}]: {this.DescriptiveName}";
+            return "[Record] '{this.Name}' [{this.FormID:X8}]: {this.DescriptiveName}";
         }
     }
 }

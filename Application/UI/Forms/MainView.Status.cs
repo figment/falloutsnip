@@ -113,7 +113,7 @@ namespace FalloutSnip.UI.Forms
         public static void PostStatusText(string text, Color color)
         {
             var form = Application.OpenForms.OfType<MainView>().FirstOrDefault();
-            form?.SendStatusText(text, color);
+            form.SendStatusText(text, color);
         }
 
         public static void PostStatusWarning(string text)
