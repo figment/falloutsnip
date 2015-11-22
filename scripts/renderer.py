@@ -326,7 +326,7 @@ class HTMLRenderer():
                                         if id == None:
                                             p.td(fullStr, class_='text', colspan=2)
                                         else:
-                                            p.td(id, class_='textid', width="15%")
+                                            p.td(str(id), class_='textid', width="15%")
                                             p.td(fullStr, class_='text')
 
                             elif sselem.type == ElementValueType.LString:
