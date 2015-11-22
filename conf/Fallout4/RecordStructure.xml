@@ -208,6 +208,7 @@
         <Element name="DEBR FormID" type="formid" reftype="DEBR" />
         <Element name="Debris Count" type="uint" />
       </Subrecord>
+      <Group id="PTRN" optional="1" />
       <Subrecord name="DMDL" desc="Replacement Model" optional="1">
         <Element name="Path\Filename" type="string" />
       </Subrecord>
@@ -216,7 +217,13 @@
         <Element name="Unknown" type="uint" hexview="1" hexviewwithdec="1" />
         <Element name="Total # of Textures Used by Model" type="uint" />
         <Element name="Unknown" type="uint" hexview="1" hexviewwithdec="1" />
-        <Element name="Rest of Data" type="uint" hexview="1" hexviewwithdec="1" optional="1" repeat="1" />
+        <Element name="Unknown" type="uint" hexview="1" hexviewwithdec="1"/>
+        <Element name="Unknown" type="uint" hexview="1" hexviewwithdec="1"/>
+        <Group id="Block" repeat="1" >
+          <Element name="Hash1" type="uint" hexview="1"/>
+          <Element name="Type" type="Str4" />
+          <Element name="Hash2" type="uint" hexview="1"/>
+        </Group>
       </Subrecord>
       <Subrecord name="DMDS" desc="Alternate TexData for Replacer Model" optional="1">
         <Element name="# of Textures" type="uint" />
@@ -288,11 +295,13 @@
       <Element name="Unknown" type="uint" hexview="1" hexviewwithdec="1" />
       <Element name="Total # of Textures Used by Model" type="uint" />
       <Element name="Unknown" type="uint" hexview="1" hexviewwithdec="1" />
-	  <Group id="Block" repeat="1" >
-		  <Element name="Hash1" type="uint" hexview="1"/>
-		  <Element name="Type" type="Str4" />
-		  <Element name="Hash2" type="uint" hexview="1"/>
-	  </Group>
+      <Element name="Unknown" type="uint" hexview="1" hexviewwithdec="1" />
+      <Element name="Unknown" type="uint" hexview="1" hexviewwithdec="1" />
+      <Group id="Block" repeat="1" >
+        <Element name="Hash1" type="uint" hexview="1"/>
+        <Element name="Type" type="Str4" />
+        <Element name="Hash2" type="uint" hexview="1"/>
+      </Group>
       <Element name="Rest of Data" type="uint" hexview="1" hexviewwithdec="1" optional="1" repeat="1" />
     </Subrecord>
     <Group id="MODS" optional="1" />
@@ -985,6 +994,19 @@
     </Subrecord>
     <Subrecord name="SCRO" desc="? Quest (QUST)" optional="1">
       <Element name="FormID" type="formid" reftype="QUST" />
+    </Subrecord>
+  </Group>
+  <Group id="PTRN">
+    <Subrecord name="PTRN" optional="1">
+      <Element name="Transform" type="formid" reftype="TRNS" />
+    </Subrecord>
+  </Group>
+  <Group id="PRPS">
+    <Subrecord name="PRPS" optional="1">
+      <Group repeat="1">
+        <Element name="Actor Value" type="formid" reftype="AVIF" />
+        <Element name="Value" type="float" />
+      </Group>
     </Subrecord>
   </Group>
   <!-- HERE STARTS THE RECORDS -->
@@ -2325,6 +2347,8 @@
   <Record name="KYWD" desc="Keyword">
     <Group id="EDID" optional="1" />
     <Group id="CNAM" optional="1" />
+    <Subrecord name="TNAM" optional="1" />
+    <Group id="FULL" optional="1" />
   </Record>
   <Record name="LCRT" desc="Location Ref Type">
     <Group id="EDID" optional="1" />
@@ -3443,6 +3467,7 @@
   </Record>
   <Record name="FLST" desc="Form ID List">
     <Group id="EDID" optional="1" />
+    <Group id="FULL" optional="1" />
     <Subrecord name="LNAM" desc="List Item" optional="1" repeat="1">
       <Element name="FormID" type="formid" />
     </Subrecord>
@@ -3632,7 +3657,16 @@
     <Group id="DESC" optional="1" />
     <!-- localized -->
     <Subrecord name="ANAM" desc="Alternate Name" optional="1">
-      <Element name="Text" type="string" />
+      <Element name="Text" type="lstring" />
+    </Subrecord>
+    <Subrecord name="NAM0" optional="1">
+      <Element name="Unknown" type="uint" />
+    </Subrecord>
+    <Subrecord name="AVFL" optional="1">
+      <Element name="Unknown" type="uint" />
+    </Subrecord>
+    <Subrecord name="NAM1" optional="1">
+      <Element name="Unknown" type="uint" />
     </Subrecord>
     <Subrecord name="CNAM" desc="Skill Category" optional="1" repeat="1">
       <Element name="Skill Category" type="byte" options="None;0;Combat;1;Magic;2;Stealth;3;4;4" />
@@ -6285,6 +6319,7 @@
     <Group id="VMAD" optional="1" />
     <!-- Snip doesn't support repeating element-groups yet -->
     <Group id="OBND" optional="1" />
+    <Group id="PTRN" optional="1" />
     <Group id="FULL" optional="1" />
     <!-- localized -->
     <Group id="MODEL" optional="1" />
@@ -6902,6 +6937,7 @@
     <Group id="VMAD" optional="1" />
     <!-- Snip doesn't support repeating element-groups yet -->
     <Group id="OBND" optional="1" />
+    <Group id="PTRN" optional="1" />
     <Group id="FULL" optional="1" />
     <!-- localized -->
     <Group id="MODEL" optional="1" />
@@ -6909,6 +6945,7 @@
     <Group id="DESTRUCT" optional="1" />
     <!-- Snip doesn't support arranging this yet -->
     <Group id="KEYWORDS" optional="1" />
+    <Group id="PRPS" optional="1" />
     <Subrecord name="PNAM" desc="(legacy)" optional="1">
       <Element name="Unknown" type="uint" hexview="1" hexviewwithdec="1" />
     </Subrecord>
@@ -7361,9 +7398,54 @@
     <Group id="MODEL" optional="1" />
     <!-- Snip doesn't support arranging this yet -->
   </Record>
+  <Record name="TRNS" desc="Transform">
+    <Group id="EDID" />
+    <Subrecord name="DATA">
+      <Element name="Unknown" type="float" repeat="7" />
+      <Group optional="1">
+        <Element name="Unknown 2" type="float" repeat="2" />
+      </Group>
+    </Subrecord>
+  </Record>
+  <Record name="DMGT" desc="Damage Type">
+    <Group id="EDID" optional="1" />
+    <Subrecord name="DNAM">
+      <Element name="Unknown" type="uint" />
+      <Element name="Unknown" type="formid" reftype="SPEL" />
+    </Subrecord>
+  </Record>
+  <Record name="CMPO" desc="Components">
+    <Group id="EDID" optional="1" />
+    <Group id="OBND" optional="1" />
+    <Group id="FULL" optional="1" />
+    <Subrecord name="CUSD" desc="UI Sound" optional="1">
+      <Element name="FormID" type="formid" reftype="SNDR" />
+    </Subrecord>
+    <Subrecord name="DATA" desc="Unknown" optional="1" />
+    <Subrecord name="MNAM" desc="Scrap Item" optional="1">
+      <Element name="FormID" type="formid" reftype="MISC" />
+    </Subrecord>
+    <Subrecord name="GNAM" desc="Rarity" optional="1">
+      <Element name="FormID" type="formid" reftype="GLOB" />
+    </Subrecord>
+  </Record>
   <Record name="COBJ" desc="Constructible Objects (Recipes)">
     <Group id="EDID" optional="1" />
     <Group id="CONTITEMS" optional="1" />
+    <Subrecord name="YNAM" desc="Sound - Pick Up" optional="1">
+      <Element name="FormID" type="formid" reftype="SNDR" />
+    </Subrecord>
+    <Subrecord name="ZNAM" desc="Sound - Drop" optional="1">
+      <Element name="FormID" type="formid" reftype="SNDR" />
+    </Subrecord>
+    <Subrecord name="FVPA" desc="Components" optional="1">
+      <Group repeat="1">
+        <!-- Reftype should be one of CMPO, MISC, or ALCH, as all are valid -->
+        <Element name="Component" type="formid" />
+        <Element name="Count" type="uint" />
+      </Group>
+    </Subrecord>
+    <Group id="DESC" optional="1" />
     <Group id="CONDITIONAL" optional="1" repeat="1" />
     <Subrecord name="CNAM" desc="Created Object" optional="1" repeat="1">
       <Element name="FormID" type="formid" />
@@ -7371,9 +7453,18 @@
     <Subrecord name="BNAM" desc="Workbench Keyword (KYWD)" optional="1">
       <Element name="KYWD FormID" type="formid" reftype="KYWD" />
     </Subrecord>
-    <Subrecord name="NAM1" desc="Created Object Count" optional="1">
-      <Element name="Count" type="ushort" />
+    <Subrecord name="NAM1" desc="Unused" optional="1" notininfo="1" />
+    <Subrecord name="NAM2" desc="Unused" optional="1" notininfo="1" />
+    <Subrecord name="NAM3" desc="Unused" optional="1" notininfo="1" />
+    <Subrecord name="ANAM" desc="Unknown" optional="1">
+      <Element name="Unknown" type="formid" reftype="ARTO" />
     </Subrecord>
+    <Subrecord name="FNAM" desc="Keywords" optional="1">
+      <Group repeat="1">
+        <Element name="Keyword" type="formid" reftype="KYWD" />
+      </Group>
+    </Subrecord>
+    <Subrecord name="INTV" optional="1" />
   </Record>
   <Record name="LVLI" desc="Leveled Item">
     <!-- Snip can't do element groups yet -->
